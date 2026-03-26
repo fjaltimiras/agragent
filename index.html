@@ -2447,6 +2447,7 @@ const tickOpts = { color: '#7fa892', font: { size: 11 } };
 // ═══════════════════════════════════════
 // CLIMATE: Load real data from Open-Meteo
 // ═══════════════════════════════════════
+let kmlRawCoords = [];   // [[lng,lat],...] per polygon, populated when KML loads
 let climateDataLoaded = false;
 
 async function loadClimateData() {
@@ -2463,11 +2464,13 @@ async function loadClimateData() {
     lng = sumLng / n;
   }
 
-  // Season: Apr 2025 → Mar 2026
+  // Season: Apr 2025 → yesterday (archive API may lag a few days)
   const startDate = '2025-04-01';
-  const endDate = '2026-03-26';
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  const endDate = yesterday < '2026-03-31' ? yesterday : '2026-03-31';
 
-  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}`
+  // Try forecast API first (handles recent dates better), fallback to archive
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}`
     + `&start_date=${startDate}&end_date=${endDate}`
     + `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum`
     + `&timezone=America%2FSantiago`;
@@ -2853,7 +2856,6 @@ function setIndex(btn, idx) {
 // ═══════════════════════════════════════
 let geeConnected = false;
 let geeLayer = null;
-let kmlRawCoords = [];   // [[lng,lat],...] per polygon, populated when KML loads
 let currentGEEIndex = 'NDVI';
 
 const INDEX_META = {
