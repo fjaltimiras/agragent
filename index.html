@@ -1592,28 +1592,28 @@
 
       <div class="section-header">
         <h2>Genomic Analysis</h2>
-        <span class="sub">RNA-seq Pipeline — Vitis vinifera</span>
+        <span class="sub">RNA-seq Differential Expression — Vitis vinifera phenological stages (Altimiras et al.)</span>
       </div>
 
       <!-- Pipeline -->
       <div class="card mb-20">
         <div class="card-title">RNA-seq Processing Pipeline</div>
         <div class="pipeline">
-          <div class="pipe-step"><div class="p-name">Raw Reads</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-step"><div class="p-name">Raw Reads</div><div class="p-status">68 samples</div></div>
           <div class="pipe-arrow">→</div>
-          <div class="pipe-step"><div class="p-name">FastQC</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-step"><div class="p-name">FastQC</div><div class="p-status">✓ QC</div></div>
           <div class="pipe-arrow">→</div>
-          <div class="pipe-step"><div class="p-name">Trimmomatic</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-step"><div class="p-name">Trimmomatic</div><div class="p-status">✓ trimmed</div></div>
           <div class="pipe-arrow">→</div>
-          <div class="pipe-step"><div class="p-name">Salmon</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-step"><div class="p-name">Salmon</div><div class="p-status">✓ quant</div></div>
           <div class="pipe-arrow">→</div>
-          <div class="pipe-step"><div class="p-name">tximeta</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-step"><div class="p-name">tximeta</div><div class="p-status">✓ import</div></div>
           <div class="pipe-arrow">→</div>
-          <div class="pipe-step"><div class="p-name">edgeR</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-step"><div class="p-name">edgeR</div><div class="p-status">✓ DE</div></div>
           <div class="pipe-arrow">→</div>
-          <div class="pipe-step"><div class="p-name">DEGs</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-step"><div class="p-name">DEGs</div><div class="p-status">✓ 3,603</div></div>
           <div class="pipe-arrow">→</div>
-          <div class="pipe-step"><div class="p-name">Classification</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-step"><div class="p-name">ML Classification</div><div class="p-status">✓ done</div></div>
         </div>
       </div>
 
@@ -1621,27 +1621,27 @@
       <div class="grid-4 mb-20">
         <div class="card" style="text-align:center;">
           <div class="kpi-label">Total Reads</div>
-          <div class="kpi-value" style="font-size:1.5rem;color:var(--accent);">1,340M</div>
-          <div class="kpi-sub">across all samples</div>
+          <div class="kpi-value" style="font-size:1.5rem;color:var(--accent);">1,336M</div>
+          <div class="kpi-sub">68 RNA-seq samples</div>
         </div>
         <div class="card" style="text-align:center;">
           <div class="kpi-label">Data Processed</div>
-          <div class="kpi-value" style="font-size:1.5rem;color:var(--accent);">89.1 GB</div>
+          <div class="kpi-value" style="font-size:1.5rem;color:var(--accent);">87.0 GB</div>
           <div class="kpi-sub">FASTQ files</div>
         </div>
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Mapped Rate</div>
-          <div class="kpi-value" style="font-size:1.5rem;color:var(--green);">92.3%</div>
-          <div class="kpi-sub">to PN40024 genome</div>
+          <div class="kpi-label">Phenological Stages</div>
+          <div class="kpi-value" style="font-size:1.5rem;color:var(--green);">8</div>
+          <div class="kpi-sub">E-L 3 → E-L 41</div>
         </div>
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">DEGs Identified</div>
-          <div class="kpi-value" style="font-size:1.5rem;color:var(--yellow);">847</div>
-          <div class="kpi-sub">FDR &lt; 0.05</div>
+          <div class="kpi-label">Unique DEGs</div>
+          <div class="kpi-value" style="font-size:1.5rem;color:var(--yellow);">3,603</div>
+          <div class="kpi-sub">FDR &lt; 0.05 (edgeR)</div>
         </div>
       </div>
 
-      <!-- Gauge + Timeline -->
+      <!-- Gauge + DEG count chart -->
       <div class="grid-2 mb-20">
         <div class="card" style="text-align:center;">
           <div class="card-title">Phenological Stage Progress</div>
@@ -1658,89 +1658,221 @@
           </div>
           <div style="margin-top:12px;">
             <div style="font-size:1rem;font-weight:700;color:var(--yellow);">Veraison</div>
-            <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:2px;">Stage 35 — E-L Scale</div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:2px;">Stage 35 — Modified E-L Scale</div>
           </div>
-          <!-- Stage timeline -->
+          <!-- Stage timeline matching paper's 8 stages -->
           <div class="stage-timeline" style="margin-top:20px;">
             <div class="stage-dot-wrap">
               <div class="stage-dot done"></div>
-              <div class="stage-label">Bud<br>Break</div>
+              <div class="stage-label">EL 3<br><small>Bud</small></div>
             </div>
             <div class="stage-line done"></div>
             <div class="stage-dot-wrap">
               <div class="stage-dot done"></div>
-              <div class="stage-label">Flower-<br>ing</div>
+              <div class="stage-label">EL 15<br><small>Inflor.</small></div>
             </div>
             <div class="stage-line done"></div>
             <div class="stage-dot-wrap">
               <div class="stage-dot done"></div>
-              <div class="stage-label">Fruit<br>Set</div>
+              <div class="stage-label">EL 27<br><small>Berry</small></div>
             </div>
             <div class="stage-line done"></div>
             <div class="stage-dot-wrap">
               <div class="stage-dot current"></div>
-              <div class="stage-label">Vera-<br>ison</div>
+              <div class="stage-label">EL 35<br><small>Veraison</small></div>
             </div>
             <div class="stage-line"></div>
             <div class="stage-dot-wrap">
               <div class="stage-dot"></div>
-              <div class="stage-label">Ripen-<br>ing</div>
+              <div class="stage-label">EL 38<br><small>Ripen</small></div>
             </div>
             <div class="stage-line"></div>
             <div class="stage-dot-wrap">
               <div class="stage-dot"></div>
-              <div class="stage-label">Har-<br>vest</div>
+              <div class="stage-label">EL 41<br><small>Senesc.</small></div>
             </div>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-title">Pathway Enrichment Analysis</div>
-          <div style="padding-top:8px;">
-            <div class="hbar-row">
-              <div class="hbar-label">Anthocyanin biosynthesis <span>-log₁₀(p) 8.4</span></div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:92%"></div></div>
-            </div>
-            <div class="hbar-row">
-              <div class="hbar-label">Sugar transport <span>7.9</span></div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:86%;background:#60a5fa"></div></div>
-            </div>
-            <div class="hbar-row">
-              <div class="hbar-label">Cell wall remodeling <span>7.1</span></div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:77%;background:#a78bfa"></div></div>
-            </div>
-            <div class="hbar-row">
-              <div class="hbar-label">Stress response <span>6.5</span></div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:71%;background:#fb923c"></div></div>
-            </div>
-            <div class="hbar-row">
-              <div class="hbar-label">Photosynthesis <span>5.8</span></div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:63%;background:#f87171"></div></div>
-            </div>
+          <div class="card-title">DEGs per Developmental Stage (vs. E-L 3 baseline)</div>
+          <div class="chart-wrap tall">
+            <canvas id="degStageChart"></canvas>
           </div>
         </div>
       </div>
 
-      <!-- DEG Table -->
+      <!-- Sample composition -->
+      <div class="grid-2 mb-20">
+        <div class="card">
+          <div class="card-title">Sample Composition by Variety</div>
+          <div style="padding-top:8px;">
+            <div class="hbar-row">
+              <div class="hbar-label">Muscat Blanc a Petits Grains <span>24 samples</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:35%"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">Corvina <span>9 samples</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:13%;background:#60a5fa"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">Cabernet Sauvignon <span>6 samples</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:9%;background:#a78bfa"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">Sangiovese <span>3 samples</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:4%;background:#fb923c"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">Sangiovese somatic variant <span>3 samples</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:4%;background:#f87171"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">V. vinifera sylvestris (wild) <span>23 samples</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:34%;background:#fbbf24"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">DEG Accumulation Across Stages</div>
+          <div class="chart-wrap">
+            <canvas id="degAccumChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEG Tables by stage — tabbed -->
+      <div class="card mb-20">
+        <div class="card-title">Top Differentially Expressed Genes by Stage</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+          <button class="chip active" onclick="showDEGStage('el15',this)">EL 15</button>
+          <button class="chip" onclick="showDEGStage('el17',this)">EL 17</button>
+          <button class="chip" onclick="showDEGStage('el27',this)">EL 27</button>
+          <button class="chip" onclick="showDEGStage('el31',this)">EL 31</button>
+          <button class="chip" onclick="showDEGStage('el35',this)">EL 35</button>
+          <button class="chip" onclick="showDEGStage('el36',this)">EL 36</button>
+          <button class="chip" onclick="showDEGStage('el38',this)">EL 38</button>
+          <button class="chip" onclick="showDEGStage('el41',this)">EL 41</button>
+        </div>
+
+        <!-- EL 15 — Shoot/Inflorescence -->
+        <table class="data-table" id="deg-el15">
+          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <tbody>
+            <tr><td><strong>VIT_03s0063g01440</strong></td><td style="color:var(--green)">+7.71</td><td>1.89e-16</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_01s0011g00140</strong></td><td style="color:var(--green)">+6.76</td><td>1.37e-14</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_19s0014g03940</strong></td><td style="color:var(--green)">+5.62</td><td>5.15e-15</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_10s0003g02070</strong></td><td style="color:var(--green)">+4.93</td><td>1.74e-24</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_02s0025g00200</strong></td><td style="color:var(--green)">+4.00</td><td>1.70e-14</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_12s0142g00360</strong></td><td style="color:var(--green)">+3.99</td><td>1.68e-21</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
+          </tbody>
+        </table>
+
+        <!-- EL 17 -->
+        <table class="data-table" id="deg-el17" style="display:none">
+          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <tbody>
+            <tr><td><strong>VIT_03s0063g01440</strong></td><td style="color:var(--green)">+8.65</td><td>2.07e-19</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_00s0199g00200</strong></td><td style="color:var(--green)">+6.94</td><td>2.03e-18</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_19s0014g03940</strong></td><td style="color:var(--green)">+6.92</td><td>1.34e-20</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_10s0003g02070</strong></td><td style="color:var(--green)">+5.69</td><td>5.82e-29</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_12s0142g00360</strong></td><td style="color:var(--green)">+4.47</td><td>6.68e-24</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
+          </tbody>
+        </table>
+
+        <!-- EL 27 — Berry development -->
+        <table class="data-table" id="deg-el27" style="display:none">
+          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <tbody>
+            <tr><td><strong>VIT_14s0108g00810</strong></td><td style="color:var(--green)">+11.85</td><td>1.56e-75</td><td>Berry dev.</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_10s0003g02070</strong></td><td style="color:var(--green)">+5.60</td><td>1.82e-24</td><td>Berry dev.</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_12s0142g00360</strong></td><td style="color:var(--green)">+5.48</td><td>1.76e-28</td><td>Berry dev.</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_19s0014g01350</strong></td><td style="color:var(--green)">+4.99</td><td>4.05e-26</td><td>Berry dev.</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_19s0014g01940</strong></td><td style="color:var(--green)">+3.95</td><td>1.47e-24</td><td>Berry dev.</td><td><span class="badge badge-green">UP</span></td></tr>
+          </tbody>
+        </table>
+
+        <!-- EL 31 — Berry development -->
+        <table class="data-table" id="deg-el31" style="display:none">
+          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <tbody>
+            <tr><td><strong>VIT_14s0108g00810</strong></td><td style="color:var(--green)">+13.47</td><td>2.92e-105</td><td>Berry dev.</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_16s0022g02190</strong></td><td style="color:var(--red)">−12.85</td><td>9.13e-71</td><td>Berry dev.</td><td><span class="badge badge-red">DOWN</span></td></tr>
+            <tr><td><strong>VIT_01s0011g03230</strong></td><td style="color:var(--red)">−7.72</td><td>5.96e-81</td><td>Berry dev.</td><td><span class="badge badge-red">DOWN</span></td></tr>
+            <tr><td><strong>VIT_04s0008g00880</strong></td><td style="color:var(--red)">−6.62</td><td>1.83e-81</td><td>Berry dev.</td><td><span class="badge badge-red">DOWN</span></td></tr>
+            <tr><td><strong>VIT_11s0016g02210</strong></td><td style="color:var(--red)">−6.42</td><td>2.71e-80</td><td>Berry dev.</td><td><span class="badge badge-red">DOWN</span></td></tr>
+          </tbody>
+        </table>
+
+        <!-- EL 35 — Veraison / Ripening -->
+        <table class="data-table" id="deg-el35" style="display:none">
+          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <tbody>
+            <tr><td><strong>VIT_04s0008g00880</strong></td><td style="color:var(--red)">−8.34</td><td>6.93e-179</td><td>Ripening</td><td><span class="badge badge-red">DOWN</span></td></tr>
+            <tr><td><strong>VIT_09s0002g01350</strong></td><td style="color:var(--red)">−8.34</td><td>2.04e-156</td><td>Ripening</td><td><span class="badge badge-red">DOWN</span></td></tr>
+            <tr><td><strong>VIT_11s0016g02210</strong></td><td style="color:var(--red)">−8.27</td><td>8.79e-159</td><td>Ripening</td><td><span class="badge badge-red">DOWN</span></td></tr>
+            <tr><td><strong>VIT_01s0011g03230</strong></td><td style="color:var(--red)">−8.27</td><td>3.89e-148</td><td>Ripening</td><td><span class="badge badge-red">DOWN</span></td></tr>
+            <tr><td><strong>VIT_00s0199g00250</strong></td><td style="color:var(--red)">−5.56</td><td>2.11e-138</td><td>Ripening</td><td><span class="badge badge-red">DOWN</span></td></tr>
+          </tbody>
+        </table>
+
+        <!-- EL 36 — Ripening -->
+        <table class="data-table" id="deg-el36" style="display:none">
+          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <tbody>
+            <tr><td><strong>VIT_14s0108g00810</strong></td><td style="color:var(--green)">+15.03</td><td>1.28e-121</td><td>Ripening</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_01s0011g04140</strong></td><td style="color:var(--green)">+5.33</td><td>6.86e-81</td><td>Ripening</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_10s0003g03870</strong></td><td style="color:var(--green)">+3.43</td><td>8.39e-72</td><td>Ripening</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_17s0000g08260</strong></td><td style="color:var(--green)">+2.98</td><td>3.15e-73</td><td>Ripening</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_09s0002g04590</strong></td><td style="color:var(--green)">+2.87</td><td>1.18e-70</td><td>Ripening</td><td><span class="badge badge-green">UP</span></td></tr>
+          </tbody>
+        </table>
+
+        <!-- EL 38 — Ripening -->
+        <table class="data-table" id="deg-el38" style="display:none">
+          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <tbody>
+            <tr><td><strong>VIT_16s0039g01450</strong></td><td style="color:var(--red)">−9.59</td><td>3.75e-165</td><td>Ripening</td><td><span class="badge badge-red">DOWN</span></td></tr>
+            <tr><td><strong>VIT_09s0002g01350</strong></td><td style="color:var(--red)">−9.84</td><td>3.66e-189</td><td>Ripening</td><td><span class="badge badge-red">DOWN</span></td></tr>
+            <tr><td><strong>VIT_11s0016g02210</strong></td><td style="color:var(--red)">−8.96</td><td>4.55e-173</td><td>Ripening</td><td><span class="badge badge-red">DOWN</span></td></tr>
+            <tr><td><strong>VIT_04s0008g00880</strong></td><td style="color:var(--red)">−7.65</td><td>6.92e-197</td><td>Ripening</td><td><span class="badge badge-red">DOWN</span></td></tr>
+            <tr><td><strong>VIT_07s0031g00210</strong></td><td style="color:var(--red)">−2.46</td><td>7.87e-172</td><td>Ripening</td><td><span class="badge badge-red">DOWN</span></td></tr>
+          </tbody>
+        </table>
+
+        <!-- EL 41 — Senescence -->
+        <table class="data-table" id="deg-el41" style="display:none">
+          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <tbody>
+            <tr><td><strong>VIT_14s0108g00810</strong></td><td style="color:var(--green)">+13.89</td><td>3.10e-105</td><td>Senescence</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_08s0105g00400</strong></td><td style="color:var(--green)">+8.57</td><td>5.54e-86</td><td>Senescence</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_10s0003g03870</strong></td><td style="color:var(--green)">+4.46</td><td>2.62e-107</td><td>Senescence</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_05s0077g00690</strong></td><td style="color:var(--green)">+4.22</td><td>1.65e-90</td><td>Senescence</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VIT_08s0040g01590</strong></td><td style="color:var(--green)">+3.96</td><td>2.19e-86</td><td>Senescence</td><td><span class="badge badge-green">UP</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- DEG count summary table -->
       <div class="card">
-        <div class="card-title">Top 10 Differentially Expressed Genes</div>
+        <div class="card-title">Differential Expression Summary — All Comparisons vs. E-L 3 (Baseline)</div>
         <table class="data-table">
           <thead>
             <tr>
-              <th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Function</th><th>Regulation</th>
+              <th>Comparison</th><th>Major Stage</th><th>Tissue</th><th>Replicates</th><th>Down-regulated</th><th>Up-regulated</th><th>Total DEGs</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td><strong>VvMYBA1</strong></td><td style="color:var(--green)">+4.2</td><td>0.001</td><td>Anthocyanin biosynthesis</td><td><span class="badge badge-green">UP</span></td></tr>
-            <tr><td><strong>VvCHI1</strong></td><td style="color:var(--green)">+3.8</td><td>0.001</td><td>Chalcone isomerase</td><td><span class="badge badge-green">UP</span></td></tr>
-            <tr><td><strong>VvSWEET7</strong></td><td style="color:var(--green)">+3.5</td><td>0.002</td><td>Sugar efflux transporter</td><td><span class="badge badge-green">UP</span></td></tr>
-            <tr><td><strong>VvF3H</strong></td><td style="color:var(--green)">+3.2</td><td>0.002</td><td>Flavanone 3-hydroxylase</td><td><span class="badge badge-green">UP</span></td></tr>
-            <tr><td><strong>VvXTH1</strong></td><td style="color:var(--green)">+2.9</td><td>0.003</td><td>Cell wall xyloglucan</td><td><span class="badge badge-green">UP</span></td></tr>
-            <tr><td><strong>VvRBOH</strong></td><td style="color:var(--green)">+2.7</td><td>0.004</td><td>ROS burst oxidase</td><td><span class="badge badge-green">UP</span></td></tr>
-            <tr><td><strong>VvRbcL</strong></td><td style="color:var(--red)">−2.4</td><td>0.005</td><td>Rubisco large subunit</td><td><span class="badge badge-red">DOWN</span></td></tr>
-            <tr><td><strong>VvCAB1</strong></td><td style="color:var(--red)">−2.8</td><td>0.004</td><td>Chlorophyll a/b binding</td><td><span class="badge badge-red">DOWN</span></td></tr>
-            <tr><td><strong>VvGolS1</strong></td><td style="color:var(--green)">+2.5</td><td>0.006</td><td>Galactinol synthase</td><td><span class="badge badge-green">UP</span></td></tr>
-            <tr><td><strong>VvDHN3</strong></td><td style="color:var(--green)">+2.3</td><td>0.007</td><td>Dehydrin stress protein</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td>EL 3 → 5</td><td>Shoot &amp; Inflor.</td><td>Flower bud</td><td>6</td><td>0</td><td>0</td><td>0</td></tr>
+            <tr><td>EL 3 → 15</td><td>Shoot &amp; Inflor.</td><td>Flower bud</td><td>8</td><td style="color:var(--red)">11</td><td style="color:var(--green)">84</td><td><strong>95</strong></td></tr>
+            <tr><td>EL 3 → 17</td><td>Shoot &amp; Inflor.</td><td>Flower bud</td><td>5</td><td style="color:var(--red)">91</td><td style="color:var(--green)">80</td><td><strong>171</strong></td></tr>
+            <tr><td>EL 3 → 27</td><td>Berry dev.</td><td>Flower</td><td>2</td><td style="color:var(--red)">304</td><td style="color:var(--green)">214</td><td><strong>518</strong></td></tr>
+            <tr><td>EL 3 → 31</td><td>Berry dev.</td><td>Grape berry</td><td>6</td><td style="color:var(--red)">455</td><td style="color:var(--green)">590</td><td><strong>1,045</strong></td></tr>
+            <tr><td>EL 3 → 35</td><td>Ripening</td><td>Grape berry</td><td>13</td><td style="color:var(--red)">1,052</td><td style="color:var(--green)">596</td><td><strong>1,648</strong></td></tr>
+            <tr><td>EL 3 → 36</td><td>Ripening</td><td>Grape berry</td><td>4</td><td style="color:var(--red)">2,259</td><td style="color:var(--green)">634</td><td><strong>2,893</strong></td></tr>
+            <tr><td>EL 3 → 38</td><td>Ripening</td><td>Grape berry</td><td>15</td><td style="color:var(--red)">1,675</td><td style="color:var(--green)">661</td><td><strong>2,336</strong></td></tr>
+            <tr><td>EL 3 → 41</td><td>Senescence</td><td>Fruit</td><td>3</td><td style="color:var(--red)">2,563</td><td style="color:var(--green)">840</td><td><strong>3,403</strong></td></tr>
           </tbody>
         </table>
       </div>
@@ -2332,6 +2464,105 @@ async function loadClimateData() {
 
 // Auto-load climate data on page load
 loadClimateData();
+
+// ═══════════════════════════════════════
+// GENOMIC: DEG Stage Chart + Accumulation Chart
+// ═══════════════════════════════════════
+(function() {
+  // Real data from Altimiras et al. supplementary Table S3
+  const stages = ['EL 5','EL 15','EL 17','EL 27','EL 31','EL 35','EL 36','EL 38','EL 41'];
+  const downReg = [0, 11, 91, 304, 455, 1052, 2259, 1675, 2563];
+  const upReg   = [0, 84, 80, 214, 590, 596, 634, 661, 840];
+
+  const ctx1 = document.getElementById('degStageChart');
+  if (ctx1) {
+    chartInstances.degStage = new Chart(ctx1.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: stages,
+        datasets: [
+          {
+            label: 'Up-regulated', data: upReg,
+            backgroundColor: 'rgba(82,183,136,0.7)', borderColor: '#52b788', borderWidth: 1, borderRadius: 3
+          },
+          {
+            label: 'Down-regulated', data: downReg.map(v => -v),
+            backgroundColor: 'rgba(239,68,68,0.6)', borderColor: '#ef4444', borderWidth: 1, borderRadius: 3
+          }
+        ]
+      },
+      options: {
+        responsive: true, indexAxis: 'x',
+        animation: { duration: 1200 },
+        plugins: {
+          legend: { labels: { color: '#7fa892', boxWidth: 14, font: { size: 11 } } },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                return ctx.dataset.label + ': ' + Math.abs(ctx.raw);
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: gridOpts, ticks: tickOpts },
+          y: {
+            grid: gridOpts,
+            ticks: { ...tickOpts, callback: v => Math.abs(v) },
+            title: { display: true, text: 'Number of DEGs', color: '#7fa892', font: { size: 11 } }
+          }
+        }
+      }
+    });
+  }
+
+  // DEG accumulation (total unique DEGs from Table S4)
+  const accumLabels = ['EL 15','EL 17','EL 27','EL 31','EL 35','EL 36','EL 38','EL 41'];
+  const accumData   = [95, 171, 518, 1045, 1648, 2893, 2336, 3403];
+
+  const ctx2 = document.getElementById('degAccumChart');
+  if (ctx2) {
+    const grad = ctx2.getContext('2d').createLinearGradient(0, 0, 0, 180);
+    grad.addColorStop(0, 'rgba(167,139,250,0.35)');
+    grad.addColorStop(1, 'rgba(167,139,250,0.02)');
+    chartInstances.degAccum = new Chart(ctx2.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: accumLabels,
+        datasets: [{
+          label: 'Total DEGs', data: accumData,
+          borderColor: '#a78bfa', backgroundColor: grad,
+          borderWidth: 2.5, pointBackgroundColor: '#a78bfa', pointRadius: 5, fill: true, tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true, animation: { duration: 1200 },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: gridOpts, ticks: tickOpts },
+          y: { grid: gridOpts, ticks: tickOpts,
+            title: { display: true, text: 'Total DEGs (FDR<0.05)', color: '#7fa892', font: { size: 11 } } }
+        }
+      }
+    });
+  }
+})();
+
+// DEG stage tab switching
+function showDEGStage(stageId, btn) {
+  const ids = ['el15','el17','el27','el31','el35','el36','el38','el41'];
+  ids.forEach(id => {
+    const el = document.getElementById('deg-' + id);
+    if (el) el.style.display = 'none';
+  });
+  const target = document.getElementById('deg-' + stageId);
+  if (target) target.style.display = '';
+  // Update active chip
+  if (btn) {
+    btn.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+  }
+}
 
 // ═══════════════════════════════════════
 // CHART 5: Historical Yield
