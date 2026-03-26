@@ -1176,11 +1176,16 @@
     <div class="nav-item" data-section="yield">
       <span class="nav-icon">🌾</span> Yield Prediction
     </div>
+    <div class="nav-item" data-section="references">
+      <span class="nav-icon">📚</span> References
+    </div>
   </div>
   <div class="sidebar-footer">
     <div class="avatar">FA</div>
     <div class="user-info">
-      <div class="name">Francisco A.</div>
+      <a href="https://orcid.org/0000-0003-1992-8338" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="name" style="color:var(--text-primary);">Francisco Altimiras</div>
+      </a>
       <div class="role">PhD Researcher · PUCV</div>
     </div>
   </div>
@@ -2126,6 +2131,126 @@
 
     </section>
 
+    <!-- ═══════════════ SECTION 7: REFERENCES ═══════════════ -->
+    <section id="section-references" class="section">
+
+      <div class="section-header">
+        <h2>References & Credits</h2>
+        <span class="sub">Author, publications, and data sources</span>
+      </div>
+
+      <!-- Author -->
+      <div class="card mb-20">
+        <div class="card-title">Author</div>
+        <div style="display:flex;align-items:center;gap:16px;padding:8px 0;">
+          <div class="avatar" style="width:56px;height:56px;font-size:1.2rem;flex-shrink:0;">FA</div>
+          <div>
+            <div style="font-size:1.1rem;font-weight:700;color:var(--text-primary);">Francisco Altimiras</div>
+            <div style="font-size:0.85rem;color:var(--text-secondary);margin-top:2px;">PhD Candidate in Computer Science</div>
+            <div style="font-size:0.85rem;color:var(--text-secondary);">Pontificia Universidad Catolica de Valparaiso (PUCV), Chile</div>
+            <div style="margin-top:6px;">
+              <a href="https://orcid.org/0000-0003-1992-8338" target="_blank" rel="noopener"
+                 style="color:var(--accent);font-size:0.85rem;text-decoration:none;">
+                ORCID: 0000-0003-1992-8338
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Publications -->
+      <div class="card mb-20">
+        <div class="card-title">Associated Publications</div>
+        <div style="padding:8px 0;">
+
+          <div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);">
+            <div style="font-size:0.95rem;color:var(--text-primary);font-weight:600;">
+              Bioinformatics and Machine Learning for Grapevine Phenological Stage Classification:
+              A Comparative Study of RNA-seq Differential Expression Analysis
+            </div>
+            <div style="font-size:0.82rem;color:var(--text-secondary);margin-top:4px;">
+              Altimiras, F. et al. — <em>Agronomy</em>, 14(3), 613, 2024
+            </div>
+            <div style="margin-top:6px;">
+              <a href="https://www.mdpi.com/2073-4395/14/3/613" target="_blank" rel="noopener"
+                 style="color:var(--accent);font-size:0.82rem;text-decoration:none;">
+                doi.org/10.3390/agronomy14030613
+              </a>
+            </div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:4px;font-style:italic;">
+              Source of genomic data: RNA-seq pipeline, DEGs, phenological stage comparisons (Tables S1–S5)
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:0.95rem;color:var(--text-primary);font-weight:600;">
+              Towards Precision Viticulture: Computational Approaches for Grape Production Monitoring
+            </div>
+            <div style="font-size:0.82rem;color:var(--text-secondary);margin-top:4px;">
+              Altimiras, F. et al. — <em>Progress in Artificial Intelligence, EPIA 2024</em>.
+              LNCS vol. 15400, Springer, 2025
+            </div>
+            <div style="margin-top:6px;">
+              <a href="https://link.springer.com/chapter/10.1007/978-3-031-80084-9_14" target="_blank" rel="noopener"
+                 style="color:var(--accent);font-size:0.82rem;text-decoration:none;">
+                doi.org/10.1007/978-3-031-80084-9_14
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Datasets & Data Sources -->
+      <div class="card mb-20">
+        <div class="card-title">Datasets & Data Sources</div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Resource</th><th>Description</th><th>Usage in agragent</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://github.com/thsant/wgisd" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;"><strong>WGISD</strong></a></td>
+              <td>Wine Grape Instance Segmentation Dataset (Embrapa). 300+ images, 5 varieties, YOLO bounding boxes.<br>
+                <span style="font-size:0.78rem;color:var(--text-secondary);">Santos, T.T. et al. <em>Computers and Electronics in Agriculture</em>, 2020</span></td>
+              <td>Image Analysis section</td>
+            </tr>
+            <tr>
+              <td><strong>Sentinel-2 SR</strong></td>
+              <td>COPERNICUS/S2_SR_HARMONIZED — 10m multispectral satellite imagery via Google Earth Engine</td>
+              <td>Satellite Maps (NDVI, NDRE, MSAVI, TCARI)</td>
+            </tr>
+            <tr>
+              <td><a href="https://open-meteo.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;"><strong>Open-Meteo</strong></a></td>
+              <td>Free open-source weather API — historical daily temperature and precipitation</td>
+              <td>Climate Data section</td>
+            </tr>
+            <tr>
+              <td><strong>RNA-seq (ArrayExpress)</strong></td>
+              <td>68 Vitis vinifera samples across 8 E-L stages. Processed with Salmon + edgeR pipeline</td>
+              <td>Genomic Analysis section</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- License -->
+      <div class="card">
+        <div class="card-title">License & Source Code</div>
+        <div style="padding:8px 0;font-size:0.9rem;color:var(--text-secondary);">
+          <p>This project is open source under the <strong style="color:var(--text-primary);">MIT License</strong>.</p>
+          <p style="margin-top:8px;">
+            Source code:
+            <a href="https://github.com/fjaltimiras/agragent" target="_blank" rel="noopener"
+               style="color:var(--accent);text-decoration:none;">
+              github.com/fjaltimiras/agragent
+            </a>
+          </p>
+        </div>
+      </div>
+
+    </section>
+
   </div><!-- /#content -->
 </div><!-- /#main -->
 
@@ -2145,7 +2270,8 @@ const titles = {
   climate: 'Climate Data',
   genomic: 'Genomic Analysis',
   images: 'Crop Image Analysis',
-  yield: 'Yield Prediction'
+  yield: 'Yield Prediction',
+  references: 'References & Credits'
 };
 
 navItems.forEach(item => {

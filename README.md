@@ -265,6 +265,33 @@ agragent/
 
 ---
 
+## Author
+
+**Francisco Altimiras**
+- ORCID: [0000-0003-1992-8338](https://orcid.org/0000-0003-1992-8338)
+- PhD Candidate in Computer Science, Pontificia Universidad Catolica de Valparaiso (PUCV), Chile
+- Research focus: Computational crop monitoring using bioinformatics and machine learning
+
+---
+
+## Associated Publications
+
+This platform is part of an ongoing research project. The following peer-reviewed publications provide the scientific foundation:
+
+1. **Altimiras, F. et al.** *Bioinformatics and Machine Learning for Grapevine Phenological Stage Classification: A Comparative Study of RNA-seq Differential Expression Analysis.* Agronomy, 14(3), 613, 2024.
+   - DOI: [10.3390/agronomy14030613](https://www.mdpi.com/2073-4395/14/3/613)
+   - Genomic data in the app (DEGs, phenological stages, RNA-seq pipeline) comes from this study
+
+2. **Altimiras, F. et al.** *Towards Precision Viticulture: Computational Approaches for Grape Production Monitoring.* In: Progress in Artificial Intelligence, EPIA 2024. Lecture Notes in Computer Science, vol. 15400. Springer, 2025.
+   - DOI: [10.1007/978-3-031-80084-9_14](https://link.springer.com/chapter/10.1007/978-3-031-80084-9_14)
+
+### Datasets
+
+- **WGISD** — Wine Grape Instance Segmentation Dataset (Embrapa): [github.com/thsant/wgisd](https://github.com/thsant/wgisd)
+  > Santos, T.T.; de Souza, L.L.; dos Santos, A.A.; Avila, S. *Grape detection, segmentation, and tracking using deep neural networks and three-dimensional association.* Computers and Electronics in Agriculture, 2020.
+
+---
+
 ## Citation
 
 If you use agragent in your research, please cite:
@@ -276,6 +303,28 @@ If you use agragent in your research, please cite:
   year = {2026},
   url = {https://github.com/fjaltimiras/agragent},
   institution = {Pontificia Universidad Cat\'{o}lica de Valpara\'{i}so}
+}
+
+@article{altimiras2024bioinformatics,
+  author = {Altimiras, Francisco and others},
+  title = {Bioinformatics and Machine Learning for Grapevine Phenological Stage Classification},
+  journal = {Agronomy},
+  volume = {14},
+  number = {3},
+  pages = {613},
+  year = {2024},
+  doi = {10.3390/agronomy14030613}
+}
+
+@inproceedings{altimiras2025precision,
+  author = {Altimiras, Francisco and others},
+  title = {Towards Precision Viticulture: Computational Approaches for Grape Production Monitoring},
+  booktitle = {Progress in Artificial Intelligence, EPIA 2024},
+  series = {Lecture Notes in Computer Science},
+  volume = {15400},
+  publisher = {Springer},
+  year = {2025},
+  doi = {10.1007/978-3-031-80084-9\_14}
 }
 ```
 
@@ -301,11 +350,11 @@ Contributions are welcome. Please open an issue first to discuss proposed change
 
 ## Acknowledgments
 
-- **Embrapa** — WGISD grape image dataset
+- **Embrapa** — [WGISD](https://github.com/thsant/wgisd) grape image dataset
 - **Google Earth Engine** — Sentinel-2 satellite imagery
 - **Open-Meteo** — Free historical weather API
 - **PUCV** — Pontificia Universidad Catolica de Valparaiso, School of Computer Engineering
 
 ---
 
-*Developed by Francisco Altimiras — PhD Candidate, Computer Science, PUCV, Chile (2026)*
+*Developed by [Francisco Altimiras](https://orcid.org/0000-0003-1992-8338) — PhD Candidate, Computer Science, PUCV, Chile (2026)*
