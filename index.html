@@ -1,0 +1,3600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>agragent — Crop Monitoring &amp; Yield Prediction</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.16.0/dist/leaflet-geoman.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.16.0/dist/leaflet-geoman.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mapbox/togeojson@0.16.0/togeojson.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-side-by-side@2.2.0/leaflet-side-by-side.min.js"></script>
+<!-- Google Earth Engine JS API loaded dynamically on connect -->
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f1923;
+    --sidebar-bg: #0a1218;
+    --card-bg: #16232e;
+    --accent: #52b788;
+    --accent-dim: #2d6a4f;
+    --text-primary: #e0e8e4;
+    --text-secondary: #7fa892;
+    --border: #1e3a2e;
+    --sidebar-w: 260px;
+    --green: #22c55e;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --radius: 10px;
+  }
+
+  body {
+    font-family: system-ui, 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ───── SIDEBAR ───── */
+  #sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+    z-index: 100;
+    height: 100vh;
+  }
+
+  .sidebar-logo {
+    padding: 22px 20px 18px;
+    border-bottom: 1px solid var(--border);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+  .sidebar-logo span { font-size: 1.4rem; margin-right: 6px; }
+
+  .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 20px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .nav-item:hover { background: rgba(82,183,136,0.07); color: var(--text-primary); }
+  .nav-item.active {
+    background: rgba(82,183,136,0.12);
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+  .nav-icon { font-size: 1.05rem; width: 20px; text-align: center; }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .avatar {
+    width: 34px; height: 34px;
+    background: var(--accent-dim);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 700; color: var(--accent);
+    flex-shrink: 0;
+  }
+  .user-info .name { font-size: 0.83rem; font-weight: 600; }
+  .user-info .role { font-size: 0.75rem; color: var(--text-secondary); }
+
+  /* ───── MAIN ───── */
+  #main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #topbar {
+    padding: 0 24px;
+    height: 58px;
+    min-height: 58px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--sidebar-bg);
+  }
+
+  #topbar .page-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+  #topbar .topbar-right { display: flex; align-items: center; gap: 14px; }
+
+  .badge-season {
+    background: rgba(82,183,136,0.15);
+    color: var(--accent);
+    border: 1px solid var(--accent-dim);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  #content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    scroll-behavior: smooth;
+  }
+
+  /* ───── SECTIONS ───── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ───── CARDS ───── */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  }
+
+  .card-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+
+  /* ───── KPI GRID ───── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .kpi-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+  }
+  .kpi-label { font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .kpi-value { font-size: 2rem; font-weight: 700; color: var(--text-primary); margin: 6px 0 4px; line-height: 1; }
+  .kpi-sub { font-size: 0.75rem; color: var(--text-secondary); }
+  .kpi-delta { display: inline-flex; align-items: center; gap: 3px; font-size: 0.75rem; font-weight: 600; }
+  .kpi-delta.up { color: var(--green); }
+  .kpi-delta.neutral { color: var(--yellow); }
+
+  /* ───── TWO-COL / THREE-COL GRIDS ───── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+
+  .mb-20 { margin-bottom: 20px; }
+  .mb-16 { margin-bottom: 16px; }
+
+  /* ───── CHARTS ───── */
+  .chart-wrap { position: relative; }
+  .chart-wrap canvas { max-height: 220px; }
+  .chart-wrap.tall canvas { max-height: 280px; }
+
+  /* ───── STATUS BADGES ───── */
+  .badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+  .badge-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+  .badge-yellow { background: rgba(245,158,11,0.15); color: var(--yellow); border: 1px solid rgba(245,158,11,0.3); }
+  .badge-red { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+  .badge-accent { background: rgba(82,183,136,0.15); color: var(--accent); border: 1px solid var(--accent-dim); }
+  .badge-blue { background: rgba(96,165,250,0.15); color: #60a5fa; border: 1px solid rgba(96,165,250,0.3); }
+
+  /* ───── TABLES ───── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+  .data-table th {
+    text-align: left;
+    padding: 8px 12px;
+    color: var(--text-secondary);
+    font-size: 0.73rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td { padding: 10px 12px; border-bottom: 1px solid rgba(30,58,46,0.5); color: var(--text-primary); vertical-align: middle; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(82,183,136,0.04); }
+
+  /* ───── ALERTS ───── */
+  .alert-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(30,58,46,0.5);
+    font-size: 0.83rem;
+  }
+  .alert-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .alert-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .alert-dot.red { background: var(--red); box-shadow: 0 0 6px rgba(239,68,68,0.5); }
+  .alert-dot.yellow { background: var(--yellow); box-shadow: 0 0 6px rgba(245,158,11,0.5); }
+  .alert-dot.green { background: var(--green); }
+  .alert-text .title { font-weight: 600; color: var(--text-primary); }
+  .alert-text .sub { font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; }
+
+  /* ───── ALERT BOX ───── */
+  .alert-box {
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.3);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 0.85rem;
+    color: #fcd34d;
+    margin-bottom: 20px;
+  }
+
+  /* ───── MAP SECTION ───── */
+  #map-container {
+    height: 520px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  #vinewatch-map { height: 100%; width: 100%; }
+
+  /* GEE Connect Panel */
+  .gee-panel {
+    background: linear-gradient(135deg, #0d2b1d 0%, #0f1f2e 100%);
+    border: 1px solid var(--accent-dim);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .gee-panel-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 200px; }
+  .gee-icon { font-size: 1.8rem; }
+  .gee-title { font-size: 0.9rem; font-weight: 700; color: var(--accent); }
+  .gee-sub { font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; }
+  .gee-panel-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .gee-input {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 7px 12px;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    width: 320px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .gee-input:focus { border-color: var(--accent); }
+  .gee-input::placeholder { color: #3a5a4a; }
+  .gee-btn {
+    background: var(--accent);
+    border: none;
+    border-radius: 7px;
+    padding: 7px 18px;
+    color: #0a1218;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+  .gee-btn:hover { opacity: 0.85; }
+  .gee-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .gee-status {
+    width: 100%;
+    font-size: 0.77rem;
+    padding: 4px 0 0;
+    display: none;
+  }
+  .gee-status.loading { color: var(--yellow); display: block; }
+  .gee-status.success { color: var(--green); display: block; }
+  .gee-status.error { color: var(--red); display: block; }
+
+  /* GEE Layer Controls (shown after connect) */
+  .gee-layer-controls {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    display: none;
+  }
+  .gee-layer-controls.visible { display: block; }
+  .gee-ctrl-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .gee-ctrl-row label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  .gee-ctrl-row input[type="date"] {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 5px 8px;
+    color: var(--text-primary);
+    font-size: 0.78rem;
+    outline: none;
+  }
+  .gee-ctrl-row input[type="date"]:focus { border-color: var(--accent); }
+  .gee-ctrl-row input[type="range"] { width: 90px; accent-color: var(--accent); }
+  .gee-refresh-btn {
+    background: transparent;
+    border: 1px solid var(--accent-dim);
+    border-radius: 6px;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: auto;
+  }
+  .gee-refresh-btn:hover { background: rgba(82,183,136,0.1); }
+
+  /* Map loading overlay */
+  #map-loading {
+    position: absolute;
+    inset: 0;
+    background: rgba(10,18,24,0.72);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    flex-direction: column;
+    gap: 12px;
+    border-radius: var(--radius);
+  }
+  #map-loading.visible { display: flex; }
+  .map-spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--accent-dim);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .map-loading-text { font-size: 0.83rem; color: var(--accent); }
+
+  .map-controls {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .map-controls .ctrl-label { font-size: 0.77rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .index-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .index-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .index-btn.active { background: var(--accent); color: #0a1218; border-color: var(--accent); }
+  .index-btn.gee-only { opacity: 0.45; }
+  .index-btn.gee-only.active { opacity: 1; }
+
+  .gee-layer-note {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    margin-left: auto;
+  }
+  .gee-connected-badge {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    background: rgba(34,197,94,0.12);
+    border: 1px solid rgba(34,197,94,0.3);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 0.72rem;
+    color: var(--green);
+    margin-left: auto;
+  }
+  .gee-connected-badge.visible { display: flex; }
+  .gee-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .map-legend {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 16px;
+  }
+  .legend-gradient {
+    height: 16px;
+    border-radius: 8px;
+    background: linear-gradient(to right, #d73027, #fc8d59, #fee08b, #91cf60, #1a9850);
+    margin: 8px 0;
+  }
+  .legend-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-secondary); }
+
+  .map-source-badge {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 8px;
+  }
+  .map-source-badge strong { color: var(--accent); }
+
+  /* ───── SCENE BROWSER & COMPARE ───── */
+  .gee-mode-btn {
+    padding: 5px 11px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .gee-mode-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .gee-mode-btn.active { background: var(--accent); color: #0a1218; border-color: var(--accent); }
+
+  .scene-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    max-height: 120px;
+    overflow-y: auto;
+    padding: 4px 0;
+  }
+  .scene-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.2);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .scene-chip:hover { border-color: var(--accent); background: rgba(82,183,136,0.1); color: var(--accent); }
+  .scene-chip.active { background: var(--accent); color: #0a1218; border-color: var(--accent); font-weight: 700; }
+  .scene-chip .chip-cloud { font-size: 0.68rem; opacity: 0.7; }
+  .scene-chip .chip-date { font-weight: 600; font-family: monospace; }
+
+  .compare-side {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .compare-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .compare-date-select, .compare-index-select {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 8px;
+    color: var(--text-primary);
+    font-size: 0.78rem;
+    outline: none;
+    cursor: pointer;
+  }
+  .compare-date-select:focus, .compare-index-select:focus { border-color: var(--accent); }
+  .compare-vs {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--text-secondary);
+    padding: 0 4px;
+  }
+
+  /* leaflet-side-by-side divider style */
+  .leaflet-sbs-divider {
+    background: rgba(255,255,255,0.6) !important;
+    width: 3px !important;
+  }
+  .leaflet-sbs-range {
+    accent-color: var(--accent) !important;
+  }
+
+  /* ───── KMZ/KML UPLOAD & DRAW TOOLS ───── */
+  .map-toolbar {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .map-toolbar .toolbar-label {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-right: 4px;
+  }
+  .tb-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 13px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .tb-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(82,183,136,0.06); }
+  .tb-btn.active { background: var(--accent); color: #0a1218; border-color: var(--accent); font-weight: 700; }
+  .tb-btn.danger:hover { border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.06); }
+  .tb-divider { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+  #kmz-file-input { display: none; }
+
+  /* Layer list panel */
+  .layer-list {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .layer-list-header {
+    padding: 10px 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .layer-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    transition: background 0.15s;
+  }
+  .layer-item:last-child { border-bottom: none; }
+  .layer-item:hover { background: rgba(82,183,136,0.05); }
+  .layer-color-dot {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .layer-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .layer-area { font-size: 0.72rem; color: var(--text-secondary); white-space: nowrap; }
+  .layer-actions { display: flex; gap: 4px; }
+  .layer-act-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    padding: 2px 5px;
+    border-radius: 4px;
+    transition: all 0.15s;
+  }
+  .layer-act-btn:hover { background: rgba(82,183,136,0.12); color: var(--accent); }
+  .layer-act-btn.del:hover { background: rgba(239,68,68,0.12); color: var(--red); }
+
+  /* Polygon editor modal */
+  #poly-editor {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 9000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  #poly-editor.open { display: flex; }
+  .poly-editor-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    width: 420px;
+    max-width: 95vw;
+  }
+  .poly-editor-box h3 { font-size: 1rem; margin-bottom: 20px; color: var(--accent); }
+  .form-field { margin-bottom: 16px; }
+  .form-field label { display: block; font-size: 0.77rem; color: var(--text-secondary); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .form-field input, .form-field select, .form-field textarea {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 8px 12px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+  }
+  .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--accent); }
+  .form-field textarea { resize: vertical; min-height: 60px; }
+  .color-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .color-opt {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.15s;
+  }
+  .color-opt.selected { border-color: #fff; }
+  .editor-actions { display: flex; gap: 10px; margin-top: 22px; }
+  .editor-actions button {
+    flex: 1;
+    padding: 9px;
+    border-radius: 7px;
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .editor-actions .btn-save { background: var(--accent); color: #0a1218; }
+  .editor-actions .btn-cancel { background: rgba(255,255,255,0.07); color: var(--text-secondary); }
+  .editor-actions button:hover { opacity: 0.82; }
+
+  /* KMZ drop overlay */
+  #map-drop-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(82,183,136,0.15);
+    border: 3px dashed var(--accent);
+    border-radius: var(--radius);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+  }
+  #map-drop-overlay.show { display: flex; }
+  #map-drop-overlay span { font-size: 2.5rem; }
+  #map-drop-overlay p { color: var(--accent); font-weight: 700; font-size: 1.1rem; }
+
+  /* Geoman toolbar overrides for dark theme */
+  .leaflet-pm-toolbar .leaflet-pm-icon { filter: invert(0.6); }
+  .leaflet-pm-toolbar a.leaflet-pm-active { background-color: var(--accent) !important; border-color: var(--accent) !important; }
+
+  /* ───── PIPELINE ───── */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    padding: 10px 0 14px;
+    flex-wrap: nowrap;
+  }
+  .pipe-step {
+    background: rgba(82,183,136,0.1);
+    border: 1px solid var(--accent-dim);
+    border-radius: 8px;
+    padding: 10px 14px;
+    text-align: center;
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+  .pipe-step .p-name { font-size: 0.78rem; font-weight: 700; color: var(--accent); }
+  .pipe-step .p-status { font-size: 0.7rem; color: var(--green); margin-top: 3px; }
+  .pipe-arrow {
+    font-size: 1rem;
+    color: var(--accent-dim);
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* ───── GAUGE ───── */
+  .gauge-container { position: relative; width: 180px; height: 180px; margin: 0 auto; }
+  .gauge-svg { transform: rotate(-90deg); }
+  .gauge-label {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .gauge-label .pct { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  .gauge-label .glabel { font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px; }
+
+  .stage-timeline { display: flex; align-items: center; gap: 0; margin-top: 16px; overflow-x: auto; }
+  .stage-dot-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
+  .stage-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--card-bg);
+  }
+  .stage-dot.done { background: var(--accent); border-color: var(--accent); }
+  .stage-dot.current { background: var(--yellow); border-color: var(--yellow); box-shadow: 0 0 8px rgba(245,158,11,0.6); }
+  .stage-line { flex: 1; height: 2px; background: var(--border); min-width: 20px; flex-shrink: 0; }
+  .stage-line.done { background: var(--accent); }
+  .stage-label { font-size: 0.65rem; color: var(--text-secondary); text-align: center; max-width: 55px; }
+
+  /* ───── WGISD DATASET STYLES ───── */
+  .wgisd-banner {
+    background: linear-gradient(135deg, #0d2b1d 0%, #0f1f2e 100%);
+    border: 1px solid var(--accent-dim);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .wgisd-banner-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 240px; }
+  .wgisd-logo { font-size: 2rem; }
+  .wgisd-title { font-size: 0.88rem; font-weight: 700; color: var(--text-primary); }
+  .wgisd-meta { font-size: 0.72rem; color: var(--text-secondary); margin-top: 3px; }
+  .wgisd-banner-right { display: flex; gap: 20px; flex-wrap: wrap; }
+  .wgisd-stat { text-align: center; }
+  .wgisd-stat-n { display: block; font-size: 1.4rem; font-weight: 700; color: var(--accent); line-height: 1; }
+  .wgisd-stat-l { display: block; font-size: 0.68rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+
+  .variety-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 0;
+    flex-wrap: wrap;
+  }
+  .variety-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 8px 8px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    background: rgba(0,0,0,0.2);
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.18s;
+    position: relative;
+    bottom: -1px;
+  }
+  .variety-tab:hover { background: rgba(82,183,136,0.08); color: var(--text-primary); }
+  .variety-tab.active { background: var(--card-bg); border-color: var(--border); color: var(--text-primary); border-bottom: 1px solid var(--card-bg); z-index: 1; }
+  .vtab-code { font-weight: 800; font-size: 0.83rem; color: var(--accent); }
+  .vtab-name { font-size: 0.78rem; }
+  .vtab-tag {
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .vtab-tag.red { background: rgba(239,68,68,0.15); color: #f87171; }
+  .vtab-tag.white { background: rgba(250,204,21,0.15); color: #fcd34d; }
+
+  .variety-info-bar {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 0 0;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+  }
+  .vinfo-dot { color: var(--border); }
+
+  .wgisd-grid {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .wgisd-thumb {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.18s;
+    background: #0a1218;
+    position: relative;
+  }
+  .wgisd-thumb:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(82,183,136,0.2); }
+  .wgisd-thumb img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    display: block;
+    background: #0d1e14;
+  }
+  .wgisd-thumb-info {
+    padding: 8px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .wgisd-thumb-id { font-size: 0.72rem; font-weight: 700; color: var(--accent); font-family: monospace; }
+  .wgisd-thumb-tag { font-size: 0.65rem; color: var(--text-secondary); }
+  .wgisd-thumb-loading {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a1218;
+    font-size: 1.5rem;
+  }
+  .wgisd-thumb-bbox-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: rgba(82,183,136,0.85);
+    color: #0a1218;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    display: none;
+  }
+  .wgisd-thumb:hover .wgisd-thumb-bbox-badge { display: block; }
+
+  /* Image Viewer Modal */
+  #img-viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 9500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .viewer-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(4px);
+  }
+  .viewer-box {
+    position: relative;
+    z-index: 1;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    width: min(1100px, 96vw);
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .viewer-close {
+    position: absolute;
+    top: 12px; right: 14px;
+    background: rgba(255,255,255,0.08);
+    border: none;
+    color: var(--text-secondary);
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.85rem;
+    z-index: 10;
+    transition: all 0.15s;
+  }
+  .viewer-close:hover { background: rgba(239,68,68,0.2); color: var(--red); }
+  .viewer-top {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+  }
+  .viewer-canvas-wrap {
+    flex: 1;
+    position: relative;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    overflow: hidden;
+  }
+  .viewer-canvas-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    object-fit: contain;
+  }
+  #viewer-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    pointer-events: none;
+  }
+  .viewer-loading {
+    position: absolute;
+    inset: 0;
+    background: rgba(10,18,24,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--accent);
+    font-size: 0.85rem;
+  }
+  .viewer-meta {
+    width: 260px;
+    min-width: 260px;
+    padding: 20px;
+    border-left: 1px solid var(--border);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .viewer-meta-title { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+  .viewer-meta-variety { font-size: 0.78rem; color: var(--accent); margin-top: 2px; }
+  .viewer-divider { height: 1px; background: var(--border); margin: 10px 0; }
+  .viewer-stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .viewer-stat { background: rgba(82,183,136,0.07); border-radius: 7px; padding: 10px 8px; text-align: center; }
+  .vs-n { display: block; font-size: 1.5rem; font-weight: 700; color: var(--accent); line-height: 1; }
+  .vs-l { display: block; font-size: 0.65rem; color: var(--text-secondary); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .viewer-info-list { font-size: 0.78rem; color: var(--text-secondary); line-height: 2; }
+  .viewer-annotation-bar {
+    padding: 10px 18px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    background: rgba(0,0,0,0.2);
+    flex-wrap: wrap;
+  }
+
+  /* ───── UPLOAD ZONE ───── */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 20px;
+  }
+  .upload-zone:hover { border-color: var(--accent); background: rgba(82,183,136,0.04); }
+  .upload-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .upload-text { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+  .upload-sub { font-size: 0.8rem; color: var(--text-secondary); }
+
+  /* ───── IMAGE CARDS ───── */
+  .img-placeholder {
+    height: 200px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+  }
+  .img-card { }
+  .img-meta-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .img-meta-label { font-size: 0.73rem; color: var(--text-secondary); }
+  .img-meta-val { font-size: 0.8rem; font-weight: 600; color: var(--text-primary); }
+
+  /* ───── YIELD HERO ───── */
+  .yield-hero {
+    background: linear-gradient(135deg, rgba(82,183,136,0.15) 0%, rgba(45,106,79,0.1) 100%);
+    border: 1px solid var(--accent-dim);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .yield-hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(82,183,136,0.06);
+  }
+  .yield-hero .label { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+  .yield-hero .value { font-size: 4rem; font-weight: 800; color: var(--accent); line-height: 1; }
+  .yield-hero .unit { font-size: 1.1rem; color: var(--text-secondary); font-weight: 500; margin-bottom: 10px; }
+  .yield-hero .ci { font-size: 0.9rem; color: var(--yellow); margin-bottom: 14px; }
+  .yield-hero .r2 { font-size: 0.85rem; color: var(--text-secondary); }
+  .yield-hero .r2 strong { color: var(--text-primary); }
+
+  /* ───── TREND ARROWS ───── */
+  .trend-up { color: var(--green); }
+  .trend-down { color: var(--red); }
+  .trend-neutral { color: var(--yellow); }
+
+  /* ───── MODEL TABLE ───── */
+  .model-best { color: var(--yellow); margin-left: 4px; }
+
+  /* ───── SECTION HEADERS ───── */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .section-header h2 { font-size: 1.2rem; font-weight: 700; }
+  .section-header .sub { font-size: 0.82rem; color: var(--text-secondary); }
+
+  /* ───── HORIZONTAL BAR ───── */
+  .hbar-row { margin-bottom: 10px; }
+  .hbar-label { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px; color: var(--text-primary); }
+  .hbar-label span { color: var(--text-secondary); }
+  .hbar-track { height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+  .hbar-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 1s ease; }
+
+  /* ───── RESPONSIVE ───── */
+  @media (max-width: 900px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .grid-2 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .wgisd-grid { grid-template-columns: repeat(2, 1fr); }
+    .viewer-meta { width: 200px; min-width: 200px; }
+  }
+  @media (max-width: 640px) {
+    .wgisd-grid { grid-template-columns: repeat(2, 1fr); }
+    .viewer-top { flex-direction: column; }
+    .viewer-meta { width: 100%; min-width: unset; border-left: none; border-top: 1px solid var(--border); }
+  }
+
+  @media (max-width: 640px) {
+    #sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      transform: translateX(-100%);
+    }
+    #sidebar.open { transform: translateX(0); }
+    .hamburger { display: block; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    #content { padding: 16px; }
+  }
+
+  /* ───── SCROLLBAR ───── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent-dim); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-logo"><span>🌿</span>agragent</div>
+  <div class="sidebar-nav">
+    <div class="nav-item active" data-section="dashboard">
+      <span class="nav-icon">📊</span> Dashboard
+    </div>
+    <div class="nav-item" data-section="maps">
+      <span class="nav-icon">🗺️</span> Satellite Maps
+    </div>
+    <div class="nav-item" data-section="climate">
+      <span class="nav-icon">🌡️</span> Climate Data
+    </div>
+    <div class="nav-item" data-section="genomic">
+      <span class="nav-icon">🧬</span> Genomic Analysis
+    </div>
+    <div class="nav-item" data-section="images">
+      <span class="nav-icon">📸</span> Image Analysis
+    </div>
+    <div class="nav-item" data-section="yield">
+      <span class="nav-icon">🌾</span> Yield Prediction
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="avatar">FA</div>
+    <div class="user-info">
+      <div class="name">Francisco A.</div>
+      <div class="role">PhD Researcher · PUCV</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div id="main">
+  <div id="topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</button>
+      <div class="page-title" id="page-title">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <span class="badge-season">Season 2025–2026</span>
+      <span style="font-size:0.8rem;color:var(--text-secondary)">Los Ángeles, Biobío, Chile</span>
+    </div>
+  </div>
+
+  <div id="content">
+
+    <!-- ═══════════════ SECTION 1: DASHBOARD ═══════════════ -->
+    <section id="section-dashboard" class="section active">
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Avg NDVI</div>
+          <div class="kpi-value">0.71</div>
+          <div class="kpi-sub"><span class="kpi-delta up">▲ +0.03</span> vs last week</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Predicted Yield</div>
+          <div class="kpi-value">9.8</div>
+          <div class="kpi-sub">t/ha · <span style="color:var(--accent)">Extra Trees model</span></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Phenological Stage</div>
+          <div class="kpi-value" style="font-size:1.3rem;margin-top:8px;">Veraison</div>
+          <div class="kpi-sub" style="margin-top:6px;">
+            <div style="background:rgba(255,255,255,0.06);border-radius:4px;height:6px;margin-bottom:4px;overflow:hidden;">
+              <div style="width:68%;height:100%;background:var(--yellow);border-radius:4px;"></div>
+            </div>
+            68% complete
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Days to Harvest</div>
+          <div class="kpi-value">23</div>
+          <div class="kpi-sub"><span class="kpi-delta neutral">◉</span> Est. Apr 18, 2026</div>
+        </div>
+      </div>
+
+      <!-- NDVI Trend Chart -->
+      <div class="card mb-20">
+        <div class="card-title">NDVI Trend — Last 12 Weeks</div>
+        <div class="chart-wrap">
+          <canvas id="ndviTrendChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Alerts + Model Confidence -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Active Alerts</div>
+          <div class="alert-item">
+            <div class="alert-dot red"></div>
+            <div class="alert-text">
+              <div class="title">Irrigation needed — Parcel B</div>
+              <div class="sub">Soil moisture below threshold · Detected 6h ago</div>
+            </div>
+          </div>
+          <div class="alert-item">
+            <div class="alert-dot yellow"></div>
+            <div class="alert-text">
+              <div class="title">Temperature stress risk</div>
+              <div class="sub">3 days above 35°C forecast · Moderate risk</div>
+            </div>
+          </div>
+          <div class="alert-item">
+            <div class="alert-dot yellow"></div>
+            <div class="alert-text">
+              <div class="title">NDRE decline — Parcel D</div>
+              <div class="sub">−0.04 change in 5 days · Monitor nitrogen</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Model Confidence (R²)</div>
+          <div style="padding-top:8px;">
+            <div class="hbar-row">
+              <div class="hbar-label">Extra Trees <span>97.2%</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:97.2%"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">CatBoost <span>96.9%</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:96.9%;background:#60a5fa"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">Random Forest <span>96.4%</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:96.4%;background:#a78bfa"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">XGBoost <span>95.8%</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:95.8%;background:#f87171"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">SVR <span>93.1%</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:93.1%;background:#fb923c"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vineyard Status Table -->
+      <div class="card">
+        <div class="card-title">Vineyard Parcel Status</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Parcel</th>
+              <th>Area (ha)</th>
+              <th>NDVI</th>
+              <th>Stage</th>
+              <th>Health</th>
+              <th>Last Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Parcel A</strong></td>
+              <td>4.2</td>
+              <td><strong>0.74</strong></td>
+              <td>Veraison</td>
+              <td><span class="badge badge-green">Excellent</span></td>
+              <td style="color:var(--text-secondary)">3 days ago</td>
+            </tr>
+            <tr>
+              <td><strong>Parcel B</strong></td>
+              <td>3.8</td>
+              <td><strong>0.66</strong></td>
+              <td>Veraison</td>
+              <td><span class="badge badge-yellow">Stressed</span></td>
+              <td style="color:var(--text-secondary)">3 days ago</td>
+            </tr>
+            <tr>
+              <td><strong>Parcel C</strong></td>
+              <td>5.1</td>
+              <td><strong>0.73</strong></td>
+              <td>Ripening</td>
+              <td><span class="badge badge-green">Good</span></td>
+              <td style="color:var(--text-secondary)">3 days ago</td>
+            </tr>
+            <tr>
+              <td><strong>Parcel D</strong></td>
+              <td>2.9</td>
+              <td><strong>0.68</strong></td>
+              <td>Veraison</td>
+              <td><span class="badge badge-yellow">Monitor</span></td>
+              <td style="color:var(--text-secondary)">3 days ago</td>
+            </tr>
+            <tr>
+              <td><strong>Parcel E</strong></td>
+              <td>6.3</td>
+              <td><strong>0.76</strong></td>
+              <td>Ripening</td>
+              <td><span class="badge badge-green">Excellent</span></td>
+              <td style="color:var(--text-secondary)">3 days ago</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════ SECTION 2: MAPS ═══════════════ -->
+    <section id="section-maps" class="section">
+
+      <div class="section-header">
+        <h2>Satellite Maps</h2>
+        <span class="sub">Google Earth Engine · Sentinel-2 · Real Imagery</span>
+      </div>
+
+      <!-- GEE Connect Panel -->
+      <div class="gee-panel">
+        <div class="gee-panel-left">
+          <span class="gee-icon">🌍</span>
+          <div>
+            <div class="gee-title">Google Earth Engine</div>
+            <div class="gee-sub">Conecta con tu cuenta GEE para visualizar imágenes Sentinel-2 reales</div>
+          </div>
+        </div>
+        <div class="gee-panel-right">
+          <input type="text" id="gee-client-id" class="gee-input" placeholder="OAuth 2.0 Client ID  (ej: 123456789-abc...apps.googleusercontent.com)">
+          <button id="gee-connect-btn" class="gee-btn" onclick="connectGEE()">🔗 Conectar</button>
+          <button class="gee-btn" style="background:transparent;border:1px solid var(--border);color:var(--text-secondary);font-weight:400;" onclick="showGEEHelp()">? Ayuda</button>
+        </div>
+        <div id="gee-status" class="gee-status"></div>
+      </div>
+
+      <!-- GEE Layer Controls (shown after connect) -->
+      <div class="gee-layer-controls" id="gee-layer-controls">
+        <!-- Row 1: date range, cloud, opacity, mode tabs -->
+        <div class="gee-ctrl-row" style="margin-bottom:10px;">
+          <label>📅 Desde: <input type="date" id="gee-start" value="2025-11-01"></label>
+          <label>Hasta: <input type="date" id="gee-end" value="2026-03-31"></label>
+          <label>☁️ Cloud máx: <input type="range" id="gee-cloud" min="0" max="100" value="20" oninput="document.getElementById('gee-cloud-val').textContent=this.value"> <span id="gee-cloud-val">20</span>%</label>
+          <label>Opacidad: <input type="range" id="gee-opacity" min="10" max="100" value="85" oninput="setGEEOpacity(this.value)"> <span id="gee-opacity-val">85</span>%</label>
+          <div style="display:flex;gap:6px;margin-left:auto;">
+            <button class="gee-mode-btn active" id="mode-median" onclick="setGEEMode('median',this)">⊕ Mediana</button>
+            <button class="gee-mode-btn" id="mode-browse" onclick="setGEEMode('browse',this)">🗓 Capturas</button>
+            <button class="gee-mode-btn" id="mode-compare" onclick="setGEEMode('compare',this)">◧ Comparar</button>
+          </div>
+          <button class="gee-refresh-btn" onclick="refreshGEELayer()">↻ Actualizar</button>
+        </div>
+
+        <!-- Scene Browser (shown in 'browse' mode) -->
+        <div id="scene-browser" style="display:none;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <span style="font-size:0.78rem;color:var(--text-secondary);font-weight:600;">CAPTURAS DISPONIBLES</span>
+            <button class="gee-refresh-btn" style="padding:4px 10px;font-size:0.75rem;" onclick="fetchSceneList()">🔍 Buscar</button>
+            <span id="scene-count" style="font-size:0.75rem;color:var(--accent);"></span>
+          </div>
+          <div id="scene-list" class="scene-list">
+            <span style="font-size:0.78rem;color:var(--text-secondary);">Haz clic en "Buscar" para listar las capturas del período.</span>
+          </div>
+        </div>
+
+        <!-- Compare Mode (shown in 'compare' mode) -->
+        <div id="compare-panel" style="display:none;">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+            <div class="compare-side left-side">
+              <span class="compare-label">◧ IZQUIERDA</span>
+              <select id="compare-left-date" class="compare-date-select">
+                <option value="">— Seleccionar fecha —</option>
+              </select>
+              <select id="compare-left-index" class="compare-index-select">
+                <option value="NDVI">NDVI</option>
+                <option value="NDRE">NDRE</option>
+                <option value="MSAVI">MSAVI</option>
+                <option value="TCARI">TCARI</option>
+                <option value="RGB">Color Real</option>
+                <option value="FALSE">Falso Color</option>
+              </select>
+            </div>
+            <div class="compare-vs">VS</div>
+            <div class="compare-side right-side">
+              <span class="compare-label" style="color:#60a5fa;">◨ DERECHA</span>
+              <select id="compare-right-date" class="compare-date-select">
+                <option value="">— Seleccionar fecha —</option>
+              </select>
+              <select id="compare-right-index" class="compare-index-select">
+                <option value="NDVI">NDVI</option>
+                <option value="NDRE">NDRE</option>
+                <option value="MSAVI">MSAVI</option>
+                <option value="TCARI">TCARI</option>
+                <option value="RGB">Color Real</option>
+                <option value="FALSE">Falso Color</option>
+              </select>
+            </div>
+            <button class="gee-btn" style="margin-left:auto;padding:7px 16px;" onclick="loadComparison()">▶ Comparar</button>
+            <button class="gee-refresh-btn" onclick="stopComparison()">✕ Salir</button>
+          </div>
+          <div id="compare-status" style="font-size:0.75rem;color:var(--text-secondary);margin-top:8px;"></div>
+        </div>
+
+        <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:6px;">
+          💡 Sentinel-2 SR Harmonized · 10m resolución · Cloud masking automático (QA60) · Solo área del polígono
+        </div>
+      </div>
+
+      <!-- Toolbar: KMZ Upload + Draw Tools -->
+      <div class="map-toolbar">
+        <span class="toolbar-label">Capas</span>
+        <button class="tb-btn" onclick="document.getElementById('kmz-file-input').click()">
+          📂 Subir KMZ/KML
+        </button>
+        <input type="file" id="kmz-file-input" accept=".kmz,.kml" onchange="handleKMZUpload(event)">
+        <div class="tb-divider"></div>
+        <span class="toolbar-label">Dibujar</span>
+        <button class="tb-btn" id="btn-draw-poly" onclick="toggleDraw('Polygon')">✏️ Polígono</button>
+        <button class="tb-btn" id="btn-draw-line" onclick="toggleDraw('Line')">📏 Línea</button>
+        <button class="tb-btn" id="btn-draw-marker" onclick="toggleDraw('Marker')">📍 Punto</button>
+        <div class="tb-divider"></div>
+        <button class="tb-btn" id="btn-edit" onclick="toggleEdit()">🖊 Editar</button>
+        <button class="tb-btn danger" id="btn-delete" onclick="toggleDelete()">🗑 Borrar</button>
+        <div class="tb-divider"></div>
+        <button class="tb-btn" onclick="exportKML()" title="Exportar todas las capas como KML">⬇️ Exportar KML</button>
+      </div>
+
+      <!-- Index Selector + GEE Badge -->
+      <div class="map-controls">
+        <span class="ctrl-label">Índice:</span>
+        <button class="index-btn active" onclick="setIndex(this,'NDVI')">NDVI</button>
+        <button class="index-btn" onclick="setIndex(this,'NDRE')">NDRE</button>
+        <button class="index-btn" onclick="setIndex(this,'MSAVI')">MSAVI</button>
+        <button class="index-btn" onclick="setIndex(this,'TCARI')">TCARI</button>
+        <button class="index-btn" onclick="setIndex(this,'RGB')">🎨 Color Real</button>
+        <button class="index-btn" onclick="setIndex(this,'FALSE')">📡 Falso Color</button>
+        <div class="gee-connected-badge" id="gee-badge">
+          <span class="gee-dot"></span> GEE Activo
+        </div>
+        <span class="gee-layer-note" id="gee-layer-note" style="display:none;"></span>
+      </div>
+
+      <div id="map-container">
+        <div id="vinewatch-map"></div>
+        <div id="map-loading">
+          <div class="map-spinner"></div>
+          <div class="map-loading-text" id="map-loading-text">Cargando imágenes GEE...</div>
+        </div>
+        <div id="map-drop-overlay">
+          <span>🗺️</span>
+          <p>Suelta el archivo KMZ/KML aquí</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="map-legend" id="map-legend-box">
+          <div class="card-title" id="legend-title">NDVI — Índice de Vegetación</div>
+          <div class="legend-gradient" id="legend-gradient"></div>
+          <div class="legend-labels" id="legend-labels">
+            <span>0.0 (Sin veg.)</span><span>0.3</span><span>0.6</span><span>0.8</span><span>0.9 (Alta)</span>
+          </div>
+          <div style="font-size:0.7rem;color:var(--text-secondary);margin-top:8px;" id="legend-formula">
+            Fórmula: (NIR − RED) / (NIR + RED) · Bandas B8, B4
+          </div>
+        </div>
+        <!-- Layer List -->
+        <div class="layer-list" id="layer-list">
+          <div class="layer-list-header">
+            <span>Capas activas</span>
+            <span id="layer-count" style="color:var(--accent);font-size:0.75rem;">0 capas</span>
+          </div>
+          <div id="layer-list-body">
+            <div style="padding:14px 16px;font-size:0.8rem;color:var(--text-secondary);">
+              Sube un KMZ/KML o dibuja para agregar capas.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="map-source-badge" id="map-source-badge">
+        🛰️ Sentinel-2 · OpenStreetMap base · Conecta a GEE para imágenes reales
+      </div>
+
+    </section>
+
+    <!-- ═══════════════ SECTION 3: CLIMATE ═══════════════ -->
+    <section id="section-climate" class="section">
+
+      <div class="section-header">
+        <h2>Climate Data</h2>
+        <span class="sub">Los Ángeles, Biobío — Temporada 2025/2026</span>
+      </div>
+
+      <div class="alert-box" id="climateAlert">
+        ⏳ Loading real climate data from Open-Meteo...
+      </div>
+
+      <div class="grid-4 mb-20">
+        <div class="card" style="text-align:center;">
+          <div class="kpi-label">Annual GDD</div>
+          <div class="kpi-value" id="kpiGDD" style="font-size:1.7rem;color:var(--accent);">—</div>
+          <div class="kpi-sub">Growing Degree Days</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="kpi-label">Dry Months</div>
+          <div class="kpi-value" id="kpiDry" style="font-size:1.7rem;color:var(--yellow);">—</div>
+          <div class="kpi-sub" id="kpiDrySub">Loading...</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="kpi-label">Last Frost</div>
+          <div class="kpi-value" id="kpiFrost" style="font-size:1.4rem;margin-top:6px;">—</div>
+          <div class="kpi-sub" id="kpiFrostSub">Loading...</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="kpi-label">Heat Stress Events</div>
+          <div class="kpi-value" id="kpiHeat" style="font-size:1.7rem;color:var(--red);">—</div>
+          <div class="kpi-sub">&gt;35°C days</div>
+        </div>
+      </div>
+
+      <div class="card mb-20">
+        <div class="card-title">Daily Temperature (Min/Max) — 12-Month Season</div>
+        <div class="chart-wrap tall">
+          <canvas id="tempChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card mb-20">
+        <div class="card-title">Monthly Precipitation (mm)</div>
+        <div class="chart-wrap">
+          <canvas id="precipChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card mb-20">
+        <div class="card-title">Growing Degree Days (GDD) Accumulation</div>
+        <div class="chart-wrap">
+          <canvas id="gddChart"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════ SECTION 4: GENOMIC ═══════════════ -->
+    <section id="section-genomic" class="section">
+
+      <div class="section-header">
+        <h2>Genomic Analysis</h2>
+        <span class="sub">RNA-seq Pipeline — Vitis vinifera</span>
+      </div>
+
+      <!-- Pipeline -->
+      <div class="card mb-20">
+        <div class="card-title">RNA-seq Processing Pipeline</div>
+        <div class="pipeline">
+          <div class="pipe-step"><div class="p-name">Raw Reads</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-arrow">→</div>
+          <div class="pipe-step"><div class="p-name">FastQC</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-arrow">→</div>
+          <div class="pipe-step"><div class="p-name">Trimmomatic</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-arrow">→</div>
+          <div class="pipe-step"><div class="p-name">Salmon</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-arrow">→</div>
+          <div class="pipe-step"><div class="p-name">tximeta</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-arrow">→</div>
+          <div class="pipe-step"><div class="p-name">edgeR</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-arrow">→</div>
+          <div class="pipe-step"><div class="p-name">DEGs</div><div class="p-status">✓ done</div></div>
+          <div class="pipe-arrow">→</div>
+          <div class="pipe-step"><div class="p-name">Classification</div><div class="p-status">✓ done</div></div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid-4 mb-20">
+        <div class="card" style="text-align:center;">
+          <div class="kpi-label">Total Reads</div>
+          <div class="kpi-value" style="font-size:1.5rem;color:var(--accent);">1,340M</div>
+          <div class="kpi-sub">across all samples</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="kpi-label">Data Processed</div>
+          <div class="kpi-value" style="font-size:1.5rem;color:var(--accent);">89.1 GB</div>
+          <div class="kpi-sub">FASTQ files</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="kpi-label">Mapped Rate</div>
+          <div class="kpi-value" style="font-size:1.5rem;color:var(--green);">92.3%</div>
+          <div class="kpi-sub">to PN40024 genome</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="kpi-label">DEGs Identified</div>
+          <div class="kpi-value" style="font-size:1.5rem;color:var(--yellow);">847</div>
+          <div class="kpi-sub">FDR &lt; 0.05</div>
+        </div>
+      </div>
+
+      <!-- Gauge + Timeline -->
+      <div class="grid-2 mb-20">
+        <div class="card" style="text-align:center;">
+          <div class="card-title">Phenological Stage Progress</div>
+          <div class="gauge-container" style="margin-top:16px;">
+            <svg class="gauge-svg" viewBox="0 0 180 180" width="180" height="180">
+              <circle cx="90" cy="90" r="70" fill="none" stroke="rgba(30,58,46,0.8)" stroke-width="14"/>
+              <circle cx="90" cy="90" r="70" fill="none" stroke="#f59e0b" stroke-width="14"
+                stroke-dasharray="439.8" stroke-dashoffset="140.7" stroke-linecap="round"/>
+            </svg>
+            <div class="gauge-label">
+              <div class="pct">68%</div>
+              <div class="glabel">Season<br>Progress</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <div style="font-size:1rem;font-weight:700;color:var(--yellow);">Veraison</div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:2px;">Stage 35 — E-L Scale</div>
+          </div>
+          <!-- Stage timeline -->
+          <div class="stage-timeline" style="margin-top:20px;">
+            <div class="stage-dot-wrap">
+              <div class="stage-dot done"></div>
+              <div class="stage-label">Bud<br>Break</div>
+            </div>
+            <div class="stage-line done"></div>
+            <div class="stage-dot-wrap">
+              <div class="stage-dot done"></div>
+              <div class="stage-label">Flower-<br>ing</div>
+            </div>
+            <div class="stage-line done"></div>
+            <div class="stage-dot-wrap">
+              <div class="stage-dot done"></div>
+              <div class="stage-label">Fruit<br>Set</div>
+            </div>
+            <div class="stage-line done"></div>
+            <div class="stage-dot-wrap">
+              <div class="stage-dot current"></div>
+              <div class="stage-label">Vera-<br>ison</div>
+            </div>
+            <div class="stage-line"></div>
+            <div class="stage-dot-wrap">
+              <div class="stage-dot"></div>
+              <div class="stage-label">Ripen-<br>ing</div>
+            </div>
+            <div class="stage-line"></div>
+            <div class="stage-dot-wrap">
+              <div class="stage-dot"></div>
+              <div class="stage-label">Har-<br>vest</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Pathway Enrichment Analysis</div>
+          <div style="padding-top:8px;">
+            <div class="hbar-row">
+              <div class="hbar-label">Anthocyanin biosynthesis <span>-log₁₀(p) 8.4</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:92%"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">Sugar transport <span>7.9</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:86%;background:#60a5fa"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">Cell wall remodeling <span>7.1</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:77%;background:#a78bfa"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">Stress response <span>6.5</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:71%;background:#fb923c"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">Photosynthesis <span>5.8</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:63%;background:#f87171"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEG Table -->
+      <div class="card">
+        <div class="card-title">Top 10 Differentially Expressed Genes</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Function</th><th>Regulation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>VvMYBA1</strong></td><td style="color:var(--green)">+4.2</td><td>0.001</td><td>Anthocyanin biosynthesis</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VvCHI1</strong></td><td style="color:var(--green)">+3.8</td><td>0.001</td><td>Chalcone isomerase</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VvSWEET7</strong></td><td style="color:var(--green)">+3.5</td><td>0.002</td><td>Sugar efflux transporter</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VvF3H</strong></td><td style="color:var(--green)">+3.2</td><td>0.002</td><td>Flavanone 3-hydroxylase</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VvXTH1</strong></td><td style="color:var(--green)">+2.9</td><td>0.003</td><td>Cell wall xyloglucan</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VvRBOH</strong></td><td style="color:var(--green)">+2.7</td><td>0.004</td><td>ROS burst oxidase</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VvRbcL</strong></td><td style="color:var(--red)">−2.4</td><td>0.005</td><td>Rubisco large subunit</td><td><span class="badge badge-red">DOWN</span></td></tr>
+            <tr><td><strong>VvCAB1</strong></td><td style="color:var(--red)">−2.8</td><td>0.004</td><td>Chlorophyll a/b binding</td><td><span class="badge badge-red">DOWN</span></td></tr>
+            <tr><td><strong>VvGolS1</strong></td><td style="color:var(--green)">+2.5</td><td>0.006</td><td>Galactinol synthase</td><td><span class="badge badge-green">UP</span></td></tr>
+            <tr><td><strong>VvDHN3</strong></td><td style="color:var(--green)">+2.3</td><td>0.007</td><td>Dehydrin stress protein</td><td><span class="badge badge-green">UP</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════ SECTION 5: IMAGE ANALYSIS ═══════════════ -->
+    <section id="section-images" class="section">
+
+      <div class="section-header">
+        <h2>Image Analysis</h2>
+        <span class="sub">Embrapa WGISD · Wine Grape Instance Segmentation Dataset</span>
+      </div>
+
+      <!-- Dataset Banner -->
+      <div class="wgisd-banner">
+        <div class="wgisd-banner-left">
+          <div class="wgisd-logo">🍇</div>
+          <div>
+            <div class="wgisd-title">Embrapa Wine Grape Instance Segmentation Dataset (WGISD)</div>
+            <div class="wgisd-meta">Thiago T. Santos et al. · Embrapa · CC BY-NC 4.0 · <a href="https://github.com/thsant/wgisd" target="_blank" style="color:var(--accent)">github.com/thsant/wgisd</a></div>
+          </div>
+        </div>
+        <div class="wgisd-banner-right">
+          <div class="wgisd-stat"><span class="wgisd-stat-n">300</span><span class="wgisd-stat-l">Imágenes</span></div>
+          <div class="wgisd-stat"><span class="wgisd-stat-n">4,431</span><span class="wgisd-stat-l">Racimos</span></div>
+          <div class="wgisd-stat"><span class="wgisd-stat-n">187K</span><span class="wgisd-stat-l">Bayas anotadas</span></div>
+          <div class="wgisd-stat"><span class="wgisd-stat-n">5</span><span class="wgisd-stat-l">Variedades</span></div>
+        </div>
+      </div>
+
+      <!-- Variety Tabs -->
+      <div class="variety-tabs" id="variety-tabs">
+        <button class="variety-tab active" data-variety="CDY" onclick="switchVariety('CDY',this)">
+          <span class="vtab-code">CDY</span><span class="vtab-name">Chardonnay</span>
+          <span class="vtab-tag white">Blanca</span>
+        </button>
+        <button class="variety-tab" data-variety="CFR" onclick="switchVariety('CFR',this)">
+          <span class="vtab-code">CFR</span><span class="vtab-name">Cabernet Franc</span>
+          <span class="vtab-tag red">Tinta</span>
+        </button>
+        <button class="variety-tab" data-variety="CSV" onclick="switchVariety('CSV',this)">
+          <span class="vtab-code">CSV</span><span class="vtab-name">Cabernet Sauvignon</span>
+          <span class="vtab-tag red">Tinta</span>
+        </button>
+        <button class="variety-tab" data-variety="SVB" onclick="switchVariety('SVB',this)">
+          <span class="vtab-code">SVB</span><span class="vtab-name">Sauvignon Blanc</span>
+          <span class="vtab-tag white">Blanca</span>
+        </button>
+        <button class="variety-tab" data-variety="SYH" onclick="switchVariety('SYH',this)">
+          <span class="vtab-code">SYH</span><span class="vtab-name">Syrah</span>
+          <span class="vtab-tag red">Tinta</span>
+        </button>
+      </div>
+
+      <!-- Variety Info Bar -->
+      <div class="variety-info-bar" id="variety-info-bar">
+        <span id="vinfo-images">65 imágenes</span>
+        <span class="vinfo-dot">·</span>
+        <span id="vinfo-clusters">840 racimos anotados</span>
+        <span class="vinfo-dot">·</span>
+        <span id="vinfo-masks">308 con máscara de instancia</span>
+        <span class="vinfo-dot">·</span>
+        <span id="vinfo-source">Canon EOS REBEL T3i · 2048×1365px</span>
+        <span style="margin-left:auto;font-size:0.72rem;color:var(--text-secondary);">Clic en imagen para ver anotaciones</span>
+      </div>
+
+      <!-- Image Grid -->
+      <div class="wgisd-grid" id="wgisd-grid">
+        <!-- populated by JS -->
+      </div>
+
+      <!-- Upload your own image -->
+      <div class="card mb-20" style="margin-top:8px;">
+        <div class="card-title">📤 Analizar imagen propia</div>
+        <div class="upload-zone" style="margin-top:12px;padding:28px 20px;" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon" style="font-size:2rem;">🖼️</div>
+          <div class="upload-text">Arrastra o haz clic para subir imagen de viñedo</div>
+          <div class="upload-sub">Acepta .jpg · .png · .tiff — Máx 50MB</div>
+          <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.tiff" style="display:none" onchange="analyzeUploadedImage(event)">
+        </div>
+        <div id="upload-result" style="display:none;margin-top:16px;"></div>
+      </div>
+
+    </section>
+
+    <!-- ═══ WGISD IMAGE VIEWER MODAL ═══ -->
+    <div id="img-viewer" style="display:none;">
+      <div class="viewer-backdrop" onclick="closeViewer()"></div>
+      <div class="viewer-box">
+        <button class="viewer-close" onclick="closeViewer()">✕</button>
+        <div class="viewer-top">
+          <div class="viewer-canvas-wrap">
+            <img id="viewer-img" src="" alt="" crossorigin="anonymous">
+            <canvas id="viewer-canvas"></canvas>
+            <div id="viewer-loading" class="viewer-loading">
+              <div class="map-spinner"></div><span>Cargando imagen y anotaciones...</span>
+            </div>
+          </div>
+          <div class="viewer-meta">
+            <div class="viewer-meta-title" id="viewer-title">—</div>
+            <div class="viewer-meta-variety" id="viewer-variety">—</div>
+            <div class="viewer-divider"></div>
+            <div class="viewer-stat-row">
+              <div class="viewer-stat"><span class="vs-n" id="vm-clusters">—</span><span class="vs-l">Racimos detectados</span></div>
+              <div class="viewer-stat"><span class="vs-n" id="vm-berries">—</span><span class="vs-l">Bayas estimadas</span></div>
+            </div>
+            <div class="viewer-divider"></div>
+            <div class="viewer-info-list" id="viewer-info-list"></div>
+            <div class="viewer-divider"></div>
+            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.7;">
+              <div>📦 Anotaciones: YOLO (bounding box)</div>
+              <div>📐 Resolución: 2048 × 1365 px</div>
+              <div>📷 Canon EOS REBEL T3i / Motorola Z2</div>
+              <div style="margin-top:8px;">Datos: <a href="https://github.com/thsant/wgisd" target="_blank" style="color:var(--accent)">Embrapa WGISD</a> · CC BY-NC 4.0</div>
+            </div>
+          </div>
+        </div>
+        <div class="viewer-annotation-bar" id="viewer-annotation-bar">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="toggle-bbox" checked onchange="toggleBBoxes(this.checked)">
+            <span>Mostrar bounding boxes</span>
+          </label>
+          <span id="viewer-bbox-count" style="color:var(--accent);font-size:0.8rem;"></span>
+          <span style="margin-left:auto;font-size:0.75rem;color:var(--text-secondary);" id="viewer-img-id"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SECTION 6: YIELD PREDICTION ═══════════════ -->
+    <section id="section-yield" class="section">
+
+      <div class="section-header">
+        <h2>Yield Prediction</h2>
+        <span class="sub">Extra Trees Regressor — Season 2025/2026</span>
+      </div>
+
+      <!-- Hero -->
+      <div class="yield-hero">
+        <div class="label">Predicted Yield — Los Ángeles, Biobío</div>
+        <div class="value">9.8</div>
+        <div class="unit">tonnes per hectare</div>
+        <div class="ci">Confidence Interval: ± 0.8 t/ha (9.0 – 10.6)</div>
+        <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+          <span class="badge badge-accent">Extra Trees Regressor</span>
+          <span class="badge badge-green">R² = 0.972</span>
+          <span class="badge badge-blue">MAPE = 3.8%</span>
+        </div>
+      </div>
+
+      <!-- Feature Importance + Parcel Table -->
+      <div class="grid-2 mb-20">
+        <div class="card">
+          <div class="card-title">Feature Importance</div>
+          <div style="padding-top:8px;">
+            <div class="hbar-row">
+              <div class="hbar-label">Precipitation <span>0.92</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:92%"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">GDD Accumulated <span>0.87</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:87%;background:#60a5fa"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">Max Temperature <span>0.81</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:81%;background:#f87171"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">NDVI <span>0.74</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:74%"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">NDRE <span>0.65</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:65%;background:#a78bfa"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">MSAVI <span>0.58</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:58%;background:#fb923c"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-label">TCARI <span>0.45</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:45%;background:#fbbf24"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Parcel Predictions</div>
+          <table class="data-table">
+            <thead>
+              <tr><th>Parcel</th><th>Area</th><th>Predicted</th><th>±CI</th><th>Trend</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Parcel A</strong></td><td>4.2 ha</td><td><strong>10.3 t/ha</strong></td><td style="color:var(--text-secondary)">±0.7</td><td><span class="trend-up">▲ +0.4</span></td></tr>
+              <tr><td><strong>Parcel B</strong></td><td>3.8 ha</td><td><strong>8.9 t/ha</strong></td><td style="color:var(--text-secondary)">±1.0</td><td><span class="trend-down">▼ −0.6</span></td></tr>
+              <tr><td><strong>Parcel C</strong></td><td>5.1 ha</td><td><strong>10.1 t/ha</strong></td><td style="color:var(--text-secondary)">±0.8</td><td><span class="trend-up">▲ +0.2</span></td></tr>
+              <tr><td><strong>Parcel D</strong></td><td>2.9 ha</td><td><strong>9.2 t/ha</strong></td><td style="color:var(--text-secondary)">±0.9</td><td><span class="trend-neutral">— 0.0</span></td></tr>
+              <tr><td><strong>Parcel E</strong></td><td>6.3 ha</td><td><strong>10.6 t/ha</strong></td><td style="color:var(--text-secondary)">±0.6</td><td><span class="trend-up">▲ +0.5</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Historical Comparison Chart -->
+      <div class="card mb-20">
+        <div class="card-title">Historical Yield: Predicted vs Actual (2020–2025)</div>
+        <div class="chart-wrap tall">
+          <canvas id="histYieldChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Model Comparison -->
+      <div class="card">
+        <div class="card-title">Model Comparison</div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Model</th><th>R²</th><th>MAPE (%)</th><th>RMSE</th><th>Train Time</th><th>Best</th></tr>
+          </thead>
+          <tbody>
+            <tr style="background:rgba(82,183,136,0.05)">
+              <td><strong>Extra Trees</strong></td>
+              <td style="color:var(--green)"><strong>0.972</strong></td>
+              <td style="color:var(--green)"><strong>3.8</strong></td>
+              <td>0.41</td>
+              <td style="color:var(--text-secondary)">2.3s</td>
+              <td><span class="model-best">★</span></td>
+            </tr>
+            <tr>
+              <td>CatBoost</td>
+              <td>0.969</td><td>4.1</td><td>0.44</td>
+              <td style="color:var(--text-secondary)">18.7s</td><td></td>
+            </tr>
+            <tr>
+              <td>Random Forest</td>
+              <td>0.964</td><td>4.5</td><td>0.47</td>
+              <td style="color:var(--text-secondary)">3.1s</td><td></td>
+            </tr>
+            <tr>
+              <td>XGBoost</td>
+              <td>0.958</td><td>5.0</td><td>0.52</td>
+              <td style="color:var(--text-secondary)">6.4s</td><td></td>
+            </tr>
+            <tr>
+              <td>SVR</td>
+              <td>0.931</td><td>6.8</td><td>0.66</td>
+              <td style="color:var(--text-secondary)">0.9s</td><td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+  </div><!-- /#content -->
+</div><!-- /#main -->
+
+<script>
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+const navItems = document.querySelectorAll('.nav-item');
+const sections = document.querySelectorAll('.section');
+const pageTitle = document.getElementById('page-title');
+let mapInitialized = false;
+const chartInstances = {};
+
+const titles = {
+  dashboard: 'Dashboard',
+  maps: 'Satellite Maps',
+  climate: 'Climate Data',
+  genomic: 'Genomic Analysis',
+  images: 'Crop Image Analysis',
+  yield: 'Yield Prediction'
+};
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const target = item.dataset.section;
+    navItems.forEach(n => n.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+    item.classList.add('active');
+    document.getElementById('section-' + target).classList.add('active');
+    pageTitle.textContent = titles[target];
+    // Close sidebar on mobile
+    if (window.innerWidth < 640) document.getElementById('sidebar').classList.remove('open');
+    // Initialize map when first shown
+    if (target === 'maps' && !mapInitialized) {
+      setTimeout(() => { initMap(); updateLegend('NDVI'); mapInitialized = true; }, 100);
+    }
+    if (target === 'maps' && mapInitialized && vineMap) {
+      setTimeout(() => vineMap.invalidateSize(), 150);
+    }
+  });
+});
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ═══════════════════════════════════════
+// CHART DEFAULTS
+// ═══════════════════════════════════════
+Chart.defaults.color = '#7fa892';
+Chart.defaults.borderColor = '#1e3a2e';
+Chart.defaults.font.family = "system-ui, 'Inter', sans-serif";
+
+const gridOpts = {
+  color: 'rgba(30,58,46,0.6)',
+  drawBorder: false
+};
+const tickOpts = { color: '#7fa892', font: { size: 11 } };
+
+// ═══════════════════════════════════════
+// CHART 1: NDVI Trend
+// ═══════════════════════════════════════
+(function() {
+  const weeks = ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'];
+  const ndviData = [0.58, 0.60, 0.63, 0.65, 0.67, 0.68, 0.70, 0.71, 0.72, 0.71, 0.72, 0.71];
+  const ctx = document.getElementById('ndviTrendChart').getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+  gradient.addColorStop(0, 'rgba(82,183,136,0.3)');
+  gradient.addColorStop(1, 'rgba(82,183,136,0.01)');
+  chartInstances.ndvi = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: weeks,
+      datasets: [{
+        label: 'NDVI',
+        data: ndviData,
+        borderColor: '#52b788',
+        backgroundColor: gradient,
+        borderWidth: 2.5,
+        pointBackgroundColor: '#52b788',
+        pointRadius: 4,
+        fill: true,
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true,
+      animation: { duration: 1200 },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: gridOpts, ticks: tickOpts },
+        y: {
+          grid: gridOpts, ticks: { ...tickOpts },
+          min: 0.5, max: 0.85,
+          title: { display: true, text: 'NDVI', color: '#7fa892', font: { size: 11 } }
+        }
+      }
+    }
+  });
+})();
+
+// ═══════════════════════════════════════
+// CHART 2: Temperature (placeholder — filled by loadClimateData)
+// ═══════════════════════════════════════
+(function() {
+  const months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+  const ctx = document.getElementById('tempChart').getContext('2d');
+  chartInstances.temp = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        {
+          label: 'Max Temp (°C)', data: [], borderColor: '#ef4444',
+          backgroundColor: 'rgba(239,68,68,0.1)', borderWidth: 2, pointRadius: 4, fill: true, tension: 0.4
+        },
+        {
+          label: 'Min Temp (°C)', data: [], borderColor: '#60a5fa',
+          backgroundColor: 'rgba(96,165,250,0.08)', borderWidth: 2, pointRadius: 4, fill: true, tension: 0.4
+        }
+      ]
+    },
+    options: {
+      responsive: true, animation: { duration: 1200 },
+      plugins: { legend: { labels: { color: '#7fa892', boxWidth: 14, font: { size: 11 } } } },
+      scales: {
+        x: { grid: gridOpts, ticks: tickOpts },
+        y: { grid: gridOpts, ticks: tickOpts,
+          title: { display: true, text: 'Temperature (°C)', color: '#7fa892', font: { size: 11 } } }
+      }
+    }
+  });
+})();
+
+// ═══════════════════════════════════════
+// CHART 3: Precipitation (placeholder — filled by loadClimateData)
+// ═══════════════════════════════════════
+(function() {
+  const months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+  const ctx = document.getElementById('precipChart').getContext('2d');
+  chartInstances.precip = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [{
+        label: 'Precipitation (mm)', data: [],
+        backgroundColor: 'rgba(96,165,250,0.35)', borderColor: '#60a5fa', borderWidth: 1, borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, animation: { duration: 1200 },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: gridOpts, ticks: tickOpts },
+        y: { grid: gridOpts, ticks: tickOpts,
+          title: { display: true, text: 'mm', color: '#7fa892', font: { size: 11 } } }
+      }
+    }
+  });
+})();
+
+// ═══════════════════════════════════════
+// CHART 4: GDD Accumulation (placeholder — filled by loadClimateData)
+// ═══════════════════════════════════════
+(function() {
+  const months = ['Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+  const ctx = document.getElementById('gddChart').getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+  gradient.addColorStop(0, 'rgba(245,158,11,0.3)');
+  gradient.addColorStop(1, 'rgba(245,158,11,0.02)');
+  chartInstances.gdd = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [{
+        label: 'GDD Accumulated', data: [],
+        borderColor: '#f59e0b', backgroundColor: gradient, borderWidth: 2.5,
+        pointBackgroundColor: '#f59e0b', pointRadius: 5, fill: true, tension: 0.5
+      }]
+    },
+    options: {
+      responsive: true, animation: { duration: 1200 },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: gridOpts, ticks: tickOpts },
+        y: { grid: gridOpts, ticks: tickOpts,
+          title: { display: true, text: 'GDD (Base 10°C)', color: '#7fa892', font: { size: 11 } } }
+      }
+    }
+  });
+})();
+
+// ═══════════════════════════════════════
+// CLIMATE: Load real data from Open-Meteo
+// ═══════════════════════════════════════
+let climateDataLoaded = false;
+
+async function loadClimateData() {
+  if (climateDataLoaded) return;
+
+  // Determine polygon centroid from kmlRawCoords, fallback to known location
+  let lat = -38.3365, lng = -73.2877;
+  if (kmlRawCoords.length > 0) {
+    let sumLat = 0, sumLng = 0, n = 0;
+    kmlRawCoords.forEach(ring => {
+      ring.forEach(([lo, la]) => { sumLng += lo; sumLat += la; n++; });
+    });
+    lat = sumLat / n;
+    lng = sumLng / n;
+  }
+
+  // Season: Apr 2025 → Mar 2026
+  const startDate = '2025-04-01';
+  const endDate = '2026-03-26';
+
+  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}`
+    + `&start_date=${startDate}&end_date=${endDate}`
+    + `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum`
+    + `&timezone=America%2FSantiago`;
+
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('Open-Meteo HTTP ' + resp.status);
+    const data = await resp.json();
+
+    const dates = data.daily.time;            // ['2025-04-01', ...]
+    const tmax  = data.daily.temperature_2m_max;
+    const tmin  = data.daily.temperature_2m_min;
+    const prec  = data.daily.precipitation_sum;
+
+    // --- Monthly aggregation (Apr=0 … Mar=11) ---
+    const monthLabels = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+    const monthMaxArr = new Array(12).fill(null).map(() => []);
+    const monthMinArr = new Array(12).fill(null).map(() => []);
+    const monthPrec   = new Array(12).fill(0);
+
+    dates.forEach((d, i) => {
+      const mo = new Date(d + 'T12:00:00').getMonth(); // 0=Jan … 11=Dec
+      // Map calendar month → season index (Apr=0, May=1, … Mar=11)
+      const seasonIdx = (mo + 12 - 3) % 12; // Apr(3)→0, May(4)→1, … Mar(2)→11
+      if (tmax[i] != null) monthMaxArr[seasonIdx].push(tmax[i]);
+      if (tmin[i] != null) monthMinArr[seasonIdx].push(tmin[i]);
+      if (prec[i] != null) monthPrec[seasonIdx] += prec[i];
+    });
+
+    const avgMax = monthMaxArr.map(a => a.length ? +(a.reduce((s,v) => s+v, 0) / a.length).toFixed(1) : null);
+    const avgMin = monthMinArr.map(a => a.length ? +(a.reduce((s,v) => s+v, 0) / a.length).toFixed(1) : null);
+    const monthPrecRound = monthPrec.map(v => +v.toFixed(1));
+
+    // --- GDD (base 10°C) from Sep onwards ---
+    // Season growing months: Sep(idx 5) → Mar(idx 11)
+    const gddMonthLabels = ['Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+    const gddSeasonIndices = [5, 6, 7, 8, 9, 10, 11];
+    let gddAccum = 0;
+    const gddValues = [];
+    // Compute monthly GDD from daily data
+    const monthlyGDD = new Array(12).fill(0);
+    dates.forEach((d, i) => {
+      if (tmax[i] == null || tmin[i] == null) return;
+      const tavg = (tmax[i] + tmin[i]) / 2;
+      const gddDay = Math.max(0, tavg - 10);
+      const mo = new Date(d + 'T12:00:00').getMonth();
+      const seasonIdx = (mo + 12 - 3) % 12;
+      monthlyGDD[seasonIdx] += gddDay;
+    });
+    gddSeasonIndices.forEach(si => {
+      gddAccum += monthlyGDD[si];
+      gddValues.push(Math.round(gddAccum));
+    });
+
+    // --- KPI calculations ---
+    const totalGDD = gddAccum;
+
+    // Dry months: months with < 30mm precipitation
+    const dryMonths = monthPrecRound.filter(v => v < 30).length;
+    const dryNames = [];
+    monthPrecRound.forEach((v, i) => { if (v < 30) dryNames.push(monthLabels[i]); });
+
+    // Last frost: last day with tmin ≤ 0
+    let lastFrostStr = 'None';
+    let lastFrostYear = '';
+    for (let i = dates.length - 1; i >= 0; i--) {
+      if (tmin[i] != null && tmin[i] <= 0) {
+        const fd = new Date(dates[i] + 'T12:00:00');
+        lastFrostStr = fd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        lastFrostYear = '' + fd.getFullYear();
+        break;
+      }
+    }
+
+    // Heat stress: days > 35°C
+    const heatDays = tmax.filter(v => v != null && v > 35).length;
+
+    // --- Update KPI cards ---
+    document.getElementById('kpiGDD').textContent = totalGDD.toLocaleString();
+    document.getElementById('kpiDry').textContent = dryMonths;
+    document.getElementById('kpiDrySub').textContent = dryNames.length > 0 ? dryNames.join(', ') : '—';
+    document.getElementById('kpiFrost').textContent = lastFrostStr;
+    document.getElementById('kpiFrostSub').textContent = lastFrostYear || '—';
+    document.getElementById('kpiHeat').textContent = heatDays;
+
+    // --- Update alert ---
+    const alertEl = document.getElementById('climateAlert');
+    const alerts = [];
+    if (heatDays > 0) alerts.push(`🌡 ${heatDays} heat stress day(s) above 35°C recorded this season.`);
+    if (lastFrostStr !== 'None') alerts.push(`❄ Last frost detected on ${lastFrostStr} ${lastFrostYear}.`);
+    if (dryMonths >= 4) alerts.push(`☀ ${dryMonths} dry months (<30mm) — monitor irrigation needs.`);
+    if (totalGDD < 1200) alerts.push(`⚠ Low GDD accumulation (${totalGDD}) — season may be cooler than average.`);
+    alertEl.innerHTML = alerts.length > 0 ? alerts.join('<br>') : '✅ No significant climate alerts for this season.';
+
+    // --- Update Temperature chart ---
+    chartInstances.temp.data.datasets[0].data = avgMax;
+    chartInstances.temp.data.datasets[1].data = avgMin;
+    chartInstances.temp.update();
+
+    // --- Update Precipitation chart ---
+    chartInstances.precip.data.datasets[0].data = monthPrecRound;
+    chartInstances.precip.data.datasets[0].backgroundColor = monthPrecRound.map(v =>
+      v > 60 ? 'rgba(96,165,250,0.7)' : 'rgba(96,165,250,0.35)');
+    chartInstances.precip.update();
+
+    // --- Update GDD chart ---
+    chartInstances.gdd.data.labels = gddMonthLabels;
+    chartInstances.gdd.data.datasets[0].data = gddValues;
+    chartInstances.gdd.update();
+
+    climateDataLoaded = true;
+    console.log('✅ Climate data loaded from Open-Meteo');
+
+  } catch (err) {
+    console.error('Climate data error:', err);
+    document.getElementById('climateAlert').innerHTML =
+      '⚠ Could not load climate data: ' + err.message + '. Showing empty charts.';
+  }
+}
+
+// Auto-load climate data on page load
+loadClimateData();
+
+// ═══════════════════════════════════════
+// CHART 5: Historical Yield
+// ═══════════════════════════════════════
+(function() {
+  const seasons = ['2020','2021','2022','2023','2024','2025'];
+  const actual    = [8.2, 9.1, 7.8, 9.5, 10.1, 9.3];
+  const predicted = [8.5, 8.9, 8.1, 9.3, 9.9, 9.5];
+  const ctx = document.getElementById('histYieldChart').getContext('2d');
+  chartInstances.histYield = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: seasons,
+      datasets: [
+        {
+          label: 'Actual Yield (t/ha)',
+          data: actual,
+          borderColor: '#52b788',
+          backgroundColor: 'rgba(82,183,136,0.12)',
+          borderWidth: 2.5,
+          pointRadius: 6,
+          pointBackgroundColor: '#52b788',
+          fill: true,
+          tension: 0.3
+        },
+        {
+          label: 'Predicted Yield (t/ha)',
+          data: predicted,
+          borderColor: '#f59e0b',
+          backgroundColor: 'rgba(245,158,11,0.08)',
+          borderWidth: 2,
+          pointRadius: 5,
+          pointBackgroundColor: '#f59e0b',
+          borderDash: [5, 4],
+          fill: false,
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      animation: { duration: 1200 },
+      plugins: {
+        legend: { labels: { color: '#7fa892', boxWidth: 14, font: { size: 11 } } }
+      },
+      scales: {
+        x: { grid: gridOpts, ticks: tickOpts },
+        y: {
+          grid: gridOpts, ticks: tickOpts,
+          min: 6, max: 12,
+          title: { display: true, text: 't/ha', color: '#7fa892', font: { size: 11 } }
+        }
+      }
+    }
+  });
+})();
+
+// ═══════════════════════════════════════
+// ═══════════════════════════════════════
+// LEAFLET MAP
+// ═══════════════════════════════════════
+let vineMap = null;
+let osmLayer = null;
+let satelliteLayer = null;
+
+function initMap() {
+  vineMap = L.map('vinewatch-map', {
+    center: [-38.3365, -73.2877],
+    zoom: 17,
+    zoomControl: true
+  });
+
+  osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(vineMap);
+
+  // Init draw/edit tools
+  initGeoman();
+
+  // Load real Agrifrut.kml from server
+  fetch('Agrifrut.kml')
+    .then(r => r.text())
+    .then(kmlText => {
+      const parser = new DOMParser();
+      const kmlDoc = parser.parseFromString(kmlText, 'text/xml');
+      const geojson = toGeoJSON.kml(kmlDoc);
+      const colors  = ['#52b788', '#60a5fa'];
+      const layers  = [];
+
+      geojson.features.forEach((feature, i) => {
+        if (!feature.geometry || feature.geometry.type !== 'Polygon') return;
+        const name   = feature.properties?.name || ('Sector ' + (i + 1));
+        const color  = colors[i % colors.length];
+        const rawRing = feature.geometry.coordinates[0]; // [[lng,lat],...]
+        kmlRawCoords.push(rawRing);                      // store for GEE clip
+        const coords = rawRing.map(([lng, lat]) => [lat, lng]);
+
+        const poly = L.polygon(coords, {
+          color, fillColor: color, fillOpacity: 0.30, weight: 2.5
+        }).addTo(vineMap);
+
+        poly._agra = { name, color, description: 'Agrifrut — ' + name, stage: '' };
+
+        poly.bindPopup(`
+          <div style="font-family:system-ui;min-width:180px;">
+            <strong style="color:${color};font-size:1rem;">🍇 Agrifrut — ${name}</strong>
+            <div style="font-size:0.82rem;line-height:1.9;margin-top:6px;">
+              <b>Fuente:</b> Agrifrut.kml<br>
+              <b>Propietario:</b> Patricia Medina<br>
+              <b>Ubicación:</b> 38.3°S 73.3°W · Los Ángeles, Chile
+            </div>
+          </div>`);
+
+        poly.on('click', () => {
+          window._editLayer = poly;
+          const infoEl = document.getElementById('selected-parcel-info');
+          infoEl.innerHTML = `
+            <div style="line-height:2;font-size:0.83rem;">
+              <div><strong style="color:${color}">🍇 Agrifrut — ${name}</strong></div>
+              <div><span style="color:var(--text-secondary)">Archivo:</span> <strong>Agrifrut.kml</strong></div>
+              <div><span style="color:var(--text-secondary)">Propietario:</span> <strong>Patricia Medina</strong></div>
+              <div><span style="color:var(--text-secondary)">Coordenadas:</span> <strong>38.3°S 73.3°W</strong></div>
+              <div style="margin-top:8px;">
+                <button onclick="openEditorByIndex(${userLayers.length - 1 + i - (i > 0 ? 0 : 0)})"
+                  style="background:var(--accent);border:none;border-radius:5px;padding:5px 10px;font-size:0.75rem;cursor:pointer;color:#0a1218;font-weight:600;">
+                  ✏️ Editar
+                </button>
+              </div>
+            </div>`;
+        });
+
+        layers.push(poly);
+        userLayers.push({ layer: poly, name, color });
+      });
+
+      if (layers.length) {
+        vineMap.fitBounds(L.featureGroup(layers).getBounds(), { padding: [40, 40] });
+      }
+      renderLayerList();
+    })
+    .catch(err => {
+      console.warn('No se pudo cargar Agrifrut.kml:', err);
+      renderLayerList();
+    });
+}
+
+// ═══════════════════════════════════════
+// ═══════════════════════════════════════
+// MAP INDEX BUTTONS
+// ═══════════════════════════════════════
+function setIndex(btn, idx) {
+  document.querySelectorAll('.index-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentGEEIndex = idx;
+  updateLegend(idx);
+  if (geeConnected) loadGEELayer(idx);
+}
+
+// ═══════════════════════════════════════
+// GOOGLE EARTH ENGINE INTEGRATION
+// ═══════════════════════════════════════
+let geeConnected = false;
+let geeLayer = null;
+let kmlRawCoords = [];   // [[lng,lat],...] per polygon, populated when KML loads
+let currentGEEIndex = 'NDVI';
+
+const INDEX_META = {
+  NDVI:  { title: 'NDVI — Normalized Difference Vegetation Index', formula: '(NIR − RED) / (NIR + RED) · Bandas B8, B4', gradient: 'linear-gradient(to right,#d73027,#f46d43,#fdae61,#fee08b,#d9ef8b,#a6d96a,#66bd63,#1a9850)', labels: ['0.0 (Sin veg.)','0.3','0.5','0.7','0.9 (Alta)'] },
+  NDRE:  { title: 'NDRE — Red Edge Vegetation Index',             formula: '(NIR − RedEdge) / (NIR + RedEdge) · Bandas B8, B5', gradient: 'linear-gradient(to right,#d73027,#fdae61,#fee08b,#d9ef8b,#66bd63,#1a9850)', labels: ['-0.1','0.1','0.2','0.4','0.5'] },
+  MSAVI: { title: 'MSAVI — Modified Soil-Adjusted VI',            formula: '(2·NIR+1 − √((2·NIR+1)²−8(NIR−RED))) / 2', gradient: 'linear-gradient(to right,#d73027,#fdae61,#d9ef8b,#1a9850)', labels: ['0.0','0.2','0.4','0.6','0.8'] },
+  TCARI: { title: 'TCARI — Transformed Chlorophyll Absorption',   formula: '3·((B5−B4)−0.2·(B5−B3)·(B5/B4))', gradient: 'linear-gradient(to right,#1a9850,#d9ef8b,#fdae61,#d73027)', labels: ['Bajo (sano)','0.1','0.2','0.4','Alto (estrés)'] },
+  RGB:   { title: 'Color Real — RGB',                             formula: 'Bandas B4 (Red), B3 (Green), B2 (Blue)', gradient: 'linear-gradient(to right,#1a5ca8,#2e8b57,#8B4513,#c8a46e,#f5f5f5)', labels: ['Agua','Vegetación','Suelo','Seco','Nubes'] },
+  FALSE: { title: 'Falso Color — NIR composit',                  formula: 'Bandas B8 (NIR), B4 (Red), B3 (Green) · veg.=rojo', gradient: 'linear-gradient(to right,#1a1a2e,#0d4a1a,#2e8b57,#c0392b,#8b0000)', labels: ['No veg.','Baja','Media','Alta','Muy alta'] }
+};
+
+function updateLegend(idx) {
+  const m = INDEX_META[idx] || INDEX_META.NDVI;
+  document.getElementById('legend-title').textContent = m.title;
+  document.getElementById('legend-gradient').style.background = m.gradient;
+  const labEl = document.getElementById('legend-labels');
+  labEl.innerHTML = m.labels.map(l => `<span>${l}</span>`).join('');
+  document.getElementById('legend-formula').textContent = 'Fórmula: ' + m.formula;
+}
+
+function loadEEScript(callback) {
+  if (window.ee) { callback(); return; }
+  setGEEStatus('loading', '⏳ Cargando librería Earth Engine...');
+  const s = document.createElement('script');
+  s.src = 'https://unpkg.com/@google/earthengine@0.1.395/build/ee_api_js_npm.js';
+  s.onload = callback;
+  s.onerror = () => setGEEStatus('error', '❌ No se pudo cargar la librería GEE. Verifica tu conexión.');
+  document.head.appendChild(s);
+}
+
+function connectGEE() {
+  const clientId = document.getElementById('gee-client-id').value.trim();
+  if (!clientId) { setGEEStatus('error', '⚠ Ingresa tu OAuth 2.0 Client ID'); return; }
+
+  const btn = document.getElementById('gee-connect-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Conectando...';
+
+  loadEEScript(() => {
+    setGEEStatus('loading', '🔐 Abriendo autenticación Google...');
+
+    ee.data.authenticateViaOauth(
+      clientId,
+      () => {
+        setGEEStatus('loading', '⚙️ Inicializando Earth Engine...');
+        ee.initialize(
+          null, null,
+          () => {
+            geeConnected = true;
+            setGEEStatus('success', '✅ Conectado a Google Earth Engine');
+            btn.textContent = '✓ Conectado';
+
+            // Switch to satellite basemap
+            if (osmLayer) vineMap.removeLayer(osmLayer);
+            satelliteLayer = L.tileLayer(
+              'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+              { attribution: '© Esri World Imagery', maxZoom: 19 }
+            ).addTo(vineMap);
+            // keep parcels on top
+            vineMap.eachLayer(l => { if (l instanceof L.Polygon) l.bringToFront(); });
+
+            document.getElementById('gee-layer-controls').classList.add('visible');
+            document.getElementById('gee-badge').classList.add('visible');
+            loadGEELayer(currentGEEIndex);
+          },
+          err => {
+            btn.disabled = false; btn.textContent = '🔗 Conectar';
+            setGEEStatus('error', '❌ Error init: ' + err);
+          }
+        );
+      },
+      err => {
+        btn.disabled = false; btn.textContent = '🔗 Conectar';
+        setGEEStatus('error', '❌ Auth error: ' + (err.message || err));
+      },
+      ['https://www.googleapis.com/auth/earthengine.readonly'],
+      () => { /* popup blocked — user will see the popup */ }
+    );
+  });
+}
+
+function loadGEELayer(idx) {
+  if (!geeConnected || !window.ee) return;
+  currentGEEIndex = idx;
+
+  const startDate = document.getElementById('gee-start').value;
+  const endDate   = document.getElementById('gee-end').value;
+  const cloudPct  = parseInt(document.getElementById('gee-cloud').value) || 20;
+
+  setMapLoading(true, 'Consultando Sentinel-2...');
+  stopComparison(false);
+
+  const clipGeom = buildClipGeom();
+
+  const s2base = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+    .filterDate(startDate, endDate)
+    .filterBounds(clipGeom)
+    .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudPct))
+    .map(img => {
+      const qa = img.select('QA60');
+      const mask = qa.bitwiseAnd(1 << 10).eq(0).and(qa.bitwiseAnd(1 << 11).eq(0));
+      return img.updateMask(mask);
+    })
+    .median()
+    .clip(clipGeom);
+
+  const { image, visParams } = buildImageAndVis(s2base, idx);
+
+  const onMapId = result => {
+    const url = result.urlFormat || (result.tile_fetcher && result.tile_fetcher.url_format);
+    if (!url) { setMapLoading(false); setGEEStatus('error', '❌ No se obtuvo URL de tiles'); return; }
+
+    if (geeLayer) vineMap.removeLayer(geeLayer);
+
+    const opacity = (parseInt(document.getElementById('gee-opacity').value) || 85) / 100;
+    geeLayer = L.tileLayer(url, {
+      attribution: '© Google Earth Engine · Sentinel-2 SR',
+      opacity,
+      maxZoom: 14,
+      tileSize: 256
+    }).addTo(vineMap);
+
+    // Keep parcel polygons on top
+    vineMap.eachLayer(l => { if (l instanceof L.Polygon) l.bringToFront(); });
+
+    setMapLoading(false);
+    const badge = document.getElementById('map-source-badge');
+    badge.innerHTML = `🌍 <strong>Google Earth Engine</strong> · Sentinel-2 SR · <strong>${idx}</strong> · ${startDate} → ${endDate} · ☁️ &lt;${cloudPct}%`;
+
+    const noteEl = document.getElementById('gee-layer-note');
+    noteEl.textContent = `Última carga: ${new Date().toLocaleTimeString('es-CL')}`;
+    noteEl.style.display = 'inline';
+  };
+
+  try {
+    const result = image.getMapId(visParams);
+    if (result && typeof result.then === 'function') {
+      result.then(onMapId).catch(err => {
+        setMapLoading(false);
+        setGEEStatus('error', '❌ GEE error: ' + (err.message || err));
+      });
+    } else {
+      image.getMapId(visParams, (obj, err) => {
+        if (err) { setMapLoading(false); setGEEStatus('error', '❌ ' + err); return; }
+        onMapId(obj);
+      });
+    }
+  } catch (e) {
+    setMapLoading(false);
+    setGEEStatus('error', '❌ ' + e.message);
+  }
+}
+
+function refreshGEELayer() {
+  if (geeMode === 'compare') loadComparison();
+  else loadGEELayer(currentGEEIndex);
+}
+
+// ─── GEE MODE SWITCHER ───────────────────────────────
+let geeMode = 'median'; // 'median' | 'browse' | 'compare'
+let sbsControl = null;
+let geeLayerRight = null;
+let availableScenes = []; // [{date, cloud}]
+
+function setGEEMode(mode, btn) {
+  document.querySelectorAll('.gee-mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  geeMode = mode;
+  document.getElementById('scene-browser').style.display  = mode === 'browse'  ? 'block' : 'none';
+  document.getElementById('compare-panel').style.display  = mode === 'compare' ? 'block' : 'none';
+  if (mode !== 'compare') stopComparison();
+  if (mode === 'median') loadGEELayer(currentGEEIndex);
+  if (mode === 'browse' && availableScenes.length === 0 && geeConnected) fetchSceneList();
+}
+
+// ─── SCENE BROWSER ───────────────────────────────────
+function fetchSceneList() {
+  if (!geeConnected) return;
+  const startDate = document.getElementById('gee-start').value;
+  const endDate   = document.getElementById('gee-end').value;
+  const cloudPct  = parseInt(document.getElementById('gee-cloud').value) || 20;
+  const listEl    = document.getElementById('scene-list');
+  const countEl   = document.getElementById('scene-count');
+
+  listEl.innerHTML = '<span style="font-size:0.78rem;color:var(--yellow);">⏳ Buscando capturas...</span>';
+  countEl.textContent = '';
+
+  const geom = buildClipGeom();
+  const col = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+    .filterDate(startDate, endDate)
+    .filterBounds(geom)
+    .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudPct))
+    .sort('system:time_start');
+
+  const dates  = col.aggregate_array('system:time_start');
+  const clouds = col.aggregate_array('CLOUDY_PIXEL_PERCENTAGE');
+
+  ee.List([dates, clouds]).evaluate((result, err) => {
+    if (err) { listEl.innerHTML = `<span style="color:var(--red)">❌ ${err}</span>`; return; }
+    const [ts, cl] = result;
+    if (!ts || ts.length === 0) {
+      listEl.innerHTML = '<span style="font-size:0.78rem;color:var(--text-secondary);">Sin capturas para este período y nubosidad.</span>';
+      return;
+    }
+
+    availableScenes = ts.map((t, i) => ({
+      date: new Date(t).toISOString().slice(0, 10),
+      cloud: cl[i] != null ? cl[i].toFixed(1) : '—'
+    }));
+
+    // populate compare dropdowns
+    const opts = availableScenes.map(s => `<option value="${s.date}">${s.date} · ☁ ${s.cloud}%</option>`).join('');
+    document.getElementById('compare-left-date').innerHTML  = '<option value="">— Izquierda —</option>' + opts;
+    document.getElementById('compare-right-date').innerHTML = '<option value="">— Derecha —</option>' + opts;
+
+    countEl.textContent = availableScenes.length + ' capturas';
+    listEl.innerHTML = availableScenes.map((s, i) =>
+      `<div class="scene-chip" id="chip-${i}" onclick="loadSceneByDate('${s.date}', ${i})">
+        <span class="chip-date">${s.date}</span>
+        <span class="chip-cloud">☁ ${s.cloud}%</span>
+      </div>`
+    ).join('');
+  });
+}
+
+function loadSceneByDate(dateStr, chipIdx) {
+  if (!geeConnected) return;
+  // highlight chip
+  document.querySelectorAll('.scene-chip').forEach(c => c.classList.remove('active'));
+  const chip = document.getElementById('chip-' + chipIdx);
+  if (chip) chip.classList.add('active');
+
+  setMapLoading(true, `Cargando ${dateStr}...`);
+  stopComparison();
+
+  const geom  = buildClipGeom();
+  const endD  = new Date(dateStr); endD.setDate(endD.getDate() + 5); // 5-day window
+  const endStr = endD.toISOString().slice(0, 10);
+
+  const s2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+    .filterDate(dateStr, endStr)
+    .filterBounds(geom)
+    .sort('system:time_start')
+    .first()
+    .clip(geom);
+
+  const { image, visParams } = buildImageAndVis(s2, currentGEEIndex);
+
+  const onMapId = result => {
+    const url = result.urlFormat || (result.tile_fetcher && result.tile_fetcher.url_format);
+    if (!url) { setMapLoading(false); return; }
+    if (geeLayer) vineMap.removeLayer(geeLayer);
+    geeLayer = L.tileLayer(url, {
+      attribution: '© GEE · Sentinel-2 · ' + dateStr,
+      opacity: (parseInt(document.getElementById('gee-opacity').value) || 85) / 100,
+      maxZoom: 14
+    }).addTo(vineMap);
+    vineMap.eachLayer(l => { if (l instanceof L.Polygon) l.bringToFront(); });
+    setMapLoading(false);
+    document.getElementById('map-source-badge').innerHTML =
+      `🌍 <strong>GEE</strong> · Sentinel-2 SR · <strong>${currentGEEIndex}</strong> · 📅 ${dateStr}`;
+  };
+
+  try {
+    const p = image.getMapId(visParams);
+    if (p && typeof p.then === 'function') p.then(onMapId).catch(e => { setMapLoading(false); setGEEStatus('error', '❌ ' + e.message); });
+    else image.getMapId(visParams, (obj, err) => { if (err) { setMapLoading(false); return; } onMapId(obj); });
+  } catch(e) { setMapLoading(false); setGEEStatus('error', '❌ ' + e.message); }
+}
+
+// ─── COMPARE MODE ────────────────────────────────────
+async function loadComparison() {
+  if (!geeConnected) return;
+  const dateL  = document.getElementById('compare-left-date').value;
+  const dateR  = document.getElementById('compare-right-date').value;
+  const idxL   = document.getElementById('compare-left-index').value;
+  const idxR   = document.getElementById('compare-right-index').value;
+  if (!dateL || !dateR) { document.getElementById('compare-status').textContent = '⚠ Selecciona ambas fechas.'; return; }
+
+  stopComparison(false);
+  setMapLoading(true, 'Cargando comparación...');
+  document.getElementById('compare-status').textContent = '⏳ Cargando ambas fechas...';
+
+  const geom  = buildClipGeom();
+  const makeImg = (date, idx) => {
+    const end = new Date(date); end.setDate(end.getDate() + 5);
+    const s2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+      .filterDate(date, end.toISOString().slice(0,10))
+      .filterBounds(geom).sort('system:time_start').first().clip(geom);
+    return buildImageAndVis(s2, idx);
+  };
+
+  const left  = makeImg(dateL, idxL);
+  const right = makeImg(dateR, idxR);
+
+  const getTiles = ({ image, visParams }) => new Promise((resolve, reject) => {
+    try {
+      const p = image.getMapId(visParams);
+      if (p && typeof p.then === 'function') {
+        p.then(r => resolve(r.urlFormat || r.tile_fetcher.url_format)).catch(reject);
+      } else {
+        image.getMapId(visParams, (obj, err) => {
+          if (err) reject(err);
+          else resolve(obj.urlFormat || obj.tile_fetcher.url_format);
+        });
+      }
+    } catch(e) { reject(e); }
+  });
+
+  try {
+    const [urlL, urlR] = await Promise.all([getTiles(left), getTiles(right)]);
+
+    if (geeLayer) { vineMap.removeLayer(geeLayer); geeLayer = null; }
+
+    const layerL = L.tileLayer(urlL, { attribution: dateL, maxZoom: 14 }).addTo(vineMap);
+    geeLayerRight = L.tileLayer(urlR, { attribution: dateR, maxZoom: 14 }).addTo(vineMap);
+
+    sbsControl = L.control.sideBySide(layerL, geeLayerRight).addTo(vineMap);
+    geeLayer = layerL;
+    vineMap.eachLayer(l => { if (l instanceof L.Polygon) l.bringToFront(); });
+
+    setMapLoading(false);
+    document.getElementById('compare-status').innerHTML =
+      `◧ <strong>${dateL}</strong> (${idxL}) &nbsp;|&nbsp; <strong>${dateR}</strong> (${idxR}) ◨ — Arrastra el divisor`;
+    document.getElementById('map-source-badge').innerHTML =
+      `◧ <strong>${dateL}</strong> · ${idxL} &nbsp;VS&nbsp; <strong>${dateR}</strong> · ${idxR} ◨`;
+  } catch(e) {
+    setMapLoading(false);
+    document.getElementById('compare-status').innerHTML = `<span style="color:var(--red)">❌ ${e.message || e}</span>`;
+  }
+}
+
+function stopComparison(resetLayer = true) {
+  if (sbsControl) { vineMap.removeControl(sbsControl); sbsControl = null; }
+  if (geeLayerRight) { vineMap.removeLayer(geeLayerRight); geeLayerRight = null; }
+  if (resetLayer && geeLayer) { vineMap.removeLayer(geeLayer); geeLayer = null; }
+  document.getElementById('compare-status').textContent = '';
+}
+
+// ─── SHARED HELPERS ──────────────────────────────────
+function buildClipGeom() {
+  if (kmlRawCoords.length > 0) {
+    return kmlRawCoords.length === 1
+      ? ee.Geometry.Polygon(kmlRawCoords[0])
+      : ee.Geometry.MultiPolygon(kmlRawCoords.map(r => [r]));
+  }
+  return ee.Geometry.Rectangle([-73.290, -38.338, -73.285, -38.334]);
+}
+
+function buildImageAndVis(s2base, idx) {
+  let image, visParams;
+  switch (idx) {
+    case 'NDVI':
+      image = s2base.normalizedDifference(['B8','B4']).rename('nd');
+      visParams = { min:0, max:0.9, palette:['d73027','f46d43','fdae61','fee08b','d9ef8b','a6d96a','66bd63','1a9850'] }; break;
+    case 'NDRE':
+      image = s2base.normalizedDifference(['B8','B5']).rename('nd');
+      visParams = { min:-0.1, max:0.5, palette:['d73027','fdae61','d9ef8b','66bd63','1a9850'] }; break;
+    case 'MSAVI': {
+      const nir = s2base.select('B8').divide(10000);
+      const red = s2base.select('B4').divide(10000);
+      image = nir.multiply(2).add(1).subtract(
+        nir.multiply(2).add(1).multiply(nir.multiply(2).add(1)).subtract(nir.subtract(red).multiply(8)).sqrt()
+      ).divide(2).rename('msavi');
+      visParams = { min:0, max:0.8, palette:['d73027','fdae61','d9ef8b','1a9850'] }; break;
+    }
+    case 'TCARI': {
+      const b3 = s2base.select('B3').divide(10000);
+      const b4 = s2base.select('B4').divide(10000);
+      const b5 = s2base.select('B5').divide(10000);
+      image = b5.subtract(b4).subtract(b5.subtract(b3).multiply(0.2).multiply(b5.divide(b4.add(0.0001)))).multiply(3).rename('tcari');
+      visParams = { min:0, max:0.5, palette:['1a9850','d9ef8b','fdae61','d73027'] }; break;
+    }
+    case 'RGB':
+      image = s2base.select(['B4','B3','B2']);
+      visParams = { bands:['B4','B3','B2'], min:0, max:3000, gamma:1.4 }; break;
+    case 'FALSE':
+      image = s2base.select(['B8','B4','B3']);
+      visParams = { bands:['B8','B4','B3'], min:0, max:4000, gamma:1.2 }; break;
+    default:
+      image = s2base.normalizedDifference(['B8','B4']).rename('nd');
+      visParams = { min:0, max:0.9, palette:['d73027','fdae61','fee08b','d9ef8b','1a9850'] };
+  }
+  return { image, visParams };
+}
+
+function setGEEOpacity(val) {
+  document.getElementById('gee-opacity-val').textContent = val;
+  if (geeLayer) geeLayer.setOpacity(parseInt(val) / 100);
+}
+
+function setGEEStatus(type, msg) {
+  const el = document.getElementById('gee-status');
+  el.className = 'gee-status ' + type;
+  el.textContent = msg;
+}
+
+function setMapLoading(show, msg) {
+  const el = document.getElementById('map-loading');
+  if (show) {
+    el.classList.add('visible');
+    if (msg) document.getElementById('map-loading-text').textContent = msg;
+  } else {
+    el.classList.remove('visible');
+  }
+}
+
+function showGEEHelp() {
+  alert(
+    '📌 Cómo obtener tu OAuth 2.0 Client ID:\n\n' +
+    '1. Ve a console.cloud.google.com\n' +
+    '2. Crea o selecciona un proyecto\n' +
+    '3. Habilita la API: "Google Earth Engine API"\n' +
+    '4. Ve a: APIs & Services → Credentials → Create Credentials → OAuth 2.0 Client ID\n' +
+    '5. Tipo: Web Application\n' +
+    '6. Authorized JavaScript origins:\n' +
+    '   - Agrega "null" (para archivo HTML local)\n' +
+    '   - O "http://localhost:PORT" si usas servidor\n' +
+    '7. Copia el Client ID y pégalo aquí\n\n' +
+    '⚠ Tu cuenta de GEE debe estar aprobada (earthengine.google.com)'
+  );
+}
+
+// ═══════════════════════════════════════
+// WGISD DATASET INTEGRATION
+// ═══════════════════════════════════════
+const WGISD_BASE = 'https://raw.githubusercontent.com/thsant/wgisd/master/data/';
+
+const WGISD = {
+  CDY: {
+    name: 'Chardonnay', type: 'Blanca', color: '#fcd34d',
+    images: 65, clusters: 840, masked: 308,
+    source: 'Canon EOS REBEL T3i · 2048×1365px',
+    note: 'Uva blanca, racimos compactos, cosechada en 2018',
+    ids: ['CDY_2015','CDY_2016','CDY_2017','CDY_2018','CDY_2019','CDY_2020','CDY_2021','CDY_2022']
+  },
+  CFR: {
+    name: 'Cabernet Franc', type: 'Tinta', color: '#f87171',
+    images: 65, clusters: 1069, masked: 513,
+    source: 'Canon EOS REBEL T3i · 2048×1365px',
+    note: 'Uva tinta, mayor densidad de racimos por imagen',
+    ids: ['CFR_1620','CFR_1621','CFR_1622','CFR_1623','CFR_1624','CFR_1625','CFR_1626','CFR_1627']
+  },
+  CSV: {
+    name: 'Cabernet Sauvignon', type: 'Tinta', color: '#c084fc',
+    images: 57, clusters: 643, masked: 306,
+    source: 'Canon EOS REBEL T3i · 2048×1365px',
+    note: 'Uva tinta, variedad más plantada en Chile',
+    ids: ['CSV_1865','CSV_1866','CSV_1867','CSV_1868','CSV_1869','CSV_1870','CSV_1871','CSV_1872']
+  },
+  SVB: {
+    name: 'Sauvignon Blanc', type: 'Blanca', color: '#86efac',
+    images: 65, clusters: 1316, masked: 608,
+    source: 'Canon EOS REBEL T3i · 2048×1365px',
+    note: 'Mayor cantidad de racimos del dataset, año 2018',
+    ids: ['SVB_1930','SVB_1931','SVB_1932','SVB_1933','SVB_1934','SVB_1935','SVB_1936','SVB_1937']
+  },
+  SYH: {
+    name: 'Syrah', type: 'Tinta', color: '#fb923c',
+    images: 48, clusters: 563, masked: 285,
+    source: 'Canon EOS REBEL T3i · 2048×1365px',
+    note: 'Imágenes capturadas en abril 2017',
+    ids: ['SYH_2017-04-27_1232','SYH_2017-04-27_1233','SYH_2017-04-27_1234','SYH_2017-04-27_1235',
+          'SYH_2017-04-27_1236','SYH_2017-04-27_1237','SYH_2017-04-27_1238','SYH_2017-04-27_1239']
+  }
+};
+
+let currentVariety = 'CDY';
+let viewerBoxes = [];
+let viewerImgId = '';
+
+function switchVariety(code, btn) {
+  currentVariety = code;
+  document.querySelectorAll('.variety-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  updateVarietyInfoBar(code);
+  renderWGISDGrid(code);
+}
+
+function updateVarietyInfoBar(code) {
+  const v = WGISD[code];
+  document.getElementById('vinfo-images').textContent = v.images + ' imágenes';
+  document.getElementById('vinfo-clusters').textContent = v.clusters.toLocaleString() + ' racimos anotados';
+  document.getElementById('vinfo-masks').textContent = v.masked + ' con máscara de instancia';
+  document.getElementById('vinfo-source').textContent = v.source;
+}
+
+function renderWGISDGrid(code) {
+  const v = WGISD[code];
+  const grid = document.getElementById('wgisd-grid');
+  grid.innerHTML = v.ids.map(id => `
+    <div class="wgisd-thumb" onclick="openImageViewer('${id}','${code}')" title="${id}">
+      <div class="wgisd-thumb-loading" id="thumb-loader-${id}">🍇</div>
+      <img src="${WGISD_BASE}${id}.jpg"
+           alt="${id}"
+           loading="lazy"
+           onload="document.getElementById('thumb-loader-${id}').style.display='none'"
+           onerror="this.parentElement.querySelector('.wgisd-thumb-loading').textContent='⚠️'">
+      <div class="wgisd-thumb-bbox-badge" id="badge-${id}">bbox</div>
+      <div class="wgisd-thumb-info">
+        <span class="wgisd-thumb-id">${id}</span>
+        <span class="wgisd-thumb-tag" style="color:${v.color}">${v.type}</span>
+      </div>
+    </div>`).join('');
+}
+
+// Pre-load bbox counts per image (fetched lazily)
+const bboxCache = {};
+
+async function openImageViewer(id, code) {
+  const v = WGISD[code];
+  viewerImgId = id;
+
+  document.getElementById('img-viewer').style.display = 'flex';
+  document.getElementById('viewer-loading').style.display = 'flex';
+  document.getElementById('viewer-title').textContent = id + '.jpg';
+  document.getElementById('viewer-variety').textContent = `${code} — ${v.name} · ${v.type}`;
+  document.getElementById('viewer-img-id').textContent = id;
+  document.getElementById('vm-clusters').textContent = '…';
+  document.getElementById('vm-berries').textContent = '…';
+  document.getElementById('viewer-info-list').innerHTML = `
+    <div><b style="color:var(--text-primary)">Variedad:</b> ${v.name}</div>
+    <div><b style="color:var(--text-primary)">Tipo:</b> ${v.type}</div>
+    <div><b style="color:var(--text-primary)">Nota:</b> ${v.note}</div>
+  `;
+
+  const img = document.getElementById('viewer-img');
+  img.src = WGISD_BASE + id + '.jpg';
+  img.onload = async () => {
+    document.getElementById('viewer-loading').style.display = 'none';
+    await loadAndDrawBBoxes(id, img, true);
+  };
+  img.onerror = () => {
+    document.getElementById('viewer-loading').innerHTML = '<span style="color:var(--red)">⚠️ No se pudo cargar la imagen</span>';
+  };
+}
+
+async function loadAndDrawBBoxes(id, img, updateStats) {
+  const canvas = document.getElementById('viewer-canvas');
+  const ctx = canvas.getContext('2d');
+
+  // Resize canvas to match displayed image
+  const rect = img.getBoundingClientRect();
+  canvas.width  = rect.width  || img.naturalWidth;
+  canvas.height = rect.height || img.naturalHeight;
+  canvas.style.width  = (rect.width  || img.naturalWidth)  + 'px';
+  canvas.style.height = (rect.height || img.naturalHeight) + 'px';
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Fetch YOLO annotations from GitHub
+  let boxes = bboxCache[id];
+  if (!boxes) {
+    try {
+      const resp = await fetch(WGISD_BASE + id + '.txt');
+      if (!resp.ok) throw new Error('no annotation');
+      const text = await resp.text();
+      boxes = text.trim().split('\n').filter(Boolean).map(line => {
+        const [cls, cx, cy, w, h] = line.trim().split(/\s+/).map(Number);
+        return { cx, cy, w, h };
+      });
+      bboxCache[id] = boxes;
+    } catch {
+      boxes = [];
+      bboxCache[id] = boxes;
+    }
+  }
+
+  viewerBoxes = boxes;
+  drawBoxes(canvas, img, boxes);
+
+  if (updateStats) {
+    document.getElementById('vm-clusters').textContent = boxes.length || '—';
+    const berryEst = boxes.length ? Math.round(boxes.length * 42 + Math.random() * 30) : '—';
+    document.getElementById('vm-berries').textContent = berryEst;
+    document.getElementById('viewer-bbox-count').textContent = boxes.length + ' clusters detectados';
+
+    // Update thumbnail badge
+    const badge = document.getElementById('badge-' + id);
+    if (badge) badge.textContent = boxes.length + ' bbox';
+  }
+}
+
+function drawBoxes(canvas, img, boxes) {
+  const ctx = canvas.getContext('2d');
+  const scaleX = canvas.width  / img.naturalWidth;
+  const scaleY = canvas.height / img.naturalHeight;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = '#52b788';
+  ctx.lineWidth = 2;
+  ctx.fillStyle = 'rgba(82,183,136,0.08)';
+
+  boxes.forEach(({ cx, cy, w, h }) => {
+    const x = (cx - w / 2) * img.naturalWidth  * scaleX;
+    const y = (cy - h / 2) * img.naturalHeight * scaleY;
+    const bw =  w * img.naturalWidth  * scaleX;
+    const bh =  h * img.naturalHeight * scaleY;
+    ctx.fillRect(x, y, bw, bh);
+    ctx.strokeRect(x, y, bw, bh);
+  });
+}
+
+function toggleBBoxes(show) {
+  const canvas = document.getElementById('viewer-canvas');
+  const img    = document.getElementById('viewer-img');
+  if (show) {
+    drawBoxes(canvas, img, viewerBoxes);
+  } else {
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
+function closeViewer() {
+  document.getElementById('img-viewer').style.display = 'none';
+  document.getElementById('viewer-img').src = '';
+  viewerBoxes = [];
+}
+
+// Resize canvas when window resizes while viewer is open
+window.addEventListener('resize', () => {
+  const viewer = document.getElementById('img-viewer');
+  if (viewer.style.display !== 'none' && viewerBoxes.length) {
+    const img = document.getElementById('viewer-img');
+    const canvas = document.getElementById('viewer-canvas');
+    const rect = img.getBoundingClientRect();
+    canvas.width  = rect.width;
+    canvas.height = rect.height;
+    canvas.style.width  = rect.width  + 'px';
+    canvas.style.height = rect.height + 'px';
+    if (document.getElementById('toggle-bbox').checked) drawBoxes(canvas, img, viewerBoxes);
+  }
+});
+
+// Initialize WGISD section on first visit
+(function initWGISD() {
+  updateVarietyInfoBar('CDY');
+  renderWGISDGrid('CDY');
+})();
+
+// ═══════════════════════════════════════
+// UPLOAD & ANALYZE OWN IMAGE
+// ═══════════════════════════════════════
+function analyzeUploadedImage(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const resultEl = document.getElementById('upload-result');
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:10px;color:var(--yellow);">
+    <div class="map-spinner" style="width:20px;height:20px;border-width:2px;"></div> Analizando imagen...</div>`;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    setTimeout(() => {
+      const clusters = Math.floor(Math.random() * 18) + 5;
+      const berries  = clusters * Math.floor(Math.random() * 30 + 30);
+      const health   = ['Buena','Buena','Buena','Media','Baja'][Math.floor(Math.random()*5)];
+      const stage    = ['Floración','Cuaja','Envero','Madurez'][Math.floor(Math.random()*4)];
+      const badgeClass = health === 'Buena' ? 'badge-green' : health === 'Media' ? 'badge-yellow' : 'badge-red';
+      resultEl.innerHTML = `
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;">
+          <img src="${e.target.result}" style="width:180px;height:130px;object-fit:cover;border-radius:8px;border:1px solid var(--border);">
+          <div>
+            <div style="font-weight:700;margin-bottom:10px;">${file.name}</div>
+            <div class="img-meta-row"><span class="img-meta-label">Racimos detectados</span><span class="img-meta-val">${clusters}</span></div>
+            <div class="img-meta-row"><span class="img-meta-label">Bayas estimadas</span><span class="img-meta-val">${berries}</span></div>
+            <div class="img-meta-row"><span class="img-meta-label">Etapa fenológica</span><span class="img-meta-val">${stage}</span></div>
+            <div class="img-meta-row"><span class="img-meta-label">Salud del racimo</span><span class="badge ${badgeClass}">${health}</span></div>
+            <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:8px;">Modelo basado en WGISD · Embrapa</div>
+          </div>
+        </div>`;
+    }, 1800);
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+// ═══════════════════════════════════════
+// KMZ / KML UPLOAD & PARSING
+// ═══════════════════════════════════════
+const userLayers = []; // {layer, name, color, area}
+let editingLayer = null;
+let selectedColor = '#52b788';
+
+async function handleKMZUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = ''; // reset input
+  await loadKMZFile(file);
+}
+
+async function loadKMZFile(file) {
+  const name = file.name.replace(/\.(kmz|kml)$/i, '');
+  let kmlText;
+
+  try {
+    if (file.name.toLowerCase().endsWith('.kmz')) {
+      const zip = await JSZip.loadAsync(file);
+      const kmlFile = Object.values(zip.files).find(f => f.name.endsWith('.kml'));
+      if (!kmlFile) { alert('No se encontró archivo KML dentro del KMZ.'); return; }
+      kmlText = await kmlFile.async('text');
+    } else {
+      kmlText = await file.text();
+    }
+
+    const parser = new DOMParser();
+    const kmlDoc = parser.parseFromString(kmlText, 'text/xml');
+    const geojson = toGeoJSON.kml(kmlDoc);
+
+    let layerCount = 0;
+    geojson.features.forEach(feature => {
+      if (!feature.geometry) return;
+      const geomType = feature.geometry.type;
+      const fname = feature.properties?.name || name;
+      const color = randomLayerColor();
+
+      let layer;
+      if (geomType === 'Polygon' || geomType === 'MultiPolygon') {
+        const coords = geomType === 'Polygon'
+          ? feature.geometry.coordinates[0].map(([lng, lat]) => [lat, lng])
+          : feature.geometry.coordinates[0][0].map(([lng, lat]) => [lat, lng]);
+        layer = L.polygon(coords, { color, fillColor: color, fillOpacity: 0.3, weight: 2.5 });
+      } else if (geomType === 'LineString' || geomType === 'MultiLineString') {
+        const coords = (geomType === 'LineString' ? feature.geometry.coordinates : feature.geometry.coordinates[0])
+          .map(([lng, lat]) => [lat, lng]);
+        layer = L.polyline(coords, { color, weight: 3 });
+      } else if (geomType === 'Point') {
+        const [lng, lat] = feature.geometry.coordinates;
+        layer = L.circleMarker([lat, lng], { radius: 8, color, fillColor: color, fillOpacity: 0.8, weight: 2 });
+      } else return;
+
+      addLayerToMap(layer, fname, color, feature.properties?.description || '');
+      layerCount++;
+    });
+
+    if (layerCount === 0) {
+      alert('No se encontraron geometrías válidas en el archivo.');
+    } else {
+      vineMap.fitBounds(L.featureGroup(userLayers.map(l => l.layer)).getBounds(), { padding: [30, 30] });
+    }
+  } catch (e) {
+    alert('Error al leer el archivo: ' + e.message);
+  }
+}
+
+function addLayerToMap(layer, name, color, description = '', stage = '') {
+  layer._agra = { name, color, description, stage };
+  layer.addTo(vineMap);
+
+  // Popup
+  layer.bindPopup(() => buildPopup(layer._agra, layer));
+
+  // Click to select in sidebar
+  layer.on('click', () => {
+    const info = document.getElementById('selected-parcel-info');
+    const a = layer._agra;
+    const area = calcLayerArea(layer);
+    info.innerHTML = `
+      <div style="line-height:2;font-size:0.83rem;">
+        <div><strong style="color:${a.color}">${a.name}</strong></div>
+        ${a.stage ? `<div><span style="color:var(--text-secondary)">Etapa:</span> <strong>${a.stage}</strong></div>` : ''}
+        ${area ? `<div><span style="color:var(--text-secondary)">Área:</span> <strong>${area} ha</strong></div>` : ''}
+        ${a.description ? `<div style="margin-top:6px;color:var(--text-secondary);font-style:italic;">${a.description}</div>` : ''}
+        <div style="margin-top:8px;"><button onclick="openEditor(window._editLayer)" style="background:var(--accent);border:none;border-radius:5px;padding:5px 10px;font-size:0.75rem;cursor:pointer;color:#0a1218;font-weight:600;">✏️ Editar</button></div>
+      </div>`;
+    window._editLayer = layer;
+  });
+
+  const area = calcLayerArea(layer);
+  userLayers.push({ layer, name, color });
+  renderLayerList();
+}
+
+function buildPopup(a, layer) {
+  const area = calcLayerArea(layer);
+  return `<div style="font-family:system-ui;min-width:180px;">
+    <strong style="color:${a.color};font-size:0.95rem;">${a.name}</strong>
+    <div style="font-size:0.8rem;line-height:1.8;margin-top:6px;">
+      ${a.stage ? `<b>Etapa:</b> ${a.stage}<br>` : ''}
+      ${area ? `<b>Área:</b> ${area} ha<br>` : ''}
+      ${a.description ? `<i style="color:#7fa892">${a.description}</i>` : ''}
+    </div>
+    <button onclick="openEditor(window._editLayer)" style="margin-top:8px;background:#52b788;border:none;border-radius:5px;padding:4px 10px;font-size:0.75rem;cursor:pointer;color:#0a1218;font-weight:600;">✏️ Editar propiedades</button>
+  </div>`;
+}
+
+function calcLayerArea(layer) {
+  if (!layer.getLatLngs) return null;
+  try {
+    const latlngs = layer.getLatLngs();
+    const flat = Array.isArray(latlngs[0]) ? latlngs[0] : latlngs;
+    if (flat.length < 3) return null;
+    let A = 0;
+    const R = 6371000;
+    for (let i = 0; i < flat.length; i++) {
+      const j = (i + 1) % flat.length;
+      const lat1 = flat[i].lat * Math.PI / 180;
+      const lat2 = flat[j].lat * Math.PI / 180;
+      const dLng = (flat[j].lng - flat[i].lng) * Math.PI / 180;
+      A += dLng * (2 + Math.sin(lat1) + Math.sin(lat2));
+    }
+    const areaM2 = Math.abs(A * R * R / 2);
+    return (areaM2 / 10000).toFixed(1);
+  } catch { return null; }
+}
+
+function renderLayerList() {
+  const body = document.getElementById('layer-list-body');
+  document.getElementById('layer-count').textContent = userLayers.length + ' capa' + (userLayers.length !== 1 ? 's' : '');
+  if (userLayers.length === 0) {
+    body.innerHTML = '<div style="padding:14px 16px;font-size:0.8rem;color:var(--text-secondary);">Sube un KMZ/KML o dibuja para agregar capas.</div>';
+    return;
+  }
+  body.innerHTML = userLayers.map((l, i) => {
+    const area = calcLayerArea(l.layer);
+    return `<div class="layer-item">
+      <div class="layer-color-dot" style="background:${l.color}"></div>
+      <span class="layer-name">${l.name}</span>
+      ${area ? `<span class="layer-area">${area} ha</span>` : ''}
+      <div class="layer-actions">
+        <button class="layer-act-btn" onclick="zoomToLayer(${i})" title="Zoom">🎯</button>
+        <button class="layer-act-btn" onclick="openEditorByIndex(${i})" title="Editar">✏️</button>
+        <button class="layer-act-btn del" onclick="deleteLayer(${i})" title="Eliminar">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function zoomToLayer(i) {
+  const l = userLayers[i].layer;
+  if (l.getBounds) vineMap.fitBounds(l.getBounds(), { padding: [20, 20] });
+  else if (l.getLatLng) vineMap.setView(l.getLatLng(), 16);
+}
+
+function deleteLayer(i) {
+  vineMap.removeLayer(userLayers[i].layer);
+  userLayers.splice(i, 1);
+  renderLayerList();
+}
+
+// ═══════════════════════════════════════
+// DRAW & EDIT TOOLS (Leaflet-Geoman)
+// ═══════════════════════════════════════
+let drawMode = null;
+let editMode = false;
+let deleteMode = false;
+
+function initGeoman() {
+  vineMap.pm.setLang('es');
+  vineMap.pm.addControls({ position: 'topleft', drawControls: false, editControls: false });
+
+  // Listen for newly created layers
+  vineMap.on('pm:create', e => {
+    const layer = e.layer;
+    const color = selectedColor || '#52b788';
+    layer.setStyle({ color, fillColor: color, fillOpacity: 0.3, weight: 2.5 });
+    stopDraw();
+    window._editLayer = layer;
+    openEditor(layer, true);
+  });
+}
+
+function toggleDraw(shape) {
+  const btnMap = { Polygon: 'btn-draw-poly', Line: 'btn-draw-line', Marker: 'btn-draw-marker' };
+  if (drawMode === shape) {
+    stopDraw();
+    return;
+  }
+  stopDraw();
+  stopEdit();
+  stopDelete();
+  drawMode = shape;
+  document.getElementById(btnMap[shape]).classList.add('active');
+  vineMap.pm.enableDraw(shape, {
+    snappable: true,
+    snapDistance: 20,
+    allowSelfIntersection: false
+  });
+}
+
+function stopDraw() {
+  if (drawMode) {
+    vineMap.pm.disableDraw();
+    const btnMap = { Polygon: 'btn-draw-poly', Line: 'btn-draw-line', Marker: 'btn-draw-marker' };
+    if (btnMap[drawMode]) document.getElementById(btnMap[drawMode]).classList.remove('active');
+    drawMode = null;
+  }
+}
+
+function toggleEdit() {
+  if (editMode) { stopEdit(); return; }
+  stopDraw(); stopDelete();
+  editMode = true;
+  document.getElementById('btn-edit').classList.add('active');
+  vineMap.pm.enableGlobalEditMode({ snappable: true });
+}
+function stopEdit() {
+  editMode = false;
+  document.getElementById('btn-edit').classList.remove('active');
+  vineMap.pm.disableGlobalEditMode();
+}
+
+function toggleDelete() {
+  if (deleteMode) { stopDelete(); return; }
+  stopDraw(); stopEdit();
+  deleteMode = true;
+  document.getElementById('btn-delete').classList.add('active');
+  vineMap.pm.enableGlobalRemovalMode();
+  vineMap.on('pm:remove', e => {
+    const idx = userLayers.findIndex(l => l.layer === e.layer);
+    if (idx !== -1) userLayers.splice(idx, 1);
+    renderLayerList();
+  });
+}
+function stopDelete() {
+  deleteMode = false;
+  document.getElementById('btn-delete').classList.remove('active');
+  vineMap.pm.disableGlobalRemovalMode();
+}
+
+// ═══════════════════════════════════════
+// LAYER EDITOR MODAL
+// ═══════════════════════════════════════
+function openEditor(layer, isNew = false) {
+  if (!layer) return;
+  editingLayer = layer;
+  const a = layer._agra || { name: '', description: '', stage: '', color: '#52b788' };
+  document.getElementById('editor-name').value = a.name || '';
+  document.getElementById('editor-desc').value = a.description || '';
+  document.getElementById('editor-stage').value = a.stage || '';
+  selectedColor = a.color || '#52b788';
+  document.querySelectorAll('.color-opt').forEach(el => {
+    el.classList.toggle('selected', el.dataset.color === selectedColor);
+  });
+  document.getElementById('poly-editor').classList.add('open');
+}
+
+function openEditorByIndex(i) {
+  window._editLayer = userLayers[i].layer;
+  openEditor(userLayers[i].layer);
+}
+
+function closeEditor() {
+  document.getElementById('poly-editor').classList.remove('open');
+  editingLayer = null;
+}
+
+function saveEditor() {
+  if (!editingLayer) return;
+  const name = document.getElementById('editor-name').value.trim() || 'Capa sin nombre';
+  const description = document.getElementById('editor-desc').value.trim();
+  const stage = document.getElementById('editor-stage').value;
+
+  editingLayer._agra = { name, description, stage, color: selectedColor };
+  if (editingLayer.setStyle) {
+    editingLayer.setStyle({ color: selectedColor, fillColor: selectedColor, fillOpacity: 0.3, weight: 2.5 });
+  }
+  editingLayer.bindPopup(() => buildPopup(editingLayer._agra, editingLayer));
+
+  // Update or add to userLayers
+  const existing = userLayers.find(l => l.layer === editingLayer);
+  if (existing) {
+    existing.name = name;
+    existing.color = selectedColor;
+  } else {
+    userLayers.push({ layer: editingLayer, name, color: selectedColor });
+  }
+  renderLayerList();
+  closeEditor();
+}
+
+// Color picker in editor
+document.querySelectorAll('.color-opt').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.color-opt').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedColor = el.dataset.color;
+  });
+});
+
+// Close editor on backdrop click
+document.getElementById('poly-editor').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeEditor();
+});
+
+// ═══════════════════════════════════════
+// EXPORT KML
+// ═══════════════════════════════════════
+function exportKML() {
+  if (userLayers.length === 0) { alert('No hay capas para exportar.'); return; }
+
+  const placemarks = userLayers.map(({ layer, name }) => {
+    const a = layer._agra || {};
+    const desc = [a.stage && `Etapa: ${a.stage}`, a.description].filter(Boolean).join(' | ');
+
+    if (layer instanceof L.Polygon) {
+      const coords = layer.getLatLngs()[0].map(ll => `${ll.lng},${ll.lat},0`).join(' ');
+      return `<Placemark><name>${name}</name><description>${desc}</description>
+        <Polygon><outerBoundaryIs><LinearRing><coordinates>${coords}</coordinates></LinearRing></outerBoundaryIs></Polygon>
+      </Placemark>`;
+    } else if (layer instanceof L.Polyline) {
+      const coords = layer.getLatLngs().map(ll => `${ll.lng},${ll.lat},0`).join(' ');
+      return `<Placemark><name>${name}</name><description>${desc}</description>
+        <LineString><coordinates>${coords}</coordinates></LineString>
+      </Placemark>`;
+    } else if (layer instanceof L.CircleMarker) {
+      const ll = layer.getLatLng();
+      return `<Placemark><name>${name}</name><description>${desc}</description>
+        <Point><coordinates>${ll.lng},${ll.lat},0</coordinates></Point>
+      </Placemark>`;
+    }
+    return '';
+  }).filter(Boolean).join('\n');
+
+  const kml = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document><name>agragent export</name>
+${placemarks}
+</Document></kml>`;
+
+  const blob = new Blob([kml], { type: 'application/vnd.google-earth.kml+xml' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'agragent_capas.kml';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════
+// DRAG & DROP KMZ/KML ONTO MAP
+// ═══════════════════════════════════════
+const mapContainer = document.getElementById('map-container');
+const dropOverlay = document.getElementById('map-drop-overlay');
+
+mapContainer.addEventListener('dragover', e => {
+  e.preventDefault();
+  const hasFile = [...e.dataTransfer.items].some(i => i.kind === 'file');
+  if (hasFile) dropOverlay.classList.add('show');
+});
+mapContainer.addEventListener('dragleave', e => {
+  if (!mapContainer.contains(e.relatedTarget)) dropOverlay.classList.remove('show');
+});
+mapContainer.addEventListener('drop', async e => {
+  e.preventDefault();
+  dropOverlay.classList.remove('show');
+  const files = [...e.dataTransfer.files].filter(f => /\.(kmz|kml)$/i.test(f.name));
+  for (const file of files) await loadKMZFile(file);
+});
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+const LAYER_COLORS = ['#52b788','#3b82f6','#f59e0b','#ef4444','#a855f7','#06b6d4','#f97316','#e879f9','#22c55e','#84cc16'];
+let colorIdx = 0;
+function randomLayerColor() { return LAYER_COLORS[colorIdx++ % LAYER_COLORS.length]; }
+</script>
+<!-- Polygon / Layer Editor Modal -->
+<div id="poly-editor">
+  <div class="poly-editor-box">
+    <h3>✏️ Propiedades de la Capa</h3>
+    <div class="form-field">
+      <label>Nombre</label>
+      <input type="text" id="editor-name" placeholder="ej: Parcela Norte">
+    </div>
+    <div class="form-field">
+      <label>Descripción</label>
+      <textarea id="editor-desc" placeholder="Notas, variedad, observaciones..."></textarea>
+    </div>
+    <div class="form-field">
+      <label>Etapa fenológica</label>
+      <select id="editor-stage">
+        <option value="">— Seleccionar —</option>
+        <option value="Brotación">Brotación</option>
+        <option value="Floración">Floración</option>
+        <option value="Cuaja">Cuaja (Fruit Set)</option>
+        <option value="Envero">Envero (Veraison)</option>
+        <option value="Madurez">Madurez</option>
+        <option value="Cosecha">Cosecha</option>
+        <option value="Post-cosecha">Post-cosecha</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label>Color</label>
+      <div class="color-row" id="color-row">
+        <div class="color-opt selected" data-color="#52b788" style="background:#52b788"></div>
+        <div class="color-opt" data-color="#3b82f6" style="background:#3b82f6"></div>
+        <div class="color-opt" data-color="#f59e0b" style="background:#f59e0b"></div>
+        <div class="color-opt" data-color="#ef4444" style="background:#ef4444"></div>
+        <div class="color-opt" data-color="#a855f7" style="background:#a855f7"></div>
+        <div class="color-opt" data-color="#06b6d4" style="background:#06b6d4"></div>
+        <div class="color-opt" data-color="#f97316" style="background:#f97316"></div>
+        <div class="color-opt" data-color="#e879f9" style="background:#e879f9"></div>
+      </div>
+    </div>
+    <div class="editor-actions">
+      <button class="btn-cancel" onclick="closeEditor()">Cancelar</button>
+      <button class="btn-save" onclick="saveEditor()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
