@@ -2939,30 +2939,51 @@ function loadGEELayer(idx) {
   const { image, visParams } = buildImageAndVis(s2base, idx);
 
   const onMapId = result => {
-    // urlFormat or formatTileUrl function
-    let url = result.urlFormat;
-    if (!url && result.formatTileUrl) {
-      // Build URL template from formatTileUrl
-      url = result.formatTileUrl('{x}', '{y}', '{z}');
-    }
-    if (!url) {
-      // Try constructing from mapid + token
-      if (result.mapid) {
-        url = 'https://earthengine.googleapis.com/v1alpha/' + result.mapid + '/tiles/{z}/{x}/{y}';
-      }
-    }
-    console.log('GEE tile URL (full):', url);
-    if (!url) { setMapLoading(false); setGEEStatus('error', '❌ No se obtuvo URL de tiles'); return; }
+    console.log('GEE result:', JSON.stringify({mapid: result.mapid, token: result.token ? result.token.substring(0,20)+'...' : 'none', urlFormat: result.urlFormat}));
 
     if (geeLayer) vineMap.removeLayer(geeLayer);
 
     const opacity = (parseInt(document.getElementById('gee-opacity').value) || 85) / 100;
-    geeLayer = L.tileLayer(url, {
-      attribution: '© Google Earth Engine · Sentinel-2 SR',
-      opacity,
-      maxZoom: 20,
-      tileSize: 256
-    }).addTo(vineMap);
+
+    // Use ee.data.getTileUrl or formatTileUrl for authenticated tile access
+    if (result.formatTileUrl) {
+      // Custom tile layer using formatTileUrl function
+      geeLayer = L.gridLayer({
+        attribution: '© Google Earth Engine · Sentinel-2 SR',
+        opacity,
+        maxZoom: 20,
+        tileSize: 256
+      });
+      geeLayer.createTile = function(coords) {
+        const tile = document.createElement('img');
+        tile.width = 256;
+        tile.height = 256;
+        tile.style.width = '256px';
+        tile.style.height = '256px';
+        tile.crossOrigin = 'anonymous';
+        tile.src = result.formatTileUrl(coords.x, coords.y, coords.z);
+        return tile;
+      };
+      geeLayer.addTo(vineMap);
+    } else {
+      // Fallback to urlFormat with token
+      let url = result.urlFormat;
+      if (!url && result.mapid) {
+        url = 'https://earthengine.googleapis.com/v1/projects/agragent-491300/maps/' + result.mapid + '/tiles/{z}/{x}/{y}';
+      }
+      if (result.token && url && !url.includes('token=')) {
+        url += (url.includes('?') ? '&' : '?') + 'token=' + result.token;
+      }
+      console.log('GEE tile URL:', url);
+      if (!url) { setMapLoading(false); setGEEStatus('error', '❌ No se obtuvo URL de tiles'); return; }
+
+      geeLayer = L.tileLayer(url, {
+        attribution: '© Google Earth Engine · Sentinel-2 SR',
+        opacity,
+        maxZoom: 20,
+        tileSize: 256
+      }).addTo(vineMap);
+    }
 
     // Make polygon fills transparent so GEE tiles are visible, keep borders
     vineMap.eachLayer(l => {
