@@ -2789,8 +2789,8 @@ function initMap() {
         if (!feature.geometry || feature.geometry.type !== 'Polygon') return;
         const name   = feature.properties?.name || ('Sector ' + (i + 1));
         const color  = colors[i % colors.length];
-        const rawRing = feature.geometry.coordinates[0]; // [[lng,lat],...]
-        kmlRawCoords.push(rawRing);                      // store for GEE clip
+        const rawRing = feature.geometry.coordinates[0]; // [[lng,lat,alt?],...]
+        kmlRawCoords.push(rawRing.map(c => [c[0], c[1]])); // strip altitude for GEE
         const coords = rawRing.map(([lng, lat]) => [lat, lng]);
 
         const poly = L.polygon(coords, {
