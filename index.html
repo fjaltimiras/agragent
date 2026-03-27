@@ -281,12 +281,43 @@
 
   /* ───── MAP SECTION ───── */
   #map-container {
-    height: 520px;
+    height: 70vh;
+    min-height: 500px;
     border-radius: var(--radius);
     overflow: hidden;
     position: relative;
     border: 1px solid var(--border);
     margin-bottom: 16px;
+    transition: all 0.3s ease;
+  }
+  #map-container.fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    height: 100vh !important;
+    border-radius: 0;
+    border: none;
+    margin: 0;
+  }
+  .map-fullscreen-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1500;
+    background: rgba(10,18,24,0.85);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    backdrop-filter: blur(6px);
+  }
+  .map-fullscreen-btn:hover {
+    background: var(--accent);
+    color: #0a1218;
+    border-color: var(--accent);
   }
   #vinewatch-map { height: 100%; width: 100%; }
 
@@ -1594,6 +1625,7 @@ function updateUserUI(user, role) {
       </div>
 
       <div id="map-container">
+        <button class="map-fullscreen-btn" id="map-fs-btn" onclick="toggleMapFullscreen()">⛶ Fullscreen</button>
         <div id="vinewatch-map"></div>
         <div id="map-loading">
           <div class="map-spinner"></div>
@@ -2582,6 +2614,27 @@ navItems.forEach(item => {
 
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
+}
+
+function toggleMapFullscreen() {
+  const container = document.getElementById('map-container');
+  const btn = document.getElementById('map-fs-btn');
+  const isFs = container.classList.toggle('fullscreen');
+  btn.textContent = isFs ? '✕ Exit' : '⛶ Fullscreen';
+  // Hide/show sidebar and topbar in fullscreen
+  document.getElementById('sidebar').style.display = isFs ? 'none' : '';
+  document.getElementById('topbar').style.display = isFs ? 'none' : '';
+  // Resize map
+  if (vineMap) setTimeout(() => vineMap.invalidateSize(), 300);
+  // ESC to exit
+  if (isFs) {
+    document.addEventListener('keydown', _escMapFs);
+  } else {
+    document.removeEventListener('keydown', _escMapFs);
+  }
+}
+function _escMapFs(e) {
+  if (e.key === 'Escape') toggleMapFullscreen();
 }
 
 // Initialize language on load
