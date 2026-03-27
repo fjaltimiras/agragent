@@ -2775,66 +2775,24 @@ function initMap() {
   // Init draw/edit tools
   initGeoman();
 
-  // Load real Agrifrut.kml from server
+  // Load Agrifrut.kml coordinates for GEE clipping (no visible polygons)
   fetch('Agrifrut.kml')
     .then(r => r.text())
     .then(kmlText => {
       const parser = new DOMParser();
       const kmlDoc = parser.parseFromString(kmlText, 'text/xml');
       const geojson = toGeoJSON.kml(kmlDoc);
-      const colors  = ['#52b788', '#60a5fa'];
-      const layers  = [];
 
-      geojson.features.forEach((feature, i) => {
+      geojson.features.forEach(feature => {
         if (!feature.geometry || feature.geometry.type !== 'Polygon') return;
-        const name   = feature.properties?.name || ('Sector ' + (i + 1));
-        const color  = colors[i % colors.length];
-        const rawRing = feature.geometry.coordinates[0]; // [[lng,lat,alt?],...]
-        kmlRawCoords.push(rawRing.map(c => [c[0], c[1]])); // strip altitude for GEE
-        const coords = rawRing.map(([lng, lat]) => [lat, lng]);
-
-        const poly = L.polygon(coords, {
-          color, fillColor: color, fillOpacity: 0, weight: 2, dashArray: '6,4'
-        }).addTo(vineMap);
-
-        poly._agra = { name, color, description: 'Agrifrut — ' + name, stage: '' };
-
-        poly.bindPopup(`
-          <div style="font-family:system-ui;min-width:180px;">
-            <strong style="color:${color};font-size:1rem;">🍇 Agrifrut — ${name}</strong>
-            <div style="font-size:0.82rem;line-height:1.9;margin-top:6px;">
-              <b>Fuente:</b> Agrifrut.kml<br>
-              <b>Propietario:</b> Patricia Medina<br>
-              <b>Ubicación:</b> 38.3°S 73.3°W · Los Ángeles, Chile
-            </div>
-          </div>`);
-
-        poly.on('click', () => {
-          window._editLayer = poly;
-          const infoEl = document.getElementById('selected-parcel-info');
-          if (!infoEl) return;
-          infoEl.style.display = 'block';
-          infoEl.innerHTML = `
-            <div style="line-height:2;font-size:0.83rem;">
-              <div><strong style="color:${color}">🍇 Agrifrut — ${name}</strong></div>
-              <div><span style="color:var(--text-secondary)">Archivo:</span> <strong>Agrifrut.kml</strong></div>
-              <div><span style="color:var(--text-secondary)">Propietario:</span> <strong>Patricia Medina</strong></div>
-              <div><span style="color:var(--text-secondary)">Coordenadas:</span> <strong>38.3°S 73.3°W</strong></div>
-              <div style="margin-top:8px;">
-                <button onclick="openEditorByIndex(${userLayers.length - 1 + i - (i > 0 ? 0 : 0)})"
-                  style="background:var(--accent);border:none;border-radius:5px;padding:5px 10px;font-size:0.75rem;cursor:pointer;color:#0a1218;font-weight:600;">
-                  ✏️ Editar
-                </button>
-              </div>
-            </div>`;
-        });
-
-        layers.push(poly);
-        userLayers.push({ layer: poly, name, color });
+        const rawRing = feature.geometry.coordinates[0];
+        kmlRawCoords.push(rawRing.map(c => [c[0], c[1]]));
       });
 
-      if (layers.length) {
-        vineMap.fitBounds(L.featureGroup(layers).getBounds(), { padding: [40, 40] });
+      // Fit map to KML bounds
+      if (kmlRawCoords.length > 0) {
+        const allPts = kmlRawCoords.flat().map(([lng, lat]) => [lat, lng]);
+        vineMap.fitBounds(L.latLngBounds(allPts), { padding: [40, 40] });
       }
       renderLayerList();
     })
