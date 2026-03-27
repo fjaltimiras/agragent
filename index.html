@@ -3590,10 +3590,15 @@ async function loadKMZFile(file) {
 
       let layer;
       if (geomType === 'Polygon' || geomType === 'MultiPolygon') {
-        const coords = geomType === 'Polygon'
-          ? feature.geometry.coordinates[0].map(([lng, lat]) => [lat, lng])
-          : feature.geometry.coordinates[0][0].map(([lng, lat]) => [lat, lng]);
-        layer = L.polygon(coords, { color, fillColor: color, fillOpacity: 0.3, weight: 2.5 });
+        const rawRings = geomType === 'Polygon'
+          ? [feature.geometry.coordinates[0]]
+          : feature.geometry.coordinates.map(p => p[0]);
+        // Store coords for GEE clipping
+        rawRings.forEach(ring => {
+          kmlRawCoords.push(ring.map(c => [c[0], c[1]]));
+        });
+        const coords = rawRings[0].map(([lng, lat]) => [lat, lng]);
+        layer = L.polygon(coords, { color, fillColor: color, fillOpacity: 0.15, weight: 2, dashArray: '6,4' });
       } else if (geomType === 'LineString' || geomType === 'MultiLineString') {
         const coords = (geomType === 'LineString' ? feature.geometry.coordinates : feature.geometry.coordinates[0])
           .map(([lng, lat]) => [lat, lng]);
@@ -3611,6 +3616,10 @@ async function loadKMZFile(file) {
       alert('No se encontraron geometrías válidas en el archivo.');
     } else {
       vineMap.fitBounds(L.featureGroup(userLayers.map(l => l.layer)).getBounds(), { padding: [30, 30] });
+      // Reload GEE layer with new polygon bounds
+      if (geeConnected) {
+        loadGEELayer(currentGEEIndex);
+      }
     }
   } catch (e) {
     alert('Error al leer el archivo: ' + e.message);
