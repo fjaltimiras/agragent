@@ -2981,7 +2981,19 @@ function loadGEELayer(idx) {
   const { image, visParams } = buildImageAndVis(s2base, idx);
 
   const onMapId = result => {
-    const url = result.urlFormat || (result.tile_fetcher && result.tile_fetcher.url_format);
+    // urlFormat or formatTileUrl function
+    let url = result.urlFormat;
+    if (!url && result.formatTileUrl) {
+      // Build URL template from formatTileUrl
+      url = result.formatTileUrl('{x}', '{y}', '{z}');
+    }
+    if (!url) {
+      // Try constructing from mapid + token
+      if (result.mapid) {
+        url = 'https://earthengine.googleapis.com/v1alpha/' + result.mapid + '/tiles/{z}/{x}/{y}';
+      }
+    }
+    console.log('GEE tile URL:', url ? url.substring(0, 100) + '...' : 'NONE');
     if (!url) { setMapLoading(false); setGEEStatus('error', '❌ No se obtuvo URL de tiles'); return; }
 
     if (geeLayer) vineMap.removeLayer(geeLayer);
@@ -2990,7 +3002,8 @@ function loadGEELayer(idx) {
     geeLayer = L.tileLayer(url, {
       attribution: '© Google Earth Engine · Sentinel-2 SR',
       opacity,
-      maxZoom: 14,
+      maxZoom: 20,
+      maxNativeZoom: 14,
       tileSize: 256
     }).addTo(vineMap);
 
