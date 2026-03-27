@@ -2569,11 +2569,13 @@ navItems.forEach(item => {
     // Close sidebar on mobile
     if (window.innerWidth < 640) document.getElementById('sidebar').classList.remove('open');
     // Initialize map when first shown
-    if (target === 'maps' && !mapInitialized) {
-      setTimeout(() => { initMap(); updateLegend('NDVI'); mapInitialized = true; }, 100);
-    }
-    if (target === 'maps' && mapInitialized && vineMap) {
-      setTimeout(() => vineMap.invalidateSize(), 150);
+    if (target === 'maps') {
+      if (!mapInitialized) {
+        setTimeout(() => { initMap(); updateLegend('NDVI'); mapInitialized = true; _tryApplyGEE(); }, 100);
+      } else {
+        if (vineMap) setTimeout(() => vineMap.invalidateSize(), 150);
+      }
+      _tryApplyGEE();
     }
   });
 });
