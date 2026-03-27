@@ -3468,6 +3468,7 @@ function showDEGStage(stageId, btn) {
 let vineMap = null;
 let osmLayer = null;
 let satelliteLayer = null;
+let labelsLayer = null;
 
 function initMap() {
   vineMap = L.map('vinewatch-map', {
@@ -3476,9 +3477,12 @@ function initMap() {
     zoomControl: true
   });
 
-  osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors',
-    maxZoom: 19
+  // Satellite base + labels by default
+  osmLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: '© Esri', maxZoom: 19
+  }).addTo(vineMap);
+  labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+    attribution: '© CARTO', maxZoom: 19, pane: 'overlayPane'
   }).addTo(vineMap);
 
   // Init draw/edit tools
@@ -3568,13 +3572,18 @@ function connectGEE() {
             setGEEStatus('success', '✅ Conectado a Google Earth Engine (proyecto: ' + projectId + ')');
             btn.textContent = '✓ Conectado';
 
-            // Switch to satellite basemap (Esri World Imagery)
+            // Switch to satellite basemap (Esri World Imagery) + labels overlay
             if (osmLayer) vineMap.removeLayer(osmLayer);
             satelliteLayer = L.tileLayer(
               'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
               { attribution: '© Esri', maxZoom: 19 }
             ).addTo(vineMap);
-            // Zoom out slightly so Esri has tiles, GEE layer goes on top
+            // Add transparent labels on top (cities, roads, places)
+            labelsLayer = L.tileLayer(
+              'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',
+              { attribution: '© CARTO', maxZoom: 19, pane: 'overlayPane' }
+            ).addTo(vineMap);
+            // Zoom out slightly so Esri has tiles
             if (vineMap.getZoom() > 16) vineMap.setZoom(16);
 
             document.getElementById('gee-layer-controls').classList.add('visible');
@@ -3677,13 +3686,8 @@ function loadGEELayer(idx) {
       }).addTo(vineMap);
     }
 
-    // Make polygon fills transparent so GEE tiles are visible, keep borders
-    vineMap.eachLayer(l => {
-      if (l instanceof L.Polygon) {
-        l.setStyle({ fillOpacity: 0.05 });
-        l.bringToFront();
-      }
-    });
+    // Bring labels and polygons to top
+    bringLabelsToTop();
 
     setMapLoading(false);
     const badge = document.getElementById('map-source-badge');
@@ -3963,6 +3967,12 @@ function setGEEStatus(type, msg) {
   const el = document.getElementById('gee-status');
   el.className = 'gee-status ' + type;
   el.textContent = msg;
+}
+
+function bringLabelsToTop() {
+  if (labelsLayer && vineMap) {
+    labelsLayer.bringToFront();
+  }
 }
 
 function setMapLoading(show, msg) {
