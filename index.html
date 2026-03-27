@@ -1550,40 +1550,88 @@
         📍 Sube un archivo KML/KMZ o dibuja un polígono en el mapa para cargar datos climáticos de la localidad.
       </div>
 
+      <!-- KPI Row 1 -->
       <div class="grid-4 mb-20">
         <div class="card" style="text-align:center;">
           <div class="kpi-label">Annual GDD</div>
           <div class="kpi-value" id="kpiGDD" style="font-size:1.7rem;color:var(--accent);">—</div>
-          <div class="kpi-sub">Growing Degree Days</div>
+          <div class="kpi-sub">Growing Degree Days (base 10°C)</div>
         </div>
+        <div class="card" style="text-align:center;">
+          <div class="kpi-label">Chill Hours</div>
+          <div class="kpi-value" id="kpiChill" style="font-size:1.7rem;color:var(--accent);">—</div>
+          <div class="kpi-sub" id="kpiChillSub">Hours 0–7.2°C (Apr–Sep)</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="kpi-label">Frost Days</div>
+          <div class="kpi-value" id="kpiFrost" style="font-size:1.7rem;color:#60a5fa;">—</div>
+          <div class="kpi-sub" id="kpiFrostSub">Days with Tmin ≤ 0°C</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="kpi-label">Heat Waves</div>
+          <div class="kpi-value" id="kpiHeatWave" style="font-size:1.7rem;color:var(--red);">—</div>
+          <div class="kpi-sub" id="kpiHeatWaveSub">≥3 consecutive days &gt;35°C</div>
+        </div>
+      </div>
+
+      <!-- KPI Row 2 -->
+      <div class="grid-4 mb-20">
         <div class="card" style="text-align:center;">
           <div class="kpi-label">Dry Months</div>
           <div class="kpi-value" id="kpiDry" style="font-size:1.7rem;color:var(--yellow);">—</div>
-          <div class="kpi-sub" id="kpiDrySub">Loading...</div>
+          <div class="kpi-sub" id="kpiDrySub">&lt;30mm precipitation</div>
         </div>
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Last Frost</div>
-          <div class="kpi-value" id="kpiFrost" style="font-size:1.4rem;margin-top:6px;">—</div>
-          <div class="kpi-sub" id="kpiFrostSub">Loading...</div>
+          <div class="kpi-label">Avg Humidity</div>
+          <div class="kpi-value" id="kpiHumidity" style="font-size:1.7rem;color:#60a5fa;">—</div>
+          <div class="kpi-sub">Relative humidity (%)</div>
         </div>
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Heat Stress Events</div>
-          <div class="kpi-value" id="kpiHeat" style="font-size:1.7rem;color:var(--red);">—</div>
-          <div class="kpi-sub">&gt;35°C days</div>
+          <div class="kpi-label">Total Solar Radiation</div>
+          <div class="kpi-value" id="kpiSolar" style="font-size:1.4rem;color:var(--yellow);">—</div>
+          <div class="kpi-sub">MJ/m² (season total)</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="kpi-label">Total ET₀</div>
+          <div class="kpi-value" id="kpiET" style="font-size:1.7rem;color:var(--accent);">—</div>
+          <div class="kpi-sub">Evapotranspiration (mm)</div>
         </div>
       </div>
 
       <div class="card mb-20">
-        <div class="card-title">Daily Temperature (Min/Max) — 12-Month Season</div>
+        <div class="card-title">Monthly Temperature (Min/Max) — 12-Month Season</div>
         <div class="chart-wrap tall">
           <canvas id="tempChart"></canvas>
         </div>
       </div>
 
-      <div class="card mb-20">
-        <div class="card-title">Monthly Precipitation (mm)</div>
-        <div class="chart-wrap">
-          <canvas id="precipChart"></canvas>
+      <div class="grid-2 mb-20">
+        <div class="card">
+          <div class="card-title">Monthly Precipitation (mm)</div>
+          <div class="chart-wrap">
+            <canvas id="precipChart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Monthly Relative Humidity (%)</div>
+          <div class="chart-wrap">
+            <canvas id="humidityChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2 mb-20">
+        <div class="card">
+          <div class="card-title">Monthly Solar Radiation (MJ/m²)</div>
+          <div class="chart-wrap">
+            <canvas id="solarChart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Monthly Evapotranspiration ET₀ (mm)</div>
+          <div class="chart-wrap">
+            <canvas id="etChart"></canvas>
+          </div>
         </div>
       </div>
 
@@ -2418,7 +2466,89 @@ const tickOpts = { color: '#7fa892', font: { size: 11 } };
 })();
 
 // ═══════════════════════════════════════
-// CHART 4: GDD Accumulation (placeholder — filled by loadClimateData)
+// CHART 4: Humidity (placeholder — filled by loadClimateData)
+// ═══════════════════════════════════════
+(function() {
+  const months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+  const ctx = document.getElementById('humidityChart').getContext('2d');
+  chartInstances.humidity = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [{
+        label: 'Relative Humidity (%)', data: [],
+        borderColor: '#60a5fa', backgroundColor: 'rgba(96,165,250,0.1)',
+        borderWidth: 2, pointRadius: 4, fill: true, tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true, animation: { duration: 1200 },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: gridOpts, ticks: tickOpts },
+        y: { grid: gridOpts, ticks: tickOpts, min: 0, max: 100,
+          title: { display: true, text: '%', color: '#7fa892', font: { size: 11 } } }
+      }
+    }
+  });
+})();
+
+// ═══════════════════════════════════════
+// CHART 5: Solar Radiation (placeholder — filled by loadClimateData)
+// ═══════════════════════════════════════
+(function() {
+  const months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+  const ctx = document.getElementById('solarChart').getContext('2d');
+  chartInstances.solar = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [{
+        label: 'Solar Radiation (MJ/m²)', data: [],
+        backgroundColor: 'rgba(245,158,11,0.5)', borderColor: '#f59e0b', borderWidth: 1, borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, animation: { duration: 1200 },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: gridOpts, ticks: tickOpts },
+        y: { grid: gridOpts, ticks: tickOpts,
+          title: { display: true, text: 'MJ/m²', color: '#7fa892', font: { size: 11 } } }
+      }
+    }
+  });
+})();
+
+// ═══════════════════════════════════════
+// CHART 6: Evapotranspiration (placeholder — filled by loadClimateData)
+// ═══════════════════════════════════════
+(function() {
+  const months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+  const ctx = document.getElementById('etChart').getContext('2d');
+  chartInstances.et = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [{
+        label: 'ET₀ (mm)', data: [],
+        backgroundColor: 'rgba(82,183,136,0.5)', borderColor: '#52b788', borderWidth: 1, borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, animation: { duration: 1200 },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: gridOpts, ticks: tickOpts },
+        y: { grid: gridOpts, ticks: tickOpts,
+          title: { display: true, text: 'mm', color: '#7fa892', font: { size: 11 } } }
+      }
+    }
+  });
+})();
+
+// ═══════════════════════════════════════
+// CHART 7: GDD Accumulation (placeholder — filled by loadClimateData)
 // ═══════════════════════════════════════
 (function() {
   const months = ['Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
@@ -2509,7 +2639,8 @@ async function loadClimateData() {
 
   const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}`
     + `&start_date=${startDate}&end_date=${endDate}`
-    + `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum`
+    + `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,relative_humidity_2m_mean,shortwave_radiation_sum,et0_fao_evapotranspiration`
+    + `&hourly=temperature_2m`
     + `&timezone=America%2FSantiago`;
 
   try {
@@ -2517,37 +2648,46 @@ async function loadClimateData() {
     if (!resp.ok) throw new Error('Open-Meteo HTTP ' + resp.status);
     const data = await resp.json();
 
-    const dates = data.daily.time;            // ['2025-04-01', ...]
+    const dates = data.daily.time;
     const tmax  = data.daily.temperature_2m_max;
     const tmin  = data.daily.temperature_2m_min;
     const prec  = data.daily.precipitation_sum;
+    const humid = data.daily.relative_humidity_2m_mean || [];
+    const solar = data.daily.shortwave_radiation_sum || [];
+    const et0   = data.daily.et0_fao_evapotranspiration || [];
 
     // --- Monthly aggregation (Apr=0 … Mar=11) ---
     const monthLabels = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
     const monthMaxArr = new Array(12).fill(null).map(() => []);
     const monthMinArr = new Array(12).fill(null).map(() => []);
     const monthPrec   = new Array(12).fill(0);
+    const monthHumArr = new Array(12).fill(null).map(() => []);
+    const monthSolar  = new Array(12).fill(0);
+    const monthET     = new Array(12).fill(0);
 
     dates.forEach((d, i) => {
-      const mo = new Date(d + 'T12:00:00').getMonth(); // 0=Jan … 11=Dec
-      // Map calendar month → season index (Apr=0, May=1, … Mar=11)
-      const seasonIdx = (mo + 12 - 3) % 12; // Apr(3)→0, May(4)→1, … Mar(2)→11
+      const mo = new Date(d + 'T12:00:00').getMonth();
+      const seasonIdx = (mo + 12 - 3) % 12;
       if (tmax[i] != null) monthMaxArr[seasonIdx].push(tmax[i]);
       if (tmin[i] != null) monthMinArr[seasonIdx].push(tmin[i]);
       if (prec[i] != null) monthPrec[seasonIdx] += prec[i];
+      if (humid[i] != null) monthHumArr[seasonIdx].push(humid[i]);
+      if (solar[i] != null) monthSolar[seasonIdx] += solar[i];
+      if (et0[i] != null) monthET[seasonIdx] += et0[i];
     });
 
     const avgMax = monthMaxArr.map(a => a.length ? +(a.reduce((s,v) => s+v, 0) / a.length).toFixed(1) : null);
     const avgMin = monthMinArr.map(a => a.length ? +(a.reduce((s,v) => s+v, 0) / a.length).toFixed(1) : null);
     const monthPrecRound = monthPrec.map(v => +v.toFixed(1));
+    const avgHumidity = monthHumArr.map(a => a.length ? +(a.reduce((s,v) => s+v, 0) / a.length).toFixed(1) : null);
+    const monthSolarRound = monthSolar.map(v => +v.toFixed(1));
+    const monthETRound = monthET.map(v => +v.toFixed(1));
 
     // --- GDD (base 10°C) from Sep onwards ---
-    // Season growing months: Sep(idx 5) → Mar(idx 11)
     const gddMonthLabels = ['Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
     const gddSeasonIndices = [5, 6, 7, 8, 9, 10, 11];
     let gddAccum = 0;
     const gddValues = [];
-    // Compute monthly GDD from daily data
     const monthlyGDD = new Array(12).fill(0);
     dates.forEach((d, i) => {
       if (tmax[i] == null || tmin[i] == null) return;
@@ -2565,14 +2705,23 @@ async function loadClimateData() {
     // --- KPI calculations ---
     const totalGDD = gddAccum;
 
-    // Dry months: months with < 30mm precipitation
-    const dryMonths = monthPrecRound.filter(v => v < 30).length;
-    const dryNames = [];
-    monthPrecRound.forEach((v, i) => { if (v < 30) dryNames.push(monthLabels[i]); });
+    // Chill hours (0–7.2°C) from hourly data, Apr–Sep (dormancy)
+    let chillHours = 0;
+    if (data.hourly && data.hourly.temperature_2m) {
+      const hourlyTemps = data.hourly.temperature_2m;
+      const hourlyTimes = data.hourly.time;
+      hourlyTimes.forEach((t, i) => {
+        const mo = new Date(t).getMonth(); // 0=Jan
+        // Dormancy months: Apr(3)–Sep(8) in southern hemisphere
+        if (mo >= 3 && mo <= 8 && hourlyTemps[i] != null) {
+          if (hourlyTemps[i] >= 0 && hourlyTemps[i] <= 7.2) chillHours++;
+        }
+      });
+    }
 
-    // Last frost: last day with tmin ≤ 0
-    let lastFrostStr = 'None';
-    let lastFrostYear = '';
+    // Frost days: tmin ≤ 0°C
+    const frostDays = tmin.filter(v => v != null && v <= 0).length;
+    let lastFrostStr = 'None', lastFrostYear = '';
     for (let i = dates.length - 1; i >= 0; i--) {
       if (tmin[i] != null && tmin[i] <= 0) {
         const fd = new Date(dates[i] + 'T12:00:00');
@@ -2582,38 +2731,69 @@ async function loadClimateData() {
       }
     }
 
-    // Heat stress: days > 35°C
+    // Heat waves: ≥3 consecutive days >35°C
+    let heatWaves = 0, heatStreak = 0;
+    tmax.forEach(v => {
+      if (v != null && v > 35) { heatStreak++; }
+      else { if (heatStreak >= 3) heatWaves++; heatStreak = 0; }
+    });
+    if (heatStreak >= 3) heatWaves++;
     const heatDays = tmax.filter(v => v != null && v > 35).length;
+
+    // Dry months
+    const dryMonths = monthPrecRound.filter(v => v < 30).length;
+    const dryNames = [];
+    monthPrecRound.forEach((v, i) => { if (v < 30) dryNames.push(monthLabels[i]); });
+
+    // Averages for KPIs
+    const avgHumAll = humid.filter(v => v != null);
+    const meanHumidity = avgHumAll.length ? +(avgHumAll.reduce((s,v) => s+v, 0) / avgHumAll.length).toFixed(0) : '—';
+    const totalSolar = +monthSolar.reduce((s,v) => s+v, 0).toFixed(0);
+    const totalET = +monthET.reduce((s,v) => s+v, 0).toFixed(0);
 
     // --- Update KPI cards ---
     document.getElementById('kpiGDD').textContent = totalGDD.toLocaleString();
+    document.getElementById('kpiChill').textContent = chillHours.toLocaleString();
+    document.getElementById('kpiFrost').textContent = frostDays;
+    document.getElementById('kpiFrostSub').textContent = lastFrostStr !== 'None' ? `Last: ${lastFrostStr} ${lastFrostYear}` : 'No frost recorded';
+    document.getElementById('kpiHeatWave').textContent = heatWaves;
+    document.getElementById('kpiHeatWaveSub').textContent = `${heatDays} days >35°C total`;
     document.getElementById('kpiDry').textContent = dryMonths;
     document.getElementById('kpiDrySub').textContent = dryNames.length > 0 ? dryNames.join(', ') : '—';
-    document.getElementById('kpiFrost').textContent = lastFrostStr;
-    document.getElementById('kpiFrostSub').textContent = lastFrostYear || '—';
-    document.getElementById('kpiHeat').textContent = heatDays;
+    document.getElementById('kpiHumidity').textContent = meanHumidity + '%';
+    document.getElementById('kpiSolar').textContent = totalSolar.toLocaleString();
+    document.getElementById('kpiET').textContent = totalET;
 
     // --- Update alert ---
     const alertEl = document.getElementById('climateAlert');
     const alerts = [];
-    if (heatDays > 0) alerts.push(`🌡 ${heatDays} heat stress day(s) above 35°C recorded this season.`);
-    if (lastFrostStr !== 'None') alerts.push(`❄ Last frost detected on ${lastFrostStr} ${lastFrostYear}.`);
+    if (heatWaves > 0) alerts.push(`🌡 ${heatWaves} heat wave(s) detected (≥3 days >35°C). ${heatDays} total heat stress days.`);
+    if (frostDays > 0) alerts.push(`❄ ${frostDays} frost day(s). Last frost: ${lastFrostStr} ${lastFrostYear}.`);
     if (dryMonths >= 4) alerts.push(`☀ ${dryMonths} dry months (<30mm) — monitor irrigation needs.`);
-    if (totalGDD < 1200) alerts.push(`⚠ Low GDD accumulation (${totalGDD}) — season may be cooler than average.`);
+    if (totalGDD < 1200) alerts.push(`⚠ Low GDD (${totalGDD}) — cooler season than average.`);
+    if (chillHours < 400) alerts.push(`⚠ Low chill hours (${chillHours}) — may affect bud break.`);
+    if (totalET > 1000) alerts.push(`💧 High evapotranspiration (${totalET}mm) — increased water demand.`);
     alertEl.innerHTML = alerts.length > 0 ? alerts.join('<br>') : '✅ No significant climate alerts for this season.';
 
-    // --- Update Temperature chart ---
+    // --- Update charts ---
     chartInstances.temp.data.datasets[0].data = avgMax;
     chartInstances.temp.data.datasets[1].data = avgMin;
     chartInstances.temp.update();
 
-    // --- Update Precipitation chart ---
     chartInstances.precip.data.datasets[0].data = monthPrecRound;
     chartInstances.precip.data.datasets[0].backgroundColor = monthPrecRound.map(v =>
       v > 60 ? 'rgba(96,165,250,0.7)' : 'rgba(96,165,250,0.35)');
     chartInstances.precip.update();
 
-    // --- Update GDD chart ---
+    chartInstances.humidity.data.datasets[0].data = avgHumidity;
+    chartInstances.humidity.update();
+
+    chartInstances.solar.data.datasets[0].data = monthSolarRound;
+    chartInstances.solar.update();
+
+    chartInstances.et.data.datasets[0].data = monthETRound;
+    chartInstances.et.update();
+
     chartInstances.gdd.data.labels = gddMonthLabels;
     chartInstances.gdd.data.datasets[0].data = gddValues;
     chartInstances.gdd.update();
