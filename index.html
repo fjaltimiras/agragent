@@ -3017,26 +3017,48 @@ function loadGEELayer(idx) {
     console.log('GEE: clipGeom type:', kmlRawCoords.length > 0 ? 'from KML (' + kmlRawCoords.length + ' rings)' : 'fallback rectangle');
     console.log('GEE: visParams:', JSON.stringify(visParams));
     setGEEStatus('loading', '⏳ Solicitando tiles a GEE... (puede tardar 10-20s)');
-    const result = image.getMapId(visParams);
-    if (result && typeof result.then === 'function') {
-      result.then(r => { clearTimeout(geeTimeout); onMapId(r); }).catch(err => {
+
+    // Try all known getMapId patterns for different EE API versions
+    // Pattern 1: ee.data.getMapId (most reliable with callback)
+    const serialized = image.serialize();
+    console.log('GEE: using ee.data.getMapId with callback');
+    ee.data.getMapId(
+      { image: serialized, ...visParams },
+      (result, err) => {
         clearTimeout(geeTimeout);
-        setMapLoading(false);
-        setGEEStatus('error', '❌ GEE error: ' + (err.message || err));
-        console.error('GEE getMapId error:', err);
-      });
-    } else {
-      image.getMapId(visParams, (obj, err) => {
-        clearTimeout(geeTimeout);
-        if (err) { setMapLoading(false); setGEEStatus('error', '❌ ' + err); console.error('GEE callback error:', err); return; }
-        onMapId(obj);
-      });
-    }
+        if (err) {
+          setMapLoading(false);
+          setGEEStatus('error', '❌ GEE error: ' + err);
+          console.error('GEE getMapId error:', err);
+          return;
+        }
+        console.log('GEE: getMapId result keys:', Object.keys(result));
+        onMapId(result);
+      }
+    );
   } catch (e) {
-    clearTimeout(geeTimeout);
-    setMapLoading(false);
-    setGEEStatus('error', '❌ ' + e.message);
-    console.error('GEE exception:', e);
+    // Fallback: try image.getMapId with promise
+    console.log('GEE: ee.data.getMapId failed, trying image.getMapId...', e.message);
+    try {
+      const result = image.getMapId(visParams);
+      if (result && typeof result.then === 'function') {
+        result.then(r => { clearTimeout(geeTimeout); onMapId(r); }).catch(err2 => {
+          clearTimeout(geeTimeout);
+          setMapLoading(false);
+          setGEEStatus('error', '❌ GEE error: ' + (err2.message || err2));
+          console.error('GEE promise error:', err2);
+        });
+      } else {
+        console.log('GEE: getMapId returned:', typeof result, result ? Object.keys(result) : 'null');
+        clearTimeout(geeTimeout);
+        if (result) onMapId(result);
+      }
+    } catch (e2) {
+      clearTimeout(geeTimeout);
+      setMapLoading(false);
+      setGEEStatus('error', '❌ ' + e2.message);
+      console.error('GEE exception:', e2);
+    }
   }
 }
 
