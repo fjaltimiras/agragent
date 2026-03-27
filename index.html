@@ -2951,7 +2951,7 @@ function loadGEELayer(idx) {
         url = 'https://earthengine.googleapis.com/v1alpha/' + result.mapid + '/tiles/{z}/{x}/{y}';
       }
     }
-    console.log('GEE tile URL:', url ? url.substring(0, 100) + '...' : 'NONE');
+    console.log('GEE tile URL (full):', url);
     if (!url) { setMapLoading(false); setGEEStatus('error', '❌ No se obtuvo URL de tiles'); return; }
 
     if (geeLayer) vineMap.removeLayer(geeLayer);
