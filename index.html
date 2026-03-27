@@ -2794,7 +2794,7 @@ function initMap() {
         const coords = rawRing.map(([lng, lat]) => [lat, lng]);
 
         const poly = L.polygon(coords, {
-          color, fillColor: color, fillOpacity: 0.30, weight: 2.5
+          color, fillColor: color, fillOpacity: 0, weight: 2, dashArray: '6,4'
         }).addTo(vineMap);
 
         poly._agra = { name, color, description: 'Agrifrut — ' + name, stage: '' };
