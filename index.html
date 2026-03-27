@@ -3001,8 +3001,13 @@ function loadGEELayer(idx) {
       tileSize: 256
     }).addTo(vineMap);
 
-    // Keep parcel polygons on top
-    vineMap.eachLayer(l => { if (l instanceof L.Polygon) l.bringToFront(); });
+    // Make polygon fills transparent so GEE tiles are visible, keep borders
+    vineMap.eachLayer(l => {
+      if (l instanceof L.Polygon) {
+        l.setStyle({ fillOpacity: 0.05 });
+        l.bringToFront();
+      }
+    });
 
     setMapLoading(false);
     const badge = document.getElementById('map-source-badge');
