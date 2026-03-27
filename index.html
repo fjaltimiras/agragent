@@ -2909,20 +2909,16 @@ function connectGEE() {
       () => {
         setGEEStatus('loading', '⚙️ Inicializando Earth Engine con proyecto ' + projectId + '...');
 
-        // Set project before initialize — required for Cloud API
-        ee.data.setCloudApiEnabled(true);
         ee.initialize(
-          'https://earthengine.googleapis.com',
-          null,
+          null, null,
           () => {
             // Set the cloud project for all EE requests
-            if (typeof ee.data.setProject === 'function') {
-              ee.data.setProject(projectId);
-            } else if (typeof ee.data.setCloudApiKey === 'function') {
-              // Older API: set project via internal property
-              ee.data.PROJECT = projectId;
-            }
-            console.log('EE initialized, project:', projectId);
+            try { ee.data.setProject && ee.data.setProject(projectId); } catch(e) {}
+            try { ee.data.setCloudApiEnabled && ee.data.setCloudApiEnabled(true); } catch(e) {}
+            // Log available ee.data methods for debugging
+            const methods = Object.keys(ee.data).filter(k => typeof ee.data[k] === 'function').sort();
+            console.log('EE initialized. ee.data methods:', methods.join(', '));
+            console.log('EE project set to:', projectId);
 
             geeConnected = true;
             setGEEStatus('success', '✅ Conectado a Google Earth Engine (proyecto: ' + projectId + ')');
