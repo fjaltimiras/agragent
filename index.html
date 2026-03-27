@@ -2763,7 +2763,7 @@ let satelliteLayer = null;
 function initMap() {
   vineMap = L.map('vinewatch-map', {
     center: [-38.3365, -73.2877],
-    zoom: 17,
+    zoom: 16,
     zoomControl: true
   });
 
@@ -2882,13 +2882,14 @@ function connectGEE() {
             setGEEStatus('success', '✅ Conectado a Google Earth Engine (proyecto: ' + projectId + ')');
             btn.textContent = '✓ Conectado';
 
-            // Switch to Google Satellite basemap
+            // Switch to satellite basemap (Esri World Imagery)
             if (osmLayer) vineMap.removeLayer(osmLayer);
             satelliteLayer = L.tileLayer(
-              'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-              { attribution: '© Google', maxZoom: 20 }
+              'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+              { attribution: '© Esri', maxZoom: 19 }
             ).addTo(vineMap);
-            // GEE layer will be added on top by loadGEELayer
+            // Zoom out slightly so Esri has tiles, GEE layer goes on top
+            if (vineMap.getZoom() > 16) vineMap.setZoom(16);
 
             document.getElementById('gee-layer-controls').classList.add('visible');
             document.getElementById('gee-badge').classList.add('visible');
