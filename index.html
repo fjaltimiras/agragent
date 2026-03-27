@@ -1379,7 +1379,8 @@
           </div>
         </div>
         <div class="gee-panel-right">
-          <input type="text" id="gee-client-id" class="gee-input" placeholder="OAuth 2.0 Client ID  (ej: 123456789-abc...apps.googleusercontent.com)">
+          <input type="text" id="gee-client-id" class="gee-input" placeholder="OAuth 2.0 Client ID">
+          <input type="text" id="gee-project-id" class="gee-input" style="width:200px;" placeholder="Project ID (ej: agragent-491300)">
           <button id="gee-connect-btn" class="gee-btn" onclick="connectGEE()">🔗 Conectar</button>
           <button class="gee-btn" style="background:transparent;border:1px solid var(--border);color:var(--text-secondary);font-weight:400;" onclick="showGEEHelp()">? Ayuda</button>
         </div>
@@ -2887,7 +2888,9 @@ function loadEEScript(callback) {
 
 function connectGEE() {
   const clientId = document.getElementById('gee-client-id').value.trim();
+  const projectId = document.getElementById('gee-project-id').value.trim();
   if (!clientId) { setGEEStatus('error', '⚠ Ingresa tu OAuth 2.0 Client ID'); return; }
+  if (!projectId) { setGEEStatus('error', '⚠ Ingresa tu Project ID (ej: agragent-491300)'); return; }
 
   const btn = document.getElementById('gee-connect-btn');
   btn.disabled = true;
@@ -2899,12 +2902,16 @@ function connectGEE() {
     ee.data.authenticateViaOauth(
       clientId,
       () => {
-        setGEEStatus('loading', '⚙️ Inicializando Earth Engine...');
+        setGEEStatus('loading', '⚙️ Inicializando Earth Engine con proyecto ' + projectId + '...');
         ee.initialize(
           null, null,
           () => {
+            // Set the cloud project for all EE requests
+            try { ee.data.setCloudApiKey(null); } catch(e) {}
+            try { ee.data.setProject(projectId); } catch(e) { console.warn('setProject not available, trying header'); }
+
             geeConnected = true;
-            setGEEStatus('success', '✅ Conectado a Google Earth Engine');
+            setGEEStatus('success', '✅ Conectado a Google Earth Engine (proyecto: ' + projectId + ')');
             btn.textContent = '✓ Conectado';
 
             // Switch to satellite basemap
@@ -2989,22 +2996,34 @@ function loadGEELayer(idx) {
     noteEl.style.display = 'inline';
   };
 
+  // Timeout: if GEE doesn't respond in 30s, show error
+  const geeTimeout = setTimeout(() => {
+    setMapLoading(false);
+    setGEEStatus('error', '❌ Timeout: GEE no respondió en 30s. Intenta con menos nubes o un período más corto.');
+  }, 30000);
+
   try {
+    console.log('GEE: requesting mapId for', idx, startDate, '→', endDate, 'cloud<', cloudPct);
     const result = image.getMapId(visParams);
     if (result && typeof result.then === 'function') {
-      result.then(onMapId).catch(err => {
+      result.then(r => { clearTimeout(geeTimeout); onMapId(r); }).catch(err => {
+        clearTimeout(geeTimeout);
         setMapLoading(false);
         setGEEStatus('error', '❌ GEE error: ' + (err.message || err));
+        console.error('GEE getMapId error:', err);
       });
     } else {
       image.getMapId(visParams, (obj, err) => {
-        if (err) { setMapLoading(false); setGEEStatus('error', '❌ ' + err); return; }
+        clearTimeout(geeTimeout);
+        if (err) { setMapLoading(false); setGEEStatus('error', '❌ ' + err); console.error('GEE callback error:', err); return; }
         onMapId(obj);
       });
     }
   } catch (e) {
+    clearTimeout(geeTimeout);
     setMapLoading(false);
     setGEEStatus('error', '❌ ' + e.message);
+    console.error('GEE exception:', e);
   }
 }
 
