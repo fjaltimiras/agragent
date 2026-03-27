@@ -1826,6 +1826,58 @@ function editDisplayName() {
         </div>
       </div>
 
+      <!-- Historical Analysis (2015–present) -->
+      <div class="section-header" style="margin-top:30px;">
+        <h2>Historical Analysis (2015–2026)</h2>
+        <span class="sub" id="hist-location-label">Multi-season comparison</span>
+      </div>
+
+      <div class="alert-box" id="histAlert" style="display:none;"></div>
+
+      <div class="card mb-20">
+        <div class="card-title">Annual GDD Comparison by Season</div>
+        <div class="chart-wrap tall">
+          <canvas id="histGDDChart"></canvas>
+        </div>
+      </div>
+
+      <div class="grid-2 mb-20">
+        <div class="card">
+          <div class="card-title">Annual Precipitation by Season (mm)</div>
+          <div class="chart-wrap">
+            <canvas id="histPrecipChart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Average Temperature by Season (°C)</div>
+          <div class="chart-wrap">
+            <canvas id="histTempChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2 mb-20">
+        <div class="card">
+          <div class="card-title">Frost Days per Season</div>
+          <div class="chart-wrap">
+            <canvas id="histFrostChart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Heat Stress Days per Season (&gt;35°C)</div>
+          <div class="chart-wrap">
+            <canvas id="histHeatChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-20">
+        <div class="card-title">Season Comparison Table</div>
+        <div id="histTable" style="overflow-x:auto;">
+          <div style="padding:14px 0;font-size:0.83rem;color:var(--text-secondary);">Upload a polygon to load historical data.</div>
+        </div>
+      </div>
+
     </section>
 
     <!-- ═══════════════ SECTION 4: GENOMIC ═══════════════ -->
@@ -2978,7 +3030,9 @@ function onPolygonAdded() {
   updateDashboard(lat, lng);
   // Reload climate data for new location
   climateDataLoaded = false;
+  histDataLoaded = false;
   loadClimateData();
+  loadHistoricalData();
 }
 
 function updateDashboard(lat, lng) {
@@ -3305,6 +3359,196 @@ async function loadClimateData() {
 }
 
 // Climate data loads when user adds a polygon (via onPolygonAdded)
+
+// ═══════════════════════════════════════
+// HISTORICAL CLIMATE ANALYSIS (2015–2026)
+// ═══════════════════════════════════════
+let histDataLoaded = false;
+
+async function loadHistoricalData() {
+  if (histDataLoaded || kmlRawCoords.length === 0) return;
+
+  let sumLat = 0, sumLng = 0, n = 0;
+  kmlRawCoords.forEach(ring => { ring.forEach(([lo, la]) => { sumLng += lo; sumLat += la; n++; }); });
+  const lat = sumLat / n, lng = sumLng / n;
+
+  const histAlert = document.getElementById('histAlert');
+  if (histAlert) { histAlert.style.display = 'block'; histAlert.innerHTML = '⏳ Loading historical data (2015–2026)... This may take a few seconds.'; }
+
+  // Seasons: Apr 2015 → Mar 2026 (11 seasons)
+  const seasons = [];
+  for (let y = 2015; y <= 2025; y++) {
+    seasons.push({ label: `${y}/${y+1}`, start: `${y}-04-01`, end: `${y+1}-03-31` });
+  }
+
+  // Fetch all data in one request (2015-04-01 → 2026-03-20)
+  const daysAgo7 = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
+  const endDate = daysAgo7 < '2026-03-31' ? daysAgo7 : '2026-03-31';
+
+  try {
+    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}`
+      + `&start_date=2015-04-01&end_date=${endDate}`
+      + `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum`
+      + `&timezone=America%2FSantiago`;
+
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+
+    const dates = data.daily.time;
+    const tmax = data.daily.temperature_2m_max;
+    const tmin = data.daily.temperature_2m_min;
+    const prec = data.daily.precipitation_sum;
+
+    // Process each season
+    const seasonData = seasons.map(s => {
+      const sd = { label: s.label, gdd: 0, precip: 0, frostDays: 0, heatDays: 0, avgMax: [], avgMin: [], heatStreak: 0, heatWaves: 0 };
+
+      dates.forEach((d, i) => {
+        if (d < s.start || d > s.end) return;
+        const tx = tmax[i], tn = tmin[i], pr = prec[i];
+
+        if (tx != null && tn != null) {
+          sd.avgMax.push(tx);
+          sd.avgMin.push(tn);
+          const tavg = (tx + tn) / 2;
+          // GDD only Sep–Mar
+          const mo = new Date(d + 'T12:00:00').getMonth();
+          if (mo >= 8 || mo <= 2) sd.gdd += Math.max(0, tavg - 10);
+          if (tn <= 0) sd.frostDays++;
+          if (tx > 35) {
+            sd.heatDays++;
+            sd.heatStreak++;
+          } else {
+            if (sd.heatStreak >= 3) sd.heatWaves++;
+            sd.heatStreak = 0;
+          }
+        }
+        if (pr != null) sd.precip += pr;
+      });
+      if (sd.heatStreak >= 3) sd.heatWaves++;
+
+      sd.gdd = Math.round(sd.gdd);
+      sd.precip = Math.round(sd.precip);
+      sd.meanMax = sd.avgMax.length ? +(sd.avgMax.reduce((a,b)=>a+b,0) / sd.avgMax.length).toFixed(1) : null;
+      sd.meanMin = sd.avgMin.length ? +(sd.avgMin.reduce((a,b)=>a+b,0) / sd.avgMin.length).toFixed(1) : null;
+      return sd;
+    });
+
+    const labels = seasonData.map(s => s.label);
+
+    // --- Historical Charts ---
+    // GDD
+    if (chartInstances.histGDD) chartInstances.histGDD.destroy();
+    chartInstances.histGDD = new Chart(document.getElementById('histGDDChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'GDD', data: seasonData.map(s => s.gdd),
+          backgroundColor: seasonData.map(s => s.gdd >= 1500 ? 'rgba(82,183,136,0.7)' : s.gdd >= 1000 ? 'rgba(245,158,11,0.7)' : 'rgba(239,68,68,0.7)'),
+          borderRadius: 4
+        }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } },
+        scales: { x: { grid: gridOpts, ticks: tickOpts }, y: { grid: gridOpts, ticks: tickOpts, title: { display: true, text: 'GDD (base 10°C)', color: '#7fa892', font: { size: 11 } } } } }
+    });
+
+    // Precipitation
+    if (chartInstances.histPrecip) chartInstances.histPrecip.destroy();
+    chartInstances.histPrecip = new Chart(document.getElementById('histPrecipChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Precipitation (mm)', data: seasonData.map(s => s.precip),
+          backgroundColor: 'rgba(96,165,250,0.6)', borderColor: '#60a5fa', borderWidth: 1, borderRadius: 4
+        }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } },
+        scales: { x: { grid: gridOpts, ticks: tickOpts }, y: { grid: gridOpts, ticks: tickOpts, title: { display: true, text: 'mm', color: '#7fa892', font: { size: 11 } } } } }
+    });
+
+    // Temperature
+    if (chartInstances.histTemp) chartInstances.histTemp.destroy();
+    chartInstances.histTemp = new Chart(document.getElementById('histTempChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Avg Max °C', data: seasonData.map(s => s.meanMax), borderColor: '#ef4444', borderWidth: 2, pointRadius: 4, tension: 0.3 },
+          { label: 'Avg Min °C', data: seasonData.map(s => s.meanMin), borderColor: '#60a5fa', borderWidth: 2, pointRadius: 4, tension: 0.3 }
+        ]
+      },
+      options: { responsive: true,
+        plugins: { legend: { labels: { color: '#7fa892', boxWidth: 14, font: { size: 11 } } } },
+        scales: { x: { grid: gridOpts, ticks: tickOpts }, y: { grid: gridOpts, ticks: tickOpts, title: { display: true, text: '°C', color: '#7fa892', font: { size: 11 } } } } }
+    });
+
+    // Frost
+    if (chartInstances.histFrost) chartInstances.histFrost.destroy();
+    chartInstances.histFrost = new Chart(document.getElementById('histFrostChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Frost Days', data: seasonData.map(s => s.frostDays),
+          backgroundColor: seasonData.map(s => s.frostDays > 20 ? 'rgba(96,165,250,0.8)' : 'rgba(96,165,250,0.4)'),
+          borderRadius: 4
+        }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } },
+        scales: { x: { grid: gridOpts, ticks: tickOpts }, y: { grid: gridOpts, ticks: tickOpts, title: { display: true, text: 'Days', color: '#7fa892', font: { size: 11 } } } } }
+    });
+
+    // Heat
+    if (chartInstances.histHeat) chartInstances.histHeat.destroy();
+    chartInstances.histHeat = new Chart(document.getElementById('histHeatChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Heat Days (>35°C)', data: seasonData.map(s => s.heatDays),
+          backgroundColor: seasonData.map(s => s.heatDays > 5 ? 'rgba(239,68,68,0.8)' : 'rgba(239,68,68,0.4)'),
+          borderRadius: 4
+        }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } },
+        scales: { x: { grid: gridOpts, ticks: tickOpts }, y: { grid: gridOpts, ticks: tickOpts, title: { display: true, text: 'Days', color: '#7fa892', font: { size: 11 } } } } }
+    });
+
+    // Table
+    const avgGDD = Math.round(seasonData.reduce((s,d) => s + d.gdd, 0) / seasonData.length);
+    const avgPrec = Math.round(seasonData.reduce((s,d) => s + d.precip, 0) / seasonData.length);
+    const tableEl = document.getElementById('histTable');
+    if (tableEl) {
+      let html = '<table class="data-table"><thead><tr><th>Season</th><th>GDD</th><th>Precip (mm)</th><th>Avg Max °C</th><th>Avg Min °C</th><th>Frost Days</th><th>Heat Days</th><th>Heat Waves</th></tr></thead><tbody>';
+      seasonData.forEach(s => {
+        const gddColor = s.gdd >= avgGDD ? 'var(--green)' : 'var(--red)';
+        const precColor = s.precip >= avgPrec ? 'var(--accent)' : 'var(--yellow)';
+        html += `<tr><td><strong>${s.label}</strong></td><td style="color:${gddColor}">${s.gdd.toLocaleString()}</td><td style="color:${precColor}">${s.precip}</td><td>${s.meanMax || '—'}</td><td>${s.meanMin || '—'}</td><td>${s.frostDays}</td><td style="color:${s.heatDays > 5 ? 'var(--red)' : ''}">${s.heatDays}</td><td>${s.heatWaves}</td></tr>`;
+      });
+      // Averages row
+      html += `<tr style="border-top:2px solid var(--accent);font-weight:700;"><td>Average</td><td>${avgGDD.toLocaleString()}</td><td>${avgPrec}</td><td>${(seasonData.reduce((s,d) => s + (d.meanMax||0), 0) / seasonData.length).toFixed(1)}</td><td>${(seasonData.reduce((s,d) => s + (d.meanMin||0), 0) / seasonData.length).toFixed(1)}</td><td>${Math.round(seasonData.reduce((s,d) => s + d.frostDays, 0) / seasonData.length)}</td><td>${Math.round(seasonData.reduce((s,d) => s + d.heatDays, 0) / seasonData.length)}</td><td>${(seasonData.reduce((s,d) => s + d.heatWaves, 0) / seasonData.length).toFixed(1)}</td></tr>`;
+      html += '</tbody></table>';
+      tableEl.innerHTML = html;
+    }
+
+    // Alert: trends
+    if (histAlert) {
+      const currentGDD = seasonData[seasonData.length - 1].gdd;
+      const trend = currentGDD > avgGDD ? 'above' : 'below';
+      histAlert.innerHTML = `📊 11 seasons analyzed (2015–2026). Current season GDD: <strong>${currentGDD}</strong> (${trend} avg of ${avgGDD}). Avg precipitation: <strong>${avgPrec} mm/season</strong>.`;
+    }
+
+    histDataLoaded = true;
+    console.log('✅ Historical data loaded (2015–2026)');
+
+  } catch (err) {
+    console.error('Historical data error:', err);
+    if (histAlert) histAlert.innerHTML = '⚠ Error loading historical data: ' + err.message;
+  }
+}
 
 // ═══════════════════════════════════════
 // GENOMIC: DEG Stage Chart + Accumulation Chart
