@@ -1177,7 +1177,9 @@
 // LOGIN SYSTEM
 // ═══════════════════════════════════════
 const DEFAULT_USERS = [
-  { user: 'admin', pass: 'agragent2026', role: 'Admin' },
+  { user: 'admin', pass: 'agragent2026', role: 'Admin',
+    geeClientId: '38756968370-bis06rvmv3tm8nsv11p6256icku3ampi.apps.googleusercontent.com',
+    geeProjectId: 'agragent-491300' },
   { user: 'demo', pass: 'demo', role: 'Viewer' }
 ];
 
@@ -1198,9 +1200,13 @@ function doLogin() {
 
   const match = users.find(u => u.user === user && u.pass === pass);
   if (match) {
-    sessionStorage.setItem('agragent-session', JSON.stringify({ user: match.user, role: match.role, ts: Date.now() }));
+    sessionStorage.setItem('agragent-session', JSON.stringify({
+      user: match.user, role: match.role, ts: Date.now(),
+      geeClientId: match.geeClientId || '', geeProjectId: match.geeProjectId || ''
+    }));
     document.getElementById('login-screen').style.display = 'none';
     updateUserUI(match.user, match.role);
+    applyGEECredentials(match.geeClientId, match.geeProjectId);
   } else {
     errEl.textContent = 'Invalid username or password';
     errEl.style.display = 'block';
@@ -1215,6 +1221,14 @@ function doLogout() {
   document.getElementById('login-user').value = '';
   document.getElementById('login-pass').value = '';
   document.getElementById('login-error').style.display = 'none';
+}
+
+function applyGEECredentials(clientId, projectId) {
+  if (!clientId) return;
+  const ci = document.getElementById('gee-client-id');
+  const pi = document.getElementById('gee-project-id');
+  if (ci) ci.value = clientId;
+  if (pi) pi.value = projectId || '';
 }
 
 function updateUserUI(user, role) {
@@ -1235,6 +1249,7 @@ function updateUserUI(user, role) {
       if (Date.now() - s.ts < 86400000) {
         document.getElementById('login-screen').style.display = 'none';
         updateUserUI(s.user, s.role);
+        applyGEECredentials(s.geeClientId, s.geeProjectId);
         return;
       }
     } catch(e) {}
