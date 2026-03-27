@@ -1159,25 +1159,25 @@
   <div class="sidebar-logo"><span>🌿</span>agragent</div>
   <div class="sidebar-nav">
     <div class="nav-item active" data-section="dashboard">
-      <span class="nav-icon">📊</span> Dashboard
+      <span class="nav-icon">📊</span> <span data-i18n="nav_dashboard">Dashboard</span>
     </div>
     <div class="nav-item" data-section="maps">
-      <span class="nav-icon">🗺️</span> Satellite Maps
+      <span class="nav-icon">🗺️</span> <span data-i18n="nav_maps">Satellite Maps</span>
     </div>
     <div class="nav-item" data-section="climate">
-      <span class="nav-icon">🌡️</span> Climate Data
+      <span class="nav-icon">🌡️</span> <span data-i18n="nav_climate">Climate Data</span>
     </div>
     <div class="nav-item" data-section="genomic">
-      <span class="nav-icon">🧬</span> Genomic Analysis
+      <span class="nav-icon">🧬</span> <span data-i18n="nav_genomic">Genomic Analysis</span>
     </div>
     <div class="nav-item" data-section="images">
-      <span class="nav-icon">📸</span> Image Analysis
+      <span class="nav-icon">📸</span> <span data-i18n="nav_images">Image Analysis</span>
     </div>
     <div class="nav-item" data-section="yield">
-      <span class="nav-icon">🌾</span> Yield Prediction
+      <span class="nav-icon">🌾</span> <span data-i18n="nav_yield">Yield Prediction</span>
     </div>
     <div class="nav-item" data-section="references">
-      <span class="nav-icon">📚</span> References
+      <span class="nav-icon">📚</span> <span data-i18n="nav_references">References</span>
     </div>
   </div>
   <div class="sidebar-footer">
@@ -1199,8 +1199,13 @@
       <div class="page-title" id="page-title">Dashboard</div>
     </div>
     <div class="topbar-right">
-      <span class="badge-season">Season 2025–2026</span>
-      <span id="location-label" style="font-size:0.8rem;color:var(--text-secondary)">Sube un polígono para comenzar</span>
+      <select id="lang-select" onchange="setLang(this.value)" style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:5px;padding:4px 8px;color:var(--text-primary);font-size:0.75rem;cursor:pointer;outline:none;">
+        <option value="en">EN</option>
+        <option value="es">ES</option>
+        <option value="pt">PT</option>
+      </select>
+      <span class="badge-season" data-i18n="season">Season 2025–2026</span>
+      <span id="location-label" style="font-size:0.8rem;color:var(--text-secondary)" data-i18n="upload_polygon">Upload a polygon to start</span>
     </div>
   </div>
 
@@ -1212,11 +1217,8 @@
       <!-- Empty state -->
       <div id="dash-empty" class="card" style="text-align:center;padding:60px 20px;">
         <div style="font-size:2.5rem;margin-bottom:12px;">📍</div>
-        <div style="font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:8px;">Bienvenido a agragent</div>
-        <div style="font-size:0.85rem;color:var(--text-secondary);max-width:420px;margin:0 auto;line-height:1.7;">
-          Para comenzar, ve a <strong style="color:var(--accent)">Satellite Maps</strong> y sube un archivo KML/KMZ o dibuja un polígono sobre tu campo.<br>
-          El dashboard se actualizará automáticamente con datos reales de la localidad.
-        </div>
+        <div style="font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:8px;" data-i18n="welcome_title">Welcome to agragent</div>
+        <div style="font-size:0.85rem;color:var(--text-secondary);max-width:420px;margin:0 auto;line-height:1.7;" data-i18n="welcome_text">To get started, go to <strong style="color:var(--accent)">Satellite Maps</strong> and upload a KML/KMZ file or draw a polygon over your field. The dashboard will update automatically with real data from the location.</div>
       </div>
 
       <!-- Dashboard content (hidden until polygon loaded) -->
@@ -1225,22 +1227,22 @@
         <!-- KPI Cards -->
         <div class="kpi-grid">
           <div class="kpi-card">
-            <div class="kpi-label">Location</div>
+            <div class="kpi-label" data-i18n="location">Location</div>
             <div class="kpi-value" id="dashLocation" style="font-size:1.1rem;margin-top:6px;">—</div>
             <div class="kpi-sub" id="dashCoords">—</div>
           </div>
           <div class="kpi-card">
-            <div class="kpi-label">Field Area</div>
+            <div class="kpi-label" data-i18n="field_area">Field Area</div>
             <div class="kpi-value" id="dashArea">—</div>
             <div class="kpi-sub" id="dashPolygons">—</div>
           </div>
           <div class="kpi-card">
-            <div class="kpi-label">Season GDD</div>
+            <div class="kpi-label" data-i18n="season_gdd">Season GDD</div>
             <div class="kpi-value" id="dashGDD">—</div>
             <div class="kpi-sub">Growing Degree Days</div>
           </div>
           <div class="kpi-card">
-            <div class="kpi-label">Season Precip.</div>
+            <div class="kpi-label" data-i18n="season_precip">Season Precip.</div>
             <div class="kpi-value" id="dashPrecip">—</div>
             <div class="kpi-sub">Total mm (Apr–present)</div>
           </div>
@@ -1249,13 +1251,13 @@
         <!-- Climate summary + Alerts -->
         <div class="grid-2 mb-20">
           <div class="card">
-            <div class="card-title">Climate Summary</div>
+            <div class="card-title" data-i18n="climate_summary">Climate Summary</div>
             <div id="dashClimateSummary" style="padding:8px 0;font-size:0.85rem;line-height:2;color:var(--text-secondary);">
               Loading...
             </div>
           </div>
           <div class="card">
-            <div class="card-title">Active Alerts</div>
+            <div class="card-title" data-i18n="active_alerts">Active Alerts</div>
             <div id="dashAlerts" style="padding:8px 0;">
               <div style="font-size:0.85rem;color:var(--text-secondary);">No alerts yet.</div>
             </div>
@@ -1264,7 +1266,7 @@
 
         <!-- Temperature mini chart -->
         <div class="card mb-20">
-          <div class="card-title">Monthly Temperature Overview</div>
+          <div class="card-title" data-i18n="monthly_temp_overview">Monthly Temperature Overview</div>
           <div class="chart-wrap">
             <canvas id="dashTempChart"></canvas>
           </div>
@@ -1272,7 +1274,7 @@
 
         <!-- Parcel table -->
         <div class="card">
-          <div class="card-title">Loaded Polygons</div>
+          <div class="card-title" data-i18n="loaded_polygons">Loaded Polygons</div>
           <div id="dashParcelTable">
             <div style="padding:14px 0;font-size:0.83rem;color:var(--text-secondary);">No polygons loaded.</div>
           </div>
@@ -1286,7 +1288,7 @@
     <section id="section-maps" class="section">
 
       <div class="section-header">
-        <h2>Satellite Maps</h2>
+        <h2 data-i18n="maps_title">Satellite Maps</h2>
         <span class="sub">Google Earth Engine · Sentinel-2 · Real Imagery</span>
       </div>
 
@@ -1463,33 +1465,33 @@
     <section id="section-climate" class="section">
 
       <div class="section-header">
-        <h2>Climate Data</h2>
+        <h2 data-i18n="climate_title">Climate Data</h2>
         <span class="sub" id="climate-location-label">Sube un polígono para ver datos climáticos</span>
       </div>
 
       <div class="alert-box" id="climateAlert">
-        📍 Sube un archivo KML/KMZ o dibuja un polígono en el mapa para cargar datos climáticos de la localidad.
+        <span data-i18n="climate_upload_msg">Upload a KML/KMZ or draw a polygon to load climate data for the location.</span>
       </div>
 
       <!-- KPI Row 1 -->
       <div class="grid-4 mb-20">
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Annual GDD</div>
+          <div class="kpi-label" data-i18n="annual_gdd">Annual GDD</div>
           <div class="kpi-value" id="kpiGDD" style="font-size:1.7rem;color:var(--accent);">—</div>
           <div class="kpi-sub">Growing Degree Days (base 10°C)</div>
         </div>
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Chill Hours</div>
+          <div class="kpi-label" data-i18n="chill_hours">Chill Hours</div>
           <div class="kpi-value" id="kpiChill" style="font-size:1.7rem;color:var(--accent);">—</div>
           <div class="kpi-sub" id="kpiChillSub">Hours 0–7.2°C (Apr–Sep)</div>
         </div>
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Frost Days</div>
+          <div class="kpi-label" data-i18n="frost_days">Frost Days</div>
           <div class="kpi-value" id="kpiFrost" style="font-size:1.7rem;color:#60a5fa;">—</div>
           <div class="kpi-sub" id="kpiFrostSub">Days with Tmin ≤ 0°C</div>
         </div>
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Heat Waves</div>
+          <div class="kpi-label" data-i18n="heat_waves">Heat Waves</div>
           <div class="kpi-value" id="kpiHeatWave" style="font-size:1.7rem;color:var(--red);">—</div>
           <div class="kpi-sub" id="kpiHeatWaveSub">≥3 consecutive days &gt;35°C</div>
         </div>
@@ -1498,29 +1500,29 @@
       <!-- KPI Row 2 -->
       <div class="grid-4 mb-20">
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Dry Months</div>
+          <div class="kpi-label" data-i18n="dry_months">Dry Months</div>
           <div class="kpi-value" id="kpiDry" style="font-size:1.7rem;color:var(--yellow);">—</div>
           <div class="kpi-sub" id="kpiDrySub">&lt;30mm precipitation</div>
         </div>
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Avg Humidity</div>
+          <div class="kpi-label" data-i18n="avg_humidity">Avg Humidity</div>
           <div class="kpi-value" id="kpiHumidity" style="font-size:1.7rem;color:#60a5fa;">—</div>
           <div class="kpi-sub">Relative humidity (%)</div>
         </div>
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Total Solar Radiation</div>
+          <div class="kpi-label" data-i18n="total_solar">Total Solar Radiation</div>
           <div class="kpi-value" id="kpiSolar" style="font-size:1.4rem;color:var(--yellow);">—</div>
           <div class="kpi-sub">MJ/m² (season total)</div>
         </div>
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Total ET₀</div>
+          <div class="kpi-label" data-i18n="total_et">Total ET₀</div>
           <div class="kpi-value" id="kpiET" style="font-size:1.7rem;color:var(--accent);">—</div>
           <div class="kpi-sub">Evapotranspiration (mm)</div>
         </div>
       </div>
 
       <div class="card mb-20">
-        <div class="card-title">Monthly Temperature (Min/Max) — 12-Month Season</div>
+        <div class="card-title" data-i18n="temp_chart">Monthly Temperature (Min/Max) — 12-Month Season</div>
         <div class="chart-wrap tall">
           <canvas id="tempChart"></canvas>
         </div>
@@ -1528,13 +1530,13 @@
 
       <div class="grid-2 mb-20">
         <div class="card">
-          <div class="card-title">Monthly Precipitation (mm)</div>
+          <div class="card-title" data-i18n="precip_chart">Monthly Precipitation (mm)</div>
           <div class="chart-wrap">
             <canvas id="precipChart"></canvas>
           </div>
         </div>
         <div class="card">
-          <div class="card-title">Monthly Relative Humidity (%)</div>
+          <div class="card-title" data-i18n="humidity_chart">Monthly Relative Humidity (%)</div>
           <div class="chart-wrap">
             <canvas id="humidityChart"></canvas>
           </div>
@@ -1543,13 +1545,13 @@
 
       <div class="grid-2 mb-20">
         <div class="card">
-          <div class="card-title">Monthly Solar Radiation (MJ/m²)</div>
+          <div class="card-title" data-i18n="solar_chart">Monthly Solar Radiation (MJ/m²)</div>
           <div class="chart-wrap">
             <canvas id="solarChart"></canvas>
           </div>
         </div>
         <div class="card">
-          <div class="card-title">Monthly Evapotranspiration ET₀ (mm)</div>
+          <div class="card-title" data-i18n="et_chart">Monthly Evapotranspiration ET₀ (mm)</div>
           <div class="chart-wrap">
             <canvas id="etChart"></canvas>
           </div>
@@ -1557,7 +1559,7 @@
       </div>
 
       <div class="card mb-20">
-        <div class="card-title">Growing Degree Days (GDD) Accumulation</div>
+        <div class="card-title" data-i18n="gdd_chart">Growing Degree Days (GDD) Accumulation</div>
         <div class="chart-wrap">
           <canvas id="gddChart"></canvas>
         </div>
@@ -1569,7 +1571,7 @@
     <section id="section-genomic" class="section">
 
       <div class="section-header">
-        <h2>Genomic Analysis</h2>
+        <h2 data-i18n="genomic_title">Genomic Analysis</h2>
         <span class="sub">RNA-seq Differential Expression — Vitis vinifera phenological stages (Altimiras et al.)</span>
       </div>
 
@@ -1984,7 +1986,7 @@
     <section id="section-yield" class="section">
 
       <div class="section-header">
-        <h2>Yield Prediction</h2>
+        <h2 data-i18n="yield_title">Yield Prediction</h2>
         <span class="sub">Extra Trees Regressor — Season 2025/2026</span>
       </div>
 
@@ -2108,7 +2110,7 @@
     <section id="section-references" class="section">
 
       <div class="section-header">
-        <h2>References & Credits</h2>
+        <h2 data-i18n="references_title">References & Credits</h2>
         <span class="sub">Author, publications, and data sources</span>
       </div>
 
@@ -2229,6 +2231,143 @@
 
 <script>
 // ═══════════════════════════════════════
+// INTERNATIONALIZATION (i18n)
+// ═══════════════════════════════════════
+let currentLang = localStorage.getItem('agragent-lang') || 'en';
+
+const i18n = {
+  en: {
+    // Nav
+    nav_dashboard: 'Dashboard', nav_maps: 'Satellite Maps', nav_climate: 'Climate Data',
+    nav_genomic: 'Genomic Analysis', nav_images: 'Image Analysis', nav_yield: 'Yield Prediction', nav_references: 'References',
+    // Topbar
+    season: 'Season 2025–2026', upload_polygon: 'Upload a polygon to start',
+    // Dashboard
+    welcome_title: 'Welcome to agragent',
+    welcome_text: 'To get started, go to <strong style="color:var(--accent)">Satellite Maps</strong> and upload a KML/KMZ file or draw a polygon over your field.<br>The dashboard will update automatically with real data from the location.',
+    location: 'Location', field_area: 'Field Area', season_gdd: 'Season GDD', season_precip: 'Season Precip.',
+    climate_summary: 'Climate Summary', active_alerts: 'Active Alerts', monthly_temp_overview: 'Monthly Temperature Overview',
+    loaded_polygons: 'Loaded Polygons', no_polygons: 'No polygons loaded.', no_alerts: 'No alerts yet.',
+    // Climate
+    climate_title: 'Climate Data', climate_upload_msg: 'Upload a KML/KMZ or draw a polygon to load climate data for the location.',
+    annual_gdd: 'Annual GDD', gdd_sub: 'Growing Degree Days (base 10°C)', chill_hours: 'Chill Hours', chill_sub: 'Hours 0–7.2°C (Apr–Sep)',
+    frost_days: 'Frost Days', frost_sub: 'Days with Tmin ≤ 0°C', heat_waves: 'Heat Waves', heat_wave_sub: '≥3 consecutive days >35°C',
+    dry_months: 'Dry Months', dry_sub: '<30mm precipitation', avg_humidity: 'Avg Humidity', total_solar: 'Total Solar Radiation',
+    total_et: 'Total ET₀', et_sub: 'Evapotranspiration (mm)',
+    temp_chart: 'Monthly Temperature (Min/Max) — 12-Month Season', precip_chart: 'Monthly Precipitation (mm)',
+    humidity_chart: 'Monthly Relative Humidity (%)', solar_chart: 'Monthly Solar Radiation (MJ/m²)',
+    et_chart: 'Monthly Evapotranspiration ET₀ (mm)', gdd_chart: 'Growing Degree Days (GDD) Accumulation',
+    // Maps
+    maps_title: 'Satellite Maps', maps_sub: 'Google Earth Engine · Sentinel-2 · Real Imagery',
+    gee_connect: 'Connect', gee_help: '? Help', gee_connect_desc: 'Connect with your GEE account to view real Sentinel-2 imagery',
+    layers: 'Layers', upload_kmz: 'Upload KMZ/KML', draw: 'Draw', polygon: 'Polygon', line: 'Line', point: 'Point',
+    edit: 'Edit', delete: 'Delete', export_kml: 'Export KML', index_label: 'Index:',
+    real_color: 'Real Color', false_color: 'False Color',
+    median: 'Median', captures: 'Captures', compare: 'Compare', refresh: 'Refresh',
+    no_polygon_gee: 'Upload a KML/KMZ or draw a polygon first.',
+    // Genomic
+    genomic_title: 'Genomic Analysis', genomic_sub: 'RNA-seq Differential Expression — Vitis vinifera phenological stages (Altimiras et al.)',
+    // Images
+    images_title: 'Crop Image Analysis',
+    // Yield
+    yield_title: 'Yield Prediction',
+    // References
+    references_title: 'References & Credits', references_sub: 'Author, publications, and data sources',
+    author: 'Author', assoc_publications: 'Associated Publications', datasets_sources: 'Datasets & Data Sources',
+    license_source: 'License & Source Code',
+    // Misc
+    active_layers: 'Active layers', polygon_word: 'polygon(s)', no_geom: 'No valid geometries found.',
+  },
+  es: {
+    nav_dashboard: 'Panel', nav_maps: 'Mapas Satelitales', nav_climate: 'Datos Climáticos',
+    nav_genomic: 'Análisis Genómico', nav_images: 'Análisis de Imágenes', nav_yield: 'Predicción de Rendimiento', nav_references: 'Referencias',
+    season: 'Temporada 2025–2026', upload_polygon: 'Sube un polígono para comenzar',
+    welcome_title: 'Bienvenido a agragent',
+    welcome_text: 'Para comenzar, ve a <strong style="color:var(--accent)">Mapas Satelitales</strong> y sube un archivo KML/KMZ o dibuja un polígono sobre tu campo.<br>El panel se actualizará automáticamente con datos reales de la localidad.',
+    location: 'Ubicación', field_area: 'Área del Campo', season_gdd: 'GDD Temporada', season_precip: 'Precip. Temporada',
+    climate_summary: 'Resumen Climático', active_alerts: 'Alertas Activas', monthly_temp_overview: 'Temperatura Mensual',
+    loaded_polygons: 'Polígonos Cargados', no_polygons: 'Sin polígonos cargados.', no_alerts: 'Sin alertas.',
+    climate_title: 'Datos Climáticos', climate_upload_msg: 'Sube un KML/KMZ o dibuja un polígono para cargar datos climáticos de la localidad.',
+    annual_gdd: 'GDD Anual', gdd_sub: 'Grados Día de Crecimiento (base 10°C)', chill_hours: 'Horas Frío', chill_sub: 'Horas 0–7.2°C (Abr–Sep)',
+    frost_days: 'Días de Helada', frost_sub: 'Días con Tmin ≤ 0°C', heat_waves: 'Olas de Calor', heat_wave_sub: '≥3 días consecutivos >35°C',
+    dry_months: 'Meses Secos', dry_sub: '<30mm precipitación', avg_humidity: 'Humedad Promedio', total_solar: 'Radiación Solar Total',
+    total_et: 'ET₀ Total', et_sub: 'Evapotranspiración (mm)',
+    temp_chart: 'Temperatura Mensual (Min/Max) — Temporada 12 Meses', precip_chart: 'Precipitación Mensual (mm)',
+    humidity_chart: 'Humedad Relativa Mensual (%)', solar_chart: 'Radiación Solar Mensual (MJ/m²)',
+    et_chart: 'Evapotranspiración Mensual ET₀ (mm)', gdd_chart: 'Acumulación de Grados Día (GDD)',
+    maps_title: 'Mapas Satelitales', maps_sub: 'Google Earth Engine · Sentinel-2 · Imágenes Reales',
+    gee_connect: 'Conectar', gee_help: '? Ayuda', gee_connect_desc: 'Conecta con tu cuenta GEE para ver imágenes Sentinel-2 reales',
+    layers: 'Capas', upload_kmz: 'Subir KMZ/KML', draw: 'Dibujar', polygon: 'Polígono', line: 'Línea', point: 'Punto',
+    edit: 'Editar', delete: 'Borrar', export_kml: 'Exportar KML', index_label: 'Índice:',
+    real_color: 'Color Real', false_color: 'Falso Color',
+    median: 'Mediana', captures: 'Capturas', compare: 'Comparar', refresh: 'Actualizar',
+    no_polygon_gee: 'Primero sube un KML/KMZ o dibuja un polígono.',
+    genomic_title: 'Análisis Genómico', genomic_sub: 'Expresión Diferencial RNA-seq — Etapas fenológicas de Vitis vinifera (Altimiras et al.)',
+    images_title: 'Análisis de Imágenes de Cultivo',
+    yield_title: 'Predicción de Rendimiento',
+    references_title: 'Referencias y Créditos', references_sub: 'Autor, publicaciones y fuentes de datos',
+    author: 'Autor', assoc_publications: 'Publicaciones Asociadas', datasets_sources: 'Datasets y Fuentes de Datos',
+    license_source: 'Licencia y Código Fuente',
+    active_layers: 'Capas activas', polygon_word: 'polígono(s)', no_geom: 'No se encontraron geometrías válidas.',
+  },
+  pt: {
+    nav_dashboard: 'Painel', nav_maps: 'Mapas Satelitais', nav_climate: 'Dados Climáticos',
+    nav_genomic: 'Análise Genômica', nav_images: 'Análise de Imagens', nav_yield: 'Previsão de Rendimento', nav_references: 'Referências',
+    season: 'Safra 2025–2026', upload_polygon: 'Carregue um polígono para começar',
+    welcome_title: 'Bem-vindo ao agragent',
+    welcome_text: 'Para começar, vá a <strong style="color:var(--accent)">Mapas Satelitais</strong> e carregue um arquivo KML/KMZ ou desenhe um polígono sobre seu campo.<br>O painel será atualizado automaticamente com dados reais da localidade.',
+    location: 'Localização', field_area: 'Área do Campo', season_gdd: 'GDD da Safra', season_precip: 'Precip. da Safra',
+    climate_summary: 'Resumo Climático', active_alerts: 'Alertas Ativos', monthly_temp_overview: 'Temperatura Mensal',
+    loaded_polygons: 'Polígonos Carregados', no_polygons: 'Nenhum polígono carregado.', no_alerts: 'Sem alertas.',
+    climate_title: 'Dados Climáticos', climate_upload_msg: 'Carregue um KML/KMZ ou desenhe um polígono para carregar dados climáticos da localidade.',
+    annual_gdd: 'GDD Anual', gdd_sub: 'Graus-Dia de Crescimento (base 10°C)', chill_hours: 'Horas de Frio', chill_sub: 'Horas 0–7.2°C (Abr–Set)',
+    frost_days: 'Dias de Geada', frost_sub: 'Dias com Tmin ≤ 0°C', heat_waves: 'Ondas de Calor', heat_wave_sub: '≥3 dias consecutivos >35°C',
+    dry_months: 'Meses Secos', dry_sub: '<30mm precipitação', avg_humidity: 'Umidade Média', total_solar: 'Radiação Solar Total',
+    total_et: 'ET₀ Total', et_sub: 'Evapotranspiração (mm)',
+    temp_chart: 'Temperatura Mensal (Min/Max) — Safra 12 Meses', precip_chart: 'Precipitação Mensal (mm)',
+    humidity_chart: 'Umidade Relativa Mensal (%)', solar_chart: 'Radiação Solar Mensal (MJ/m²)',
+    et_chart: 'Evapotranspiração Mensal ET₀ (mm)', gdd_chart: 'Acumulação de Graus-Dia (GDD)',
+    maps_title: 'Mapas Satelitais', maps_sub: 'Google Earth Engine · Sentinel-2 · Imagens Reais',
+    gee_connect: 'Conectar', gee_help: '? Ajuda', gee_connect_desc: 'Conecte sua conta GEE para ver imagens Sentinel-2 reais',
+    layers: 'Camadas', upload_kmz: 'Carregar KMZ/KML', draw: 'Desenhar', polygon: 'Polígono', line: 'Linha', point: 'Ponto',
+    edit: 'Editar', delete: 'Excluir', export_kml: 'Exportar KML', index_label: 'Índice:',
+    real_color: 'Cor Real', false_color: 'Cor Falsa',
+    median: 'Mediana', captures: 'Capturas', compare: 'Comparar', refresh: 'Atualizar',
+    no_polygon_gee: 'Primeiro carregue um KML/KMZ ou desenhe um polígono.',
+    genomic_title: 'Análise Genômica', genomic_sub: 'Expressão Diferencial RNA-seq — Estágios fenológicos de Vitis vinifera (Altimiras et al.)',
+    images_title: 'Análise de Imagens de Cultivo',
+    yield_title: 'Previsão de Rendimento',
+    references_title: 'Referências e Créditos', references_sub: 'Autor, publicações e fontes de dados',
+    author: 'Autor', assoc_publications: 'Publicações Associadas', datasets_sources: 'Datasets e Fontes de Dados',
+    license_source: 'Licença e Código Fonte',
+    active_layers: 'Camadas ativas', polygon_word: 'polígono(s)', no_geom: 'Nenhuma geometria válida encontrada.',
+  }
+};
+
+function t(key) { return (i18n[currentLang] && i18n[currentLang][key]) || i18n.en[key] || key; }
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('agragent-lang', lang);
+  document.getElementById('lang-select').value = lang;
+  // Update all elements with data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (val) el.innerHTML = val;
+  });
+  // Update page title
+  const titles = {
+    dashboard: t('nav_dashboard'), maps: t('nav_maps'), climate: t('nav_climate'),
+    genomic: t('nav_genomic'), images: t('nav_images'), yield: t('nav_yield'), references: t('nav_references')
+  };
+  const activeSection = document.querySelector('.nav-item.active');
+  if (activeSection && pageTitle) {
+    pageTitle.textContent = titles[activeSection.dataset.section] || '';
+  }
+}
+
+// ═══════════════════════════════════════
 // NAVIGATION
 // ═══════════════════════════════════════
 const navItems = document.querySelectorAll('.nav-item');
@@ -2237,14 +2376,9 @@ const pageTitle = document.getElementById('page-title');
 let mapInitialized = false;
 const chartInstances = {};
 
-const titles = {
-  dashboard: 'Dashboard',
-  maps: 'Satellite Maps',
-  climate: 'Climate Data',
-  genomic: 'Genomic Analysis',
-  images: 'Crop Image Analysis',
-  yield: 'Yield Prediction',
-  references: 'References & Credits'
+const titleKeys = {
+  dashboard: 'nav_dashboard', maps: 'nav_maps', climate: 'nav_climate',
+  genomic: 'nav_genomic', images: 'nav_images', yield: 'nav_yield', references: 'nav_references'
 };
 
 navItems.forEach(item => {
@@ -2254,7 +2388,7 @@ navItems.forEach(item => {
     sections.forEach(s => s.classList.remove('active'));
     item.classList.add('active');
     document.getElementById('section-' + target).classList.add('active');
-    pageTitle.textContent = titles[target];
+    pageTitle.textContent = t(titleKeys[target]);
     // Close sidebar on mobile
     if (window.innerWidth < 640) document.getElementById('sidebar').classList.remove('open');
     // Initialize map when first shown
@@ -2270,6 +2404,9 @@ navItems.forEach(item => {
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
 }
+
+// Initialize language on load
+setLang(currentLang);
 
 // ═══════════════════════════════════════
 // CHART DEFAULTS
@@ -3107,7 +3244,7 @@ function loadGEELayer(idx) {
   currentGEEIndex = idx;
 
   if (kmlRawCoords.length === 0) {
-    setGEEStatus('error', '⚠ Primero sube un archivo KML/KMZ o dibuja un polígono en el mapa.');
+    setGEEStatus('error', '⚠ ' + t('no_polygon_gee'));
     return;
   }
 
