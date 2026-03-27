@@ -269,7 +269,7 @@ The agricultural season follows the Southern Hemisphere viticulture calendar:
 
 The Genomic Analysis section displays real RNA-seq differential expression data from:
 
-> Altimiras, F. et al. *Bioinformatics and Machine Learning for Grapevine Phenological Stage Classification.* Agronomy, 14(3), 613, 2024.
+> Altimiras, F. et al. *Transcriptome Data Analysis Applied to Grapevine Growth Stage Identification.* Agronomy, 14(3), 613, 2024.
 
 ### Data Summary
 
@@ -362,11 +362,11 @@ agragent/
 
 This platform is part of an ongoing research project. The following peer-reviewed publications provide the scientific foundation:
 
-1. **Altimiras, F. et al.** *Bioinformatics and Machine Learning for Grapevine Phenological Stage Classification: A Comparative Study of RNA-seq Differential Expression Analysis.* Agronomy, 14(3), 613, 2024.
+1. **Altimiras, F. et al.** *Transcriptome Data Analysis Applied to Grapevine Growth Stage Identification.* Agronomy, 14(3), 613, 2024.
    - DOI: [10.3390/agronomy14030613](https://www.mdpi.com/2073-4395/14/3/613)
    - Source of genomic data: RNA-seq pipeline, DEGs, phenological stage comparisons (Tables S1–S5)
 
-2. **Altimiras, F. et al.** *Towards Precision Viticulture: Computational Approaches for Grape Production Monitoring.* In: Progress in Artificial Intelligence, EPIA 2024. Lecture Notes in Computer Science, vol. 15400. Springer, 2025.
+2. **Altimiras, F. et al.** *A Computational Framework for Crop Yield Estimation and Phenological Monitoring.* In: Progress in Artificial Intelligence, EPIA 2024. Lecture Notes in Computer Science, vol. 15400. Springer, 2025.
    - DOI: [10.1007/978-3-031-80084-9_14](https://link.springer.com/chapter/10.1007/978-3-031-80084-9_14)
 
 ### Datasets
@@ -402,7 +402,7 @@ If you use agragent in your research, please cite:
 
 @inproceedings{altimiras2025precision,
   author = {Altimiras, Francisco and others},
-  title = {Towards Precision Viticulture: Computational Approaches for Grape Production Monitoring},
+  title = {A Computational Framework for Crop Yield Estimation and Phenological Monitoring},
   booktitle = {Progress in Artificial Intelligence, EPIA 2024},
   series = {Lecture Notes in Computer Science},
   volume = {15400},

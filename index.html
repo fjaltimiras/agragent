@@ -1224,7 +1224,7 @@
       <!-- Dashboard content (hidden until polygon loaded) -->
       <div id="dash-content" style="display:none;">
 
-        <!-- KPI Cards -->
+        <!-- Row 1: Location + Key Metrics -->
         <div class="kpi-grid">
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="location">Location</div>
@@ -1239,7 +1239,7 @@
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="season_gdd">Season GDD</div>
             <div class="kpi-value" id="dashGDD">—</div>
-            <div class="kpi-sub">Growing Degree Days</div>
+            <div class="kpi-sub">Growing Degree Days (base 10°C)</div>
           </div>
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="season_precip">Season Precip.</div>
@@ -1248,7 +1248,79 @@
           </div>
         </div>
 
-        <!-- Climate summary + Alerts -->
+        <!-- Row 2: Agronomic KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label" data-i18n="chill_hours">Chill Hours</div>
+            <div class="kpi-value" id="dashChill">—</div>
+            <div class="kpi-sub">0–7.2°C (Apr–Sep)</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label" data-i18n="frost_days">Frost Days</div>
+            <div class="kpi-value" id="dashFrost" style="color:#60a5fa;">—</div>
+            <div class="kpi-sub" id="dashFrostSub">Tmin ≤ 0°C</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label" data-i18n="heat_waves">Heat Waves</div>
+            <div class="kpi-value" id="dashHeatWave" style="color:var(--red);">—</div>
+            <div class="kpi-sub" id="dashHeatSub">≥3 days &gt;35°C</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label" data-i18n="total_et">ET₀ Total</div>
+            <div class="kpi-value" id="dashET">—</div>
+            <div class="kpi-sub">Evapotranspiration (mm)</div>
+          </div>
+        </div>
+
+        <!-- Row 3: Alerts + Water Balance -->
+        <div class="grid-2 mb-20">
+          <div class="card">
+            <div class="card-title" data-i18n="active_alerts">Active Alerts</div>
+            <div id="dashAlerts" style="padding:8px 0;">
+              <div style="font-size:0.85rem;color:var(--text-secondary);">No alerts yet.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Water Balance (Precip. vs ET₀)</div>
+            <div id="dashWaterBalance" style="padding:12px 0;">
+              <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;">
+                <div style="flex:1;">
+                  <div style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:4px;">Precipitation</div>
+                  <div style="background:rgba(96,165,250,0.15);border-radius:6px;height:22px;overflow:hidden;">
+                    <div id="dashPrecipBar" style="height:100%;background:rgba(96,165,250,0.7);border-radius:6px;width:0%;transition:width 0.8s;"></div>
+                  </div>
+                  <div id="dashPrecipBarVal" style="font-size:0.72rem;color:#60a5fa;margin-top:2px;">—</div>
+                </div>
+                <div style="flex:1;">
+                  <div style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:4px;">Evapotranspiration</div>
+                  <div style="background:rgba(82,183,136,0.15);border-radius:6px;height:22px;overflow:hidden;">
+                    <div id="dashETBar" style="height:100%;background:rgba(82,183,136,0.7);border-radius:6px;width:0%;transition:width 0.8s;"></div>
+                  </div>
+                  <div id="dashETBarVal" style="font-size:0.72rem;color:var(--accent);margin-top:2px;">—</div>
+                </div>
+              </div>
+              <div id="dashWaterDeficit" style="font-size:0.82rem;font-weight:600;text-align:center;padding:6px;border-radius:6px;background:rgba(255,255,255,0.03);">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 4: Temp + Precip charts -->
+        <div class="grid-2 mb-20">
+          <div class="card">
+            <div class="card-title" data-i18n="monthly_temp_overview">Monthly Temperature Overview</div>
+            <div class="chart-wrap">
+              <canvas id="dashTempChart"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Precipitation & ET₀ Monthly</div>
+            <div class="chart-wrap">
+              <canvas id="dashPrecipETChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 5: Climate summary + Agronomic Indicators -->
         <div class="grid-2 mb-20">
           <div class="card">
             <div class="card-title" data-i18n="climate_summary">Climate Summary</div>
@@ -1257,22 +1329,14 @@
             </div>
           </div>
           <div class="card">
-            <div class="card-title" data-i18n="active_alerts">Active Alerts</div>
-            <div id="dashAlerts" style="padding:8px 0;">
-              <div style="font-size:0.85rem;color:var(--text-secondary);">No alerts yet.</div>
+            <div class="card-title">Agronomic Risk Assessment</div>
+            <div id="dashRiskAssessment" style="padding:8px 0;">
+              <div style="font-size:0.85rem;color:var(--text-secondary);">Loading...</div>
             </div>
           </div>
         </div>
 
-        <!-- Temperature mini chart -->
-        <div class="card mb-20">
-          <div class="card-title" data-i18n="monthly_temp_overview">Monthly Temperature Overview</div>
-          <div class="chart-wrap">
-            <canvas id="dashTempChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Parcel table -->
+        <!-- Row 6: Parcel table -->
         <div class="card">
           <div class="card-title" data-i18n="loaded_polygons">Loaded Polygons</div>
           <div id="dashParcelTable">
@@ -2140,8 +2204,7 @@
 
           <div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);">
             <div style="font-size:0.95rem;color:var(--text-primary);font-weight:600;">
-              Bioinformatics and Machine Learning for Grapevine Phenological Stage Classification:
-              A Comparative Study of RNA-seq Differential Expression Analysis
+              Transcriptome Data Analysis Applied to Grapevine Growth Stage Identification
             </div>
             <div style="font-size:0.82rem;color:var(--text-secondary);margin-top:4px;">
               Altimiras, F. et al. — <em>Agronomy</em>, 14(3), 613, 2024
@@ -2159,7 +2222,7 @@
 
           <div>
             <div style="font-size:0.95rem;color:var(--text-primary);font-weight:600;">
-              Towards Precision Viticulture: Computational Approaches for Grape Production Monitoring
+              A Computational Framework for Crop Yield Estimation and Phenological Monitoring
             </div>
             <div style="font-size:0.82rem;color:var(--text-secondary);margin-top:4px;">
               Altimiras, F. et al. — <em>Progress in Artificial Intelligence, EPIA 2024</em>.
@@ -2446,6 +2509,32 @@ const tickOpts = { color: '#7fa892', font: { size: 11 } };
         x: { grid: gridOpts, ticks: tickOpts },
         y: { grid: gridOpts, ticks: tickOpts,
           title: { display: true, text: '°C', color: '#7fa892', font: { size: 11 } } }
+      }
+    }
+  });
+})();
+
+// Dashboard: Precip vs ET chart
+(function() {
+  const months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+  const el = document.getElementById('dashPrecipETChart');
+  if (!el) return;
+  chartInstances.dashPrecipET = new Chart(el.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [
+        { label: 'Precip (mm)', data: [], backgroundColor: 'rgba(96,165,250,0.6)', borderColor: '#60a5fa', borderWidth: 1, borderRadius: 3 },
+        { label: 'ET₀ (mm)', data: [], backgroundColor: 'rgba(82,183,136,0.6)', borderColor: '#52b788', borderWidth: 1, borderRadius: 3 }
+      ]
+    },
+    options: {
+      responsive: true, animation: { duration: 1200 },
+      plugins: { legend: { labels: { color: '#7fa892', boxWidth: 14, font: { size: 11 } } } },
+      scales: {
+        x: { grid: gridOpts, ticks: tickOpts },
+        y: { grid: gridOpts, ticks: tickOpts,
+          title: { display: true, text: 'mm', color: '#7fa892', font: { size: 11 } } }
       }
     }
   });
@@ -2895,45 +2984,95 @@ async function loadClimateData() {
     chartInstances.gdd.update();
 
     // --- Update Dashboard ---
-    const dashGDD = document.getElementById('dashGDD');
-    if (dashGDD) dashGDD.textContent = totalGDD.toLocaleString();
-    const dashPrecip = document.getElementById('dashPrecip');
-    if (dashPrecip) dashPrecip.textContent = monthPrecRound.reduce((s,v) => s+v, 0).toFixed(0) + ' mm';
-    const dashLoc = document.getElementById('dashLocation');
-    if (dashLoc) dashLoc.textContent = document.getElementById('location-label').textContent;
+    const totalPrecipSeason = +monthPrecRound.reduce((s,v) => s+v, 0).toFixed(0);
+    const avgMaxAll = avgMax.filter(v=>v);
+    const avgMinAll = avgMin.filter(v=>v);
+    const meanMax = avgMaxAll.length ? (avgMaxAll.reduce((s,v)=>s+v,0)/avgMaxAll.length).toFixed(1) : '—';
+    const meanMin = avgMinAll.length ? (avgMinAll.reduce((s,v)=>s+v,0)/avgMinAll.length).toFixed(1) : '—';
 
-    // Dashboard climate summary
-    const summaryEl = document.getElementById('dashClimateSummary');
+    // KPI row 1
+    const el = id => document.getElementById(id);
+    if (el('dashGDD')) el('dashGDD').textContent = totalGDD.toLocaleString();
+    if (el('dashPrecip')) el('dashPrecip').textContent = totalPrecipSeason + ' mm';
+    if (el('dashLocation')) el('dashLocation').textContent = document.getElementById('location-label').textContent;
+
+    // KPI row 2
+    if (el('dashChill')) el('dashChill').textContent = chillHours.toLocaleString();
+    if (el('dashFrost')) el('dashFrost').textContent = frostDays;
+    if (el('dashFrostSub')) el('dashFrostSub').textContent = lastFrostStr !== 'None' ? `Last: ${lastFrostStr} ${lastFrostYear}` : 'No frost';
+    if (el('dashHeatWave')) el('dashHeatWave').textContent = heatWaves;
+    if (el('dashHeatSub')) el('dashHeatSub').textContent = `${heatDays} days >35°C`;
+    if (el('dashET')) el('dashET').textContent = totalET + ' mm';
+
+    // Water balance bars
+    const maxWater = Math.max(totalPrecipSeason, totalET, 1);
+    if (el('dashPrecipBar')) el('dashPrecipBar').style.width = (totalPrecipSeason / maxWater * 100) + '%';
+    if (el('dashPrecipBarVal')) el('dashPrecipBarVal').textContent = totalPrecipSeason + ' mm';
+    if (el('dashETBar')) el('dashETBar').style.width = (totalET / maxWater * 100) + '%';
+    if (el('dashETBarVal')) el('dashETBarVal').textContent = totalET + ' mm';
+    const deficit = totalPrecipSeason - totalET;
+    if (el('dashWaterDeficit')) {
+      const defColor = deficit >= 0 ? 'var(--accent)' : 'var(--red)';
+      el('dashWaterDeficit').innerHTML = `<span style="color:${defColor};font-weight:700;">${deficit >= 0 ? '+' : ''}${deficit} mm</span> <span style="color:var(--text-secondary);font-weight:400;">${deficit >= 0 ? '— Water surplus' : '— Water deficit (irrigation needed)'}</span>`;
+    }
+
+    // Climate summary
+    const summaryEl = el('dashClimateSummary');
     if (summaryEl) {
       summaryEl.innerHTML = `
-        <div><span style="color:var(--text-secondary)">Avg Max Temp:</span> <strong>${(avgMax.filter(v=>v).reduce((s,v)=>s+v,0)/avgMax.filter(v=>v).length).toFixed(1)}°C</strong></div>
-        <div><span style="color:var(--text-secondary)">Avg Min Temp:</span> <strong>${(avgMin.filter(v=>v).reduce((s,v)=>s+v,0)/avgMin.filter(v=>v).length).toFixed(1)}°C</strong></div>
+        <div><span style="color:var(--text-secondary)">Avg Max Temp:</span> <strong>${meanMax}°C</strong></div>
+        <div><span style="color:var(--text-secondary)">Avg Min Temp:</span> <strong>${meanMin}°C</strong></div>
         <div><span style="color:var(--text-secondary)">Avg Humidity:</span> <strong>${meanHumidity}%</strong></div>
-        <div><span style="color:var(--text-secondary)">Total Precip:</span> <strong>${monthPrecRound.reduce((s,v)=>s+v,0).toFixed(0)} mm</strong></div>
-        <div><span style="color:var(--text-secondary)">Total ET₀:</span> <strong>${totalET} mm</strong></div>
         <div><span style="color:var(--text-secondary)">Solar Radiation:</span> <strong>${totalSolar.toLocaleString()} MJ/m²</strong></div>
-        <div><span style="color:var(--text-secondary)">GDD (base 10°C):</span> <strong>${totalGDD.toLocaleString()}</strong></div>
-        <div><span style="color:var(--text-secondary)">Chill Hours:</span> <strong>${chillHours.toLocaleString()}</strong></div>`;
+        <div><span style="color:var(--text-secondary)">Dry Months:</span> <strong>${dryMonths}</strong> ${dryNames.length > 0 ? '<span style="font-size:0.78rem;color:var(--text-secondary);">(' + dryNames.join(', ') + ')</span>' : ''}</div>
+        <div><span style="color:var(--text-secondary)">GDD:</span> <strong>${totalGDD.toLocaleString()}</strong> · <span style="color:var(--text-secondary)">Chill Hours:</span> <strong>${chillHours.toLocaleString()}</strong></div>`;
+    }
+
+    // Risk assessment
+    const riskEl = el('dashRiskAssessment');
+    if (riskEl) {
+      const risks = [];
+      // Chill hours assessment
+      const chillStatus = chillHours >= 800 ? ['Excellent','green'] : chillHours >= 400 ? ['Adequate','accent'] : ['Low','red'];
+      risks.push(`<div class="hbar-row"><div class="hbar-label">Chill Accumulation <span style="color:var(--${chillStatus[1]});">${chillStatus[0]} (${chillHours}h)</span></div><div class="hbar-track"><div class="hbar-fill" style="width:${Math.min(100, chillHours/10)}%;background:var(--${chillStatus[1]})"></div></div></div>`);
+      // GDD assessment
+      const gddStatus = totalGDD >= 1500 ? ['On track','green'] : totalGDD >= 1000 ? ['Moderate','yellow'] : ['Low','red'];
+      risks.push(`<div class="hbar-row"><div class="hbar-label">Heat Accumulation (GDD) <span style="color:var(--${gddStatus[1]});">${gddStatus[0]} (${totalGDD})</span></div><div class="hbar-track"><div class="hbar-fill" style="width:${Math.min(100, totalGDD/20)}%;background:var(--${gddStatus[1]})"></div></div></div>`);
+      // Water stress
+      const waterStatus = deficit >= 0 ? ['Surplus','green'] : deficit > -200 ? ['Mild deficit','yellow'] : ['Severe deficit','red'];
+      risks.push(`<div class="hbar-row"><div class="hbar-label">Water Balance <span style="color:var(--${waterStatus[1]});">${waterStatus[0]} (${deficit > 0 ? '+' : ''}${deficit}mm)</span></div><div class="hbar-track"><div class="hbar-fill" style="width:${Math.min(100, Math.max(10, (totalPrecipSeason / Math.max(totalET, 1)) * 100))}%;background:var(--${waterStatus[1]})"></div></div></div>`);
+      // Frost risk
+      const frostStatus = frostDays === 0 ? ['None','green'] : frostDays <= 5 ? ['Low','yellow'] : ['High','red'];
+      risks.push(`<div class="hbar-row"><div class="hbar-label">Frost Risk <span style="color:var(--${frostStatus[1]});">${frostStatus[0]} (${frostDays} days)</span></div><div class="hbar-track"><div class="hbar-fill" style="width:${Math.min(100, frostDays * 10 + 5)}%;background:var(--${frostStatus[1]})"></div></div></div>`);
+      // Heat stress
+      const heatStatus = heatWaves === 0 ? ['None','green'] : heatWaves <= 1 ? ['Moderate','yellow'] : ['High','red'];
+      risks.push(`<div class="hbar-row"><div class="hbar-label">Heat Stress <span style="color:var(--${heatStatus[1]});">${heatStatus[0]} (${heatWaves} waves)</span></div><div class="hbar-track"><div class="hbar-fill" style="width:${Math.min(100, heatDays * 5 + 5)}%;background:var(--${heatStatus[1]})"></div></div></div>`);
+      riskEl.innerHTML = '<div style="padding-top:4px;">' + risks.join('') + '</div>';
     }
 
     // Dashboard alerts
-    const dashAlerts = document.getElementById('dashAlerts');
+    const dashAlerts = el('dashAlerts');
     if (dashAlerts) {
       if (alerts.length > 0) {
         dashAlerts.innerHTML = alerts.map(a => {
-          const color = a.includes('🌡') || a.includes('⚠') ? 'red' : a.includes('❄') ? 'blue' : 'yellow';
-          return `<div class="alert-item"><div class="alert-dot ${color === 'blue' ? 'yellow' : color}"></div><div class="alert-text"><div class="sub">${a}</div></div></div>`;
+          const color = a.includes('🌡') || a.includes('⚠') ? 'red' : a.includes('❄') ? 'yellow' : 'yellow';
+          return `<div class="alert-item"><div class="alert-dot ${color}"></div><div class="alert-text"><div class="sub">${a}</div></div></div>`;
         }).join('');
       } else {
         dashAlerts.innerHTML = '<div style="font-size:0.85rem;color:var(--accent);">✅ No alerts — conditions look good.</div>';
       }
     }
 
-    // Dashboard temperature chart
+    // Dashboard charts
     if (chartInstances.dashTemp) {
       chartInstances.dashTemp.data.datasets[0].data = avgMax;
       chartInstances.dashTemp.data.datasets[1].data = avgMin;
       chartInstances.dashTemp.update();
+    }
+    if (chartInstances.dashPrecipET) {
+      chartInstances.dashPrecipET.data.datasets[0].data = monthPrecRound;
+      chartInstances.dashPrecipET.data.datasets[1].data = monthETRound;
+      chartInstances.dashPrecipET.update();
     }
 
     climateDataLoaded = true;
