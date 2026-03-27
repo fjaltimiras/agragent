@@ -2775,31 +2775,8 @@ function initMap() {
   // Init draw/edit tools
   initGeoman();
 
-  // Load Agrifrut.kml coordinates for GEE clipping (no visible polygons)
-  fetch('Agrifrut.kml')
-    .then(r => r.text())
-    .then(kmlText => {
-      const parser = new DOMParser();
-      const kmlDoc = parser.parseFromString(kmlText, 'text/xml');
-      const geojson = toGeoJSON.kml(kmlDoc);
-
-      geojson.features.forEach(feature => {
-        if (!feature.geometry || feature.geometry.type !== 'Polygon') return;
-        const rawRing = feature.geometry.coordinates[0];
-        kmlRawCoords.push(rawRing.map(c => [c[0], c[1]]));
-      });
-
-      // Fit map to KML bounds
-      if (kmlRawCoords.length > 0) {
-        const allPts = kmlRawCoords.flat().map(([lng, lat]) => [lat, lng]);
-        vineMap.fitBounds(L.latLngBounds(allPts), { padding: [40, 40] });
-      }
-      renderLayerList();
-    })
-    .catch(err => {
-      console.warn('No se pudo cargar Agrifrut.kml:', err);
-      renderLayerList();
-    });
+  // No default polygons — user must upload KML/KMZ or draw a polygon
+  renderLayerList();
 }
 
 // ═══════════════════════════════════════
@@ -2914,6 +2891,11 @@ function connectGEE() {
 function loadGEELayer(idx) {
   if (!geeConnected || !window.ee) return;
   currentGEEIndex = idx;
+
+  if (kmlRawCoords.length === 0) {
+    setGEEStatus('error', '⚠ Primero sube un archivo KML/KMZ o dibuja un polígono en el mapa.');
+    return;
+  }
 
   const startDate = document.getElementById('gee-start').value;
   const endDate   = document.getElementById('gee-end').value;
@@ -3737,9 +3719,20 @@ function initGeoman() {
   vineMap.on('pm:create', e => {
     const layer = e.layer;
     const color = selectedColor || '#52b788';
-    layer.setStyle({ color, fillColor: color, fillOpacity: 0.3, weight: 2.5 });
+    layer.setStyle({ color, fillColor: color, fillOpacity: 0.15, weight: 2, dashArray: '6,4' });
     stopDraw();
     window._editLayer = layer;
+
+    // Store polygon coords for GEE clipping
+    if (layer instanceof L.Polygon) {
+      const latlngs = layer.getLatLngs()[0];
+      const ring = latlngs.map(ll => [ll.lng, ll.lat]);
+      ring.push(ring[0]); // close ring
+      kmlRawCoords.push(ring);
+      // Reload GEE if connected
+      if (geeConnected) loadGEELayer(currentGEEIndex);
+    }
+
     openEditor(layer, true);
   });
 }
