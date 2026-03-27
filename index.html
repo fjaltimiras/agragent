@@ -1209,154 +1209,75 @@
     <!-- ═══════════════ SECTION 1: DASHBOARD ═══════════════ -->
     <section id="section-dashboard" class="section active">
 
-      <!-- KPI Cards -->
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-label">Avg NDVI</div>
-          <div class="kpi-value">0.71</div>
-          <div class="kpi-sub"><span class="kpi-delta up">▲ +0.03</span> vs last week</div>
+      <!-- Empty state -->
+      <div id="dash-empty" class="card" style="text-align:center;padding:60px 20px;">
+        <div style="font-size:2.5rem;margin-bottom:12px;">📍</div>
+        <div style="font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:8px;">Bienvenido a agragent</div>
+        <div style="font-size:0.85rem;color:var(--text-secondary);max-width:420px;margin:0 auto;line-height:1.7;">
+          Para comenzar, ve a <strong style="color:var(--accent)">Satellite Maps</strong> y sube un archivo KML/KMZ o dibuja un polígono sobre tu campo.<br>
+          El dashboard se actualizará automáticamente con datos reales de la localidad.
         </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Predicted Yield</div>
-          <div class="kpi-value">9.8</div>
-          <div class="kpi-sub">t/ha · <span style="color:var(--accent)">Extra Trees model</span></div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Phenological Stage</div>
-          <div class="kpi-value" style="font-size:1.3rem;margin-top:8px;">Veraison</div>
-          <div class="kpi-sub" style="margin-top:6px;">
-            <div style="background:rgba(255,255,255,0.06);border-radius:4px;height:6px;margin-bottom:4px;overflow:hidden;">
-              <div style="width:68%;height:100%;background:var(--yellow);border-radius:4px;"></div>
-            </div>
-            68% complete
+      </div>
+
+      <!-- Dashboard content (hidden until polygon loaded) -->
+      <div id="dash-content" style="display:none;">
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Location</div>
+            <div class="kpi-value" id="dashLocation" style="font-size:1.1rem;margin-top:6px;">—</div>
+            <div class="kpi-sub" id="dashCoords">—</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Field Area</div>
+            <div class="kpi-value" id="dashArea">—</div>
+            <div class="kpi-sub" id="dashPolygons">—</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Season GDD</div>
+            <div class="kpi-value" id="dashGDD">—</div>
+            <div class="kpi-sub">Growing Degree Days</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Season Precip.</div>
+            <div class="kpi-value" id="dashPrecip">—</div>
+            <div class="kpi-sub">Total mm (Apr–present)</div>
           </div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Days to Harvest</div>
-          <div class="kpi-value">23</div>
-          <div class="kpi-sub"><span class="kpi-delta neutral">◉</span> Est. Apr 18, 2026</div>
-        </div>
-      </div>
 
-      <!-- NDVI Trend Chart -->
-      <div class="card mb-20">
-        <div class="card-title">NDVI Trend — Last 12 Weeks</div>
-        <div class="chart-wrap">
-          <canvas id="ndviTrendChart"></canvas>
+        <!-- Climate summary + Alerts -->
+        <div class="grid-2 mb-20">
+          <div class="card">
+            <div class="card-title">Climate Summary</div>
+            <div id="dashClimateSummary" style="padding:8px 0;font-size:0.85rem;line-height:2;color:var(--text-secondary);">
+              Loading...
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Active Alerts</div>
+            <div id="dashAlerts" style="padding:8px 0;">
+              <div style="font-size:0.85rem;color:var(--text-secondary);">No alerts yet.</div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <!-- Alerts + Model Confidence -->
-      <div class="grid-2">
+        <!-- Temperature mini chart -->
+        <div class="card mb-20">
+          <div class="card-title">Monthly Temperature Overview</div>
+          <div class="chart-wrap">
+            <canvas id="dashTempChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Parcel table -->
         <div class="card">
-          <div class="card-title">Active Alerts</div>
-          <div class="alert-item">
-            <div class="alert-dot red"></div>
-            <div class="alert-text">
-              <div class="title">Irrigation needed — Parcel B</div>
-              <div class="sub">Soil moisture below threshold · Detected 6h ago</div>
-            </div>
-          </div>
-          <div class="alert-item">
-            <div class="alert-dot yellow"></div>
-            <div class="alert-text">
-              <div class="title">Temperature stress risk</div>
-              <div class="sub">3 days above 35°C forecast · Moderate risk</div>
-            </div>
-          </div>
-          <div class="alert-item">
-            <div class="alert-dot yellow"></div>
-            <div class="alert-text">
-              <div class="title">NDRE decline — Parcel D</div>
-              <div class="sub">−0.04 change in 5 days · Monitor nitrogen</div>
-            </div>
+          <div class="card-title">Loaded Polygons</div>
+          <div id="dashParcelTable">
+            <div style="padding:14px 0;font-size:0.83rem;color:var(--text-secondary);">No polygons loaded.</div>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-title">Model Confidence (R²)</div>
-          <div style="padding-top:8px;">
-            <div class="hbar-row">
-              <div class="hbar-label">Extra Trees <span>97.2%</span></div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:97.2%"></div></div>
-            </div>
-            <div class="hbar-row">
-              <div class="hbar-label">CatBoost <span>96.9%</span></div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:96.9%;background:#60a5fa"></div></div>
-            </div>
-            <div class="hbar-row">
-              <div class="hbar-label">Random Forest <span>96.4%</span></div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:96.4%;background:#a78bfa"></div></div>
-            </div>
-            <div class="hbar-row">
-              <div class="hbar-label">XGBoost <span>95.8%</span></div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:95.8%;background:#f87171"></div></div>
-            </div>
-            <div class="hbar-row">
-              <div class="hbar-label">SVR <span>93.1%</span></div>
-              <div class="hbar-track"><div class="hbar-fill" style="width:93.1%;background:#fb923c"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Vineyard Status Table -->
-      <div class="card">
-        <div class="card-title">Vineyard Parcel Status</div>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Parcel</th>
-              <th>Area (ha)</th>
-              <th>NDVI</th>
-              <th>Stage</th>
-              <th>Health</th>
-              <th>Last Updated</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Parcel A</strong></td>
-              <td>4.2</td>
-              <td><strong>0.74</strong></td>
-              <td>Veraison</td>
-              <td><span class="badge badge-green">Excellent</span></td>
-              <td style="color:var(--text-secondary)">3 days ago</td>
-            </tr>
-            <tr>
-              <td><strong>Parcel B</strong></td>
-              <td>3.8</td>
-              <td><strong>0.66</strong></td>
-              <td>Veraison</td>
-              <td><span class="badge badge-yellow">Stressed</span></td>
-              <td style="color:var(--text-secondary)">3 days ago</td>
-            </tr>
-            <tr>
-              <td><strong>Parcel C</strong></td>
-              <td>5.1</td>
-              <td><strong>0.73</strong></td>
-              <td>Ripening</td>
-              <td><span class="badge badge-green">Good</span></td>
-              <td style="color:var(--text-secondary)">3 days ago</td>
-            </tr>
-            <tr>
-              <td><strong>Parcel D</strong></td>
-              <td>2.9</td>
-              <td><strong>0.68</strong></td>
-              <td>Veraison</td>
-              <td><span class="badge badge-yellow">Monitor</span></td>
-              <td style="color:var(--text-secondary)">3 days ago</td>
-            </tr>
-            <tr>
-              <td><strong>Parcel E</strong></td>
-              <td>6.3</td>
-              <td><strong>0.76</strong></td>
-              <td>Ripening</td>
-              <td><span class="badge badge-green">Excellent</span></td>
-              <td style="color:var(--text-secondary)">3 days ago</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
 
     </section>
@@ -2364,42 +2285,30 @@ const gridOpts = {
 const tickOpts = { color: '#7fa892', font: { size: 11 } };
 
 // ═══════════════════════════════════════
-// CHART 1: NDVI Trend
+// CHART 1: Dashboard Temperature Overview
 // ═══════════════════════════════════════
 (function() {
-  const weeks = ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'];
-  const ndviData = [0.58, 0.60, 0.63, 0.65, 0.67, 0.68, 0.70, 0.71, 0.72, 0.71, 0.72, 0.71];
-  const ctx = document.getElementById('ndviTrendChart').getContext('2d');
-  const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-  gradient.addColorStop(0, 'rgba(82,183,136,0.3)');
-  gradient.addColorStop(1, 'rgba(82,183,136,0.01)');
-  chartInstances.ndvi = new Chart(ctx, {
+  const months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+  const el = document.getElementById('dashTempChart');
+  if (!el) return;
+  const ctx = el.getContext('2d');
+  chartInstances.dashTemp = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: weeks,
-      datasets: [{
-        label: 'NDVI',
-        data: ndviData,
-        borderColor: '#52b788',
-        backgroundColor: gradient,
-        borderWidth: 2.5,
-        pointBackgroundColor: '#52b788',
-        pointRadius: 4,
-        fill: true,
-        tension: 0.4
-      }]
+      labels: months,
+      datasets: [
+        { label: 'Max °C', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.08)', borderWidth: 2, pointRadius: 3, fill: true, tension: 0.4 },
+        { label: 'Min °C', data: [], borderColor: '#60a5fa', backgroundColor: 'rgba(96,165,250,0.08)', borderWidth: 2, pointRadius: 3, fill: true, tension: 0.4 }
+      ]
     },
     options: {
       responsive: true,
       animation: { duration: 1200 },
-      plugins: { legend: { display: false } },
+      plugins: { legend: { labels: { color: '#7fa892', boxWidth: 14, font: { size: 11 } } } },
       scales: {
         x: { grid: gridOpts, ticks: tickOpts },
-        y: {
-          grid: gridOpts, ticks: { ...tickOpts },
-          min: 0.5, max: 0.85,
-          title: { display: true, text: 'NDVI', color: '#7fa892', font: { size: 11 } }
-        }
+        y: { grid: gridOpts, ticks: tickOpts,
+          title: { display: true, text: '°C', color: '#7fa892', font: { size: 11 } } }
       }
     }
   });
@@ -2615,9 +2524,59 @@ function onPolygonAdded() {
   const lng = sumLng / n;
   // Update location name
   updateLocationName(lat, lng);
+  // Show dashboard content
+  const dashEmpty = document.getElementById('dash-empty');
+  const dashContent = document.getElementById('dash-content');
+  if (dashEmpty) dashEmpty.style.display = 'none';
+  if (dashContent) dashContent.style.display = 'block';
+  // Update dashboard KPIs
+  updateDashboard(lat, lng);
   // Reload climate data for new location
   climateDataLoaded = false;
   loadClimateData();
+}
+
+function updateDashboard(lat, lng) {
+  // Coordinates
+  const coordsEl = document.getElementById('dashCoords');
+  if (coordsEl) coordsEl.textContent = `${Math.abs(lat).toFixed(4)}°${lat < 0 ? 'S' : 'N'}, ${Math.abs(lng).toFixed(4)}°${lng < 0 ? 'W' : 'E'}`;
+
+  // Polygon count and area
+  const polyEl = document.getElementById('dashPolygons');
+  if (polyEl) polyEl.textContent = kmlRawCoords.length + ' polygon(s)';
+
+  // Approximate area (shoelace formula in km², then to ha)
+  let totalArea = 0;
+  kmlRawCoords.forEach(ring => {
+    let area = 0;
+    for (let i = 0; i < ring.length - 1; i++) {
+      const [x1, y1] = ring[i];
+      const [x2, y2] = ring[i + 1];
+      area += x1 * y2 - x2 * y1;
+    }
+    // Convert degrees² to approximate m² (at this latitude)
+    const degToM = 111320;
+    const cosLat = Math.cos(lat * Math.PI / 180);
+    totalArea += Math.abs(area / 2) * degToM * degToM * cosLat;
+  });
+  const areaHa = (totalArea / 10000).toFixed(2);
+  const areaEl = document.getElementById('dashArea');
+  if (areaEl) areaEl.textContent = areaHa + ' ha';
+
+  // Parcel table
+  const tableEl = document.getElementById('dashParcelTable');
+  if (tableEl && kmlRawCoords.length > 0) {
+    let html = '<table class="data-table"><thead><tr><th>Polygon</th><th>Points</th><th>Centroid</th></tr></thead><tbody>';
+    kmlRawCoords.forEach((ring, i) => {
+      let sLat = 0, sLng = 0;
+      ring.forEach(([lo, la]) => { sLng += lo; sLat += la; });
+      const cLat = (sLat / ring.length).toFixed(4);
+      const cLng = (sLng / ring.length).toFixed(4);
+      html += `<tr><td><strong>Polygon ${i + 1}</strong></td><td>${ring.length}</td><td>${Math.abs(cLat)}°${cLat < 0 ? 'S' : 'N'}, ${Math.abs(cLng)}°${cLng < 0 ? 'W' : 'E'}</td></tr>`;
+    });
+    html += '</tbody></table>';
+    tableEl.innerHTML = html;
+  }
 }
 
 async function loadClimateData() {
@@ -2797,6 +2756,48 @@ async function loadClimateData() {
     chartInstances.gdd.data.labels = gddMonthLabels;
     chartInstances.gdd.data.datasets[0].data = gddValues;
     chartInstances.gdd.update();
+
+    // --- Update Dashboard ---
+    const dashGDD = document.getElementById('dashGDD');
+    if (dashGDD) dashGDD.textContent = totalGDD.toLocaleString();
+    const dashPrecip = document.getElementById('dashPrecip');
+    if (dashPrecip) dashPrecip.textContent = monthPrecRound.reduce((s,v) => s+v, 0).toFixed(0) + ' mm';
+    const dashLoc = document.getElementById('dashLocation');
+    if (dashLoc) dashLoc.textContent = document.getElementById('location-label').textContent;
+
+    // Dashboard climate summary
+    const summaryEl = document.getElementById('dashClimateSummary');
+    if (summaryEl) {
+      summaryEl.innerHTML = `
+        <div><span style="color:var(--text-secondary)">Avg Max Temp:</span> <strong>${(avgMax.filter(v=>v).reduce((s,v)=>s+v,0)/avgMax.filter(v=>v).length).toFixed(1)}°C</strong></div>
+        <div><span style="color:var(--text-secondary)">Avg Min Temp:</span> <strong>${(avgMin.filter(v=>v).reduce((s,v)=>s+v,0)/avgMin.filter(v=>v).length).toFixed(1)}°C</strong></div>
+        <div><span style="color:var(--text-secondary)">Avg Humidity:</span> <strong>${meanHumidity}%</strong></div>
+        <div><span style="color:var(--text-secondary)">Total Precip:</span> <strong>${monthPrecRound.reduce((s,v)=>s+v,0).toFixed(0)} mm</strong></div>
+        <div><span style="color:var(--text-secondary)">Total ET₀:</span> <strong>${totalET} mm</strong></div>
+        <div><span style="color:var(--text-secondary)">Solar Radiation:</span> <strong>${totalSolar.toLocaleString()} MJ/m²</strong></div>
+        <div><span style="color:var(--text-secondary)">GDD (base 10°C):</span> <strong>${totalGDD.toLocaleString()}</strong></div>
+        <div><span style="color:var(--text-secondary)">Chill Hours:</span> <strong>${chillHours.toLocaleString()}</strong></div>`;
+    }
+
+    // Dashboard alerts
+    const dashAlerts = document.getElementById('dashAlerts');
+    if (dashAlerts) {
+      if (alerts.length > 0) {
+        dashAlerts.innerHTML = alerts.map(a => {
+          const color = a.includes('🌡') || a.includes('⚠') ? 'red' : a.includes('❄') ? 'blue' : 'yellow';
+          return `<div class="alert-item"><div class="alert-dot ${color === 'blue' ? 'yellow' : color}"></div><div class="alert-text"><div class="sub">${a}</div></div></div>`;
+        }).join('');
+      } else {
+        dashAlerts.innerHTML = '<div style="font-size:0.85rem;color:var(--accent);">✅ No alerts — conditions look good.</div>';
+      }
+    }
+
+    // Dashboard temperature chart
+    if (chartInstances.dashTemp) {
+      chartInstances.dashTemp.data.datasets[0].data = avgMax;
+      chartInstances.dashTemp.data.datasets[1].data = avgMin;
+      chartInstances.dashTemp.update();
+    }
 
     climateDataLoaded = true;
     console.log('✅ Climate data loaded from Open-Meteo');
