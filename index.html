@@ -1529,6 +1529,9 @@
         </div>
       </div>
 
+      <!-- Selected parcel info -->
+      <div class="card mb-20" id="selected-parcel-info" style="display:none;margin-top:14px;"></div>
+
       <div class="map-source-badge" id="map-source-badge">
         🛰️ Sentinel-2 · OpenStreetMap base · Conecta a GEE para imágenes reales
       </div>
@@ -2809,6 +2812,8 @@ function initMap() {
         poly.on('click', () => {
           window._editLayer = poly;
           const infoEl = document.getElementById('selected-parcel-info');
+          if (!infoEl) return;
+          infoEl.style.display = 'block';
           infoEl.innerHTML = `
             <div style="line-height:2;font-size:0.83rem;">
               <div><strong style="color:${color}">🍇 Agrifrut — ${name}</strong></div>
