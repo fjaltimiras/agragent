@@ -32,13 +32,23 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 
 | Module | Description |
 |---|---|
-| **Dashboard** | Dynamic overview: location, field area, climate summary, alerts — all derived from the user's polygon |
-| **Satellite Maps** | Sentinel-2 imagery via Google Earth Engine with 6 vegetation indices, scene browsing, and temporal comparison |
-| **Climate Data** | Real-time climate analytics from Open-Meteo — temperature, precipitation, humidity, solar radiation, evapotranspiration, GDD, chill hours, frost, heat waves |
+| **Login** | Username/password authentication with role-based access (Admin, Viewer). GEE credentials auto-filled for admin |
+| **Dashboard** | Dynamic agronomic overview: 8 KPIs, water balance, risk assessment, alerts, charts — all derived from the user's polygon |
+| **Satellite Maps** | Sentinel-2 imagery via Google Earth Engine with 6 vegetation indices, scene browsing, and split-screen temporal comparison |
+| **Climate Data** | Real-time climate analytics from Open-Meteo — temperature, precipitation, humidity, solar radiation, ET₀, GDD, chill hours, frost, heat waves (8 KPIs + 6 charts) |
 | **Genomic Analysis** | Real RNA-seq DEG data from Altimiras et al. (2024) — 3,603 DEGs across 8 phenological stages of *Vitis vinifera* |
 | **Image Analysis** | Integration with the WGISD dataset (Embrapa) — 300+ grape cluster images with YOLO bounding box annotations |
 | **Yield Prediction** | Extra Trees Regressor model output with confidence intervals and feature importance |
 | **References** | Author info, ORCID, associated publications with DOIs, dataset citations |
+| **Multi-language** | English, Spanish, and Portuguese — language persisted in localStorage |
+
+### Authentication
+
+- Login screen with username/password
+- Default users: `admin` (full access, GEE credentials auto-filled) and `demo` (viewer)
+- Sessions stored in sessionStorage (24h expiry)
+- User list stored in localStorage (can be extended)
+- Logout button in sidebar
 
 ### Dynamic Dashboard
 
@@ -46,10 +56,19 @@ The dashboard starts empty and automatically populates when the user uploads a K
 
 - **Location**: reverse-geocoded name from polygon centroid (via OpenStreetMap Nominatim)
 - **Field area**: computed from polygon coordinates (shoelace formula)
-- **Climate summary**: real temperature, humidity, precipitation, ET₀, solar radiation, GDD, chill hours
-- **Active alerts**: generated from actual climate data (frost, heat waves, drought, low GDD)
+- **8 KPI cards**: location, area, GDD, precipitation, chill hours, frost days, heat waves, ET₀
+- **Water balance**: visual comparison of precipitation vs evapotranspiration with deficit/surplus indicator
+- **Agronomic risk assessment**: color-coded progress bars for chill accumulation, GDD, water balance, frost risk, heat stress
+- **Active alerts**: generated from actual climate data (frost, heat waves, drought, low GDD, low chill, high ET₀)
 - **Temperature chart**: monthly min/max from Open-Meteo
+- **Precipitation vs ET₀ chart**: monthly comparison for irrigation planning
 - **Polygon table**: list of all loaded polygons with centroids
+
+### Multi-language Support
+
+- Language selector (EN/ES/PT) in the top bar
+- All navigation, section headers, KPI labels, chart titles, buttons, and messages are translated
+- Language preference saved in localStorage and restored on reload
 
 ### Satellite Analysis
 
@@ -89,14 +108,17 @@ All climate data is fetched dynamically from the [Open-Meteo Archive API](https:
 
 ## How It Works
 
-1. **Open the app** and navigate to Satellite Maps
-2. **Upload a KML/KMZ** file or **draw a polygon** on the map
+1. **Login** with your credentials (default: `admin` / `agragent2026`)
+2. **Navigate to Satellite Maps** and upload a KML/KMZ file or draw a polygon
 3. The app automatically:
    - Detects the location name via reverse geocoding
    - Fetches climate data from Open-Meteo for that location
+   - Computes agronomic indicators (GDD, chill hours, water balance, risk assessment)
    - Updates the Dashboard, Climate, and all sections with real data
-4. **Connect to Google Earth Engine** (optional) to view Sentinel-2 satellite imagery clipped to your polygon
-5. Explore genomic data, grape images, and yield predictions
+4. **Connect to Google Earth Engine** (credentials auto-filled for admin) to view Sentinel-2 satellite imagery clipped to your polygon
+5. **Compare dates** using the split-screen slider in Compare mode
+6. **Change language** (EN/ES/PT) from the selector in the top bar
+7. Explore genomic data, grape images, and yield predictions
 
 ---
 
@@ -114,8 +136,8 @@ agragent is a **zero-dependency single-page application** (SPA) — the entire p
 │                                                       │
 │  ┌──────────┐  ┌──────────┐  ┌────────────────────┐ │
 │  │ Leaflet  │  │ Chart.js │  │ Earth Engine JS    │ │
-│  │ Map +    │  │ 9 Charts │  │ API (OAuth 2.0)    │ │
-│  │ Geoman   │  │          │  │                    │ │
+│  │ Map +    │  │10 Charts │  │ API (OAuth 2.0)    │ │
+│  │ Geoman   │  │ + i18n   │  │ + Login System     │ │
 │  └────┬─────┘  └────┬─────┘  └──────┬─────────────┘ │
 │       │              │               │                │
 │       └──────────────┼───────────────┘                │
@@ -169,6 +191,13 @@ open http://localhost:8080
 ```
 
 > **Note**: A local HTTP server is required (not `file://`) because the app makes API calls that require proper CORS handling.
+
+### Default Login Credentials
+
+| User | Password | Role | GEE Credentials |
+|------|----------|------|-----------------|
+| `admin` | `agragent2026` | Admin | Auto-filled |
+| `demo` | `demo` | Viewer | — |
 
 ### Google Earth Engine (Optional)
 
