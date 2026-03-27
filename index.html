@@ -1154,6 +1154,99 @@
 </head>
 <body>
 
+<!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
+<div id="login-screen" style="position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;">
+  <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:40px 36px;width:360px;max-width:90vw;text-align:center;">
+    <div style="font-size:2rem;margin-bottom:8px;">🌿</div>
+    <div style="font-size:1.4rem;font-weight:800;color:var(--accent);margin-bottom:4px;">agragent</div>
+    <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:28px;">Crop Monitoring Platform</div>
+    <div id="login-error" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:8px 12px;font-size:0.8rem;color:var(--red);margin-bottom:16px;"></div>
+    <input type="text" id="login-user" placeholder="Username" autocomplete="username"
+      style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text-primary);font-size:0.9rem;outline:none;margin-bottom:10px;box-sizing:border-box;"
+      onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+    <input type="password" id="login-pass" placeholder="Password" autocomplete="current-password"
+      style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text-primary);font-size:0.9rem;outline:none;margin-bottom:18px;box-sizing:border-box;"
+      onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()" style="width:100%;background:var(--accent);border:none;border-radius:8px;padding:12px;color:#0a1218;font-size:0.95rem;font-weight:700;cursor:pointer;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">Sign In</button>
+    <div style="margin-top:18px;font-size:0.72rem;color:var(--text-secondary);line-height:1.6;">
+      Default: <strong style="color:var(--text-primary);">admin</strong> / <strong style="color:var(--text-primary);">agragent2026</strong><br>
+      Manage users in Settings
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// LOGIN SYSTEM
+// ═══════════════════════════════════════
+const DEFAULT_USERS = [
+  { user: 'admin', pass: 'agragent2026', role: 'Admin' },
+  { user: 'demo', pass: 'demo', role: 'Viewer' }
+];
+
+function getUsers() {
+  try {
+    const stored = localStorage.getItem('agragent-users');
+    if (stored) return JSON.parse(stored);
+  } catch(e) {}
+  localStorage.setItem('agragent-users', JSON.stringify(DEFAULT_USERS));
+  return DEFAULT_USERS;
+}
+
+function doLogin() {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  const users = getUsers();
+
+  const match = users.find(u => u.user === user && u.pass === pass);
+  if (match) {
+    sessionStorage.setItem('agragent-session', JSON.stringify({ user: match.user, role: match.role, ts: Date.now() }));
+    document.getElementById('login-screen').style.display = 'none';
+    updateUserUI(match.user, match.role);
+  } else {
+    errEl.textContent = 'Invalid username or password';
+    errEl.style.display = 'block';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('agragent-session');
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').style.display = 'none';
+}
+
+function updateUserUI(user, role) {
+  const avatar = document.getElementById('user-avatar');
+  if (avatar) avatar.textContent = user.substring(0, 2).toUpperCase();
+  const nameEl = document.getElementById('sidebar-username');
+  if (nameEl) nameEl.textContent = user;
+  const roleEl = document.getElementById('sidebar-role');
+  if (roleEl) roleEl.textContent = role;
+}
+
+// Auto-login if session exists
+(function() {
+  const session = sessionStorage.getItem('agragent-session');
+  if (session) {
+    try {
+      const s = JSON.parse(session);
+      if (Date.now() - s.ts < 86400000) {
+        document.getElementById('login-screen').style.display = 'none';
+        updateUserUI(s.user, s.role);
+        return;
+      }
+    } catch(e) {}
+  }
+  document.getElementById('login-user').focus();
+})();
+</script>
+
 <!-- ═══════════════ SIDEBAR ═══════════════ -->
 <nav id="sidebar">
   <div class="sidebar-logo"><span>🌿</span>agragent</div>
@@ -1180,14 +1273,13 @@
       <span class="nav-icon">📚</span> <span data-i18n="nav_references">References</span>
     </div>
   </div>
-  <div class="sidebar-footer">
-    <div class="avatar">FA</div>
-    <div class="user-info">
-      <a href="https://orcid.org/0000-0003-1992-8338" target="_blank" rel="noopener" style="text-decoration:none;">
-        <div class="name" style="color:var(--text-primary);">Francisco Altimiras</div>
-      </a>
-      <div class="role">PhD Researcher · PUCV</div>
+  <div class="sidebar-footer" style="flex-wrap:wrap;">
+    <div class="avatar" id="user-avatar">—</div>
+    <div class="user-info" style="flex:1;">
+      <div class="name" id="sidebar-username" style="color:var(--text-primary);">—</div>
+      <div class="role" id="sidebar-role">—</div>
     </div>
+    <button onclick="doLogout()" title="Logout" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text-secondary);font-size:0.75rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">Logout</button>
   </div>
 </nav>
 
