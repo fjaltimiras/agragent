@@ -1200,7 +1200,7 @@
     </div>
     <div class="topbar-right">
       <span class="badge-season">Season 2025–2026</span>
-      <span style="font-size:0.8rem;color:var(--text-secondary)">Los Ángeles, Biobío, Chile</span>
+      <span id="location-label" style="font-size:0.8rem;color:var(--text-secondary)">Sube un polígono para comenzar</span>
     </div>
   </div>
 
@@ -1543,11 +1543,11 @@
 
       <div class="section-header">
         <h2>Climate Data</h2>
-        <span class="sub">Los Ángeles, Biobío — Temporada 2025/2026</span>
+        <span class="sub" id="climate-location-label">Sube un polígono para ver datos climáticos</span>
       </div>
 
       <div class="alert-box" id="climateAlert">
-        ⏳ Loading real climate data from Open-Meteo...
+        📍 Sube un archivo KML/KMZ o dibuja un polígono en el mapa para cargar datos climáticos de la localidad.
       </div>
 
       <div class="grid-4 mb-20">
@@ -2021,7 +2021,7 @@
 
       <!-- Hero -->
       <div class="yield-hero">
-        <div class="label">Predicted Yield — Los Ángeles, Biobío</div>
+        <div class="label" id="yield-location-label">Predicted Yield</div>
         <div class="value">9.8</div>
         <div class="unit">tonnes per hectare</div>
         <div class="ci">Confidence Interval: ± 0.8 t/ha (9.0 – 10.6)</div>
@@ -2454,19 +2454,53 @@ const tickOpts = { color: '#7fa892', font: { size: 11 } };
 let kmlRawCoords = [];   // [[lng,lat],...] per polygon, populated when KML loads
 let climateDataLoaded = false;
 
+// Reverse geocode coordinates to get location name
+async function updateLocationName(lat, lng) {
+  try {
+    const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10&accept-language=es`);
+    if (!resp.ok) return;
+    const data = await resp.json();
+    const addr = data.address || {};
+    const parts = [addr.city || addr.town || addr.village || addr.municipality || '', addr.state || addr.region || '', addr.country || ''].filter(Boolean);
+    const name = parts.join(', ') || data.display_name || '';
+    if (name) {
+      document.getElementById('location-label').textContent = name;
+      document.getElementById('climate-location-label').textContent = name + ' — Temporada 2025/2026';
+      document.getElementById('yield-location-label').textContent = 'Predicted Yield — ' + name;
+    }
+  } catch (e) {
+    console.warn('Reverse geocoding failed:', e);
+  }
+}
+
+// Called when polygons are added (upload or draw)
+function onPolygonAdded() {
+  if (kmlRawCoords.length === 0) return;
+  // Compute centroid
+  let sumLat = 0, sumLng = 0, n = 0;
+  kmlRawCoords.forEach(ring => {
+    ring.forEach(([lo, la]) => { sumLng += lo; sumLat += la; n++; });
+  });
+  const lat = sumLat / n;
+  const lng = sumLng / n;
+  // Update location name
+  updateLocationName(lat, lng);
+  // Reload climate data for new location
+  climateDataLoaded = false;
+  loadClimateData();
+}
+
 async function loadClimateData() {
   if (climateDataLoaded) return;
+  if (kmlRawCoords.length === 0) return; // No polygon yet
 
-  // Determine polygon centroid from kmlRawCoords, fallback to known location
-  let lat = -38.3365, lng = -73.2877;
-  if (kmlRawCoords.length > 0) {
-    let sumLat = 0, sumLng = 0, n = 0;
-    kmlRawCoords.forEach(ring => {
-      ring.forEach(([lo, la]) => { sumLng += lo; sumLat += la; n++; });
-    });
-    lat = sumLat / n;
-    lng = sumLng / n;
-  }
+  // Determine polygon centroid
+  let sumLat = 0, sumLng = 0, n = 0;
+  kmlRawCoords.forEach(ring => {
+    ring.forEach(([lo, la]) => { sumLng += lo; sumLat += la; n++; });
+  });
+  const lat = sumLat / n;
+  const lng = sumLng / n;
 
   // Season: Apr 2025 → ~7 days ago (archive API lags a few days)
   const startDate = '2025-04-01';
@@ -2594,8 +2628,7 @@ async function loadClimateData() {
   }
 }
 
-// Auto-load climate data on page load
-loadClimateData();
+// Climate data loads when user adds a polygon (via onPolygonAdded)
 
 // ═══════════════════════════════════════
 // GENOMIC: DEG Stage Chart + Accumulation Chart
@@ -3599,10 +3632,9 @@ async function loadKMZFile(file) {
       alert('No se encontraron geometrías válidas en el archivo.');
     } else {
       vineMap.fitBounds(L.featureGroup(userLayers.map(l => l.layer)).getBounds(), { padding: [30, 30] });
-      // Reload GEE layer with new polygon bounds
-      if (geeConnected) {
-        loadGEELayer(currentGEEIndex);
-      }
+      // Update location, climate, and GEE
+      onPolygonAdded();
+      if (geeConnected) loadGEELayer(currentGEEIndex);
     }
   } catch (e) {
     alert('Error al leer el archivo: ' + e.message);
@@ -3729,7 +3761,8 @@ function initGeoman() {
       const ring = latlngs.map(ll => [ll.lng, ll.lat]);
       ring.push(ring[0]); // close ring
       kmlRawCoords.push(ring);
-      // Reload GEE if connected
+      // Update location, climate, and GEE
+      onPolygonAdded();
       if (geeConnected) loadGEELayer(currentGEEIndex);
     }
 
