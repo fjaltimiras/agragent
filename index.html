@@ -11,7 +11,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mapbox/togeojson@0.16.0/togeojson.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://unpkg.com/leaflet-side-by-side/index.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/digidem/leaflet-side-by-side@gh-pages/leaflet-side-by-side.min.js"></script>
 <!-- Google Earth Engine JS API loaded dynamically on connect -->
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -3216,8 +3216,9 @@ function stopComparison(resetLayer = true) {
 // ─── SHARED HELPERS ──────────────────────────────────
 function buildClipGeom() {
   if (kmlRawCoords.length > 0) {
+    // ee.Geometry.Polygon expects [[[lng,lat],...]] — wrap each ring in an array
     return kmlRawCoords.length === 1
-      ? ee.Geometry.Polygon(kmlRawCoords[0])
+      ? ee.Geometry.Polygon([kmlRawCoords[0]])
       : ee.Geometry.MultiPolygon(kmlRawCoords.map(r => [r]));
   }
   return ee.Geometry.Rectangle([-73.290, -38.338, -73.285, -38.334]);
@@ -3853,9 +3854,12 @@ document.querySelectorAll('.color-opt').forEach(el => {
   });
 });
 
-// Close editor on backdrop click
-document.getElementById('poly-editor').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeEditor();
+// Close editor on backdrop click (element is below this script, defer)
+document.addEventListener('DOMContentLoaded', () => {
+  const pe = document.getElementById('poly-editor');
+  if (pe) pe.addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeEditor();
+  });
 });
 
 // ═══════════════════════════════════════
