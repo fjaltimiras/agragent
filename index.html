@@ -3633,7 +3633,7 @@ function setGEEMode(mode, btn) {
   document.getElementById('compare-panel').style.display  = mode === 'compare' ? 'block' : 'none';
   if (mode !== 'compare') stopComparison();
   if (mode === 'median') loadGEELayer(currentGEEIndex);
-  if (mode === 'browse' && availableScenes.length === 0 && geeConnected) fetchSceneList();
+  if ((mode === 'browse' || mode === 'compare') && availableScenes.length === 0 && geeConnected) fetchSceneList();
 }
 
 // ─── SCENE BROWSER ───────────────────────────────────
@@ -3709,25 +3709,28 @@ function loadSceneByDate(dateStr, chipIdx) {
 
   const { image, visParams } = buildImageAndVis(s2, currentGEEIndex);
 
-  const onMapId = result => {
-    const url = result.urlFormat || (result.tile_fetcher && result.tile_fetcher.url_format);
-    if (!url) { setMapLoading(false); return; }
+  try {
     if (geeLayer) vineMap.removeLayer(geeLayer);
-    geeLayer = L.tileLayer(url, {
-      attribution: '© GEE · Sentinel-2 · ' + dateStr,
-      opacity: (parseInt(document.getElementById('gee-opacity').value) || 85) / 100,
-      maxZoom: 14
-    }).addTo(vineMap);
-    vineMap.eachLayer(l => { if (l instanceof L.Polygon) l.bringToFront(); });
+    const result = image.getMapId(visParams);
+    const opacity = (parseInt(document.getElementById('gee-opacity').value) || 85) / 100;
+
+    if (result.formatTileUrl) {
+      geeLayer = L.gridLayer({ attribution: '© GEE · ' + dateStr, maxZoom: 20, tileSize: 256, opacity });
+      geeLayer.createTile = function(coords) {
+        const tile = document.createElement('img');
+        tile.width = 256; tile.height = 256;
+        tile.style.width = '256px'; tile.style.height = '256px';
+        tile.crossOrigin = 'anonymous';
+        tile.src = result.formatTileUrl(coords.x, coords.y, coords.z);
+        return tile;
+      };
+    } else {
+      geeLayer = L.tileLayer(result.urlFormat, { attribution: '© GEE · ' + dateStr, maxZoom: 20, opacity, tileSize: 256 });
+    }
+    geeLayer.addTo(vineMap);
     setMapLoading(false);
     document.getElementById('map-source-badge').innerHTML =
       `🌍 <strong>GEE</strong> · Sentinel-2 SR · <strong>${currentGEEIndex}</strong> · 📅 ${dateStr}`;
-  };
-
-  try {
-    const p = image.getMapId(visParams);
-    if (p && typeof p.then === 'function') p.then(onMapId).catch(e => { setMapLoading(false); setGEEStatus('error', '❌ ' + e.message); });
-    else image.getMapId(visParams, (obj, err) => { if (err) { setMapLoading(false); return; } onMapId(obj); });
   } catch(e) { setMapLoading(false); setGEEStatus('error', '❌ ' + e.message); }
 }
 
@@ -3756,31 +3759,31 @@ async function loadComparison() {
   const left  = makeImg(dateL, idxL);
   const right = makeImg(dateR, idxR);
 
-  const getTiles = ({ image, visParams }) => new Promise((resolve, reject) => {
-    try {
-      const p = image.getMapId(visParams);
-      if (p && typeof p.then === 'function') {
-        p.then(r => resolve(r.urlFormat || r.tile_fetcher.url_format)).catch(reject);
-      } else {
-        image.getMapId(visParams, (obj, err) => {
-          if (err) reject(err);
-          else resolve(obj.urlFormat || obj.tile_fetcher.url_format);
-        });
-      }
-    } catch(e) { reject(e); }
-  });
+  const makeLayer = ({ image, visParams }, label) => {
+    const result = image.getMapId(visParams);
+    if (result.formatTileUrl) {
+      const layer = L.gridLayer({ attribution: label, maxZoom: 20, tileSize: 256 });
+      layer.createTile = function(coords) {
+        const tile = document.createElement('img');
+        tile.width = 256; tile.height = 256;
+        tile.style.width = '256px'; tile.style.height = '256px';
+        tile.crossOrigin = 'anonymous';
+        tile.src = result.formatTileUrl(coords.x, coords.y, coords.z);
+        return tile;
+      };
+      return layer;
+    }
+    return L.tileLayer(result.urlFormat, { attribution: label, maxZoom: 20, tileSize: 256 });
+  };
 
   try {
-    const [urlL, urlR] = await Promise.all([getTiles(left), getTiles(right)]);
-
     if (geeLayer) { vineMap.removeLayer(geeLayer); geeLayer = null; }
 
-    const layerL = L.tileLayer(urlL, { attribution: dateL, maxZoom: 14 }).addTo(vineMap);
-    geeLayerRight = L.tileLayer(urlR, { attribution: dateR, maxZoom: 14 }).addTo(vineMap);
+    const layerL = makeLayer(left, dateL).addTo(vineMap);
+    geeLayerRight = makeLayer(right, dateR).addTo(vineMap);
 
     sbsControl = L.control.sideBySide(layerL, geeLayerRight).addTo(vineMap);
     geeLayer = layerL;
-    vineMap.eachLayer(l => { if (l instanceof L.Polygon) l.bringToFront(); });
 
     setMapLoading(false);
     document.getElementById('compare-status').innerHTML =
