@@ -1223,12 +1223,23 @@ function doLogout() {
   document.getElementById('login-error').style.display = 'none';
 }
 
+let _pendingGEE = null;
 function applyGEECredentials(clientId, projectId) {
   if (!clientId) return;
+  _pendingGEE = { clientId, projectId: projectId || '' };
+  // Try immediately, also retry after DOM is fully ready
+  _tryApplyGEE();
+  setTimeout(_tryApplyGEE, 500);
+  document.addEventListener('DOMContentLoaded', _tryApplyGEE);
+}
+function _tryApplyGEE() {
+  if (!_pendingGEE) return;
   const ci = document.getElementById('gee-client-id');
   const pi = document.getElementById('gee-project-id');
-  if (ci) ci.value = clientId;
-  if (pi) pi.value = projectId || '';
+  if (ci && pi) {
+    ci.value = _pendingGEE.clientId;
+    pi.value = _pendingGEE.projectId;
+  }
 }
 
 function updateUserUI(user, role) {
