@@ -2924,7 +2924,12 @@ function connectGEE() {
             setGEEStatus('success', '✅ Conectado a Google Earth Engine (proyecto: ' + projectId + ')');
             btn.textContent = '✓ Conectado';
 
-            // Keep OSM as basemap (Esri has no coverage at high zoom for this area)
+            // Switch to Google Satellite basemap
+            if (osmLayer) vineMap.removeLayer(osmLayer);
+            satelliteLayer = L.tileLayer(
+              'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+              { attribution: '© Google', maxZoom: 20 }
+            ).addTo(vineMap);
             // GEE layer will be added on top by loadGEELayer
 
             document.getElementById('gee-layer-controls').classList.add('visible');
