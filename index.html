@@ -2935,8 +2935,9 @@ function loadGEELayer(idx) {
     })
     .median();
 
-  // Don't clip — show full area NDVI so it's visible on the map
-  const { image, visParams } = buildImageAndVis(s2base, idx);
+  // Clip to polygon area
+  const clipped = s2base.clip(clipGeom);
+  const { image, visParams } = buildImageAndVis(clipped, idx);
 
   const onMapId = result => {
     console.log('GEE result:', JSON.stringify({mapid: result.mapid, token: result.token ? result.token.substring(0,20)+'...' : 'none', urlFormat: result.urlFormat}));
