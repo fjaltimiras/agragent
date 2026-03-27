@@ -2908,12 +2908,21 @@ function connectGEE() {
       clientId,
       () => {
         setGEEStatus('loading', '⚙️ Inicializando Earth Engine con proyecto ' + projectId + '...');
+
+        // Set project before initialize — required for Cloud API
+        ee.data.setCloudApiEnabled(true);
         ee.initialize(
-          null, null,
+          'https://earthengine.googleapis.com',
+          null,
           () => {
             // Set the cloud project for all EE requests
-            try { ee.data.setCloudApiKey(null); } catch(e) {}
-            try { ee.data.setProject(projectId); } catch(e) { console.warn('setProject not available, trying header'); }
+            if (typeof ee.data.setProject === 'function') {
+              ee.data.setProject(projectId);
+            } else if (typeof ee.data.setCloudApiKey === 'function') {
+              // Older API: set project via internal property
+              ee.data.PROJECT = projectId;
+            }
+            console.log('EE initialized, project:', projectId);
 
             geeConnected = true;
             setGEEStatus('success', '✅ Conectado a Google Earth Engine (proyecto: ' + projectId + ')');
@@ -2942,7 +2951,7 @@ function connectGEE() {
         btn.disabled = false; btn.textContent = '🔗 Conectar';
         setGEEStatus('error', '❌ Auth error: ' + (err.message || err));
       },
-      ['https://www.googleapis.com/auth/earthengine.readonly'],
+      ['https://www.googleapis.com/auth/earthengine'],
       () => { /* popup blocked — user will see the popup */ }
     );
   });
@@ -3009,6 +3018,9 @@ function loadGEELayer(idx) {
 
   try {
     console.log('GEE: requesting mapId for', idx, startDate, '→', endDate, 'cloud<', cloudPct);
+    console.log('GEE: clipGeom type:', kmlRawCoords.length > 0 ? 'from KML (' + kmlRawCoords.length + ' rings)' : 'fallback rectangle');
+    console.log('GEE: visParams:', JSON.stringify(visParams));
+    setGEEStatus('loading', '⏳ Solicitando tiles a GEE... (puede tardar 10-20s)');
     const result = image.getMapId(visParams);
     if (result && typeof result.then === 'function') {
       result.then(r => { clearTimeout(geeTimeout); onMapId(r); }).catch(err => {
