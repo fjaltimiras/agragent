@@ -1658,6 +1658,11 @@ function editDisplayName() {
         <button class="tb-btn danger" id="btn-delete" onclick="toggleDelete()">🗑 Borrar</button>
         <div class="tb-divider"></div>
         <button class="tb-btn" onclick="exportKML()" title="Exportar todas las capas como KML">⬇️ Exportar KML</button>
+        <div class="tb-divider"></div>
+        <span class="toolbar-label">Base:</span>
+        <button class="tb-btn active" id="base-satellite" onclick="setBaseMap('satellite',this)">🛰️ Satellite</button>
+        <button class="tb-btn" id="base-streets" onclick="setBaseMap('streets',this)">🗺️ Streets</button>
+        <button class="tb-btn" id="base-hybrid" onclick="setBaseMap('hybrid',this)">🌐 Hybrid</button>
       </div>
 
       <!-- Index Selector + GEE Badge -->
@@ -2716,6 +2721,29 @@ navItems.forEach(item => {
 
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
+}
+
+function setBaseMap(type, btn) {
+  if (!vineMap) return;
+  // Update active button
+  document.querySelectorAll('#base-satellite,#base-streets,#base-hybrid').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  // Remove current base layers
+  if (osmLayer) { vineMap.removeLayer(osmLayer); osmLayer = null; }
+  if (labelsLayer) { vineMap.removeLayer(labelsLayer); labelsLayer = null; }
+
+  if (type === 'satellite') {
+    osmLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri', maxZoom: 19 }).addTo(vineMap);
+    labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', { attribution: '© CARTO', maxZoom: 19, pane: 'overlayPane' }).addTo(vineMap);
+  } else if (type === 'streets') {
+    osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 19 }).addTo(vineMap);
+  } else if (type === 'hybrid') {
+    osmLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri', maxZoom: 19 }).addTo(vineMap);
+    labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', { attribution: '© CARTO', maxZoom: 19, pane: 'overlayPane' }).addTo(vineMap);
+  }
+  // Keep GEE and labels on top
+  if (geeLayer) geeLayer.bringToFront();
+  bringLabelsToTop();
 }
 
 function toggleMapFullscreen() {
