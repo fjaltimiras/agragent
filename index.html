@@ -158,6 +158,175 @@
   .section { display: none; }
   .section.active { display: block; }
 
+  /* ───── AI CHAT FLOATING WIDGET ───── */
+  #chat-fab {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9998;
+    width: 56px; height: 56px; border-radius: 50%; border: none;
+    background: var(--accent); color: #fff; font-size: 1.5rem;
+    cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #chat-fab:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(0,0,0,0.5); }
+  #chat-fab.hidden { display: none; }
+
+  #chat-widget {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    width: 420px; height: 600px; max-height: calc(100vh - 48px);
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 16px; display: flex; flex-direction: column;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    transition: opacity 0.2s, transform 0.2s;
+    overflow: hidden;
+  }
+  #chat-widget.chat-widget-hidden { display: none; }
+
+  .chat-widget-header {
+    padding: 12px 16px; background: var(--sidebar-bg);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .chat-widget-header-left { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+  .chat-widget-header-right { display: flex; gap: 4px; }
+  .chat-widget-hbtn {
+    background: none; border: none; color: var(--text-secondary); cursor: pointer;
+    font-size: 1rem; padding: 4px 8px; border-radius: 6px; transition: all 0.15s;
+  }
+  .chat-widget-hbtn:hover { background: rgba(82,183,136,0.12); color: var(--text-primary); }
+
+  .chat-context-badge {
+    font-size: 0.68rem; background: rgba(82,183,136,0.2); color: var(--accent);
+    padding: 2px 8px; border-radius: 8px; font-weight: 600;
+  }
+  .chat-context-badge:empty { display: none; }
+
+  .chat-widget-conv-panel {
+    max-height: 200px; overflow-y: auto; border-bottom: 1px solid var(--border);
+    background: var(--sidebar-bg);
+  }
+  .chat-conv-list { overflow-y: auto; padding: 4px 0; }
+  .chat-conv-item {
+    padding: 10px 16px; cursor: pointer; font-size: 0.82rem;
+    color: var(--text-secondary); border-left: 3px solid transparent;
+    transition: all 0.15s; display: flex; align-items: center; justify-content: space-between;
+  }
+  .chat-conv-item:hover { background: rgba(82,183,136,0.07); color: var(--text-primary); }
+  .chat-conv-item.active { background: rgba(82,183,136,0.12); color: var(--accent); border-left-color: var(--accent); }
+  .chat-conv-item .conv-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chat-conv-item .conv-actions { display: flex; gap: 2px; flex-shrink: 0; }
+  .chat-conv-item .conv-btn {
+    opacity: 0; background: none; border: none; cursor: pointer;
+    font-size: 0.78rem; padding: 2px 4px; transition: opacity 0.15s;
+  }
+  .chat-conv-item .conv-btn.conv-edit { color: var(--accent); }
+  .chat-conv-item .conv-btn.conv-delete { color: var(--red); }
+  .chat-conv-item:hover .conv-btn { opacity: 0.7; }
+  .chat-conv-item .conv-btn:hover { opacity: 1; }
+  .conv-rename-input {
+    flex: 1; background: var(--card-bg); border: 1px solid var(--accent);
+    border-radius: 4px; padding: 3px 6px; color: var(--text-primary);
+    font-size: 0.82rem; font-family: inherit; outline: none;
+  }
+
+  .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .chat-messages {
+    flex: 1; overflow-y: auto; padding: 24px; display: flex;
+    flex-direction: column; gap: 16px;
+  }
+  .chat-welcome {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; color: var(--text-secondary); text-align: center; gap: 16px;
+  }
+  .chat-welcome h2 { color: var(--accent); font-size: 1.4rem; }
+  .chat-welcome p { max-width: 480px; font-size: 0.9rem; line-height: 1.6; }
+  .chat-welcome-cards {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    max-width: 500px; margin-top: 8px;
+  }
+  .chat-welcome-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 14px; cursor: pointer; text-align: left; font-size: 0.82rem;
+    color: var(--text-secondary); transition: all 0.2s;
+  }
+  .chat-welcome-card:hover { border-color: var(--accent); color: var(--text-primary); }
+
+  .chat-msg { display: flex; gap: 10px; max-width: 85%; }
+  .chat-msg.user { align-self: flex-end; flex-direction: row-reverse; }
+  .chat-msg-avatar {
+    width: 32px; height: 32px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0;
+  }
+  .chat-msg.assistant .chat-msg-avatar { background: var(--accent-dim); }
+  .chat-msg.user .chat-msg-avatar { background: #2a3a4a; }
+  .chat-msg-bubble {
+    padding: 10px 14px; border-radius: 12px; font-size: 0.88rem;
+    line-height: 1.6; word-break: break-word;
+  }
+  .chat-msg.assistant .chat-msg-bubble { background: var(--card-bg); border: 1px solid var(--border); }
+  .chat-msg.user .chat-msg-bubble { background: var(--accent-dim); color: #fff; }
+  .chat-msg-bubble p { margin: 6px 0; }
+  .chat-msg-bubble p:first-child { margin-top: 0; }
+  .chat-msg-bubble p:last-child { margin-bottom: 0; }
+  .chat-msg-bubble ul, .chat-msg-bubble ol { margin: 6px 0 6px 18px; }
+  .chat-msg-bubble code {
+    background: rgba(0,0,0,0.3); padding: 1px 5px; border-radius: 4px; font-size: 0.84rem;
+  }
+  .chat-msg-bubble pre { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; overflow-x: auto; margin: 8px 0; }
+  .chat-msg-bubble pre code { background: none; padding: 0; }
+  .chat-tool-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .chat-tool-tag {
+    background: rgba(82,183,136,0.15); color: var(--accent); padding: 2px 8px;
+    border-radius: 10px; font-size: 0.72rem; font-weight: 600;
+  }
+  .chat-typing { display: flex; gap: 4px; padding: 8px 0; }
+  .chat-typing span {
+    width: 7px; height: 7px; background: var(--accent); border-radius: 50%;
+    animation: chatBounce 1.2s infinite;
+  }
+  .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+  .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes chatBounce { 0%,80%,100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
+
+  .chat-input-area {
+    padding: 16px 24px; border-top: 1px solid var(--border);
+    display: flex; gap: 10px; align-items: flex-end;
+  }
+  .chat-input-area textarea {
+    flex: 1; background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px; color: var(--text-primary);
+    font-size: 0.88rem; resize: none; min-height: 42px; max-height: 120px;
+    font-family: inherit; outline: none; transition: border-color 0.2s;
+  }
+  .chat-input-area textarea:focus { border-color: var(--accent); }
+  .chat-input-area textarea::placeholder { color: var(--text-secondary); }
+  .chat-send-btn {
+    background: var(--accent); color: #fff; border: none; border-radius: 10px;
+    width: 42px; height: 42px; cursor: pointer; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .chat-send-btn:hover { background: var(--accent-dim); }
+  .chat-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ───── AI CHAT FULL PAGE ───── */
+  .chat-full-layout { display: flex; height: calc(100vh - 90px); gap: 0; }
+  .chat-full-sidebar {
+    width: 260px; min-width: 260px; background: var(--sidebar-bg);
+    border-right: 1px solid var(--border); display: flex; flex-direction: column;
+  }
+  .chat-full-sidebar .chat-sidebar-header {
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .chat-full-sidebar .chat-sidebar-header h3 { font-size: 0.9rem; color: var(--text-primary); }
+  .chat-full-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+  @media (max-width: 768px) {
+    #chat-widget { width: calc(100vw - 16px); right: 8px; bottom: 8px; height: calc(100vh - 80px); }
+    #chat-fab { bottom: 16px; right: 16px; }
+    .chat-full-sidebar { display: none; }
+  }
+
   /* ───── CARDS ───── */
   .card {
     background: var(--card-bg);
@@ -1372,6 +1541,9 @@ function editDisplayName() {
     <div class="nav-item" data-section="yield">
       <span class="nav-icon">🌾</span> <span data-i18n="nav_yield">Yield Prediction</span>
     </div>
+    <div class="nav-item" data-section="chat">
+      <span class="nav-icon">🤖</span> <span data-i18n="nav_chat">AI Assistant</span>
+    </div>
     <div class="nav-item" data-section="references">
       <span class="nav-icon">📚</span> <span data-i18n="nav_references">References</span>
     </div>
@@ -2542,8 +2714,69 @@ function editDisplayName() {
 
     </section>
 
+    <!-- ═══════════════ SECTION 8: AI CHAT (full page) ═══════════════ -->
+    <section id="section-chat" class="section">
+      <div class="chat-full-layout">
+        <div class="chat-full-sidebar">
+          <div class="chat-sidebar-header">
+            <h3 data-i18n="chat_conversations">Conversations</h3>
+            <button class="chat-new-btn" onclick="chatNewConversation()" data-i18n="chat_new">+ New</button>
+          </div>
+          <div class="chat-conv-list" id="chat-full-conv-list"></div>
+        </div>
+        <div class="chat-full-main">
+          <div class="chat-messages" id="chat-full-messages">
+            <div class="chat-welcome" id="chat-full-welcome">
+              <h2>AgroAgente AI</h2>
+              <p data-i18n="chat_welcome_text">Ask me about climate data, satellite imagery, soil analysis, irrigation planning, or any agronomic question about your fields.</p>
+              <div class="chat-welcome-cards" id="chat-full-welcome-cards"></div>
+            </div>
+          </div>
+          <div class="chat-input-area">
+            <textarea id="chat-full-input" rows="1"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();chatSend()}"
+              oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+            <button class="chat-send-btn" id="chat-full-send-btn" onclick="chatSend()">➤</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </div><!-- /#content -->
 </div><!-- /#main -->
+
+<!-- ═══════════════ FLOATING AI CHAT WIDGET ═══════════════ -->
+<button id="chat-fab" onclick="chatToggleWidget()" title="AI Assistant">🤖</button>
+<div id="chat-widget" class="chat-widget-hidden">
+  <div class="chat-widget-header">
+    <div class="chat-widget-header-left">
+      <span style="font-size:1.1rem">🌿</span>
+      <strong>AgroAgente AI</strong>
+      <span id="chat-widget-context-badge" class="chat-context-badge"></span>
+    </div>
+    <div class="chat-widget-header-right">
+      <button class="chat-widget-hbtn" onclick="chatToggleConvList()" title="Conversations">☰</button>
+      <button class="chat-widget-hbtn" onclick="chatNewConversation()" title="New conversation">+</button>
+      <button class="chat-widget-hbtn" onclick="chatToggleWidget()" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="chat-widget-conv-panel" class="chat-widget-conv-panel" style="display:none;">
+    <div class="chat-conv-list" id="chat-conv-list"></div>
+  </div>
+  <div class="chat-messages" id="chat-messages">
+    <div class="chat-welcome" id="chat-welcome">
+      <h2>AgroAgente AI</h2>
+      <p data-i18n="chat_welcome_text">Ask me about climate data, satellite imagery, soil analysis, irrigation planning, or any agronomic question about your fields.</p>
+      <div class="chat-welcome-cards" id="chat-welcome-cards"></div>
+    </div>
+  </div>
+  <div class="chat-input-area">
+    <textarea id="chat-input" placeholder="Ask AgroAgente..." rows="1"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();chatSend()}"
+      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+    <button class="chat-send-btn" id="chat-send-btn" onclick="chatSend()">➤</button>
+  </div>
+</div>
 
 <script>
 // ═══════════════════════════════════════
@@ -2555,7 +2788,19 @@ const i18n = {
   en: {
     // Nav
     nav_dashboard: 'Dashboard', nav_maps: 'Satellite Maps', nav_climate: 'Climate Data',
-    nav_genomic: 'Genomic Analysis', nav_images: 'Image Analysis', nav_yield: 'Yield Prediction', nav_references: 'References',
+    nav_genomic: 'Genomic Analysis', nav_images: 'Image Analysis', nav_yield: 'Yield Prediction',
+    nav_chat: 'AI Assistant', chat_conversations: 'Conversations', chat_new: '+ New',
+    chat_welcome_text: 'Ask me about climate data, satellite imagery, soil analysis, irrigation planning, or any agronomic question about your fields.',
+    chat_placeholder: 'Ask AgroAgente...',
+    chat_q1: 'What is the current NDVI status of my field?',
+    chat_q1_label: '🛰️ NDVI status',
+    chat_q2: 'Show me the climate summary for my area',
+    chat_q2_label: '🌤️ Climate summary',
+    chat_q3: 'Calculate an irrigation plan for my vineyard',
+    chat_q3_label: '💧 Irrigation plan',
+    chat_q4: 'Analyze soil conditions and recommend fertilization',
+    chat_q4_label: '🧪 Soil & fertilization',
+    nav_references: 'References',
     // Topbar
     season: 'Season 2025–2026', upload_polygon: 'Upload a polygon to start',
     // Dashboard
@@ -2596,7 +2841,19 @@ const i18n = {
   },
   es: {
     nav_dashboard: 'Panel', nav_maps: 'Mapas Satelitales', nav_climate: 'Datos Climáticos',
-    nav_genomic: 'Análisis Genómico', nav_images: 'Análisis de Imágenes', nav_yield: 'Predicción de Rendimiento', nav_references: 'Referencias',
+    nav_genomic: 'Análisis Genómico', nav_images: 'Análisis de Imágenes', nav_yield: 'Predicción de Rendimiento',
+    nav_chat: 'Asistente IA', chat_conversations: 'Conversaciones', chat_new: '+ Nueva',
+    chat_welcome_text: 'Pregúntame sobre datos climáticos, imágenes satelitales, análisis de suelo, planificación de riego o cualquier consulta agronómica sobre tus campos.',
+    chat_placeholder: 'Pregunta a AgroAgente...',
+    chat_q1: '¿Cuál es el estado actual del NDVI de mi campo?',
+    chat_q1_label: '🛰️ Estado NDVI',
+    chat_q2: 'Muéstrame el resumen climático de mi zona',
+    chat_q2_label: '🌤️ Resumen climático',
+    chat_q3: 'Calcula un plan de riego para mi viñedo',
+    chat_q3_label: '💧 Plan de riego',
+    chat_q4: 'Analiza las condiciones del suelo y recomienda fertilización',
+    chat_q4_label: '🧪 Suelo y fertilización',
+    nav_references: 'Referencias',
     season: 'Temporada 2025–2026', upload_polygon: 'Sube un polígono para comenzar',
     welcome_title: 'Bienvenido a agragent',
     welcome_text: 'Para comenzar, ve a <strong style="color:var(--accent)">Mapas Satelitales</strong> y sube un archivo KML/KMZ o dibuja un polígono sobre tu campo.<br>El panel se actualizará automáticamente con datos reales de la localidad.',
@@ -2628,7 +2885,19 @@ const i18n = {
   },
   pt: {
     nav_dashboard: 'Painel', nav_maps: 'Mapas Satelitais', nav_climate: 'Dados Climáticos',
-    nav_genomic: 'Análise Genômica', nav_images: 'Análise de Imagens', nav_yield: 'Previsão de Rendimento', nav_references: 'Referências',
+    nav_genomic: 'Análise Genômica', nav_images: 'Análise de Imagens', nav_yield: 'Previsão de Rendimento',
+    nav_chat: 'Assistente IA', chat_conversations: 'Conversas', chat_new: '+ Nova',
+    chat_welcome_text: 'Pergunte-me sobre dados climáticos, imagens de satélite, análise de solo, planejamento de irrigação ou qualquer questão agronômica sobre seus campos.',
+    chat_placeholder: 'Pergunte ao AgroAgente...',
+    chat_q1: 'Qual é o estado atual do NDVI do meu campo?',
+    chat_q1_label: '🛰️ Status NDVI',
+    chat_q2: 'Mostre-me o resumo climático da minha área',
+    chat_q2_label: '🌤️ Resumo climático',
+    chat_q3: 'Calcule um plano de irrigação para meu vinhedo',
+    chat_q3_label: '💧 Plano de irrigação',
+    chat_q4: 'Analise as condições do solo e recomende fertilização',
+    chat_q4_label: '🧪 Solo e fertilização',
+    nav_references: 'Referências',
     season: 'Safra 2025–2026', upload_polygon: 'Carregue um polígono para começar',
     welcome_title: 'Bem-vindo ao agragent',
     welcome_text: 'Para começar, vá a <strong style="color:var(--accent)">Mapas Satelitais</strong> e carregue um arquivo KML/KMZ ou desenhe um polígono sobre seu campo.<br>O painel será atualizado automaticamente com dados reais da localidade.',
@@ -2675,12 +2944,13 @@ function setLang(lang) {
   // Update page title
   const titles = {
     dashboard: t('nav_dashboard'), maps: t('nav_maps'), climate: t('nav_climate'),
-    genomic: t('nav_genomic'), images: t('nav_images'), yield: t('nav_yield'), references: t('nav_references')
+    genomic: t('nav_genomic'), images: t('nav_images'), yield: t('nav_yield'), chat: t('nav_chat'), references: t('nav_references')
   };
   const activeSection = document.querySelector('.nav-item.active');
   if (activeSection && pageTitle) {
     pageTitle.textContent = titles[activeSection.dataset.section] || '';
   }
+  chatRenderQuickCards();
 }
 
 // ═══════════════════════════════════════
@@ -2694,7 +2964,7 @@ const chartInstances = {};
 
 const titleKeys = {
   dashboard: 'nav_dashboard', maps: 'nav_maps', climate: 'nav_climate',
-  genomic: 'nav_genomic', images: 'nav_images', yield: 'nav_yield', references: 'nav_references'
+  genomic: 'nav_genomic', images: 'nav_images', yield: 'nav_yield', chat: 'nav_chat', references: 'nav_references'
 };
 
 navItems.forEach(item => {
@@ -4927,6 +5197,374 @@ mapContainer.addEventListener('drop', async e => {
 const LAYER_COLORS = ['#52b788','#3b82f6','#f59e0b','#ef4444','#a855f7','#06b6d4','#f97316','#e879f9','#22c55e','#84cc16'];
 let colorIdx = 0;
 function randomLayerColor() { return LAYER_COLORS[colorIdx++ % LAYER_COLORS.length]; }
+
+// ═══════════════════════════════════════
+// AI CHAT — AgroAgente Integration
+// ═══════════════════════════════════════
+const CHAT_API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:8000' : 'https://api.agragent.com';
+
+let chatUserId = localStorage.getItem('chat_user_id');
+if (!chatUserId) { chatUserId = crypto.randomUUID(); localStorage.setItem('chat_user_id', chatUserId); }
+let chatConvId = null;
+let chatLoading = false;
+
+const TOOL_LABELS = {
+  get_climate_data: '🌤 Climate', get_ndvi_data: '🛰 NDVI',
+  analyze_soil_report: '🧪 Soil', analyze_foliar_report: '🍃 Foliar',
+  calculate_irrigation_plan: '💧 Irrigation', calculate_fertilization_plan: '🧬 Fertilization'
+};
+
+function chatRenderMarkdown(text) {
+  return text
+    .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^### (.+)$/gm, '<h4>$1</h4>')
+    .replace(/^## (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^[-*] (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+    .replace(/<\/ul>\s*<ul>/g, '')
+    .replace(/\n{2,}/g, '</p><p>')
+    .replace(/\n/g, '<br>')
+    .replace(/^(.+)$/, '<p>$1</p>');
+}
+
+// Dual-view helpers: operate on both widget and full-page chat
+function chatGetContainers() {
+  return ['chat-messages', 'chat-full-messages'].map(id => document.getElementById(id)).filter(Boolean);
+}
+function chatGetInputs() {
+  return ['chat-input', 'chat-full-input'].map(id => document.getElementById(id)).filter(Boolean);
+}
+function chatGetSendBtns() {
+  return ['chat-send-btn', 'chat-full-send-btn'].map(id => document.getElementById(id)).filter(Boolean);
+}
+
+function chatAddMessage(role, content, toolCalls) {
+  ['chat-welcome', 'chat-full-welcome'].forEach(id => {
+    const w = document.getElementById(id);
+    if (w) w.style.display = 'none';
+  });
+  const avatar = role === 'assistant' ? '🌿' : '👤';
+  let toolHtml = '';
+  if (toolCalls && toolCalls.length) {
+    toolHtml = '<div class="chat-tool-tags">' +
+      toolCalls.map(tc => '<span class="chat-tool-tag">' + (TOOL_LABELS[tc] || tc) + '</span>').join('') +
+      '</div>';
+  }
+  chatGetContainers().forEach(container => {
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + role;
+    div.innerHTML = '<div class="chat-msg-avatar">' + avatar + '</div>' +
+      '<div class="chat-msg-bubble">' + chatRenderMarkdown(content) + toolHtml + '</div>';
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+  });
+}
+
+function chatShowTyping() {
+  chatGetContainers().forEach(container => {
+    const div = document.createElement('div');
+    div.className = 'chat-msg assistant';
+    div.id = 'chat-typing-' + container.id;
+    div.innerHTML = '<div class="chat-msg-avatar">🌿</div>' +
+      '<div class="chat-msg-bubble"><div class="chat-typing"><span></span><span></span><span></span></div></div>';
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+  });
+}
+
+function chatHideTyping() {
+  chatGetContainers().forEach(c => {
+    const el = document.getElementById('chat-typing-' + c.id);
+    if (el) el.remove();
+  });
+}
+
+async function chatSend() {
+  // Read from whichever input has content
+  const inputs = chatGetInputs();
+  let msg = '';
+  inputs.forEach(inp => { if (inp.value.trim()) msg = inp.value.trim(); });
+  if (!msg || chatLoading) return;
+  inputs.forEach(inp => { inp.value = ''; inp.style.height = 'auto'; });
+  chatLoading = true;
+  chatGetSendBtns().forEach(btn => btn.disabled = true);
+
+  chatAddMessage('user', msg);
+  chatShowTyping();
+
+  try {
+    const res = await fetch(CHAT_API + '/api/chat/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        conversation_id: chatConvId,
+        message: chatCollectAppContext() + msg,
+        user_id: chatUserId
+      })
+    });
+    const data = await res.json();
+    chatHideTyping();
+    if (data.conversation_id) chatConvId = data.conversation_id;
+    chatAddMessage('assistant', data.message || data.response || 'No response', data.tool_calls_made || []);
+    chatLoadConversations();
+  } catch (e) {
+    chatHideTyping();
+    chatAddMessage('assistant', '⚠️ Error connecting to AgroAgente API. Make sure the server is running on ' + CHAT_API);
+  }
+  chatLoading = false;
+  chatGetSendBtns().forEach(btn => btn.disabled = false);
+  chatGetInputs().forEach(inp => { if (inp.offsetParent !== null) inp.focus(); });
+}
+
+function chatSendQuick(text) {
+  document.getElementById('chat-input').value = text;
+  chatSend();
+}
+
+async function chatNewConversation() {
+  try {
+    const res = await fetch(CHAT_API + '/api/chat/new', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: chatUserId })
+    });
+    const data = await res.json();
+    chatConvId = data.conversation.id;
+    chatGetContainers().forEach(c => c.innerHTML = '');
+    chatAddMessage('assistant', data.welcome_message);
+    chatLoadConversations();
+  } catch (e) {
+    chatAddMessage('assistant', '⚠️ Could not create conversation. Check API connection.');
+  }
+}
+
+async function chatLoadConversations() {
+  try {
+    const res = await fetch(CHAT_API + '/api/conversations/' + chatUserId);
+    const data = await res.json();
+    ['chat-conv-list', 'chat-full-conv-list'].forEach(listId => {
+      const list = document.getElementById(listId);
+      if (!list) return;
+      list.innerHTML = '';
+      (data.conversations || []).forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'chat-conv-item' + (c.id === chatConvId ? ' active' : '');
+        div.innerHTML = '<span class="conv-title">' + (c.title || 'New conversation') + '</span>' +
+          '<span class="conv-actions">' +
+          '<button class="conv-btn conv-edit" onclick="event.stopPropagation();chatRenameConv(this,\'' + c.id + '\')" title="Rename">✏️</button>' +
+          '<button class="conv-btn conv-delete" onclick="event.stopPropagation();chatDeleteConv(\'' + c.id + '\')" title="Delete">✕</button>' +
+          '</span>';
+        div.addEventListener('click', () => chatLoadMessages(c.id));
+        list.appendChild(div);
+      });
+    });
+  } catch (e) { /* silent */ }
+}
+
+async function chatLoadMessages(convId) {
+  chatConvId = convId;
+  try {
+    const res = await fetch(CHAT_API + '/api/conversations/' + convId + '/messages');
+    const data = await res.json();
+    chatGetContainers().forEach(c => c.innerHTML = '');
+    (data.messages || []).forEach(m => {
+      const tools = (m.tool_calls || []).map(tc => tc.name);
+      chatAddMessage(m.role, m.content, tools);
+    });
+    chatLoadConversations();
+  } catch (e) {
+    chatAddMessage('assistant', '⚠️ Could not load conversation.');
+  }
+}
+
+function chatRenameConv(btn, convId) {
+  const item = btn.closest('.chat-conv-item');
+  const titleSpan = item.querySelector('.conv-title');
+  const oldTitle = titleSpan.textContent;
+  const input = document.createElement('input');
+  input.className = 'conv-rename-input';
+  input.value = oldTitle;
+  titleSpan.replaceWith(input);
+  input.focus();
+  input.select();
+
+  async function save() {
+    const newTitle = input.value.trim();
+    if (newTitle && newTitle !== oldTitle) {
+      try {
+        await fetch(CHAT_API + '/api/conversations/' + convId, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: newTitle })
+        });
+      } catch (e) { /* silent */ }
+    }
+    chatLoadConversations();
+  }
+
+  input.addEventListener('blur', save);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+    if (e.key === 'Escape') { input.value = oldTitle; input.blur(); }
+  });
+}
+
+async function chatDeleteConv(convId) {
+  try {
+    await fetch(CHAT_API + '/api/conversations/' + convId, { method: 'DELETE' });
+    if (convId === chatConvId) {
+      chatConvId = null;
+      chatGetContainers().forEach(c => {
+        c.innerHTML = '<div class="chat-welcome"><h2>AgroAgente AI</h2>' +
+          '<p>' + t('chat_welcome_text') + '</p>' +
+          '<div class="chat-welcome-cards" id="chat-welcome-cards"></div></div>';
+      });
+      chatRenderQuickCards();
+    }
+    chatLoadConversations();
+  } catch (e) { /* silent */ }
+}
+
+// ── Floating widget controls ──
+function chatToggleWidget() {
+  const widget = document.getElementById('chat-widget');
+  const fab = document.getElementById('chat-fab');
+  const isHidden = widget.classList.contains('chat-widget-hidden');
+  if (isHidden) {
+    widget.classList.remove('chat-widget-hidden');
+    fab.classList.add('hidden');
+    chatLoadConversations();
+    chatUpdateContextBadge();
+    chatRenderQuickCards();
+    document.getElementById('chat-input').focus();
+  } else {
+    widget.classList.add('chat-widget-hidden');
+    fab.classList.remove('hidden');
+  }
+}
+
+function chatToggleConvList() {
+  const panel = document.getElementById('chat-widget-conv-panel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+const SECTION_CONTEXT = {
+  dashboard: { label: 'Dashboard', ctx: 'The user is viewing the Dashboard with KPIs, water balance, risk assessment, and alerts for their field.' },
+  maps: { label: 'Satellite Maps', ctx: 'The user is viewing satellite maps with Sentinel-2 imagery and vegetation indices (NDVI, NDRE, MSAVI, TCARI) from Google Earth Engine.' },
+  climate: { label: 'Climate', ctx: 'The user is viewing climate data: temperature, precipitation, humidity, solar radiation, ET0, GDD, chill hours, frost events, and heat waves.' },
+  genomic: { label: 'Genomic', ctx: 'The user is viewing genomic analysis of Vitis vinifera RNA-seq DEG data across phenological stages.' },
+  images: { label: 'Images', ctx: 'The user is viewing image analysis with the WGISD grape cluster dataset and YOLO bounding box annotations.' },
+  yield: { label: 'Yield', ctx: 'The user is viewing yield prediction using an Extra Trees Regressor model with confidence intervals and feature importance.' },
+  references: { label: 'References', ctx: 'The user is viewing the references and documentation section.' }
+};
+
+function chatCollectAppContext() {
+  const el = id => { const e = document.getElementById(id); return e ? e.textContent.trim() : null; };
+  const parts = [];
+
+  // Active section
+  const section = chatGetActiveSection();
+  const sCtx = SECTION_CONTEXT[section];
+  if (sCtx) parts.push('Active section: ' + sCtx.ctx);
+
+  // Polygon / field info
+  const location = el('dashLocation');
+  const area = el('dashArea');
+  if (location && location !== '—') parts.push('Field location: ' + location);
+  if (area && area !== '—') parts.push('Field area: ' + area);
+  if (typeof userLayers !== 'undefined' && userLayers.length > 0) {
+    parts.push('Loaded polygons: ' + userLayers.length + ' (' + userLayers.map(l => l.name || 'unnamed').join(', ') + ')');
+  }
+  if (typeof kmlRawCoords !== 'undefined' && kmlRawCoords.length > 0) {
+    const c = kmlRawCoords[0];
+    if (c && c.length > 0) {
+      const lats = c.map(p => p[1]), lngs = c.map(p => p[0]);
+      parts.push('Polygon centroid: lat=' + (lats.reduce((a,b)=>a+b,0)/lats.length).toFixed(4) + ', lng=' + (lngs.reduce((a,b)=>a+b,0)/lngs.length).toFixed(4));
+    }
+  }
+
+  // Climate KPIs
+  const gdd = el('kpiGDD'), chill = el('kpiChill'), frost = el('kpiFrost');
+  const heatWave = el('kpiHeatWave'), humidity = el('kpiHumidity');
+  const solar = el('kpiSolar'), et = el('kpiET'), dry = el('kpiDry');
+  if (gdd && gdd !== '—' && typeof climateDataLoaded !== 'undefined' && climateDataLoaded) {
+    parts.push('Climate KPIs (current season): GDD=' + gdd + ', Chill Hours=' + chill +
+      ', Frost Days=' + frost + ', Heat Waves=' + heatWave +
+      ', Avg Humidity=' + humidity + ', Solar Radiation=' + solar + ' MJ/m²' +
+      ', ET0=' + et + ' mm, Dry Months=' + dry);
+  }
+
+  // Water balance
+  const precipBar = el('dashPrecipBarVal'), etBar = el('dashETBarVal');
+  if (precipBar && etBar) {
+    parts.push('Water Balance: Precipitation=' + precipBar + ', ET0=' + etBar);
+  }
+
+  // Dashboard alerts
+  const alerts = el('dashAlerts') || el('climateAlert');
+  if (alerts && alerts.length > 5 && !alerts.includes('No significant')) {
+    parts.push('Active alerts: ' + alerts.replace(/\n/g, '; '));
+  }
+
+  // Satellite / GEE
+  if (typeof geeConnected !== 'undefined' && geeConnected) {
+    parts.push('Google Earth Engine: Connected');
+    if (typeof currentGEEIndex !== 'undefined') parts.push('Current vegetation index: ' + currentGEEIndex);
+    if (typeof availableScenes !== 'undefined' && availableScenes.length > 0) {
+      parts.push('Available Sentinel-2 scenes: ' + availableScenes.length +
+        ' (latest: ' + availableScenes[0].date + ', cloud: ' + availableScenes[0].cloud + '%)');
+    }
+  }
+
+  // Yield prediction
+  const yieldVal = el('yield-pred-value');
+  if (yieldVal && yieldVal !== '—') parts.push('Yield prediction: ' + yieldVal);
+
+  if (parts.length === 0) return '';
+  return '[App Context]\n' + parts.join('\n') + '\n[/App Context]\n\n';
+}
+
+function chatGetActiveSection() {
+  const active = document.querySelector('.nav-item.active');
+  return active ? active.dataset.section : 'dashboard';
+}
+
+function chatUpdateContextBadge() {
+  const section = chatGetActiveSection();
+  const badge = document.getElementById('chat-widget-context-badge');
+  const info = SECTION_CONTEXT[section];
+  if (badge && info) badge.textContent = info.label;
+}
+
+function chatRenderQuickCards() {
+  const cards = [
+    { q: t('chat_q1'), label: t('chat_q1_label') },
+    { q: t('chat_q2'), label: t('chat_q2_label') },
+    { q: t('chat_q3'), label: t('chat_q3_label') },
+    { q: t('chat_q4'), label: t('chat_q4_label') }
+  ];
+  const html = cards.map(c =>
+    '<div class="chat-welcome-card" onclick="chatSendQuick(\'' + c.q.replace(/'/g, "\\'") + '\')">' + c.label + '</div>'
+  ).join('');
+  document.querySelectorAll('.chat-welcome-cards').forEach(el => el.innerHTML = html);
+  chatGetInputs().forEach(inp => inp.placeholder = t('chat_placeholder'));
+  document.querySelectorAll('[data-i18n="chat_welcome_text"]').forEach(el => el.textContent = t('chat_welcome_text'));
+}
+
+// Update badge when navigating sections
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    if (item.dataset.section === 'chat') {
+      chatLoadConversations();
+      chatRenderQuickCards();
+    }
+    setTimeout(chatUpdateContextBadge, 50);
+  });
+});
 </script>
 <!-- Polygon / Layer Editor Modal -->
 <div id="poly-editor">
