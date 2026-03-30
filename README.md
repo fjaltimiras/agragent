@@ -1,6 +1,8 @@
 # agragent — Computational Crop Monitoring Platform for Viticulture
 
-**agragent** is an open-source, browser-based precision agriculture platform designed for real-time monitoring of grapevine production systems. It integrates satellite remote sensing, climate analytics, genomic data visualization, and computer vision into a single web application — requiring no backend, no installation, and no API keys for core functionality.
+**agragent** is an open-source precision agriculture platform designed for real-time monitoring of grapevine production systems. It integrates satellite remote sensing, climate analytics, genomic data visualization, computer vision, and an **AI-powered agronomic assistant** into a single web application.
+
+The AI Assistant (AgroAgente) is a conversational agent powered by Claude that provides context-aware agronomic recommendations based on the data the user is currently viewing — satellite imagery, climate KPIs, field polygons, and yield predictions.
 
 Developed as part of a PhD research project in Computer Science at the Pontificia Universidad Católica de Valparaíso (PUCV), Chile, focusing on computational crop monitoring using bioinformatics and machine learning.
 
@@ -9,6 +11,7 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 ## Table of Contents
 
 - [Features](#features)
+- [AI Assistant](#ai-assistant)
 - [How It Works](#how-it-works)
 - [Architecture](#architecture)
 - [Data Sources](#data-sources)
@@ -39,6 +42,7 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 | **Genomic Analysis** | Real RNA-seq DEG data from Altimiras et al. (2024) — 3,603 DEGs across 8 phenological stages of *Vitis vinifera* |
 | **Image Analysis** | Integration with the WGISD dataset (Embrapa) — 300+ grape cluster images with YOLO bounding box annotations |
 | **Yield Prediction** | Extra Trees Regressor model output with confidence intervals and feature importance |
+| **AI Assistant** | Context-aware conversational agent (Claude) with access to climate, satellite, soil, irrigation, and fertilization tools |
 | **References** | Author info, ORCID, associated publications with DOIs, dataset citations |
 | **Multi-language** | English, Spanish, and Portuguese — language persisted in localStorage |
 
@@ -106,6 +110,56 @@ All climate data is fetched dynamically from the [Open-Meteo Archive API](https:
 
 ---
 
+## AI Assistant
+
+agragent includes an integrated AI agronomic assistant powered by [Claude](https://www.anthropic.com/claude) (Anthropic) via a FastAPI backend.
+
+### Availability
+
+- **Floating widget** (🤖): accessible from any screen via the bottom-right button
+- **Full-page section**: dedicated "AI Assistant" section in the sidebar with full conversation management
+
+Both views are synchronized — conversations, messages, and state are shared.
+
+### Context-Aware Responses
+
+Every message automatically includes the current application state:
+
+| Context | Data Sent |
+|---|---|
+| **Field** | Location name, area, polygon coordinates, centroid |
+| **Climate** | GDD, chill hours, frost days, heat waves, humidity, ET₀, solar radiation, water balance |
+| **Alerts** | Active agronomic alerts (frost, drought, heat stress, low GDD) |
+| **Satellite** | GEE connection status, active vegetation index, available Sentinel-2 scenes |
+| **Yield** | Predicted yield value |
+| **Section** | Which module the user is currently viewing |
+
+### Agent Tools
+
+The backend agent has 6 tools it can invoke autonomously:
+
+| Tool | Description |
+|---|---|
+| `get_climate_data` | Fetch real-time weather/climate data by coordinates |
+| `get_ndvi_data` | Retrieve satellite NDVI data from Sentinel-2 |
+| `analyze_soil_report` | Parse and interpret uploaded soil analysis |
+| `analyze_foliar_report` | Parse and interpret leaf tissue analysis |
+| `calculate_irrigation_plan` | ET₀ × Kc irrigation scheduling |
+| `calculate_fertilization_plan` | NPK requirements based on yield target |
+
+### Conversation Management
+
+- Create, rename (✏️), and delete conversations
+- Conversation history persisted in Supabase
+- Quick-start cards translated to EN/ES/PT
+- Markdown rendering with tool-use badges
+
+### Backend
+
+The AI backend is a separate FastAPI service (`agro-agent/`) that communicates with Claude via the Anthropic API with an agentic loop (max 10 iterations per message).
+
+---
+
 ## How It Works
 
 1. **Login** with your credentials (default: `admin` / `agragent2026`)
@@ -124,35 +178,39 @@ All climate data is fetched dynamically from the [Open-Meteo Archive API](https:
 
 ## Architecture
 
-agragent is a **zero-dependency single-page application** (SPA) — the entire platform is contained in one `index.html` file. This design prioritizes:
+agragent combines a **single-page frontend** (`index.html`) with an optional **FastAPI backend** for AI assistant capabilities:
 
-- **Portability**: runs on any machine with a browser, no Node.js/Python backend required
-- **Reproducibility**: a single file can be shared, archived, or embedded in academic publications
-- **Offline capability**: core UI works without internet; only API calls require connectivity
+- **Frontend**: self-contained SPA with all HTML, CSS, and JS — runs standalone for monitoring features
+- **Backend** (`agro-agent/`): FastAPI service providing conversational AI via Claude, with tool-calling and conversation persistence in Supabase
+- **Deployment**: frontend on Vercel (`agragent.com`), backend deployable independently
 
 ```
-┌──────────────────────────────────────────────────────┐
-│                      Browser                          │
-│                                                       │
-│  ┌──────────┐  ┌──────────┐  ┌────────────────────┐ │
-│  │ Leaflet  │  │ Chart.js │  │ Earth Engine JS    │ │
-│  │ Map +    │  │10 Charts │  │ API (OAuth 2.0)    │ │
-│  │ Geoman   │  │ + i18n   │  │ + Login System     │ │
-│  └────┬─────┘  └────┬─────┘  └──────┬─────────────┘ │
-│       │              │               │                │
-│       └──────────────┼───────────────┘                │
-│                      │                                │
-│              index.html (SPA)                         │
-└──────────────────────┬────────────────────────────────┘
-                       │
-       ┌───────────────┼───────────────┐
-       │               │               │
-  Open-Meteo      Google Earth    Nominatim
-  Archive API     Engine API      Geocoding
-  (climate)       (Sentinel-2)    (location)
-       │
-   WGISD/GitHub
-   (grape images)
+┌──────────────────────────────────────────────────────────┐
+│                        Browser                            │
+│                                                           │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────────┐ │
+│  │ Leaflet  │  │ Chart.js │  │ Earth     │  │   AI    │ │
+│  │ Map +    │  │10 Charts │  │ Engine JS │  │  Chat   │ │
+│  │ Geoman   │  │ + i18n   │  │ (OAuth)   │  │ Widget  │ │
+│  └────┬─────┘  └────┬─────┘  └────┬──────┘  └────┬────┘ │
+│       └──────────────┼─────────────┘              │      │
+│                      │                            │      │
+│              index.html (SPA)                     │      │
+└──────────────────────┬────────────────────────────┼──────┘
+                       │                            │
+       ┌───────────────┼───────────────┐     ┌──────┴──────┐
+       │               │               │     │  FastAPI     │
+  Open-Meteo      Google Earth    Nominatim  │  Backend     │
+  Archive API     Engine API      Geocoding  │  (agro-agent)│
+  (climate)       (Sentinel-2)    (location) │      │       │
+       │                                     │  ┌───┴────┐  │
+   WGISD/GitHub                              │  │ Claude │  │
+   (grape images)                            │  │  API   │  │
+                                             │  └───┬────┘  │
+                                             │  ┌───┴────┐  │
+                                             │  │Supabase│  │
+                                             │  └────────┘  │
+                                             └──────────────┘
 ```
 
 ---
@@ -176,7 +234,11 @@ agragent is a **zero-dependency single-page application** (SPA) — the entire p
 - A modern web browser (Chrome, Firefox, Edge)
 - Python 3.x (for local HTTP server) or any static file server
 
-### Quick Start
+### Live Demo
+
+The platform is deployed at **[agragent-app.vercel.app](https://agragent-app.vercel.app)**
+
+### Quick Start (Local)
 
 ```bash
 # Clone the repository
@@ -191,6 +253,22 @@ open http://localhost:8080
 ```
 
 > **Note**: A local HTTP server is required (not `file://`) because the app makes API calls that require proper CORS handling.
+
+### With AI Assistant (Backend)
+
+```bash
+# Clone and set up the backend
+cd agro-agent
+cp .env.example .env
+# Edit .env with your ANTHROPIC_API_KEY and SUPABASE credentials
+pip install -r requirements.txt
+
+# Run the backend (serves frontend + API)
+uvicorn app.main:app --reload --port 8000
+
+# Open in browser
+open http://localhost:8000
+```
 
 ### Default Login Credentials
 
@@ -350,6 +428,8 @@ Sentinel-2 bands used: B2 (Blue, 490nm), B3 (Green, 560nm), B4 (Red, 665nm), B5 
 
 ## Technology Stack
 
+**Frontend**
+
 | Component | Library | Version | Purpose |
 |---|---|---|---|
 | Maps | [Leaflet](https://leafletjs.com/) | 1.9.4 | Interactive map rendering |
@@ -361,7 +441,18 @@ Sentinel-2 bands used: B2 (Blue, 490nm), B3 (Green, 560nm), B4 (Red, 665nm), B5 
 | KML parsing | [@mapbox/togeojson](https://github.com/mapbox/togeojson) | 0.16.0 | KML to GeoJSON conversion |
 | Geocoding | [Nominatim](https://nominatim.openstreetmap.org/) | — | Reverse geocoding (OpenStreetMap) |
 
-All dependencies are loaded via CDN — no build step required.
+Frontend dependencies are loaded via CDN — no build step required.
+
+**Backend (AI Assistant)**
+
+| Component | Library | Version | Purpose |
+|---|---|---|---|
+| API framework | [FastAPI](https://fastapi.tiangolo.com/) | 0.115.0 | REST API for chat and conversations |
+| AI model | [Anthropic Claude](https://www.anthropic.com/) | 0.40.0 | Conversational agent with tool use |
+| Database | [Supabase](https://supabase.com/) | 2.10.0 | Conversation and message persistence |
+| Earth Engine | [earthengine-api](https://pypi.org/project/earthengine-api/) | 1.6.15 | Server-side satellite data |
+| PDF parsing | [pdfplumber](https://github.com/jsvine/pdfplumber) | 0.11.4 | Soil/foliar report extraction |
+| Excel parsing | [openpyxl](https://openpyxl.readthedocs.io/) | 3.1.5 | Spreadsheet analysis uploads |
 
 ---
 
@@ -369,11 +460,42 @@ All dependencies are loaded via CDN — no build step required.
 
 ```
 agragent/
-├── index.html      # Complete SPA — all HTML, CSS, and JS
-├── Agrifrut.kml    # Example field boundaries (Los Angeles, Chile)
-├── README.md       # This file
-├── LICENSE         # MIT License
+├── index.html              # Complete SPA — all HTML, CSS, and JS
+├── poligono.kml            # Example field boundaries
+├── README.md               # This file
+├── LICENSE                 # MIT License
 └── .gitignore
+```
+
+The AI backend (`agro-agent/`) is maintained separately:
+
+```
+agro-agent/
+├── app/
+│   ├── main.py             # FastAPI entry point (serves frontend + API)
+│   ├── config.py           # Environment configuration
+│   ├── database.py         # Supabase client
+│   ├── agent/
+│   │   ├── claude.py       # AgroAgent — agentic loop with Claude
+│   │   ├── tools.py        # 6 agronomic tools
+│   │   └── system_prompt.py
+│   ├── routers/
+│   │   ├── chat.py         # POST /api/chat, POST /api/chat/new
+│   │   ├── conversations.py # CRUD conversations + messages
+│   │   └── uploads.py      # File upload and parsing
+│   ├── services/
+│   │   ├── satellite.py    # GEE server-side queries
+│   │   ├── climate.py      # Climate data service
+│   │   ├── sentinel.py     # Sentinel-2 processing
+│   │   └── document.py     # PDF/Excel parsing
+│   └── models/
+│       └── schemas.py      # Pydantic schemas
+├── frontend/
+│   └── index.html          # Original standalone chat UI
+├── supabase/
+│   └── schema.sql          # Database schema
+├── requirements.txt
+└── .env.example
 ```
 
 ---
