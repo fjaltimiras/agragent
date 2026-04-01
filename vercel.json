@@ -1,5 +1,7 @@
 {
-  "buildCommand": "",
+  "buildCommand": false,
+  "installCommand": false,
+  "framework": null,
   "rewrites": [
     {
       "source": "/(.*)",
