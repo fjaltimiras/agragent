@@ -1,6 +1,6 @@
 {
-  "buildCommand": false,
-  "installCommand": false,
+  "buildCommand": "",
+  "installCommand": "",
   "framework": null,
   "rewrites": [
     {
