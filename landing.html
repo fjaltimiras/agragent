@@ -887,41 +887,62 @@ section {
         White Paper
       </a>
     </div>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <div class="number">6</div>
-        <div class="label" data-i18n="stat_indices">Vegetation Indices</div>
-      </div>
-      <div class="hero-stat">
-        <div class="number">3,603</div>
-        <div class="label" data-i18n="stat_degs">DEGs Analyzed</div>
-      </div>
-      <div class="hero-stat">
-        <div class="number">8+</div>
-        <div class="label" data-i18n="stat_kpis">Climate KPIs</div>
-      </div>
-      <div class="hero-stat">
-        <div class="number">3</div>
-        <div class="label" data-i18n="stat_langs">Languages</div>
-      </div>
-    </div>
   </div>
 </section>
 
-<!-- ═══════ PREVIEW ═══════ -->
+<!-- ═══════ PREVIEW CAROUSEL ═══════ -->
 <div class="preview-section fade-in">
-  <div class="preview-wrapper">
+  <div class="preview-wrapper" style="position:relative;overflow:hidden;">
     <div class="preview-bar">
       <span class="preview-dot"></span>
       <span class="preview-dot"></span>
       <span class="preview-dot"></span>
       <span class="preview-url">app.agragent.com</span>
     </div>
-    <a href="https://app.agragent.com" style="display:block;">
-      <img src="screenshot.jpg" alt="agragent platform screenshot" style="width:100%;display:block;border-radius:0 0 12px 12px;">
+    <a href="https://app.agragent.com" style="display:block;position:relative;overflow:hidden;">
+      <div id="carousel" style="display:flex;transition:transform 0.6s ease;aspect-ratio:16/10;">
+        <img src="slide1.jpg" alt="Satellite Maps - NDVI" style="min-width:100%;height:100%;object-fit:cover;object-position:top;display:block;border-radius:0 0 12px 12px;">
+        <img src="slide2.jpg" alt="Satellite Maps - Compare" style="min-width:100%;height:100%;object-fit:cover;object-position:top;display:block;border-radius:0 0 12px 12px;">
+        <img src="slide3.jpg" alt="Dashboard" style="min-width:100%;height:100%;object-fit:cover;object-position:top;display:block;border-radius:0 0 12px 12px;">
+        <img src="slide4.jpg" alt="Image Analysis" style="min-width:100%;height:100%;object-fit:cover;object-position:top;display:block;border-radius:0 0 12px 12px;">
+        <img src="slide5.jpg" alt="Yield Prediction" style="min-width:100%;height:100%;object-fit:cover;object-position:top;display:block;border-radius:0 0 12px 12px;">
+        <img src="slide6.jpg" alt="AI Assistant" style="min-width:100%;height:100%;object-fit:cover;object-position:top;display:block;border-radius:0 0 12px 12px;">
+      </div>
     </a>
+    <div style="display:flex;justify-content:center;gap:8px;padding:14px 0;">
+      <button class="carousel-dot active" onclick="goSlide(0)"></button>
+      <button class="carousel-dot" onclick="goSlide(1)"></button>
+      <button class="carousel-dot" onclick="goSlide(2)"></button>
+      <button class="carousel-dot" onclick="goSlide(3)"></button>
+      <button class="carousel-dot" onclick="goSlide(4)"></button>
+      <button class="carousel-dot" onclick="goSlide(5)"></button>
+    </div>
+    <div style="display:flex;justify-content:center;gap:6px;padding-bottom:12px;font-size:0.75rem;color:var(--text-muted);">
+      <span id="carousel-label">Satellite Maps</span>
+    </div>
   </div>
 </div>
+<style>
+.carousel-dot {
+  width: 10px; height: 10px; border-radius: 50%; border: none;
+  background: var(--text-muted); cursor: pointer; padding: 0; transition: all 0.3s;
+}
+.carousel-dot.active { background: var(--accent); transform: scale(1.3); }
+</style>
+<script>
+(function() {
+  const labels = ['Satellite Maps', 'Satellite Compare', 'Dashboard', 'Image Analysis', 'Yield Prediction', 'AI Assistant'];
+  let currentSlide = 0;
+  const total = 6;
+  window.goSlide = function(n) {
+    currentSlide = n;
+    document.getElementById('carousel').style.transform = 'translateX(-' + (n * 100) + '%)';
+    document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === n));
+    document.getElementById('carousel-label').textContent = labels[n];
+  };
+  setInterval(() => { goSlide((currentSlide + 1) % total); }, 4000);
+})();
+</script>
 
 <!-- ═══════ FEATURES ═══════ -->
 <section id="features">
@@ -1049,6 +1070,20 @@ section {
           <p data-i18n="tech_meteo">Free, global historical weather data with no API key required.</p>
         </div>
       </div>
+      <div class="tech-item">
+        <div class="tech-icon">&#128215;</div>
+        <div>
+          <h4>Supabase</h4>
+          <p data-i18n="tech_supabase">Open-source PostgreSQL backend for data persistence, authentication, and real-time APIs.</p>
+        </div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">&#128065;</div>
+        <div>
+          <h4>YOLO</h4>
+          <p data-i18n="tech_yolo">State-of-the-art object detection model for crop identification and counting in field imagery.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1135,7 +1170,7 @@ section {
     <p data-i18n="cta_desc">agragent is free, open source, and works with any crop and any location worldwide. No installation required.</p>
     <div class="hero-buttons">
       <a href="https://app.agragent.com" class="btn btn-primary" data-i18n="cta_launch">Launch Platform</a>
-      <a href="Altimiras2026.pdf" target="_blank" class="btn btn-secondary" data-i18n="cta_paper">&#128196; White Paper</a>
+      <a href="Altimiras2026.pdf" target="_blank" class="btn btn-secondary" data-i18n="cta_paper">White Paper</a>
     </div>
   </div>
 </section>
@@ -1147,7 +1182,6 @@ section {
       <div class="footer-logo">
         <img src="agragent.png" alt="agragent logo" style="height:48px;">
       </div>
-      <span class="footer-copy">&copy; 2024&ndash;2026</span>
     </div>
     <div class="footer-links">
       <a href="Altimiras2026.pdf" target="_blank" data-i18n="footer_paper">White Paper</a>
@@ -1156,7 +1190,7 @@ section {
     </div>
   </div>
   <div class="footer-author">
-    Developed by Dr. Francisco Altimiras | Todos los derechos reservados.
+    Copyright &copy; 2026 Developed by Dr. Francisco Altimiras. All rights reserved.
   </div>
 </footer>
 
@@ -1215,6 +1249,8 @@ const translations = {
     tech_fastapi: "High-performance Python backend for AI assistant and data processing.",
     tech_claude: "Agentic AI with tool-calling for context-aware agronomic recommendations.",
     tech_meteo: "Free, global historical weather data with no API key required.",
+    tech_supabase: "Open-source PostgreSQL backend for data persistence, authentication, and real-time APIs.",
+    tech_yolo: "State-of-the-art object detection model for crop identification and counting in field imagery.",
     data_label: "Data Sources",
     data_title: "Powered by open, scientific data",
     th_source: "Source",
@@ -1238,7 +1274,7 @@ const translations = {
     cta_title: "Start monitoring your crops today",
     cta_desc: "agragent is free, open source, and works with any crop and any location worldwide. No installation required.",
     cta_launch: "Launch Platform",
-    cta_paper: "\ud83d\udcc4 White Paper",
+    cta_paper: "White Paper",
     footer_app: "Application",
     footer_developed: "Developed by"
   },
@@ -1294,6 +1330,8 @@ const translations = {
     tech_fastapi: "Backend Python de alto rendimiento para el asistente IA y procesamiento de datos.",
     tech_claude: "IA ag\u00e9ntica con llamado de herramientas para recomendaciones agron\u00f3micas contextuales.",
     tech_meteo: "Datos meteorol\u00f3gicos hist\u00f3ricos globales y gratuitos sin necesidad de API key.",
+    tech_supabase: "Backend PostgreSQL de c\u00f3digo abierto para persistencia de datos, autenticaci\u00f3n y APIs en tiempo real.",
+    tech_yolo: "Modelo de detecci\u00f3n de objetos de \u00faltima generaci\u00f3n para identificaci\u00f3n y conteo de cultivos en im\u00e1genes de campo.",
     data_label: "Fuentes de Datos",
     data_title: "Impulsado por datos abiertos y cient\u00edficos",
     th_source: "Fuente",
@@ -1317,7 +1355,7 @@ const translations = {
     cta_title: "Comienza a monitorear tus cultivos hoy",
     cta_desc: "agragent es gratuito, de c\u00f3digo abierto y funciona con cualquier cultivo y ubicaci\u00f3n del mundo. Sin instalaci\u00f3n requerida.",
     cta_launch: "Abrir Plataforma",
-    cta_paper: "\ud83d\udcc4 White Paper",
+    cta_paper: "White Paper",
     footer_app: "Aplicaci\u00f3n",
     footer_developed: "Desarrollado por"
   },
@@ -1373,6 +1411,8 @@ const translations = {
     tech_fastapi: "Backend Python de alto desempenho para o assistente IA e processamento de dados.",
     tech_claude: "IA ag\u00eantica com chamada de ferramentas para recomenda\u00e7\u00f5es agron\u00f4micas contextuais.",
     tech_meteo: "Dados meteorol\u00f3gicos hist\u00f3ricos globais e gratuitos sem necessidade de API key.",
+    tech_supabase: "Backend PostgreSQL de c\u00f3digo aberto para persist\u00eancia de dados, autentica\u00e7\u00e3o e APIs em tempo real.",
+    tech_yolo: "Modelo de detec\u00e7\u00e3o de objetos de \u00faltima gera\u00e7\u00e3o para identifica\u00e7\u00e3o e contagem de culturas em imagens de campo.",
     data_label: "Fontes de Dados",
     data_title: "Impulsionado por dados abertos e cient\u00edficos",
     th_source: "Fonte",
@@ -1396,7 +1436,7 @@ const translations = {
     cta_title: "Comece a monitorar suas culturas hoje",
     cta_desc: "agragent \u00e9 gratuito, de c\u00f3digo aberto e funciona com qualquer cultura e localiza\u00e7\u00e3o do mundo. Sem instala\u00e7\u00e3o necess\u00e1ria.",
     cta_launch: "Abrir Plataforma",
-    cta_paper: "\ud83d\udcc4 White Paper",
+    cta_paper: "White Paper",
     footer_app: "Aplica\u00e7\u00e3o",
     footer_developed: "Desenvolvido por"
   }
