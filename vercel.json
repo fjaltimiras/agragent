@@ -1,0 +1,14 @@
+{
+  "buildCommand": "",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "app.agragent.com" }],
+      "destination": "/app.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/landing.html"
+    }
+  ]
+}
