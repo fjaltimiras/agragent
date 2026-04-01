@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>agragent — Computational Crop Monitoring Platform</title>
+<meta name="description" content="Open-source computational crop monitoring platform for viticulture. Satellite imagery, climate analytics, genomic analysis, and AI-powered recommendations.">
+<meta name="keywords" content="precision agriculture, viticulture, crop monitoring, satellite imagery, NDVI, climate analytics, AI agriculture, grape, vineyard">
+<meta property="og:title" content="agragent — Computational Crop Monitoring Platform">
+<meta property="og:description" content="Real-time grapevine monitoring with satellite imagery, climate analytics, genomic analysis, and AI-powered agronomic recommendations.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://agragent.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0f14;
+  --bg-alt: #0f1923;
+  --card-bg: #16232e;
+  --card-bg-hover: #1c2d3a;
+  --accent: #52b788;
+  --accent-light: #74c99d;
+  --accent-dim: #2d6a4f;
+  --accent-glow: rgba(82, 183, 136, 0.15);
+  --text-primary: #e0e8e4;
+  --text-secondary: #7fa892;
+  --text-muted: #4a6b5d;
+  --border: #1e3a2e;
+  --green: #22c55e;
+  --yellow: #f59e0b;
+  --red: #ef4444;
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ───── NAVBAR ───── */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 0 40px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10, 15, 20, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(30, 58, 46, 0.5);
+  transition: background 0.3s;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.nav-logo svg {
+  width: 32px;
+  height: 32px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--accent); }
+
+.nav-cta {
+  background: var(--accent);
+  color: #0a0f14 !important;
+  padding: 9px 22px;
+  border-radius: 8px;
+  font-weight: 600 !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+.nav-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(82, 183, 136, 0.3);
+}
+
+.mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* ───── HERO ───── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(45, 106, 79, 0.15) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 20% 80%, rgba(82, 183, 136, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(34, 197, 94, 0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(30, 58, 46, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 58, 46, 0.08) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  max-width: 840px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(82, 183, 136, 0.1);
+  border: 1px solid rgba(82, 183, 136, 0.2);
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--accent);
+  margin-bottom: 28px;
+}
+
+.hero-badge .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4.2rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 24px;
+}
+
+.hero h1 .gradient {
+  background: linear-gradient(135deg, var(--accent) 0%, #74c99d 50%, #a7f3d0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero p {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.25s;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #0a0f14;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(82, 183, 136, 0.35);
+}
+
+.btn-secondary {
+  background: rgba(82, 183, 136, 0.1);
+  color: var(--accent);
+  border: 1px solid rgba(82, 183, 136, 0.25);
+}
+
+.btn-secondary:hover {
+  background: rgba(82, 183, 136, 0.18);
+  border-color: rgba(82, 183, 136, 0.4);
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  margin-top: 64px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+}
+
+.hero-stat {
+  text-align: center;
+}
+
+.hero-stat .number {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}
+
+.hero-stat .label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ───── SECTIONS ───── */
+section {
+  padding: 100px 24px;
+}
+
+.section-header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 64px;
+}
+
+.section-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.section-header h2 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.section-header p {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ───── FEATURES ───── */
+#features { background: var(--bg-alt); }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.feature-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.feature-card:hover {
+  border-color: rgba(82, 183, 136, 0.3);
+  background: var(--card-bg-hover);
+  transform: translateY(-4px);
+}
+
+.feature-card:hover::before { opacity: 1; }
+
+.feature-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  background: var(--accent-glow);
+  border: 1px solid rgba(82, 183, 136, 0.15);
+}
+
+.feature-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+
+.feature-card p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ───── HOW IT WORKS ───── */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 32px;
+  position: relative;
+}
+
+.steps-grid::before {
+  content: '';
+  position: absolute;
+  top: 48px;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--border), var(--border), transparent);
+}
+
+.step {
+  text-align: center;
+  position: relative;
+}
+
+.step-number {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  background: var(--card-bg);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  position: relative;
+  z-index: 1;
+}
+
+.step h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.step p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ───── TECH STACK ───── */
+#tech { background: var(--bg-alt); }
+
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.tech-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color 0.2s;
+}
+
+.tech-item:hover { border-color: rgba(82, 183, 136, 0.3); }
+
+.tech-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  background: var(--accent-glow);
+  flex-shrink: 0;
+}
+
+.tech-item h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.tech-item p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ───── DATA SOURCES ───── */
+.data-table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.data-table th {
+  background: var(--card-bg);
+  padding: 16px 20px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(30, 58, 46, 0.3);
+  color: var(--text-secondary);
+}
+
+.data-table tr:last-child td { border-bottom: none; }
+
+.data-table tr:hover td { background: rgba(82, 183, 136, 0.04); }
+
+.data-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(82, 183, 136, 0.12);
+  color: var(--accent);
+}
+
+/* ───── PUBLICATIONS ───── */
+#publications { background: var(--bg-alt); }
+
+.pub-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  margin-bottom: 20px;
+  transition: border-color 0.2s;
+}
+
+.pub-card:hover { border-color: rgba(82, 183, 136, 0.3); }
+
+.pub-year {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pub-card h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.pub-card .authors {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.pub-card .journal {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.pub-card a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.pub-card a:hover { text-decoration: underline; }
+
+/* ───── CTA ───── */
+.cta-section {
+  text-align: center;
+  padding: 120px 24px;
+  position: relative;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 70% at 50% 50%, rgba(82, 183, 136, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cta-content {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.cta-content h2 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+
+.cta-content p {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  margin-bottom: 36px;
+  line-height: 1.7;
+}
+
+/* ───── FOOTER ───── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 48px 24px;
+  background: var(--bg);
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-logo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-copy {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.footer-links {
+  display: flex;
+  gap: 28px;
+}
+
+.footer-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.88rem;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--accent); }
+
+.footer-author {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(30, 58, 46, 0.3);
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.footer-author a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.footer-author a:hover { text-decoration: underline; }
+
+/* ───── i18n SWITCHER ───── */
+.lang-switcher {
+  display: flex;
+  gap: 4px;
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 3px;
+  border: 1px solid var(--border);
+}
+
+.lang-btn {
+  padding: 5px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lang-btn.active {
+  background: var(--accent);
+  color: #0a0f14;
+}
+
+.lang-btn:hover:not(.active) {
+  color: var(--text-primary);
+}
+
+/* ───── SCREENSHOT PREVIEW ───── */
+.preview-section {
+  padding: 0 24px 100px;
+  position: relative;
+}
+
+.preview-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+.preview-bar {
+  background: var(--card-bg);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.preview-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.preview-dot:nth-child(1) { background: var(--red); }
+.preview-dot:nth-child(2) { background: var(--yellow); }
+.preview-dot:nth-child(3) { background: var(--green); }
+
+.preview-url {
+  margin-left: 12px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  background: rgba(30, 58, 46, 0.3);
+  padding: 4px 14px;
+  border-radius: 6px;
+  flex: 1;
+  max-width: 300px;
+}
+
+.preview-iframe {
+  width: 100%;
+  height: 600px;
+  border: none;
+  background: var(--bg-alt);
+}
+
+.preview-placeholder {
+  width: 100%;
+  height: 500px;
+  background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-alt) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.preview-placeholder-icon {
+  font-size: 4rem;
+  opacity: 0.6;
+}
+
+.preview-placeholder a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ───── RESPONSIVE ───── */
+@media (max-width: 768px) {
+  .navbar { padding: 0 20px; }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 72px;
+    left: 0;
+    right: 0;
+    background: rgba(10, 15, 20, 0.95);
+    backdrop-filter: blur(20px);
+    flex-direction: column;
+    padding: 20px;
+    gap: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-links.open { display: flex; }
+
+  .mobile-toggle { display: block; }
+
+  .hero-stats {
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .steps-grid::before { display: none; }
+
+  .footer-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .preview-placeholder { height: 300px; }
+
+  section { padding: 64px 20px; }
+}
+
+/* ───── ANIMATIONS ───── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ NAVBAR ═══════ -->
+<nav class="navbar">
+  <a href="#" class="nav-logo">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 2C14 6 8 10 8 16c0 6 4 10 8 14 4-4 8-8 8-14 0-6-6-10-8-14z" fill="currentColor" opacity="0.2"/>
+      <path d="M16 4c-1.5 3.5-6 7-6 12 0 5 3 8.5 6 11.5 3-3 6-6.5 6-11.5 0-5-4.5-8.5-6-12z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+      <path d="M16 10v14M12 16c2-1 4-1 8 0M13 20c1.5-0.8 3.5-0.8 6 0" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+    agragent
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#features" data-i18n="nav_features">Features</a></li>
+    <li><a href="#how-it-works" data-i18n="nav_how">How it works</a></li>
+    <li><a href="#tech" data-i18n="nav_tech">Tech Stack</a></li>
+    <li><a href="#data" data-i18n="nav_data">Data Sources</a></li>
+    <li><a href="#publications" data-i18n="nav_publications">Publications</a></li>
+    <li><a href="https://github.com/fjaltimiras/agragent" target="_blank">GitHub</a></li>
+    <li><a href="index.html" class="nav-cta" data-i18n="nav_launch">Launch App</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('es')">ES</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="mobile-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">&#9776;</button>
+  </div>
+</nav>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content fade-in">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      <span data-i18n="hero_badge">Open Source &middot; MIT License</span>
+    </div>
+    <h1>
+      <span data-i18n="hero_title_1">Computational Crop Monitoring for </span><span class="gradient" data-i18n="hero_title_2">Precision Viticulture</span>
+    </h1>
+    <p data-i18n="hero_desc">Integrate satellite remote sensing, climate analytics, genomic data, computer vision, and AI-powered agronomic recommendations in a single platform.</p>
+    <div class="hero-buttons">
+      <a href="index.html" class="btn btn-primary" data-i18n="hero_cta_launch">Launch Platform</a>
+      <a href="https://github.com/fjaltimiras/agragent" target="_blank" class="btn btn-secondary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="number">6</div>
+        <div class="label" data-i18n="stat_indices">Vegetation Indices</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number">3,603</div>
+        <div class="label" data-i18n="stat_degs">DEGs Analyzed</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number">8+</div>
+        <div class="label" data-i18n="stat_kpis">Climate KPIs</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number">3</div>
+        <div class="label" data-i18n="stat_langs">Languages</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ PREVIEW ═══════ -->
+<div class="preview-section fade-in">
+  <div class="preview-wrapper">
+    <div class="preview-bar">
+      <span class="preview-dot"></span>
+      <span class="preview-dot"></span>
+      <span class="preview-dot"></span>
+      <span class="preview-url">agragent-app.vercel.app</span>
+    </div>
+    <div class="preview-placeholder">
+      <div class="preview-placeholder-icon">&#127793;</div>
+      <span data-i18n="preview_text">Interactive platform preview</span>
+      <a href="index.html" data-i18n="preview_link">Open live application &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ FEATURES ═══════ -->
+<section id="features">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label" data-i18n="features_label">Platform Capabilities</div>
+      <h2 data-i18n="features_title">Everything you need for precision viticulture</h2>
+      <p data-i18n="features_desc">A comprehensive suite of tools designed for researchers, agronomists, and vineyard managers to monitor and optimize grapevine production.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">&#128752;</div>
+        <h3 data-i18n="f1_title">Satellite Remote Sensing</h3>
+        <p data-i18n="f1_desc">Sentinel-2 imagery via Google Earth Engine with 6 vegetation indices: NDVI, NDRE, MSAVI, TCARI, True Color, and False Color composites at 10m resolution.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">&#127777;</div>
+        <h3 data-i18n="f2_title">Climate Analytics</h3>
+        <p data-i18n="f2_desc">Real-time climate data from Open-Meteo API: temperature, precipitation, humidity, solar radiation, evapotranspiration, GDD, chill hours, frost risk, and heat waves.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">&#129516;</div>
+        <h3 data-i18n="f3_title">Genomic Analysis</h3>
+        <p data-i18n="f3_desc">RNA-seq differential expression visualization with 3,603 DEGs across 8 phenological stages from 68 samples and 5 grape varieties (Vitis vinifera).</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">&#128248;</div>
+        <h3 data-i18n="f4_title">Computer Vision</h3>
+        <p data-i18n="f4_desc">WGISD dataset integration with YOLO annotations for grape cluster detection and counting. Over 300 annotated images from Embrapa research.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">&#127806;</div>
+        <h3 data-i18n="f5_title">Yield Prediction</h3>
+        <p data-i18n="f5_desc">Machine learning models (Extra Trees Regressor) for yield estimation with confidence intervals and feature importance analysis.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">&#129302;</div>
+        <h3 data-i18n="f6_title">AI Assistant</h3>
+        <p data-i18n="f6_desc">Context-aware Claude-powered assistant providing agronomic recommendations based on real-time field, climate, and satellite data with 6 autonomous tools.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ HOW IT WORKS ═══════ -->
+<section id="how-it-works">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label" data-i18n="how_label">How it works</div>
+      <h2 data-i18n="how_title">From field to insight in minutes</h2>
+      <p data-i18n="how_desc">Upload your vineyard boundaries, connect to satellite and climate data sources, and receive AI-powered recommendations.</p>
+    </div>
+    <div class="steps-grid fade-in">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3 data-i18n="step1_title">Define Your Field</h3>
+        <p data-i18n="step1_desc">Upload a KML/KMZ polygon or draw your vineyard boundaries directly on the interactive map.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3 data-i18n="step2_title">Connect Data Sources</h3>
+        <p data-i18n="step2_desc">Automatically fetch Sentinel-2 imagery and historical climate data for your specific location and season.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3 data-i18n="step3_title">Analyze & Visualize</h3>
+        <p data-i18n="step3_desc">Explore vegetation indices, climate KPIs, genomic data, and yield predictions through interactive charts and maps.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <h3 data-i18n="step4_title">Get AI Recommendations</h3>
+        <p data-i18n="step4_desc">Consult the AI assistant for context-aware agronomic advice based on your field's real-time data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ TECH STACK ═══════ -->
+<section id="tech">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label" data-i18n="tech_label">Technology</div>
+      <h2 data-i18n="tech_title">Built with modern, proven technologies</h2>
+    </div>
+    <div class="tech-grid fade-in">
+      <div class="tech-item">
+        <div class="tech-icon">&#127760;</div>
+        <div>
+          <h4>Leaflet + Geoman</h4>
+          <p data-i18n="tech_leaflet">Interactive geospatial mapping with polygon drawing, editing, and split-screen comparison.</p>
+        </div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">&#128225;</div>
+        <div>
+          <h4>Google Earth Engine</h4>
+          <p data-i18n="tech_gee">Server-side satellite image processing with cloud masking and index computation.</p>
+        </div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">&#128200;</div>
+        <div>
+          <h4>Chart.js</h4>
+          <p data-i18n="tech_chart">10+ interactive charts for climate, genomic, and yield data visualization.</p>
+        </div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">&#9889;</div>
+        <div>
+          <h4>FastAPI</h4>
+          <p data-i18n="tech_fastapi">High-performance Python backend for AI assistant and data processing.</p>
+        </div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">&#129504;</div>
+        <div>
+          <h4>Claude AI (Anthropic)</h4>
+          <p data-i18n="tech_claude">Agentic AI with tool-calling for context-aware agronomic recommendations.</p>
+        </div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">&#9729;</div>
+        <div>
+          <h4>Open-Meteo API</h4>
+          <p data-i18n="tech_meteo">Free, global historical weather data with no API key required.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ DATA SOURCES ═══════ -->
+<section id="data">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label" data-i18n="data_label">Data Sources</div>
+      <h2 data-i18n="data_title">Powered by open, scientific data</h2>
+    </div>
+    <div class="data-table-wrapper fade-in">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th data-i18n="th_source">Source</th>
+            <th data-i18n="th_type">Type</th>
+            <th data-i18n="th_access">Access</th>
+            <th data-i18n="th_usage">Usage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Sentinel-2 SR Harmonized</strong></td>
+            <td data-i18n="ds1_type">Satellite imagery (10m)</td>
+            <td><span class="data-badge">Google Earth Engine</span></td>
+            <td data-i18n="ds1_use">Vegetation indices, RGB composites</td>
+          </tr>
+          <tr>
+            <td><strong>Open-Meteo Archive API</strong></td>
+            <td data-i18n="ds2_type">Historical weather</td>
+            <td><span class="data-badge" data-i18n="badge_free">Free</span></td>
+            <td data-i18n="ds2_use">Temperature, precipitation, humidity, radiation, ET&#8320;</td>
+          </tr>
+          <tr>
+            <td><strong>WGISD (Embrapa)</strong></td>
+            <td data-i18n="ds3_type">Grape cluster images (300+)</td>
+            <td><span class="data-badge" data-i18n="badge_public">Public dataset</span></td>
+            <td data-i18n="ds3_use">Object detection annotations</td>
+          </tr>
+          <tr>
+            <td><strong>RNA-seq (Altimiras et al. 2024)</strong></td>
+            <td data-i18n="ds4_type">Genomic DEG data</td>
+            <td><span class="data-badge" data-i18n="badge_published">Published</span></td>
+            <td data-i18n="ds4_use">3,603 DEGs across 8 phenological stages</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ PUBLICATIONS ═══════ -->
+<section id="publications">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label" data-i18n="pub_label">Research</div>
+      <h2 data-i18n="pub_title">Peer-reviewed publications</h2>
+      <p data-i18n="pub_desc">agragent is grounded in published scientific research from the Pontificia Universidad Cat&oacute;lica de Valpara&iacute;so (PUCV), Chile.</p>
+    </div>
+    <div class="fade-in">
+      <div class="pub-card">
+        <div class="pub-year">2024</div>
+        <h3>Transcriptome Data Analysis Applied to Grapevine Growth Stage Identification</h3>
+        <p class="authors">Altimiras, F. et al.</p>
+        <p class="journal">Agronomy, Vol. 14(3), p. 613</p>
+        <a href="https://doi.org/10.3390/agronomy14030613" target="_blank">DOI: 10.3390/agronomy14030613 &rarr;</a>
+      </div>
+      <div class="pub-card">
+        <div class="pub-year">2025</div>
+        <h3>A Computational Framework for Crop Yield Estimation and Phenological Monitoring</h3>
+        <p class="authors">Altimiras, F. et al.</p>
+        <p class="journal">Progress in Artificial Intelligence (EPIA 2024), Springer LNCS Vol. 15400, Ch. 14</p>
+        <a href="https://doi.org/10.1007/978-3-031-80084-9_14" target="_blank">DOI: 10.1007/978-3-031-80084-9_14 &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ CTA ═══════ -->
+<section class="cta-section">
+  <div class="cta-content fade-in">
+    <h2 data-i18n="cta_title">Start monitoring your vineyard today</h2>
+    <p data-i18n="cta_desc">agragent is free, open source, and works with any location worldwide. No installation required.</p>
+    <div class="hero-buttons">
+      <a href="index.html" class="btn btn-primary" data-i18n="cta_launch">Launch Platform</a>
+      <a href="https://github.com/fjaltimiras/agragent" target="_blank" class="btn btn-secondary" data-i18n="cta_github">View on GitHub</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-logo">
+        <svg viewBox="0 0 32 32" fill="none" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 4c-1.5 3.5-6 7-6 12 0 5 3 8.5 6 11.5 3-3 6-6.5 6-11.5 0-5-4.5-8.5-6-12z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M16 10v14M12 16c2-1 4-1 8 0" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+        agragent
+      </div>
+      <span class="footer-copy">MIT License &middot; 2024&ndash;2026</span>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/fjaltimiras/agragent" target="_blank">GitHub</a>
+      <a href="index.html" data-i18n="footer_app">Application</a>
+      <a href="https://orcid.org/0000-0003-1992-8338" target="_blank">ORCID</a>
+    </div>
+  </div>
+  <div class="footer-author">
+    <span data-i18n="footer_developed">Developed by</span> <a href="https://orcid.org/0000-0003-1992-8338" target="_blank">Francisco Altimiras</a> &mdash; Pontificia Universidad Cat&oacute;lica de Valpara&iacute;so (PUCV), Chile
+  </div>
+</footer>
+
+<script>
+/* ═══════ i18n ═══════ */
+const translations = {
+  en: {
+    nav_features: "Features",
+    nav_how: "How it works",
+    nav_tech: "Tech Stack",
+    nav_data: "Data Sources",
+    nav_publications: "Publications",
+    nav_launch: "Launch App",
+    hero_badge: "Open Source \u00b7 MIT License",
+    hero_title_1: "Computational Crop Monitoring for ",
+    hero_title_2: "Precision Viticulture",
+    hero_desc: "Integrate satellite remote sensing, climate analytics, genomic data, computer vision, and AI-powered agronomic recommendations in a single platform.",
+    hero_cta_launch: "Launch Platform",
+    stat_indices: "Vegetation Indices",
+    stat_degs: "DEGs Analyzed",
+    stat_kpis: "Climate KPIs",
+    stat_langs: "Languages",
+    preview_text: "Interactive platform preview",
+    preview_link: "Open live application \u2192",
+    features_label: "Platform Capabilities",
+    features_title: "Everything you need for precision viticulture",
+    features_desc: "A comprehensive suite of tools designed for researchers, agronomists, and vineyard managers to monitor and optimize grapevine production.",
+    f1_title: "Satellite Remote Sensing",
+    f1_desc: "Sentinel-2 imagery via Google Earth Engine with 6 vegetation indices: NDVI, NDRE, MSAVI, TCARI, True Color, and False Color composites at 10m resolution.",
+    f2_title: "Climate Analytics",
+    f2_desc: "Real-time climate data from Open-Meteo API: temperature, precipitation, humidity, solar radiation, evapotranspiration, GDD, chill hours, frost risk, and heat waves.",
+    f3_title: "Genomic Analysis",
+    f3_desc: "RNA-seq differential expression visualization with 3,603 DEGs across 8 phenological stages from 68 samples and 5 grape varieties (Vitis vinifera).",
+    f4_title: "Computer Vision",
+    f4_desc: "WGISD dataset integration with YOLO annotations for grape cluster detection and counting. Over 300 annotated images from Embrapa research.",
+    f5_title: "Yield Prediction",
+    f5_desc: "Machine learning models (Extra Trees Regressor) for yield estimation with confidence intervals and feature importance analysis.",
+    f6_title: "AI Assistant",
+    f6_desc: "Context-aware Claude-powered assistant providing agronomic recommendations based on real-time field, climate, and satellite data with 6 autonomous tools.",
+    how_label: "How it works",
+    how_title: "From field to insight in minutes",
+    how_desc: "Upload your vineyard boundaries, connect to satellite and climate data sources, and receive AI-powered recommendations.",
+    step1_title: "Define Your Field",
+    step1_desc: "Upload a KML/KMZ polygon or draw your vineyard boundaries directly on the interactive map.",
+    step2_title: "Connect Data Sources",
+    step2_desc: "Automatically fetch Sentinel-2 imagery and historical climate data for your specific location and season.",
+    step3_title: "Analyze & Visualize",
+    step3_desc: "Explore vegetation indices, climate KPIs, genomic data, and yield predictions through interactive charts and maps.",
+    step4_title: "Get AI Recommendations",
+    step4_desc: "Consult the AI assistant for context-aware agronomic advice based on your field's real-time data.",
+    tech_label: "Technology",
+    tech_title: "Built with modern, proven technologies",
+    tech_leaflet: "Interactive geospatial mapping with polygon drawing, editing, and split-screen comparison.",
+    tech_gee: "Server-side satellite image processing with cloud masking and index computation.",
+    tech_chart: "10+ interactive charts for climate, genomic, and yield data visualization.",
+    tech_fastapi: "High-performance Python backend for AI assistant and data processing.",
+    tech_claude: "Agentic AI with tool-calling for context-aware agronomic recommendations.",
+    tech_meteo: "Free, global historical weather data with no API key required.",
+    data_label: "Data Sources",
+    data_title: "Powered by open, scientific data",
+    th_source: "Source",
+    th_type: "Type",
+    th_access: "Access",
+    th_usage: "Usage",
+    ds1_type: "Satellite imagery (10m)",
+    ds1_use: "Vegetation indices, RGB composites",
+    ds2_type: "Historical weather",
+    ds2_use: "Temperature, precipitation, humidity, radiation, ET\u2080",
+    ds3_type: "Grape cluster images (300+)",
+    ds3_use: "Object detection annotations",
+    ds4_type: "Genomic DEG data",
+    ds4_use: "3,603 DEGs across 8 phenological stages",
+    badge_free: "Free",
+    badge_public: "Public dataset",
+    badge_published: "Published",
+    pub_label: "Research",
+    pub_title: "Peer-reviewed publications",
+    pub_desc: "agragent is grounded in published scientific research from the Pontificia Universidad Cat\u00f3lica de Valpara\u00edso (PUCV), Chile.",
+    cta_title: "Start monitoring your vineyard today",
+    cta_desc: "agragent is free, open source, and works with any location worldwide. No installation required.",
+    cta_launch: "Launch Platform",
+    cta_github: "View on GitHub",
+    footer_app: "Application",
+    footer_developed: "Developed by"
+  },
+  es: {
+    nav_features: "Funcionalidades",
+    nav_how: "C\u00f3mo funciona",
+    nav_tech: "Tecnolog\u00eda",
+    nav_data: "Fuentes de datos",
+    nav_publications: "Publicaciones",
+    nav_launch: "Abrir App",
+    hero_badge: "C\u00f3digo Abierto \u00b7 Licencia MIT",
+    hero_title_1: "Monitoreo Computacional de Cultivos para ",
+    hero_title_2: "Viticultura de Precisi\u00f3n",
+    hero_desc: "Integra teledetecci\u00f3n satelital, anal\u00edtica clim\u00e1tica, datos gen\u00f3micos, visi\u00f3n computacional y recomendaciones agron\u00f3micas impulsadas por IA en una sola plataforma.",
+    hero_cta_launch: "Abrir Plataforma",
+    stat_indices: "\u00cdndices de Vegetaci\u00f3n",
+    stat_degs: "DEGs Analizados",
+    stat_kpis: "KPIs Clim\u00e1ticos",
+    stat_langs: "Idiomas",
+    preview_text: "Vista previa interactiva de la plataforma",
+    preview_link: "Abrir aplicaci\u00f3n en vivo \u2192",
+    features_label: "Capacidades de la Plataforma",
+    features_title: "Todo lo que necesitas para la viticultura de precisi\u00f3n",
+    features_desc: "Un conjunto integral de herramientas dise\u00f1adas para investigadores, agr\u00f3nomos y administradores de vi\u00f1edos.",
+    f1_title: "Teledetecci\u00f3n Satelital",
+    f1_desc: "Im\u00e1genes Sentinel-2 v\u00eda Google Earth Engine con 6 \u00edndices de vegetaci\u00f3n: NDVI, NDRE, MSAVI, TCARI, Color Real y Color Falso a resoluci\u00f3n de 10m.",
+    f2_title: "Anal\u00edtica Clim\u00e1tica",
+    f2_desc: "Datos clim\u00e1ticos en tiempo real de Open-Meteo API: temperatura, precipitaci\u00f3n, humedad, radiaci\u00f3n solar, evapotranspiraci\u00f3n, GDD, horas fr\u00edo y heladas.",
+    f3_title: "An\u00e1lisis Gen\u00f3mico",
+    f3_desc: "Visualizaci\u00f3n de expresi\u00f3n diferencial RNA-seq con 3.603 DEGs en 8 etapas fenol\u00f3gicas de 68 muestras y 5 variedades de uva (Vitis vinifera).",
+    f4_title: "Visi\u00f3n Computacional",
+    f4_desc: "Integraci\u00f3n del dataset WGISD con anotaciones YOLO para detecci\u00f3n y conteo de racimos de uva. M\u00e1s de 300 im\u00e1genes anotadas de Embrapa.",
+    f5_title: "Predicci\u00f3n de Rendimiento",
+    f5_desc: "Modelos de aprendizaje autom\u00e1tico (Extra Trees Regressor) para estimaci\u00f3n de rendimiento con intervalos de confianza y an\u00e1lisis de importancia de variables.",
+    f6_title: "Asistente IA",
+    f6_desc: "Asistente Claude con contexto que provee recomendaciones agron\u00f3micas basadas en datos reales del campo, clima y sat\u00e9lite con 6 herramientas aut\u00f3nomas.",
+    how_label: "C\u00f3mo funciona",
+    how_title: "Del campo al conocimiento en minutos",
+    how_desc: "Sube los l\u00edmites de tu vi\u00f1edo, conecta fuentes de datos satelitales y clim\u00e1ticos, y recibe recomendaciones impulsadas por IA.",
+    step1_title: "Define tu Campo",
+    step1_desc: "Sube un pol\u00edgono KML/KMZ o dibuja los l\u00edmites de tu vi\u00f1edo directamente en el mapa interactivo.",
+    step2_title: "Conecta Fuentes de Datos",
+    step2_desc: "Obtiene autom\u00e1ticamente im\u00e1genes Sentinel-2 y datos clim\u00e1ticos hist\u00f3ricos para tu ubicaci\u00f3n y temporada.",
+    step3_title: "Analiza y Visualiza",
+    step3_desc: "Explora \u00edndices de vegetaci\u00f3n, KPIs clim\u00e1ticos, datos gen\u00f3micos y predicciones de rendimiento con gr\u00e1ficos interactivos.",
+    step4_title: "Obtiene Recomendaciones IA",
+    step4_desc: "Consulta al asistente IA para consejos agron\u00f3micos contextuales basados en datos reales de tu campo.",
+    tech_label: "Tecnolog\u00eda",
+    tech_title: "Construido con tecnolog\u00edas modernas y probadas",
+    tech_leaflet: "Cartograf\u00eda geoespacial interactiva con dibujo de pol\u00edgonos, edici\u00f3n y comparaci\u00f3n de pantalla dividida.",
+    tech_gee: "Procesamiento de im\u00e1genes satelitales del lado del servidor con enmascaramiento de nubes.",
+    tech_chart: "M\u00e1s de 10 gr\u00e1ficos interactivos para visualizaci\u00f3n de datos clim\u00e1ticos, gen\u00f3micos y de rendimiento.",
+    tech_fastapi: "Backend Python de alto rendimiento para el asistente IA y procesamiento de datos.",
+    tech_claude: "IA ag\u00e9ntica con llamado de herramientas para recomendaciones agron\u00f3micas contextuales.",
+    tech_meteo: "Datos meteorol\u00f3gicos hist\u00f3ricos globales y gratuitos sin necesidad de API key.",
+    data_label: "Fuentes de Datos",
+    data_title: "Impulsado por datos abiertos y cient\u00edficos",
+    th_source: "Fuente",
+    th_type: "Tipo",
+    th_access: "Acceso",
+    th_usage: "Uso",
+    ds1_type: "Imagen\u00e9ria satelital (10m)",
+    ds1_use: "\u00cdndices de vegetaci\u00f3n, composiciones RGB",
+    ds2_type: "Clima hist\u00f3rico",
+    ds2_use: "Temperatura, precipitaci\u00f3n, humedad, radiaci\u00f3n, ET\u2080",
+    ds3_type: "Im\u00e1genes de racimos (300+)",
+    ds3_use: "Anotaciones de detecci\u00f3n de objetos",
+    ds4_type: "Datos gen\u00f3micos DEG",
+    ds4_use: "3.603 DEGs en 8 etapas fenol\u00f3gicas",
+    badge_free: "Gratuito",
+    badge_public: "Dataset p\u00fablico",
+    badge_published: "Publicado",
+    pub_label: "Investigaci\u00f3n",
+    pub_title: "Publicaciones revisadas por pares",
+    pub_desc: "agragent se fundamenta en investigaci\u00f3n cient\u00edfica publicada de la Pontificia Universidad Cat\u00f3lica de Valpara\u00edso (PUCV), Chile.",
+    cta_title: "Comienza a monitorear tu vi\u00f1edo hoy",
+    cta_desc: "agragent es gratuito, de c\u00f3digo abierto y funciona con cualquier ubicaci\u00f3n del mundo. Sin instalaci\u00f3n requerida.",
+    cta_launch: "Abrir Plataforma",
+    cta_github: "Ver en GitHub",
+    footer_app: "Aplicaci\u00f3n",
+    footer_developed: "Desarrollado por"
+  },
+  pt: {
+    nav_features: "Funcionalidades",
+    nav_how: "Como funciona",
+    nav_tech: "Tecnologia",
+    nav_data: "Fontes de dados",
+    nav_publications: "Publica\u00e7\u00f5es",
+    nav_launch: "Abrir App",
+    hero_badge: "C\u00f3digo Aberto \u00b7 Licen\u00e7a MIT",
+    hero_title_1: "Monitoramento Computacional de Culturas para ",
+    hero_title_2: "Viticultura de Precis\u00e3o",
+    hero_desc: "Integre sensoriamento remoto por sat\u00e9lite, anal\u00edtica clim\u00e1tica, dados gen\u00f4micos, vis\u00e3o computacional e recomenda\u00e7\u00f5es agron\u00f4micas com IA em uma \u00fanica plataforma.",
+    hero_cta_launch: "Abrir Plataforma",
+    stat_indices: "\u00cdndices de Vegeta\u00e7\u00e3o",
+    stat_degs: "DEGs Analisados",
+    stat_kpis: "KPIs Clim\u00e1ticos",
+    stat_langs: "Idiomas",
+    preview_text: "Pr\u00e9via interativa da plataforma",
+    preview_link: "Abrir aplica\u00e7\u00e3o ao vivo \u2192",
+    features_label: "Capacidades da Plataforma",
+    features_title: "Tudo o que voc\u00ea precisa para viticultura de precis\u00e3o",
+    features_desc: "Um conjunto abrangente de ferramentas projetadas para pesquisadores, agr\u00f4nomos e gestores de vinhedos.",
+    f1_title: "Sensoriamento Remoto",
+    f1_desc: "Imagens Sentinel-2 via Google Earth Engine com 6 \u00edndices de vegeta\u00e7\u00e3o: NDVI, NDRE, MSAVI, TCARI, Cor Real e Cor Falsa a 10m de resolu\u00e7\u00e3o.",
+    f2_title: "Anal\u00edtica Clim\u00e1tica",
+    f2_desc: "Dados clim\u00e1ticos em tempo real da Open-Meteo API: temperatura, precipita\u00e7\u00e3o, umidade, radia\u00e7\u00e3o solar, evapotranspira\u00e7\u00e3o, GDD, horas de frio e geadas.",
+    f3_title: "An\u00e1lise Gen\u00f4mica",
+    f3_desc: "Visualiza\u00e7\u00e3o de express\u00e3o diferencial RNA-seq com 3.603 DEGs em 8 est\u00e1gios fenol\u00f3gicos de 68 amostras e 5 variedades de uva (Vitis vinifera).",
+    f4_title: "Vis\u00e3o Computacional",
+    f4_desc: "Integra\u00e7\u00e3o do dataset WGISD com anota\u00e7\u00f5es YOLO para detec\u00e7\u00e3o e contagem de cachos. Mais de 300 imagens anotadas da Embrapa.",
+    f5_title: "Predi\u00e7\u00e3o de Rendimento",
+    f5_desc: "Modelos de aprendizado de m\u00e1quina (Extra Trees Regressor) para estima\u00e7\u00e3o de rendimento com intervalos de confian\u00e7a e an\u00e1lise de import\u00e2ncia de vari\u00e1veis.",
+    f6_title: "Assistente IA",
+    f6_desc: "Assistente Claude com contexto que fornece recomenda\u00e7\u00f5es agron\u00f4micas baseadas em dados reais do campo, clima e sat\u00e9lite com 6 ferramentas aut\u00f4nomas.",
+    how_label: "Como funciona",
+    how_title: "Do campo ao conhecimento em minutos",
+    how_desc: "Carregue os limites do seu vinhedo, conecte fontes de dados de sat\u00e9lite e clima, e receba recomenda\u00e7\u00f5es com IA.",
+    step1_title: "Defina seu Campo",
+    step1_desc: "Carregue um pol\u00edgono KML/KMZ ou desenhe os limites do seu vinhedo diretamente no mapa interativo.",
+    step2_title: "Conecte Fontes de Dados",
+    step2_desc: "Obtenha automaticamente imagens Sentinel-2 e dados clim\u00e1ticos hist\u00f3ricos para sua localiza\u00e7\u00e3o e temporada.",
+    step3_title: "Analise e Visualize",
+    step3_desc: "Explore \u00edndices de vegeta\u00e7\u00e3o, KPIs clim\u00e1ticos, dados gen\u00f4micos e predi\u00e7\u00f5es de rendimento com gr\u00e1ficos interativos.",
+    step4_title: "Obtenha Recomenda\u00e7\u00f5es IA",
+    step4_desc: "Consulte o assistente IA para conselhos agron\u00f4micos contextuais baseados nos dados reais do seu campo.",
+    tech_label: "Tecnologia",
+    tech_title: "Constru\u00eddo com tecnologias modernas e comprovadas",
+    tech_leaflet: "Cartografia geoespacial interativa com desenho de pol\u00edgonos, edi\u00e7\u00e3o e compara\u00e7\u00e3o em tela dividida.",
+    tech_gee: "Processamento de imagens de sat\u00e9lite no servidor com mascaramento de nuvens.",
+    tech_chart: "Mais de 10 gr\u00e1ficos interativos para visualiza\u00e7\u00e3o de dados clim\u00e1ticos, gen\u00f4micos e de rendimento.",
+    tech_fastapi: "Backend Python de alto desempenho para o assistente IA e processamento de dados.",
+    tech_claude: "IA ag\u00eantica com chamada de ferramentas para recomenda\u00e7\u00f5es agron\u00f4micas contextuais.",
+    tech_meteo: "Dados meteorol\u00f3gicos hist\u00f3ricos globais e gratuitos sem necessidade de API key.",
+    data_label: "Fontes de Dados",
+    data_title: "Impulsionado por dados abertos e cient\u00edficos",
+    th_source: "Fonte",
+    th_type: "Tipo",
+    th_access: "Acesso",
+    th_usage: "Uso",
+    ds1_type: "Imagens de sat\u00e9lite (10m)",
+    ds1_use: "\u00cdndices de vegeta\u00e7\u00e3o, compostos RGB",
+    ds2_type: "Clima hist\u00f3rico",
+    ds2_use: "Temperatura, precipita\u00e7\u00e3o, umidade, radia\u00e7\u00e3o, ET\u2080",
+    ds3_type: "Imagens de cachos (300+)",
+    ds3_use: "Anota\u00e7\u00f5es de detec\u00e7\u00e3o de objetos",
+    ds4_type: "Dados gen\u00f4micos DEG",
+    ds4_use: "3.603 DEGs em 8 est\u00e1gios fenol\u00f3gicos",
+    badge_free: "Gratuito",
+    badge_public: "Dataset p\u00fablico",
+    badge_published: "Publicado",
+    pub_label: "Pesquisa",
+    pub_title: "Publica\u00e7\u00f5es revisadas por pares",
+    pub_desc: "agragent \u00e9 fundamentado em pesquisa cient\u00edfica publicada da Pontificia Universidad Cat\u00f3lica de Valpara\u00edso (PUCV), Chile.",
+    cta_title: "Comece a monitorar seu vinhedo hoje",
+    cta_desc: "agragent \u00e9 gratuito, de c\u00f3digo aberto e funciona com qualquer localiza\u00e7\u00e3o do mundo. Sem instala\u00e7\u00e3o necess\u00e1ria.",
+    cta_launch: "Abrir Plataforma",
+    cta_github: "Ver no GitHub",
+    footer_app: "Aplica\u00e7\u00e3o",
+    footer_developed: "Desenvolvido por"
+  }
+};
+
+let currentLang = localStorage.getItem('agragent-landing-lang') || 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('agragent-landing-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.trim().toLowerCase() === lang));
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (translations[lang] && translations[lang][key]) {
+      el.innerHTML = translations[lang][key];
+    }
+  });
+}
+
+/* ═══════ SCROLL ANIMATIONS ═══════ */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+/* ═══════ NAVBAR SCROLL EFFECT ═══════ */
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('.navbar');
+  nav.style.background = window.scrollY > 50
+    ? 'rgba(10, 15, 20, 0.95)'
+    : 'rgba(10, 15, 20, 0.85)';
+});
+
+/* ═══════ SMOOTH NAV CLOSE ON MOBILE ═══════ */
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.getElementById('navLinks').classList.remove('open');
+  });
+});
+
+/* Init language */
+setLang(currentLang);
+</script>
+</body>
+</html>
