@@ -1376,12 +1376,8 @@
 // LOGIN SYSTEM
 // ═══════════════════════════════════════
 const DEFAULT_USERS = [
-  { user: 'admin', pass: 'agragent2026', role: 'Admin',
-    geeClientId: '38756968370-bis06rvmv3tm8nsv11p6256icku3ampi.apps.googleusercontent.com',
-    geeProjectId: 'agragent-491300' },
-  { user: 'demo', pass: 'demo', role: 'Viewer',
-    geeClientId: '38756968370-bis06rvmv3tm8nsv11p6256icku3ampi.apps.googleusercontent.com',
-    geeProjectId: 'agragent-491300' }
+  { user: 'admin', pass: 'agragent2026', role: 'Admin' },
+  { user: 'demo', pass: 'demo', role: 'Viewer' }
 ];
 
 function getUsers() {
@@ -1402,12 +1398,10 @@ function doLogin() {
   const match = users.find(u => u.user === user && u.pass === pass);
   if (match) {
     sessionStorage.setItem('agragent-session', JSON.stringify({
-      user: match.user, role: match.role, ts: Date.now(),
-      geeClientId: match.geeClientId || '', geeProjectId: match.geeProjectId || ''
+      user: match.user, role: match.role, ts: Date.now()
     }));
     document.getElementById('login-screen').style.display = 'none';
     updateUserUI(match.user, match.role);
-    applyGEECredentials(match.geeClientId, match.geeProjectId);
   } else {
     errEl.textContent = 'Invalid username or password';
     errEl.style.display = 'block';
@@ -1424,24 +1418,9 @@ function doLogout() {
   document.getElementById('login-error').style.display = 'none';
 }
 
-let _pendingGEE = null;
-function applyGEECredentials(clientId, projectId) {
-  if (!clientId) return;
-  _pendingGEE = { clientId, projectId: projectId || '' };
-  // Try immediately, also retry after DOM is fully ready
-  _tryApplyGEE();
-  setTimeout(_tryApplyGEE, 500);
-  document.addEventListener('DOMContentLoaded', _tryApplyGEE);
-}
-function _tryApplyGEE() {
-  if (!_pendingGEE) return;
-  const ci = document.getElementById('gee-client-id');
-  const pi = document.getElementById('gee-project-id');
-  if (ci && pi) {
-    ci.value = _pendingGEE.clientId;
-    pi.value = _pendingGEE.projectId;
-  }
-}
+// Legacy stubs (GEE now auto-connects via service account)
+function applyGEECredentials() {}
+function _tryApplyGEE() {}
 
 function updateUserUI(user, role) {
   const profile = JSON.parse(localStorage.getItem('agragent-profile-' + user) || '{}');
@@ -1511,7 +1490,6 @@ function editDisplayName() {
       if (Date.now() - s.ts < 86400000) {
         document.getElementById('login-screen').style.display = 'none';
         updateUserUI(s.user, s.role);
-        applyGEECredentials(s.geeClientId, s.geeProjectId);
         return;
       }
     } catch(e) {}
@@ -1725,20 +1703,14 @@ function editDisplayName() {
         <span class="sub">Google Earth Engine · Sentinel-2 · Real Imagery</span>
       </div>
 
-      <!-- GEE Connect Panel -->
+      <!-- GEE Status Panel (auto-connect) -->
       <div class="gee-panel">
         <div class="gee-panel-left">
           <span class="gee-icon">🌍</span>
           <div>
             <div class="gee-title">Google Earth Engine</div>
-            <div class="gee-sub">Conecta con tu cuenta GEE para visualizar imágenes Sentinel-2 reales</div>
+            <div class="gee-sub" id="gee-auto-sub">Conectando automáticamente a Sentinel-2...</div>
           </div>
-        </div>
-        <div class="gee-panel-right">
-          <input type="text" id="gee-client-id" class="gee-input" placeholder="OAuth 2.0 Client ID">
-          <input type="text" id="gee-project-id" class="gee-input" style="width:200px;" placeholder="Project ID (ej: agragent-491300)">
-          <button id="gee-connect-btn" class="gee-btn" onclick="connectGEE()">🔗 Conectar</button>
-          <button class="gee-btn" style="background:transparent;border:1px solid var(--border);color:var(--text-secondary);font-weight:400;" onclick="showGEEHelp()">? Ayuda</button>
         </div>
         <div id="gee-status" class="gee-status"></div>
       </div>
@@ -2799,7 +2771,7 @@ const i18n = {
     et_chart: 'Monthly Evapotranspiration ET₀ (mm)', gdd_chart: 'Growing Degree Days (GDD) Accumulation',
     // Maps
     maps_title: 'Satellite Maps', maps_sub: 'Google Earth Engine · Sentinel-2 · Real Imagery',
-    gee_connect: 'Connect', gee_help: '? Help', gee_connect_desc: 'Connect with your GEE account to view real Sentinel-2 imagery',
+    gee_connect: 'Connect', gee_help: '? Help', gee_connect_desc: 'Auto-connecting to Sentinel-2 imagery...',
     layers: 'Layers', upload_kmz: 'Upload KMZ/KML', draw: 'Draw', polygon: 'Polygon', line: 'Line', point: 'Point',
     edit: 'Edit', delete: 'Delete', export_kml: 'Export KML', index_label: 'Index:',
     real_color: 'Real Color', false_color: 'False Color',
@@ -2848,7 +2820,7 @@ const i18n = {
     humidity_chart: 'Humedad Relativa Mensual (%)', solar_chart: 'Radiación Solar Mensual (MJ/m²)',
     et_chart: 'Evapotranspiración Mensual ET₀ (mm)', gdd_chart: 'Acumulación de Grados Día (GDD)',
     maps_title: 'Mapas Satelitales', maps_sub: 'Google Earth Engine · Sentinel-2 · Imágenes Reales',
-    gee_connect: 'Conectar', gee_help: '? Ayuda', gee_connect_desc: 'Conecta con tu cuenta GEE para ver imágenes Sentinel-2 reales',
+    gee_connect: 'Conectar', gee_help: '? Ayuda', gee_connect_desc: 'Conectando automáticamente a Sentinel-2...',
     layers: 'Capas', upload_kmz: 'Subir KMZ/KML', draw: 'Dibujar', polygon: 'Polígono', line: 'Línea', point: 'Punto',
     edit: 'Editar', delete: 'Borrar', export_kml: 'Exportar KML', index_label: 'Índice:',
     real_color: 'Color Real', false_color: 'Falso Color',
@@ -2892,7 +2864,7 @@ const i18n = {
     humidity_chart: 'Umidade Relativa Mensal (%)', solar_chart: 'Radiação Solar Mensal (MJ/m²)',
     et_chart: 'Evapotranspiração Mensal ET₀ (mm)', gdd_chart: 'Acumulação de Graus-Dia (GDD)',
     maps_title: 'Mapas Satelitais', maps_sub: 'Google Earth Engine · Sentinel-2 · Imagens Reais',
-    gee_connect: 'Conectar', gee_help: '? Ajuda', gee_connect_desc: 'Conecte sua conta GEE para ver imagens Sentinel-2 reais',
+    gee_connect: 'Conectar', gee_help: '? Ajuda', gee_connect_desc: 'Conectando automaticamente ao Sentinel-2...',
     layers: 'Camadas', upload_kmz: 'Carregar KMZ/KML', draw: 'Desenhar', polygon: 'Polígono', line: 'Linha', point: 'Ponto',
     edit: 'Editar', delete: 'Excluir', export_kml: 'Exportar KML', index_label: 'Índice:',
     real_color: 'Cor Real', false_color: 'Cor Falsa',
@@ -2959,11 +2931,11 @@ navItems.forEach(item => {
     // Initialize map when first shown
     if (target === 'maps') {
       if (!mapInitialized) {
-        setTimeout(() => { initMap(); updateLegend('NDVI'); mapInitialized = true; _tryApplyGEE(); }, 100);
+        setTimeout(() => { initMap(); updateLegend('NDVI'); mapInitialized = true; autoConnectGEE(); }, 100);
       } else {
         if (vineMap) setTimeout(() => vineMap.invalidateSize(), 150);
+        if (!geeConnected) autoConnectGEE();
       }
-      _tryApplyGEE();
     }
   });
 });
@@ -4060,72 +4032,80 @@ function loadEEScript(callback) {
   document.head.appendChild(s);
 }
 
-function connectGEE() {
-  const clientId = document.getElementById('gee-client-id').value.trim();
-  const projectId = document.getElementById('gee-project-id').value.trim();
-  if (!clientId) { setGEEStatus('error', '⚠ Ingresa tu OAuth 2.0 Client ID'); return; }
-  if (!projectId) { setGEEStatus('error', '⚠ Ingresa tu Project ID (ej: agragent-491300)'); return; }
+let _geeTokenExpiry = 0;
 
-  const btn = document.getElementById('gee-connect-btn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Conectando...';
+async function autoConnectGEE() {
+  if (geeConnected) return;
 
-  loadEEScript(() => {
-    setGEEStatus('loading', '🔐 Abriendo autenticación Google...');
+  setGEEStatus('loading', '⏳ Conectando a Google Earth Engine...');
+  const subEl = document.getElementById('gee-auto-sub');
+  if (subEl) subEl.textContent = 'Conectando automáticamente a Sentinel-2...';
 
-    ee.data.authenticateViaOauth(
-      clientId,
-      () => {
-        setGEEStatus('loading', '⚙️ Inicializando Earth Engine con proyecto ' + projectId + '...');
+  try {
+    // 1. Fetch token from backend service account
+    const tokenRes = await fetch(CHAT_API + '/api/gee-token');
+    if (!tokenRes.ok) throw new Error('No se pudo obtener token GEE (HTTP ' + tokenRes.status + ')');
+    const tokenData = await tokenRes.json();
+    if (!tokenData.access_token) throw new Error(tokenData.error || 'Token vacío');
 
-        ee.initialize(
-          null, null,
-          () => {
-            // Set the cloud project for all EE requests
-            try { ee.data.setProject && ee.data.setProject(projectId); } catch(e) {}
-            try { ee.data.setCloudApiEnabled && ee.data.setCloudApiEnabled(true); } catch(e) {}
-            // Log available ee.data methods for debugging
-            const methods = Object.keys(ee.data).filter(k => typeof ee.data[k] === 'function').sort();
-            console.log('EE initialized. ee.data methods:', methods.join(', '));
-            console.log('EE project set to:', projectId);
+    const projectId = tokenData.project || 'agragent-491300';
+    _geeTokenExpiry = Date.now() + (tokenData.expires_in - 60) * 1000;
 
-            geeConnected = true;
-            setGEEStatus('success', '✅ Conectado a Google Earth Engine (proyecto: ' + projectId + ')');
-            btn.textContent = '✓ Conectado';
+    // 2. Load EE library
+    await new Promise((resolve, reject) => {
+      loadEEScript(() => resolve());
+      setTimeout(() => reject(new Error('Timeout cargando librería EE')), 15000);
+    });
 
-            // Switch to satellite basemap (Esri World Imagery) + labels overlay
-            if (osmLayer) vineMap.removeLayer(osmLayer);
-            satelliteLayer = L.tileLayer(
-              'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-              { attribution: '© Esri', maxZoom: 19 }
-            ).addTo(vineMap);
-            // Add transparent labels on top (cities, roads, places)
-            labelsLayer = L.tileLayer(
-              'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',
-              { attribution: '© CARTO', maxZoom: 19, pane: 'overlayPane' }
-            ).addTo(vineMap);
-            // Zoom out slightly so Esri has tiles
-            if (vineMap.getZoom() > 16) vineMap.setZoom(16);
+    // 3. Set auth token and initialize
+    ee.data.setAuthToken('', 'Bearer', tokenData.access_token, tokenData.expires_in, null, null, false);
+    ee.data.setAuthTokenRefresher(async function(authArgs, callback) {
+      try {
+        const r = await fetch(CHAT_API + '/api/gee-token');
+        const d = await r.json();
+        _geeTokenExpiry = Date.now() + (d.expires_in - 60) * 1000;
+        callback({ access_token: d.access_token, token_type: 'Bearer', expires_in: d.expires_in });
+      } catch(e) { console.error('GEE token refresh failed:', e); }
+    });
 
-            document.getElementById('gee-layer-controls').classList.add('visible');
-            document.getElementById('gee-badge').classList.add('visible');
-            loadGEELayer(currentGEEIndex);
-          },
-          err => {
-            btn.disabled = false; btn.textContent = '🔗 Conectar';
-            setGEEStatus('error', '❌ Error init: ' + err);
-          }
-        );
-      },
-      err => {
-        btn.disabled = false; btn.textContent = '🔗 Conectar';
-        setGEEStatus('error', '❌ Auth error: ' + (err.message || err));
-      },
-      ['https://www.googleapis.com/auth/earthengine'],
-      () => { /* popup blocked — user will see the popup */ }
-    );
-  });
+    await new Promise((resolve, reject) => {
+      ee.initialize(null, null, resolve, reject);
+    });
+
+    try { ee.data.setProject && ee.data.setProject(projectId); } catch(e) {}
+    try { ee.data.setCloudApiEnabled && ee.data.setCloudApiEnabled(true); } catch(e) {}
+    console.log('EE initialized via service account. Project:', projectId);
+
+    geeConnected = true;
+    setGEEStatus('success', '✅ Conectado a Google Earth Engine');
+    if (subEl) subEl.textContent = 'Sentinel-2 SR Harmonized · 10m resolución';
+
+    // Switch to satellite basemap
+    if (osmLayer) vineMap.removeLayer(osmLayer);
+    satelliteLayer = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      { attribution: '© Esri', maxZoom: 19 }
+    ).addTo(vineMap);
+    labelsLayer = L.tileLayer(
+      'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',
+      { attribution: '© CARTO', maxZoom: 19, pane: 'overlayPane' }
+    ).addTo(vineMap);
+    if (vineMap.getZoom() > 16) vineMap.setZoom(16);
+
+    document.getElementById('gee-layer-controls').classList.add('visible');
+    document.getElementById('gee-badge').classList.add('visible');
+    loadGEELayer(currentGEEIndex);
+
+  } catch (err) {
+    console.error('GEE auto-connect error:', err);
+    setGEEStatus('error', '❌ ' + err.message);
+    if (subEl) subEl.textContent = 'Error al conectar — reintentando en 10s...';
+    setTimeout(autoConnectGEE, 10000);
+  }
 }
+
+// Keep legacy function name for any existing calls
+function connectGEE() { autoConnectGEE(); }
 
 function loadGEELayer(idx) {
   if (!geeConnected || !window.ee) return;
@@ -4507,19 +4487,7 @@ function setMapLoading(show, msg) {
 }
 
 function showGEEHelp() {
-  alert(
-    '📌 Cómo obtener tu OAuth 2.0 Client ID:\n\n' +
-    '1. Ve a console.cloud.google.com\n' +
-    '2. Crea o selecciona un proyecto\n' +
-    '3. Habilita la API: "Google Earth Engine API"\n' +
-    '4. Ve a: APIs & Services → Credentials → Create Credentials → OAuth 2.0 Client ID\n' +
-    '5. Tipo: Web Application\n' +
-    '6. Authorized JavaScript origins:\n' +
-    '   - Agrega "null" (para archivo HTML local)\n' +
-    '   - O "http://localhost:PORT" si usas servidor\n' +
-    '7. Copia el Client ID y pégalo aquí\n\n' +
-    '⚠ Tu cuenta de GEE debe estar aprobada (earthengine.google.com)'
-  );
+  alert('Google Earth Engine se conecta automáticamente usando la cuenta del proyecto AgrAgent. No necesitas configurar nada.');
 }
 
 // ═══════════════════════════════════════

@@ -10,7 +10,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": "/landing.html"
+      "destination": "/landing/landing.html"
     }
   ]
 }
