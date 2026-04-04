@@ -2,7 +2,7 @@
 
 **agragent** is an open-source precision agriculture platform designed for real-time monitoring of grapevine production systems. It integrates satellite remote sensing, climate analytics, genomic data visualization, computer vision, and an **AI-powered agronomic assistant** into a single web application.
 
-The AI Assistant (AgroAgente) is a conversational agent powered by Claude that provides context-aware agronomic recommendations based on the data the user is currently viewing — satellite imagery, climate KPIs, field polygons, and yield predictions.
+The AI Assistant (AgrAgent) is a conversational agent powered by Claude that provides context-aware agronomic recommendations based on the data the user is currently viewing — satellite imagery, climate KPIs, field polygons, and yield predictions.
 
 Developed as part of a PhD research project in Computer Science at the Pontificia Universidad Católica de Valparaíso (PUCV), Chile, focusing on computational crop monitoring using bioinformatics and machine learning.
 
@@ -35,9 +35,9 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 
 | Module | Description |
 |---|---|
-| **Login** | Username/password authentication with role-based access (Admin, Viewer). GEE credentials auto-filled for admin |
+| **Login** | Username/password authentication with role-based access (Admin, Viewer) |
 | **Dashboard** | Dynamic agronomic overview: 8 KPIs, water balance, risk assessment, alerts, charts — all derived from the user's polygon |
-| **Satellite Maps** | Sentinel-2 imagery via Google Earth Engine with 6 vegetation indices, scene browsing, and split-screen temporal comparison |
+| **Satellite Maps** | Sentinel-2 imagery via Google Earth Engine (auto-connected via service account) with 13 spectral indices grouped by category, scene browsing, and split-screen temporal comparison |
 | **Climate Data** | Real-time climate analytics from Open-Meteo — temperature, precipitation, humidity, solar radiation, ET₀, GDD, chill hours, frost, heat waves (8 KPIs + 6 charts) |
 | **Genomic Analysis** | Real RNA-seq DEG data from Altimiras et al. (2024) — 3,603 DEGs across 8 phenological stages of *Vitis vinifera* |
 | **Image Analysis** | Integration with the WGISD dataset (Embrapa) — 300+ grape cluster images with YOLO bounding box annotations |
@@ -79,7 +79,12 @@ The dashboard starts empty and automatically populates when the user uploads a K
 - **Median Composite**: cloud-free composite from all Sentinel-2 scenes in a date range
 - **Scene Browser**: browse individual acquisitions with cloud cover percentage
 - **Date Comparison**: split-screen slider comparing two acquisition dates
-- **Vegetation Indices**: NDVI, NDRE, MSAVI, TCARI, True Color RGB, False Color (NIR-R-G)
+- **Vegetation Indices** (13 total, grouped by category):
+  - **Vigor**: NDVI, EVI, SAVI, MSAVI
+  - **Health**: NDRE, GNDVI, TCARI, CIre (Chlorophyll Index Red Edge)
+  - **Water**: NDMI (Moisture), NDWI (Water)
+  - **Soil**: BSI (Bare Soil Index)
+  - **Visual**: True Color RGB, False Color (NIR-R-G)
 - **Cloud Masking**: automatic QA60-based cloud and cirrus removal
 - **Polygon Clipping**: imagery rendered only within field boundaries
 
@@ -116,7 +121,7 @@ agragent includes an integrated AI agronomic assistant powered by [Claude](https
 
 ### Availability
 
-- **Floating widget** (🤖): accessible from any screen via the bottom-right button
+- **Floating widget**: accessible from any screen via the bottom-right AgrAgent logo button
 - **Full-page section**: dedicated "AI Assistant" section in the sidebar with full conversation management
 
 Both views are synchronized — conversations, messages, and state are shared.
@@ -236,7 +241,7 @@ agragent combines a **single-page frontend** (`index.html`) with an optional **F
 
 ### Live Demo
 
-The platform is deployed at **[agragent-app.vercel.app](https://agragent-app.vercel.app)**
+The platform is deployed at **[app.agragent.com](https://app.agragent.com)**
 
 ### Quick Start (Local)
 
@@ -274,20 +279,17 @@ open http://localhost:8000
 
 | User | Password | Role | GEE Credentials |
 |------|----------|------|-----------------|
-| `admin` | `agragent2026` | Admin | Auto-filled |
-| `demo` | `demo` | Viewer | — |
+| `admin` | `agragent2026` | Admin | Full access |
+| `demo` | `demo` | Viewer | Demo access |
 
-### Google Earth Engine (Optional)
+### Google Earth Engine
 
-To enable satellite imagery:
+Satellite imagery is **auto-connected** via a GEE service account — no user login required. The backend API (`/api/gee-token`) generates access tokens using the service account credentials stored in Vercel environment variables.
 
-1. Create a Google Cloud project at [console.cloud.google.com](https://console.cloud.google.com)
-2. Enable the **Earth Engine API**
-3. Register your project for Earth Engine (noncommercial) at the [EE registration page](https://code.earthengine.google.com/register)
-4. Configure **OAuth 2.0 credentials** (Web application type)
-5. Add `http://localhost:8080` as an authorized JavaScript origin
-6. Add your email as a **test user** in OAuth consent screen → Audience
-7. In the app, enter your **Client ID** and **Project ID**, then click Connect
+For self-hosting, configure these environment variables in your API deployment:
+- `GEE_CLIENT_EMAIL` — service account email
+- `GEE_PRIVATE_KEY_B64` — base64-encoded private key
+- `GEE_PROJECT_ID` — Google Cloud project ID
 
 ---
 
@@ -415,14 +417,36 @@ The Image Analysis module integrates the **Wine Grape Instance Segmentation Data
 
 | Index | Formula | Application |
 |---|---|---|
-| **NDVI** | (NIR - Red) / (NIR + Red) | General vegetation vigor |
-| **NDRE** | (NIR - RedEdge) / (NIR + RedEdge) | Chlorophyll content, nitrogen status |
-| **MSAVI** | (2×NIR + 1 - sqrt((2×NIR+1)² - 8×(NIR-Red))) / 2 | Soil-adjusted vegetation index |
-| **TCARI** | 3×[(RedEdge - Red) - 0.2×(RedEdge - Green)×(RedEdge/Red)] | Chlorophyll absorption |
-| **True Color** | B4-B3-B2 (RGB) | Natural color composite |
-| **False Color** | B8-B4-B3 (NIR-R-G) | Vegetation highlighted in red |
+**Vigor**
+| Index | Formula | Application |
+|---|---|---|
+| **NDVI** | (NIR − RED) / (NIR + RED) | General vegetation vigor |
+| **EVI** | 2.5×(NIR−RED)/(NIR+6×RED−7.5×BLUE+1) | Enhanced VI, no saturation at high biomass |
+| **SAVI** | 1.5×(NIR−RED)/(NIR+RED+0.5) | Soil-adjusted, ideal for young crops |
+| **MSAVI** | (2×NIR+1 − √((2×NIR+1)²−8(NIR−RED))) / 2 | Modified soil-adjusted VI |
 
-Sentinel-2 bands used: B2 (Blue, 490nm), B3 (Green, 560nm), B4 (Red, 665nm), B5 (Red Edge, 705nm), B8 (NIR, 842nm).
+**Health**
+| Index | Formula | Application |
+|---|---|---|
+| **NDRE** | (NIR − RedEdge) / (NIR + RedEdge) | Chlorophyll content, nitrogen status |
+| **GNDVI** | (NIR − GREEN) / (NIR + GREEN) | Green NDVI, early stress detection |
+| **TCARI** | 3×[(B5−B4) − 0.2×(B5−B3)×(B5/B4)] | Chlorophyll absorption |
+| **CIre** | (NIR / RedEdge) − 1 | Chlorophyll Index, correlates with N |
+
+**Water**
+| Index | Formula | Application |
+|---|---|---|
+| **NDMI** | (NIR − SWIR) / (NIR + SWIR) | Moisture/water stress |
+| **NDWI** | (GREEN − NIR) / (GREEN + NIR) | Water content in leaves |
+
+**Soil**
+| Index | Formula | Application |
+|---|---|---|
+| **BSI** | ((SWIR+RED)−(NIR+BLUE))/((SWIR+RED)+(NIR+BLUE)) | Bare soil detection |
+
+**Visual**: True Color (B4-B3-B2 RGB), False Color (B8-B4-B3 NIR-R-G)
+
+Sentinel-2 bands used: B2 (Blue, 490nm), B3 (Green, 560nm), B4 (Red, 665nm), B5 (Red Edge, 705nm), B8 (NIR, 842nm), B11 (SWIR, 1610nm).
 
 ---
 

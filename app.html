@@ -161,11 +161,12 @@
   /* ───── AI CHAT FLOATING WIDGET ───── */
   #chat-fab {
     position: fixed; bottom: 24px; right: 24px; z-index: 9998;
-    width: 56px; height: 56px; border-radius: 50%; border: none;
-    background: var(--accent); color: #fff; font-size: 1.5rem;
+    width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--accent);
+    background: var(--bg); color: #fff; font-size: 1.5rem;
     cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     transition: transform 0.2s, box-shadow 0.2s;
     display: flex; align-items: center; justify-content: center;
+    padding: 0; overflow: hidden;
   }
   #chat-fab:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(0,0,0,0.5); }
   #chat-fab.hidden { display: none; }
@@ -322,8 +323,6 @@
   .chat-full-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 
   @media (max-width: 768px) {
-    #chat-widget { width: calc(100vw - 16px); right: 8px; bottom: 8px; height: calc(100vh - 80px); }
-    #chat-fab { bottom: 16px; right: 16px; }
     .chat-full-sidebar { display: none; }
   }
 
@@ -554,6 +553,8 @@
     display: none;
   }
   .gee-layer-controls.visible { display: block; }
+  .gee-ctrl-toggle { display: none; }
+  .gee-ctrl-toggle-wrap { display: none; }
   .gee-ctrl-row {
     display: flex;
     align-items: center;
@@ -630,6 +631,22 @@
     flex-wrap: wrap;
   }
   .map-controls .ctrl-label { font-size: 0.77rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .index-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 6px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .index-group-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    margin-right: 2px;
+  }
   .index-btn {
     padding: 6px 14px;
     border-radius: 6px;
@@ -791,6 +808,18 @@
     text-transform: uppercase;
     letter-spacing: 0.06em;
     margin-right: 4px;
+  }
+  .toolbar-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 2px 0;
+    width: 100%;
+    text-align: left;
   }
   .tb-btn {
     display: flex;
@@ -1342,7 +1371,142 @@
     #sidebar.open { transform: translateX(0); }
     .hamburger { display: block; }
     .kpi-grid { grid-template-columns: 1fr 1fr; }
-    #content { padding: 16px; }
+    .kpi-value { font-size: 1.4rem; }
+    #content { padding: 10px; }
+
+    /* Section headers */
+    .section-header h2 { font-size: 1rem; }
+    .section-header .sub { font-size: 0.72rem; }
+
+    /* Topbar */
+    #topbar { padding: 0 12px; height: 48px; min-height: 48px; }
+    #topbar .page-title { font-size: 0.9rem; }
+
+    /* GEE Panel */
+    .gee-panel { padding: 10px 12px; gap: 8px; }
+    .gee-icon { font-size: 1.3rem; }
+    .gee-title { font-size: 0.8rem; }
+    .gee-sub { font-size: 0.68rem; }
+
+    /* GEE Layer Controls — collapsible on mobile */
+    .gee-layer-controls { padding: 10px 10px; }
+    .gee-ctrl-toggle-wrap { display: block; }
+    .gee-ctrl-toggle { display: block; }
+    .gee-layer-controls.collapsed-ctrl > *:not(.gee-ctrl-toggle-wrap) { display: none !important; }
+    .gee-layer-controls.collapsed-ctrl .gee-ctrl-toggle-wrap { display: block !important; }
+    .gee-ctrl-row { gap: 8px; }
+    .gee-ctrl-row label { font-size: 0.7rem; gap: 4px; }
+    .gee-ctrl-row input[type="date"] { padding: 4px 5px; font-size: 0.7rem; width: 120px; }
+    .gee-ctrl-row input[type="range"] { width: 60px; }
+    .gee-mode-btn { padding: 4px 8px; font-size: 0.68rem; }
+    .gee-refresh-btn { padding: 4px 10px; font-size: 0.72rem; margin-left: 0; }
+
+    /* Index groups — horizontal scroll */
+    .map-controls { padding: 8px 10px; gap: 6px; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+    .index-group { flex-shrink: 0; padding: 2px 4px; gap: 2px; }
+    .index-group-label { font-size: 0.6rem; }
+    .index-btn { padding: 4px 8px; font-size: 0.68rem; }
+
+    /* Map toolbar — collapsible on mobile */
+    .toolbar-toggle { display: block; }
+    .map-toolbar { padding: 8px 10px; gap: 6px; }
+    .map-toolbar.collapsed .toolbar-label,
+    .map-toolbar.collapsed .tb-btn,
+    .map-toolbar.collapsed .tb-divider,
+    .map-toolbar.collapsed input[type="file"] { display: none !important; }
+    .map-toolbar .toolbar-label { font-size: 0.65rem; margin-right: 0; }
+    .tb-btn { padding: 5px 8px; font-size: 0.72rem; gap: 4px; }
+    .tb-divider { margin: 0 2px; }
+
+    /* Map container */
+    #map-container { height: 55vh; min-height: 300px; }
+    .map-fullscreen-btn { font-size: 0.7rem; padding: 5px 10px; }
+
+    /* Legend + Layer list stack */
+    .grid-2 { grid-template-columns: 1fr; gap: 10px; }
+    .legend-labels { font-size: 0.62rem; }
+    #legend-formula { font-size: 0.62rem; }
+
+    /* Layer list */
+    .layer-item { padding: 7px 10px; font-size: 0.75rem; gap: 6px; }
+    .layer-act-btn { font-size: 0.78rem; padding: 2px 4px; }
+
+    /* Compare panel */
+    .compare-side { gap: 4px; }
+    .compare-date-select, .compare-index-select { font-size: 0.72rem; padding: 4px; }
+
+    /* Scene browser */
+    .scene-list { max-height: 150px; }
+
+    /* Cards */
+    .card { padding: 14px; }
+
+    /* Grids */
+    .grid-3 { grid-template-columns: 1fr; }
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+
+    /* Charts */
+    .chart-wrap canvas { max-height: 180px; }
+
+    /* Chat widget — full screen on mobile */
+    #chat-fab { bottom: 14px; right: 14px; width: 50px; height: 50px; }
+    #chat-fab img { width: 30px !important; height: 30px !important; }
+    #chat-widget {
+      width: 100vw; height: 100vh; max-height: 100vh;
+      right: 0; bottom: 0; left: 0; top: 0;
+      border-radius: 0; border: none;
+    }
+    .chat-widget-header { padding: 10px 12px; }
+    .chat-widget-header-left { gap: 6px; font-size: 0.85rem; }
+    .chat-widget-header-left img { width: 20px !important; height: 20px !important; }
+    .chat-widget-hbtn { font-size: 1.1rem; padding: 6px 10px; }
+    .chat-messages { padding: 14px 12px; gap: 12px; }
+    .chat-msg { max-width: 92%; gap: 6px; }
+    .chat-msg-avatar { width: 28px; height: 28px; font-size: 0.8rem; }
+    .chat-msg-bubble { padding: 8px 12px; font-size: 0.84rem; line-height: 1.5; }
+    .chat-msg-bubble pre { padding: 8px; font-size: 0.78rem; }
+    .chat-welcome h2 { font-size: 1.1rem; }
+    .chat-welcome p { font-size: 0.82rem; padding: 0 8px; }
+    .chat-welcome-cards { grid-template-columns: 1fr; gap: 8px; max-width: 100%; }
+    .chat-welcome-card { padding: 10px 12px; font-size: 0.78rem; }
+    .chat-input-area { padding: 10px 12px; gap: 8px; }
+    .chat-input-area textarea { padding: 9px 12px; font-size: 0.84rem; min-height: 38px; border-radius: 20px; }
+    .chat-send-btn { width: 38px; height: 38px; font-size: 1rem; border-radius: 50%; }
+    .chat-conv-item { padding: 8px 12px; font-size: 0.78rem; }
+    .chat-context-badge { font-size: 0.62rem; padding: 1px 6px; }
+
+    /* Poly editor modal */
+    .poly-editor-box { width: calc(100vw - 20px); padding: 20px 16px; }
+
+    /* Map source badge */
+    .map-source-badge { font-size: 0.65rem; }
+
+    /* Tables scroll horizontally */
+    .card { overflow-x: auto; }
+    .data-table { font-size: 0.75rem; min-width: 500px; }
+    .data-table th { padding: 6px 8px; font-size: 0.65rem; }
+    .data-table td { padding: 7px 8px; }
+
+    /* Stage timeline scroll */
+    .stage-timeline { overflow-x: auto; padding-bottom: 6px; }
+
+    /* WGISD grid */
+    .wgisd-grid { grid-template-columns: 1fr !important; }
+
+    /* Alert items */
+    .alert-item { font-size: 0.78rem; }
+
+    /* Chat full-page */
+    .chat-full-layout { height: calc(100vh - 70px); }
+  }
+
+  /* Extra small screens */
+  @media (max-width: 380px) {
+    .kpi-grid { grid-template-columns: 1fr; }
+    .kpi-value { font-size: 1.2rem; }
+    .gee-ctrl-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .gee-mode-btn { padding: 4px 6px; font-size: 0.62rem; }
+    #map-container { height: 45vh; min-height: 250px; }
   }
 
   /* ───── SCROLLBAR ───── */
@@ -1358,16 +1522,16 @@
 <div id="login-screen" style="position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;">
   <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:40px 36px;width:360px;max-width:90vw;text-align:center;">
     <img src="agragent.png" alt="agragent logo" style="height:50px;margin-bottom:12px;">
-    <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:28px;">Precision & Digital Agriculture</div>
+    <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:28px;" data-i18n="login_sub">Precision & Digital Agriculture</div>
     <div id="login-error" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:8px 12px;font-size:0.8rem;color:var(--red);margin-bottom:16px;"></div>
-    <input type="text" id="login-user" placeholder="Username" autocomplete="username"
+    <input type="text" id="login-user" placeholder="Username" data-i18n-placeholder="login_user" autocomplete="username"
       style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text-primary);font-size:0.9rem;outline:none;margin-bottom:10px;box-sizing:border-box;"
       onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
-    <input type="password" id="login-pass" placeholder="Password" autocomplete="current-password"
+    <input type="password" id="login-pass" placeholder="Password" data-i18n-placeholder="login_pass" autocomplete="current-password"
       style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text-primary);font-size:0.9rem;outline:none;margin-bottom:18px;box-sizing:border-box;"
       onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
       onkeydown="if(event.key==='Enter')doLogin()">
-    <button onclick="doLogin()" style="width:100%;background:var(--accent);border:none;border-radius:8px;padding:12px;color:#0a1218;font-size:0.95rem;font-weight:700;cursor:pointer;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">Sign In</button>
+    <button onclick="doLogin()" data-i18n="login_btn" style="width:100%;background:var(--accent);border:none;border-radius:8px;padding:12px;color:#0a1218;font-size:0.95rem;font-weight:700;cursor:pointer;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">Sign In</button>
   </div>
 </div>
 
@@ -1403,7 +1567,7 @@ function doLogin() {
     document.getElementById('login-screen').style.display = 'none';
     updateUserUI(match.user, match.role);
   } else {
-    errEl.textContent = 'Invalid username or password';
+    errEl.textContent = t('login_error');
     errEl.style.display = 'block';
     document.getElementById('login-pass').value = '';
     document.getElementById('login-pass').focus();
@@ -1521,7 +1685,7 @@ function editDisplayName() {
       <span class="nav-icon">🌾</span> <span data-i18n="nav_yield">Yield Prediction</span>
     </div>
     <div class="nav-item" data-section="chat">
-      <span class="nav-icon">🤖</span> <span data-i18n="nav_chat">AI Assistant</span>
+      <span class="nav-icon"><img src="logo.png" alt="" style="width:18px;height:18px;border-radius:50%;object-fit:cover;vertical-align:middle;"></span> <span data-i18n="nav_chat">AI Assistant</span>
     </div>
     <div class="nav-item" data-section="references">
       <span class="nav-icon">📚</span> <span data-i18n="nav_references">References</span>
@@ -1534,7 +1698,7 @@ function editDisplayName() {
       <div class="name" id="sidebar-username" style="color:var(--text-primary);cursor:pointer;" onclick="editDisplayName()" title="Click to edit name">—</div>
       <div class="role" id="sidebar-role">—</div>
     </div>
-    <button onclick="doLogout()" title="Logout" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text-secondary);font-size:0.75rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">Logout</button>
+    <button onclick="doLogout()" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text-secondary);font-size:0.75rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'" data-i18n="logout">Logout</button>
   </div>
 </nav>
 
@@ -1586,12 +1750,12 @@ function editDisplayName() {
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="season_gdd">Season GDD</div>
             <div class="kpi-value" id="dashGDD">—</div>
-            <div class="kpi-sub">Growing Degree Days (base 10°C)</div>
+            <div class="kpi-sub" data-i18n="gdd_base">Growing Degree Days (base 10°C)</div>
           </div>
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="season_precip">Season Precip.</div>
             <div class="kpi-value" id="dashPrecip">—</div>
-            <div class="kpi-sub">Total mm (Apr–present)</div>
+            <div class="kpi-sub" data-i18n="precip_total">Total mm (Apr–present)</div>
           </div>
         </div>
 
@@ -1600,22 +1764,22 @@ function editDisplayName() {
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="chill_hours">Chill Hours</div>
             <div class="kpi-value" id="dashChill">—</div>
-            <div class="kpi-sub">0–7.2°C (Apr–Sep)</div>
+            <div class="kpi-sub" data-i18n="chill_range">0–7.2°C (Apr–Sep)</div>
           </div>
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="frost_days">Frost Days</div>
             <div class="kpi-value" id="dashFrost" style="color:#60a5fa;">—</div>
-            <div class="kpi-sub" id="dashFrostSub">Tmin ≤ 0°C</div>
+            <div class="kpi-sub" id="dashFrostSub" data-i18n="tmin_label">Tmin ≤ 0°C</div>
           </div>
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="heat_waves">Heat Waves</div>
             <div class="kpi-value" id="dashHeatWave" style="color:var(--red);">—</div>
-            <div class="kpi-sub" id="dashHeatSub">≥3 days &gt;35°C</div>
+            <div class="kpi-sub" id="dashHeatSub" data-i18n="heat_label">≥3 days &gt;35°C</div>
           </div>
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="total_et">ET₀ Total</div>
             <div class="kpi-value" id="dashET">—</div>
-            <div class="kpi-sub">Evapotranspiration (mm)</div>
+            <div class="kpi-sub" data-i18n="et_sub">Evapotranspiration (mm)</div>
           </div>
         </div>
 
@@ -1709,37 +1873,42 @@ function editDisplayName() {
           <span class="gee-icon">🌍</span>
           <div>
             <div class="gee-title">Google Earth Engine</div>
-            <div class="gee-sub" id="gee-auto-sub">Conectando automáticamente a Sentinel-2...</div>
+            <div class="gee-sub" id="gee-auto-sub" data-i18n="gee_auto_sub">Conectando automáticamente a Sentinel-2...</div>
           </div>
         </div>
         <div id="gee-status" class="gee-status"></div>
       </div>
 
       <!-- GEE Layer Controls (shown after connect) -->
-      <div class="gee-layer-controls" id="gee-layer-controls">
+      <div class="gee-layer-controls collapsed-ctrl" id="gee-layer-controls">
+        <div class="gee-ctrl-toggle-wrap">
+          <button class="toolbar-toggle gee-ctrl-toggle" onclick="var c=document.getElementById('gee-layer-controls');c.classList.toggle('collapsed-ctrl');this.querySelector('.tgl-arrow').textContent=c.classList.contains('collapsed-ctrl')?'▸':'▾'">
+            🛰 Sentinel-2 Controls <span class="tgl-arrow">▸</span>
+          </button>
+        </div>
         <!-- Row 1: date range, cloud, opacity, mode tabs -->
         <div class="gee-ctrl-row" style="margin-bottom:10px;">
-          <label>📅 Desde: <input type="date" id="gee-start" value="2025-11-01"></label>
-          <label>Hasta: <input type="date" id="gee-end" value="2026-03-31"></label>
-          <label>☁️ Cloud máx: <input type="range" id="gee-cloud" min="0" max="100" value="20" oninput="document.getElementById('gee-cloud-val').textContent=this.value"> <span id="gee-cloud-val">20</span>%</label>
-          <label>Opacidad: <input type="range" id="gee-opacity" min="10" max="100" value="85" oninput="setGEEOpacity(this.value)"> <span id="gee-opacity-val">85</span>%</label>
+          <label>📅 <span data-i18n="gee_from">From:</span> <input type="date" id="gee-start" value="2025-11-01"></label>
+          <label><span data-i18n="gee_to">To:</span> <input type="date" id="gee-end" value="2026-03-31"></label>
+          <label>☁️ <span data-i18n="gee_cloud_max">Cloud max:</span> <input type="range" id="gee-cloud" min="0" max="100" value="20" oninput="document.getElementById('gee-cloud-val').textContent=this.value"> <span id="gee-cloud-val">20</span>%</label>
+          <label><span data-i18n="gee_opacity">Opacity:</span> <input type="range" id="gee-opacity" min="10" max="100" value="85" oninput="setGEEOpacity(this.value)"> <span id="gee-opacity-val">85</span>%</label>
           <div style="display:flex;gap:6px;margin-left:auto;">
-            <button class="gee-mode-btn active" id="mode-median" onclick="setGEEMode('median',this)">⊕ Mediana</button>
-            <button class="gee-mode-btn" id="mode-browse" onclick="setGEEMode('browse',this)">🗓 Capturas</button>
-            <button class="gee-mode-btn" id="mode-compare" onclick="setGEEMode('compare',this)">◧ Comparar</button>
+            <button class="gee-mode-btn active" id="mode-median" onclick="setGEEMode('median',this)">⊕ <span data-i18n="gee_median">Median</span></button>
+            <button class="gee-mode-btn" id="mode-browse" onclick="setGEEMode('browse',this)">🗓 <span data-i18n="gee_captures">Captures</span></button>
+            <button class="gee-mode-btn" id="mode-compare" onclick="setGEEMode('compare',this)">◧ <span data-i18n="gee_compare">Compare</span></button>
           </div>
-          <button class="gee-refresh-btn" onclick="refreshGEELayer()">↻ Actualizar</button>
+          <button class="gee-refresh-btn" onclick="refreshGEELayer()">↻ <span data-i18n="gee_refresh">Refresh</span></button>
         </div>
 
         <!-- Scene Browser (shown in 'browse' mode) -->
         <div id="scene-browser" style="display:none;">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-            <span style="font-size:0.78rem;color:var(--text-secondary);font-weight:600;">CAPTURAS DISPONIBLES</span>
-            <button class="gee-refresh-btn" style="padding:4px 10px;font-size:0.75rem;" onclick="fetchSceneList()">🔍 Buscar</button>
+            <span style="font-size:0.78rem;color:var(--text-secondary);font-weight:600;" data-i18n="gee_available_captures">AVAILABLE CAPTURES</span>
+            <button class="gee-refresh-btn" style="padding:4px 10px;font-size:0.75rem;" onclick="fetchSceneList()">🔍 <span data-i18n="gee_search">Search</span></button>
             <span id="scene-count" style="font-size:0.75rem;color:var(--accent);"></span>
           </div>
           <div id="scene-list" class="scene-list">
-            <span style="font-size:0.78rem;color:var(--text-secondary);">Haz clic en "Buscar" para listar las capturas del período.</span>
+            <span style="font-size:0.78rem;color:var(--text-secondary);" data-i18n="gee_search_msg">Click "Search" to list captures for the period.</span>
           </div>
         </div>
 
@@ -1747,62 +1916,98 @@ function editDisplayName() {
         <div id="compare-panel" style="display:none;">
           <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
             <div class="compare-side left-side">
-              <span class="compare-label">◧ IZQUIERDA</span>
+              <span class="compare-label">◧ <span data-i18n="compare_left">LEFT</span></span>
               <select id="compare-left-date" class="compare-date-select">
-                <option value="">— Seleccionar fecha —</option>
+                <option value="" data-i18n="compare_select_date">— Select date —</option>
               </select>
               <select id="compare-left-index" class="compare-index-select">
-                <option value="NDVI">NDVI</option>
-                <option value="NDRE">NDRE</option>
-                <option value="MSAVI">MSAVI</option>
-                <option value="TCARI">TCARI</option>
-                <option value="RGB">Color Real</option>
-                <option value="FALSE">Falso Color</option>
+                <optgroup label="🌿 Vigor">
+                  <option value="NDVI">NDVI</option>
+                  <option value="EVI">EVI</option>
+                  <option value="SAVI">SAVI</option>
+                  <option value="MSAVI">MSAVI</option>
+                </optgroup>
+                <optgroup label="🧪 Salud">
+                  <option value="NDRE">NDRE</option>
+                  <option value="GNDVI">GNDVI</option>
+                  <option value="TCARI">TCARI</option>
+                  <option value="CIRE">CIre</option>
+                </optgroup>
+                <optgroup label="💧 Agua">
+                  <option value="NDMI">NDMI</option>
+                  <option value="NDWI">NDWI</option>
+                </optgroup>
+                <optgroup label="🟫 Suelo">
+                  <option value="BSI">BSI</option>
+                </optgroup>
+                <optgroup label="🎨 Visual">
+                  <option value="RGB">Color Real</option>
+                  <option value="FALSE">Falso Color</option>
+                </optgroup>
               </select>
             </div>
             <div class="compare-vs">VS</div>
             <div class="compare-side right-side">
-              <span class="compare-label" style="color:#60a5fa;">◨ DERECHA</span>
+              <span class="compare-label" style="color:#60a5fa;">◨ <span data-i18n="compare_right">RIGHT</span></span>
               <select id="compare-right-date" class="compare-date-select">
-                <option value="">— Seleccionar fecha —</option>
+                <option value="" data-i18n="compare_select_date">— Select date —</option>
               </select>
               <select id="compare-right-index" class="compare-index-select">
-                <option value="NDVI">NDVI</option>
-                <option value="NDRE">NDRE</option>
-                <option value="MSAVI">MSAVI</option>
-                <option value="TCARI">TCARI</option>
-                <option value="RGB">Color Real</option>
-                <option value="FALSE">Falso Color</option>
+                <optgroup label="🌿 Vigor">
+                  <option value="NDVI">NDVI</option>
+                  <option value="EVI">EVI</option>
+                  <option value="SAVI">SAVI</option>
+                  <option value="MSAVI">MSAVI</option>
+                </optgroup>
+                <optgroup label="🧪 Salud">
+                  <option value="NDRE">NDRE</option>
+                  <option value="GNDVI">GNDVI</option>
+                  <option value="TCARI">TCARI</option>
+                  <option value="CIRE">CIre</option>
+                </optgroup>
+                <optgroup label="💧 Agua">
+                  <option value="NDMI">NDMI</option>
+                  <option value="NDWI">NDWI</option>
+                </optgroup>
+                <optgroup label="🟫 Suelo">
+                  <option value="BSI">BSI</option>
+                </optgroup>
+                <optgroup label="🎨 Visual">
+                  <option value="RGB">Color Real</option>
+                  <option value="FALSE">Falso Color</option>
+                </optgroup>
               </select>
             </div>
-            <button class="gee-btn" style="margin-left:auto;padding:7px 16px;" onclick="loadComparison()">▶ Comparar</button>
-            <button class="gee-refresh-btn" onclick="stopComparison()">✕ Salir</button>
+            <button class="gee-btn" style="margin-left:auto;padding:7px 16px;" onclick="loadComparison()">▶ <span data-i18n="compare_btn">Compare</span></button>
+            <button class="gee-refresh-btn" onclick="stopComparison()">✕ <span data-i18n="compare_exit">Exit</span></button>
           </div>
           <div id="compare-status" style="font-size:0.75rem;color:var(--text-secondary);margin-top:8px;"></div>
         </div>
 
         <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:6px;">
-          💡 Sentinel-2 SR Harmonized · 10m resolución · Cloud masking automático (QA60) · Solo área del polígono
+          💡 <span data-i18n="gee_sentinel_info">Sentinel-2 SR Harmonized · 10m resolution · Auto cloud masking (QA60) · Polygon area only</span>
         </div>
       </div>
 
       <!-- Toolbar: KMZ Upload + Draw Tools -->
-      <div class="map-toolbar">
-        <span class="toolbar-label">Capas</span>
+      <div class="map-toolbar collapsed" id="map-toolbar">
+        <button class="toolbar-toggle" id="toolbar-toggle" onclick="var tb=document.getElementById('map-toolbar');tb.classList.toggle('collapsed');this.querySelector('.tgl-arrow').textContent=tb.classList.contains('collapsed')?'▸':'▾'">
+          🗂 <span data-i18n="layers">Layers</span> &amp; Tools <span class="tgl-arrow">▸</span>
+        </button>
+        <span class="toolbar-label" data-i18n="layers">Layers</span>
         <button class="tb-btn" onclick="document.getElementById('kmz-file-input').click()">
-          📂 Subir KMZ/KML
+          📂 <span data-i18n="upload_kmz">Upload KMZ/KML</span>
         </button>
         <input type="file" id="kmz-file-input" accept=".kmz,.kml" onchange="handleKMZUpload(event)">
         <div class="tb-divider"></div>
-        <span class="toolbar-label">Dibujar</span>
-        <button class="tb-btn" id="btn-draw-poly" onclick="toggleDraw('Polygon')">✏️ Polígono</button>
-        <button class="tb-btn" id="btn-draw-line" onclick="toggleDraw('Line')">📏 Línea</button>
-        <button class="tb-btn" id="btn-draw-marker" onclick="toggleDraw('Marker')">📍 Punto</button>
+        <span class="toolbar-label" data-i18n="draw">Draw</span>
+        <button class="tb-btn" id="btn-draw-poly" onclick="toggleDraw('Polygon')">✏️ <span data-i18n="polygon_btn">Polygon</span></button>
+        <button class="tb-btn" id="btn-draw-marker" onclick="toggleDraw('Marker')">📍 <span data-i18n="point_btn">Point</span></button>
         <div class="tb-divider"></div>
-        <button class="tb-btn" id="btn-edit" onclick="toggleEdit()">🖊 Editar</button>
-        <button class="tb-btn danger" id="btn-delete" onclick="toggleDelete()">🗑 Borrar</button>
+        <button class="tb-btn" id="btn-edit" onclick="toggleEdit()">🖊 <span data-i18n="edit">Edit</span></button>
+        <button class="tb-btn danger" id="btn-delete" onclick="toggleDelete()">🗑 <span data-i18n="delete">Delete</span></button>
         <div class="tb-divider"></div>
-        <button class="tb-btn" onclick="exportKML()" title="Exportar todas las capas como KML">⬇️ Exportar KML</button>
+        <button class="tb-btn" onclick="exportKML()">⬇️ <span data-i18n="export_kml">Export KML</span></button>
         <div class="tb-divider"></div>
         <span class="toolbar-label">Base:</span>
         <button class="tb-btn active" id="base-satellite" onclick="setBaseMap('satellite',this)">🛰️ Satellite</button>
@@ -1811,14 +2016,35 @@ function editDisplayName() {
       </div>
 
       <!-- Index Selector + GEE Badge -->
-      <div class="map-controls">
-        <span class="ctrl-label">Índice:</span>
-        <button class="index-btn active" onclick="setIndex(this,'NDVI')">NDVI</button>
-        <button class="index-btn" onclick="setIndex(this,'NDRE')">NDRE</button>
-        <button class="index-btn" onclick="setIndex(this,'MSAVI')">MSAVI</button>
-        <button class="index-btn" onclick="setIndex(this,'TCARI')">TCARI</button>
-        <button class="index-btn" onclick="setIndex(this,'RGB')">🎨 Color Real</button>
-        <button class="index-btn" onclick="setIndex(this,'FALSE')">📡 Falso Color</button>
+      <div class="map-controls" style="flex-wrap:wrap;gap:6px 4px;">
+        <div class="index-group">
+          <span class="index-group-label">🌿 Vigor</span>
+          <button class="index-btn active" onclick="setIndex(this,'NDVI')">NDVI</button>
+          <button class="index-btn" onclick="setIndex(this,'EVI')">EVI</button>
+          <button class="index-btn" onclick="setIndex(this,'SAVI')">SAVI</button>
+          <button class="index-btn" onclick="setIndex(this,'MSAVI')">MSAVI</button>
+        </div>
+        <div class="index-group">
+          <span class="index-group-label">🧪 Salud</span>
+          <button class="index-btn" onclick="setIndex(this,'NDRE')">NDRE</button>
+          <button class="index-btn" onclick="setIndex(this,'GNDVI')">GNDVI</button>
+          <button class="index-btn" onclick="setIndex(this,'TCARI')">TCARI</button>
+          <button class="index-btn" onclick="setIndex(this,'CIRE')">CIre</button>
+        </div>
+        <div class="index-group">
+          <span class="index-group-label">💧 Agua</span>
+          <button class="index-btn" onclick="setIndex(this,'NDMI')">NDMI</button>
+          <button class="index-btn" onclick="setIndex(this,'NDWI')">NDWI</button>
+        </div>
+        <div class="index-group">
+          <span class="index-group-label">🟫 Suelo</span>
+          <button class="index-btn" onclick="setIndex(this,'BSI')">BSI</button>
+        </div>
+        <div class="index-group">
+          <span class="index-group-label">🎨 Visual</span>
+          <button class="index-btn" onclick="setIndex(this,'RGB')">Color Real</button>
+          <button class="index-btn" onclick="setIndex(this,'FALSE')">Falso Color</button>
+        </div>
         <div class="gee-connected-badge" id="gee-badge">
           <span class="gee-dot"></span> GEE Activo
         </div>
@@ -1826,15 +2052,15 @@ function editDisplayName() {
       </div>
 
       <div id="map-container">
-        <button class="map-fullscreen-btn" id="map-fs-btn" onclick="toggleMapFullscreen()">⛶ Fullscreen</button>
+        <button class="map-fullscreen-btn" id="map-fs-btn" onclick="toggleMapFullscreen()">⛶ <span data-i18n="fullscreen">Fullscreen</span></button>
         <div id="vinewatch-map"></div>
         <div id="map-loading">
           <div class="map-spinner"></div>
-          <div class="map-loading-text" id="map-loading-text">Cargando imágenes GEE...</div>
+          <div class="map-loading-text" id="map-loading-text" data-i18n="gee_loading">Loading GEE imagery...</div>
         </div>
         <div id="map-drop-overlay">
           <span>🗺️</span>
-          <p>Suelta el archivo KMZ/KML aquí</p>
+          <p data-i18n="map_drop">Drop your KMZ/KML file here</p>
         </div>
       </div>
 
@@ -1852,12 +2078,12 @@ function editDisplayName() {
         <!-- Layer List -->
         <div class="layer-list" id="layer-list">
           <div class="layer-list-header">
-            <span>Capas activas</span>
+            <span data-i18n="active_layers_header">Active layers</span>
             <span id="layer-count" style="color:var(--accent);font-size:0.75rem;">0 capas</span>
           </div>
           <div id="layer-list-body">
-            <div style="padding:14px 16px;font-size:0.8rem;color:var(--text-secondary);">
-              Sube un KMZ/KML o dibuja para agregar capas.
+            <div style="padding:14px 16px;font-size:0.8rem;color:var(--text-secondary);" data-i18n="layer_placeholder">
+              Upload a KMZ/KML or draw to add layers.
             </div>
           </div>
         </div>
@@ -1867,7 +2093,7 @@ function editDisplayName() {
       <div class="card mb-20" id="selected-parcel-info" style="display:none;margin-top:14px;"></div>
 
       <div class="map-source-badge" id="map-source-badge">
-        🛰️ Sentinel-2 · OpenStreetMap base · Conecta a GEE para imágenes reales
+        <span data-i18n="map_source">🛰️ Sentinel-2 · OpenStreetMap base · GEE connected</span>
       </div>
 
     </section>
@@ -1877,7 +2103,7 @@ function editDisplayName() {
 
       <div class="section-header">
         <h2 data-i18n="climate_title">Climate Data</h2>
-        <span class="sub" id="climate-location-label">Sube un polígono para ver datos climáticos</span>
+        <span class="sub" id="climate-location-label" data-i18n="climate_upload_sub">Upload a polygon to see climate data</span>
       </div>
 
       <div class="alert-box" id="climateAlert">
@@ -1889,22 +2115,22 @@ function editDisplayName() {
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="annual_gdd">Annual GDD</div>
           <div class="kpi-value" id="kpiGDD" style="font-size:1.7rem;color:var(--accent);">—</div>
-          <div class="kpi-sub">Growing Degree Days (base 10°C)</div>
+          <div class="kpi-sub" data-i18n="gdd_sub">Growing Degree Days (base 10°C)</div>
         </div>
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="chill_hours">Chill Hours</div>
           <div class="kpi-value" id="kpiChill" style="font-size:1.7rem;color:var(--accent);">—</div>
-          <div class="kpi-sub" id="kpiChillSub">Hours 0–7.2°C (Apr–Sep)</div>
+          <div class="kpi-sub" id="kpiChillSub" data-i18n="chill_sub">Hours 0–7.2°C (Apr–Sep)</div>
         </div>
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="frost_days">Frost Days</div>
           <div class="kpi-value" id="kpiFrost" style="font-size:1.7rem;color:#60a5fa;">—</div>
-          <div class="kpi-sub" id="kpiFrostSub">Days with Tmin ≤ 0°C</div>
+          <div class="kpi-sub" id="kpiFrostSub" data-i18n="frost_sub">Days with Tmin ≤ 0°C</div>
         </div>
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="heat_waves">Heat Waves</div>
           <div class="kpi-value" id="kpiHeatWave" style="font-size:1.7rem;color:var(--red);">—</div>
-          <div class="kpi-sub" id="kpiHeatWaveSub">≥3 consecutive days &gt;35°C</div>
+          <div class="kpi-sub" id="kpiHeatWaveSub" data-i18n="heat_wave_sub">≥3 consecutive days &gt;35°C</div>
         </div>
       </div>
 
@@ -1913,22 +2139,22 @@ function editDisplayName() {
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="dry_months">Dry Months</div>
           <div class="kpi-value" id="kpiDry" style="font-size:1.7rem;color:var(--yellow);">—</div>
-          <div class="kpi-sub" id="kpiDrySub">&lt;30mm precipitation</div>
+          <div class="kpi-sub" id="kpiDrySub" data-i18n="dry_sub">&lt;30mm precipitation</div>
         </div>
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="avg_humidity">Avg Humidity</div>
           <div class="kpi-value" id="kpiHumidity" style="font-size:1.7rem;color:#60a5fa;">—</div>
-          <div class="kpi-sub">Relative humidity (%)</div>
+          <div class="kpi-sub" data-i18n="avg_humidity">Avg Humidity (%)</div>
         </div>
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="total_solar">Total Solar Radiation</div>
           <div class="kpi-value" id="kpiSolar" style="font-size:1.4rem;color:var(--yellow);">—</div>
-          <div class="kpi-sub">MJ/m² (season total)</div>
+          <div class="kpi-sub">MJ/m²</div>
         </div>
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="total_et">Total ET₀</div>
           <div class="kpi-value" id="kpiET" style="font-size:1.7rem;color:var(--accent);">—</div>
-          <div class="kpi-sub">Evapotranspiration (mm)</div>
+          <div class="kpi-sub" data-i18n="et_sub">Evapotranspiration (mm)</div>
         </div>
       </div>
 
@@ -1978,14 +2204,14 @@ function editDisplayName() {
 
       <!-- Historical Analysis (2015–present) -->
       <div class="section-header" style="margin-top:30px;">
-        <h2>Historical Analysis (2015–2026)</h2>
-        <span class="sub" id="hist-location-label">Multi-season comparison</span>
+        <h2 data-i18n="historical_title">Historical Analysis (2015–2026)</h2>
+        <span class="sub" id="hist-location-label" data-i18n="historical_sub">Multi-season comparison</span>
       </div>
 
       <div class="alert-box" id="histAlert" style="display:none;"></div>
 
       <div class="card mb-20">
-        <div class="card-title">Annual GDD Comparison by Season</div>
+        <div class="card-title" data-i18n="hist_gdd">Annual GDD Comparison by Season</div>
         <div class="chart-wrap tall">
           <canvas id="histGDDChart"></canvas>
         </div>
@@ -1993,13 +2219,13 @@ function editDisplayName() {
 
       <div class="grid-2 mb-20">
         <div class="card">
-          <div class="card-title">Annual Precipitation by Season (mm)</div>
+          <div class="card-title" data-i18n="hist_precip">Annual Precipitation by Season (mm)</div>
           <div class="chart-wrap">
             <canvas id="histPrecipChart"></canvas>
           </div>
         </div>
         <div class="card">
-          <div class="card-title">Average Temperature by Season (°C)</div>
+          <div class="card-title" data-i18n="hist_temp">Average Temperature by Season (°C)</div>
           <div class="chart-wrap">
             <canvas id="histTempChart"></canvas>
           </div>
@@ -2008,13 +2234,13 @@ function editDisplayName() {
 
       <div class="grid-2 mb-20">
         <div class="card">
-          <div class="card-title">Frost Days per Season</div>
+          <div class="card-title" data-i18n="hist_frost">Frost Days per Season</div>
           <div class="chart-wrap">
             <canvas id="histFrostChart"></canvas>
           </div>
         </div>
         <div class="card">
-          <div class="card-title">Heat Stress Days per Season (&gt;35°C)</div>
+          <div class="card-title" data-i18n="hist_heat">Heat Stress Days per Season (&gt;35°C)</div>
           <div class="chart-wrap">
             <canvas id="histHeatChart"></canvas>
           </div>
@@ -2022,9 +2248,9 @@ function editDisplayName() {
       </div>
 
       <div class="card mb-20">
-        <div class="card-title">Season Comparison Table</div>
+        <div class="card-title" data-i18n="hist_table">Season Comparison Table</div>
         <div id="histTable" style="overflow-x:auto;">
-          <div style="padding:14px 0;font-size:0.83rem;color:var(--text-secondary);">Upload a polygon to load historical data.</div>
+          <div style="padding:14px 0;font-size:0.83rem;color:var(--text-secondary);" data-i18n="hist_upload">Upload a polygon to load historical data.</div>
         </div>
       </div>
 
@@ -2632,7 +2858,7 @@ function editDisplayName() {
             <tr>
               <td><strong>Sentinel-2 SR</strong></td>
               <td>COPERNICUS/S2_SR_HARMONIZED — 10m multispectral satellite imagery via Google Earth Engine</td>
-              <td>Satellite Maps (NDVI, NDRE, MSAVI, TCARI)</td>
+              <td>Satellite Maps (NDVI, EVI, SAVI, MSAVI, NDRE, GNDVI, TCARI, CIre, NDMI, NDWI, BSI)</td>
             </tr>
             <tr>
               <td><a href="https://open-meteo.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;"><strong>Open-Meteo</strong></a></td>
@@ -2678,7 +2904,7 @@ function editDisplayName() {
         <div class="chat-full-main">
           <div class="chat-messages" id="chat-full-messages">
             <div class="chat-welcome" id="chat-full-welcome">
-              <h2>AgroAgente AI</h2>
+              <h2><img src="logo.png" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;">AgrAgent</h2>
               <p data-i18n="chat_welcome_text">Ask me about climate data, satellite imagery, soil analysis, irrigation planning, or any agronomic question about your fields.</p>
               <div class="chat-welcome-cards" id="chat-full-welcome-cards"></div>
             </div>
@@ -2697,12 +2923,12 @@ function editDisplayName() {
 </div><!-- /#main -->
 
 <!-- ═══════════════ FLOATING AI CHAT WIDGET ═══════════════ -->
-<button id="chat-fab" onclick="chatToggleWidget()" title="AI Assistant">🤖</button>
+<button id="chat-fab" onclick="chatToggleWidget()" title="AI Assistant"><img src="logo.png" alt="AgrAgent" style="width:32px;height:32px;border-radius:50%;object-fit:cover;"></button>
 <div id="chat-widget" class="chat-widget-hidden">
   <div class="chat-widget-header">
     <div class="chat-widget-header-left">
-      <span style="font-size:1.1rem">🌿</span>
-      <strong>AgroAgente AI</strong>
+      <img src="logo.png" alt="" style="width:22px;height:22px;border-radius:50%;object-fit:cover;">
+      <strong>AgrAgent</strong>
       <span id="chat-widget-context-badge" class="chat-context-badge"></span>
     </div>
     <div class="chat-widget-header-right">
@@ -2716,13 +2942,13 @@ function editDisplayName() {
   </div>
   <div class="chat-messages" id="chat-messages">
     <div class="chat-welcome" id="chat-welcome">
-      <h2>AgroAgente AI</h2>
+      <h2><img src="logo.png" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;">AgrAgent</h2>
       <p data-i18n="chat_welcome_text">Ask me about climate data, satellite imagery, soil analysis, irrigation planning, or any agronomic question about your fields.</p>
       <div class="chat-welcome-cards" id="chat-welcome-cards"></div>
     </div>
   </div>
   <div class="chat-input-area">
-    <textarea id="chat-input" placeholder="Ask AgroAgente..." rows="1"
+    <textarea id="chat-input" placeholder="Ask AgrAgent..." rows="1"
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();chatSend()}"
       oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
     <button class="chat-send-btn" id="chat-send-btn" onclick="chatSend()">➤</button>
@@ -2742,7 +2968,7 @@ const i18n = {
     nav_genomic: 'Genomic Analysis', nav_images: 'Image Analysis', nav_yield: 'Yield Prediction',
     nav_chat: 'AI Assistant', chat_conversations: 'Conversations', chat_new: '+ New',
     chat_welcome_text: 'Ask me about climate data, satellite imagery, soil analysis, irrigation planning, or any agronomic question about your fields.',
-    chat_placeholder: 'Ask AgroAgente...',
+    chat_placeholder: 'Ask AgrAgent...',
     chat_q1: 'What is the current NDVI status of my field?',
     chat_q1_label: '🛰️ NDVI status',
     chat_q2: 'Show me the climate summary for my area',
@@ -2787,15 +3013,64 @@ const i18n = {
     references_title: 'References & Credits', references_sub: 'Author, publications, and data sources',
     author: 'Author', assoc_publications: 'Associated Publications', datasets_sources: 'Datasets & Data Sources',
     license_source: 'License & Source Code',
+    // Maps toolbar
+    layers: 'Layers', upload_kmz: 'Upload KMZ/KML', draw: 'Draw', polygon_btn: 'Polygon', point_btn: 'Point',
+    edit: 'Edit', delete: 'Delete', export_kml: 'Export KML', export_kml_title: 'Export all layers as KML',
+    base_label: 'Base:', fullscreen: 'Fullscreen',
+    // GEE controls
+    gee_from: 'From:', gee_to: 'To:', gee_cloud_max: 'Cloud max:', gee_opacity: 'Opacity:',
+    gee_median: 'Median', gee_captures: 'Captures', gee_compare: 'Compare', gee_refresh: 'Refresh',
+    gee_available_captures: 'AVAILABLE CAPTURES', gee_search: 'Search',
+    gee_search_msg: 'Click "Search" to list captures for the period.',
+    gee_loading: 'Loading GEE imagery...', gee_sentinel_info: 'Sentinel-2 SR Harmonized · 10m resolution · Auto cloud masking (QA60) · Polygon area only',
+    gee_auto_sub: 'Auto-connecting to Sentinel-2...',
+    // Compare
+    compare_left: 'LEFT', compare_right: 'RIGHT', compare_select_date: '— Select date —',
+    compare_btn: 'Compare', compare_exit: 'Exit',
+    // Layer list
+    active_layers_header: 'Active layers', layer_placeholder: 'Upload a KMZ/KML or draw to add layers.',
+    // Map misc
+    map_drop: 'Drop your KMZ/KML file here', map_source: 'Sentinel-2 · OpenStreetMap base · GEE connected',
+    real_color: 'Real Color', false_color: 'False Color',
+    // Login
+    login_sub: 'Precision & Digital Agriculture', login_user: 'Username', login_pass: 'Password',
+    login_btn: 'Sign In', login_error: 'Invalid username or password', logout: 'Logout',
+    // Dashboard extra
+    water_balance: 'Water Balance (Precip. vs ET₀)', precip_et_monthly: 'Precipitation & ET₀ Monthly',
+    risk_assessment: 'Agronomic Risk Assessment', precipitation_label: 'Precipitation', et_label: 'Evapotranspiration',
+    gdd_base: 'Growing Degree Days (base 10°C)', precip_total: 'Total mm (Apr–present)',
+    chill_range: '0–7.2°C (Apr–Sep)', tmin_label: 'Tmin ≤ 0°C', heat_label: '≥3 days >35°C',
+    // Historical
+    historical_title: 'Historical Analysis (2015–2026)', historical_sub: 'Multi-season comparison',
+    hist_gdd: 'Annual GDD Comparison by Season', hist_precip: 'Annual Precipitation by Season (mm)',
+    hist_temp: 'Average Temperature by Season (°C)', hist_frost: 'Frost Days per Season',
+    hist_heat: 'Heat Stress Days per Season (>35°C)', hist_table: 'Season Comparison Table',
+    hist_upload: 'Upload a polygon to load historical data.',
+    // Genomic
+    genomic_sub: 'RNA-seq Differential Expression — Vitis vinifera phenological stages (Altimiras et al.)',
+    total_reads: 'Total Reads', reads_sub: '68 RNA-seq samples', data_processed: 'Data Processed', data_sub: 'FASTQ files',
+    pheno_stages: 'Phenological Stages', stages_sub: 'E-L 3 → E-L 41', unique_degs: 'Unique DEGs', degs_sub: 'FDR < 0.05 (edgeR)',
+    pheno_progress: 'Phenological Stage Progress', season_progress: 'Season Progress',
+    veraison: 'Veraison', stage_35: 'Stage 35 — Modified E-L Scale',
+    bud: 'Bud', inflor: 'Inflor.', berry: 'Berry', ripen: 'Ripen', senesc: 'Senesc.',
+    degs_per_stage: 'DEGs per Developmental Stage (vs. E-L 3 baseline)',
+    sample_composition: 'Sample Composition by Variety', samples: 'samples',
+    deg_accumulation: 'DEG Accumulation Across Stages',
+    top_degs: 'Top Differentially Expressed Genes by Stage',
     // Misc
     active_layers: 'Active layers', polygon_word: 'polygon(s)', no_geom: 'No valid geometries found.',
+    // Alerts
+    alert_no_kml: 'No KML file found inside KMZ.', alert_no_geom: 'No valid geometries found in file.',
+    alert_file_error: 'Error reading file: ',
+    gee_help_msg: 'Google Earth Engine connects automatically using the AgrAgent project account. No configuration needed.',
+    climate_upload_sub: 'Upload a polygon to see climate data',
   },
   es: {
     nav_dashboard: 'Panel', nav_maps: 'Mapas Satelitales', nav_climate: 'Datos Climáticos',
     nav_genomic: 'Análisis Genómico', nav_images: 'Análisis de Imágenes', nav_yield: 'Predicción de Rendimiento',
     nav_chat: 'Asistente IA', chat_conversations: 'Conversaciones', chat_new: '+ Nueva',
     chat_welcome_text: 'Pregúntame sobre datos climáticos, imágenes satelitales, análisis de suelo, planificación de riego o cualquier consulta agronómica sobre tus campos.',
-    chat_placeholder: 'Pregunta a AgroAgente...',
+    chat_placeholder: 'Pregunta a AgrAgent...',
     chat_q1: '¿Cuál es el estado actual del NDVI de mi campo?',
     chat_q1_label: '🛰️ Estado NDVI',
     chat_q2: 'Muéstrame el resumen climático de mi zona',
@@ -2832,14 +3107,64 @@ const i18n = {
     references_title: 'Referencias y Créditos', references_sub: 'Autor, publicaciones y fuentes de datos',
     author: 'Autor', assoc_publications: 'Publicaciones Asociadas', datasets_sources: 'Datasets y Fuentes de Datos',
     license_source: 'Licencia y Código Fuente',
+    // Maps toolbar
+    polygon_btn: 'Polígono', point_btn: 'Punto',
+    export_kml_title: 'Exportar todas las capas como KML',
+    base_label: 'Base:', fullscreen: 'Pantalla completa',
+    // GEE controls
+    gee_from: 'Desde:', gee_to: 'Hasta:', gee_cloud_max: 'Nube máx:', gee_opacity: 'Opacidad:',
+    gee_median: 'Mediana', gee_captures: 'Capturas', gee_compare: 'Comparar', gee_refresh: 'Actualizar',
+    gee_available_captures: 'CAPTURAS DISPONIBLES', gee_search: 'Buscar',
+    gee_search_msg: 'Haz clic en "Buscar" para listar las capturas del período.',
+    gee_loading: 'Cargando imágenes GEE...', gee_sentinel_info: 'Sentinel-2 SR Harmonized · 10m resolución · Cloud masking automático (QA60) · Solo área del polígono',
+    gee_auto_sub: 'Conectando automáticamente a Sentinel-2...',
+    // Compare
+    compare_left: 'IZQUIERDA', compare_right: 'DERECHA', compare_select_date: '— Seleccionar fecha —',
+    compare_btn: 'Comparar', compare_exit: 'Salir',
+    // Layer list
+    active_layers_header: 'Capas activas', layer_placeholder: 'Sube un KMZ/KML o dibuja para agregar capas.',
+    // Map misc
+    map_drop: 'Suelta el archivo KMZ/KML aquí', map_source: 'Sentinel-2 · OpenStreetMap base · GEE conectado',
+    real_color: 'Color Real', false_color: 'Falso Color',
+    // Login
+    login_sub: 'Agricultura de Precisión y Digital', login_user: 'Usuario', login_pass: 'Contraseña',
+    login_btn: 'Iniciar Sesión', login_error: 'Usuario o contraseña incorrectos', logout: 'Cerrar sesión',
+    // Dashboard extra
+    water_balance: 'Balance Hídrico (Precip. vs ET₀)', precip_et_monthly: 'Precipitación y ET₀ Mensual',
+    risk_assessment: 'Evaluación de Riesgo Agronómico', precipitation_label: 'Precipitación', et_label: 'Evapotranspiración',
+    gdd_base: 'Grados Día de Crecimiento (base 10°C)', precip_total: 'Total mm (Abr–presente)',
+    chill_range: '0–7.2°C (Abr–Sep)', tmin_label: 'Tmin ≤ 0°C', heat_label: '≥3 días >35°C',
+    // Historical
+    historical_title: 'Análisis Histórico (2015–2026)', historical_sub: 'Comparación multi-temporada',
+    hist_gdd: 'Comparación GDD Anual por Temporada', hist_precip: 'Precipitación Anual por Temporada (mm)',
+    hist_temp: 'Temperatura Promedio por Temporada (°C)', hist_frost: 'Días de Helada por Temporada',
+    hist_heat: 'Días de Estrés Térmico por Temporada (>35°C)', hist_table: 'Tabla Comparativa de Temporadas',
+    hist_upload: 'Sube un polígono para cargar datos históricos.',
+    // Genomic
+    genomic_sub: 'Expresión Diferencial RNA-seq — Etapas fenológicas de Vitis vinifera (Altimiras et al.)',
+    total_reads: 'Lecturas Totales', reads_sub: '68 muestras RNA-seq', data_processed: 'Datos Procesados', data_sub: 'Archivos FASTQ',
+    pheno_stages: 'Etapas Fenológicas', stages_sub: 'E-L 3 → E-L 41', unique_degs: 'DEGs Únicos', degs_sub: 'FDR < 0.05 (edgeR)',
+    pheno_progress: 'Progreso Fenológico', season_progress: 'Progreso de Temporada',
+    veraison: 'Envero', stage_35: 'Etapa 35 — Escala E-L Modificada',
+    bud: 'Yema', inflor: 'Inflor.', berry: 'Baya', ripen: 'Madurez', senesc: 'Senesc.',
+    degs_per_stage: 'DEGs por Etapa de Desarrollo (vs. E-L 3 base)',
+    sample_composition: 'Composición de Muestras por Variedad', samples: 'muestras',
+    deg_accumulation: 'Acumulación de DEGs por Etapa',
+    top_degs: 'Genes Diferencialmente Expresados Top por Etapa',
+    // Misc
     active_layers: 'Capas activas', polygon_word: 'polígono(s)', no_geom: 'No se encontraron geometrías válidas.',
+    // Alerts
+    alert_no_kml: 'No se encontró archivo KML dentro del KMZ.', alert_no_geom: 'No se encontraron geometrías válidas en el archivo.',
+    alert_file_error: 'Error al leer el archivo: ',
+    gee_help_msg: 'Google Earth Engine se conecta automáticamente usando la cuenta del proyecto AgrAgent. No necesitas configurar nada.',
+    climate_upload_sub: 'Sube un polígono para ver datos climáticos',
   },
   pt: {
     nav_dashboard: 'Painel', nav_maps: 'Mapas Satelitais', nav_climate: 'Dados Climáticos',
     nav_genomic: 'Análise Genômica', nav_images: 'Análise de Imagens', nav_yield: 'Previsão de Rendimento',
     nav_chat: 'Assistente IA', chat_conversations: 'Conversas', chat_new: '+ Nova',
     chat_welcome_text: 'Pergunte-me sobre dados climáticos, imagens de satélite, análise de solo, planejamento de irrigação ou qualquer questão agronômica sobre seus campos.',
-    chat_placeholder: 'Pergunte ao AgroAgente...',
+    chat_placeholder: 'Pergunte ao AgrAgent...',
     chat_q1: 'Qual é o estado atual do NDVI do meu campo?',
     chat_q1_label: '🛰️ Status NDVI',
     chat_q2: 'Mostre-me o resumo climático da minha área',
@@ -2876,7 +3201,57 @@ const i18n = {
     references_title: 'Referências e Créditos', references_sub: 'Autor, publicações e fontes de dados',
     author: 'Autor', assoc_publications: 'Publicações Associadas', datasets_sources: 'Datasets e Fontes de Dados',
     license_source: 'Licença e Código Fonte',
+    // Maps toolbar
+    polygon_btn: 'Polígono', point_btn: 'Ponto',
+    export_kml_title: 'Exportar todas as camadas como KML',
+    base_label: 'Base:', fullscreen: 'Tela cheia',
+    // GEE controls
+    gee_from: 'De:', gee_to: 'Até:', gee_cloud_max: 'Nuvem máx:', gee_opacity: 'Opacidade:',
+    gee_median: 'Mediana', gee_captures: 'Capturas', gee_compare: 'Comparar', gee_refresh: 'Atualizar',
+    gee_available_captures: 'CAPTURAS DISPONÍVEIS', gee_search: 'Buscar',
+    gee_search_msg: 'Clique em "Buscar" para listar as capturas do período.',
+    gee_loading: 'Carregando imagens GEE...', gee_sentinel_info: 'Sentinel-2 SR Harmonized · 10m resolução · Cloud masking automático (QA60) · Apenas área do polígono',
+    gee_auto_sub: 'Conectando automaticamente ao Sentinel-2...',
+    // Compare
+    compare_left: 'ESQUERDA', compare_right: 'DIREITA', compare_select_date: '— Selecionar data —',
+    compare_btn: 'Comparar', compare_exit: 'Sair',
+    // Layer list
+    active_layers_header: 'Camadas ativas', layer_placeholder: 'Carregue um KMZ/KML ou desenhe para adicionar camadas.',
+    // Map misc
+    map_drop: 'Solte o arquivo KMZ/KML aqui', map_source: 'Sentinel-2 · OpenStreetMap base · GEE conectado',
+    real_color: 'Cor Real', false_color: 'Cor Falsa',
+    // Login
+    login_sub: 'Agricultura de Precisão e Digital', login_user: 'Usuário', login_pass: 'Senha',
+    login_btn: 'Entrar', login_error: 'Usuário ou senha incorretos', logout: 'Sair',
+    // Dashboard extra
+    water_balance: 'Balanço Hídrico (Precip. vs ET₀)', precip_et_monthly: 'Precipitação e ET₀ Mensal',
+    risk_assessment: 'Avaliação de Risco Agronômico', precipitation_label: 'Precipitação', et_label: 'Evapotranspiração',
+    gdd_base: 'Graus-Dia de Crescimento (base 10°C)', precip_total: 'Total mm (Abr–presente)',
+    chill_range: '0–7.2°C (Abr–Set)', tmin_label: 'Tmin ≤ 0°C', heat_label: '≥3 dias >35°C',
+    // Historical
+    historical_title: 'Análise Histórica (2015–2026)', historical_sub: 'Comparação multi-safra',
+    hist_gdd: 'Comparação GDD Anual por Safra', hist_precip: 'Precipitação Anual por Safra (mm)',
+    hist_temp: 'Temperatura Média por Safra (°C)', hist_frost: 'Dias de Geada por Safra',
+    hist_heat: 'Dias de Estresse Térmico por Safra (>35°C)', hist_table: 'Tabela Comparativa de Safras',
+    hist_upload: 'Carregue um polígono para carregar dados históricos.',
+    // Genomic
+    genomic_sub: 'Expressão Diferencial RNA-seq — Estágios fenológicos de Vitis vinifera (Altimiras et al.)',
+    total_reads: 'Leituras Totais', reads_sub: '68 amostras RNA-seq', data_processed: 'Dados Processados', data_sub: 'Arquivos FASTQ',
+    pheno_stages: 'Estágios Fenológicos', stages_sub: 'E-L 3 → E-L 41', unique_degs: 'DEGs Únicos', degs_sub: 'FDR < 0.05 (edgeR)',
+    pheno_progress: 'Progresso Fenológico', season_progress: 'Progresso da Safra',
+    veraison: 'Véraison', stage_35: 'Estágio 35 — Escala E-L Modificada',
+    bud: 'Gema', inflor: 'Inflor.', berry: 'Baga', ripen: 'Maturação', senesc: 'Senesc.',
+    degs_per_stage: 'DEGs por Estágio de Desenvolvimento (vs. E-L 3 base)',
+    sample_composition: 'Composição de Amostras por Variedade', samples: 'amostras',
+    deg_accumulation: 'Acumulação de DEGs por Estágio',
+    top_degs: 'Genes Diferencialmente Expressos Top por Estágio',
+    // Misc
     active_layers: 'Camadas ativas', polygon_word: 'polígono(s)', no_geom: 'Nenhuma geometria válida encontrada.',
+    // Alerts
+    alert_no_kml: 'Nenhum arquivo KML encontrado dentro do KMZ.', alert_no_geom: 'Nenhuma geometria válida encontrada no arquivo.',
+    alert_file_error: 'Erro ao ler o arquivo: ',
+    gee_help_msg: 'O Google Earth Engine se conecta automaticamente usando a conta do projeto AgrAgent. Não é necessária configuração.',
+    climate_upload_sub: 'Carregue um polígono para ver dados climáticos',
   }
 };
 
@@ -2892,6 +3267,15 @@ function setLang(lang) {
     const val = t(key);
     if (val) el.innerHTML = val;
   });
+  // Update placeholders
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    const val = t(key);
+    if (val) el.placeholder = val;
+  });
+  // Update chat input placeholder
+  const chatInput = document.getElementById('chat-input');
+  if (chatInput) chatInput.placeholder = t('chat_placeholder');
   // Update page title
   const titles = {
     dashboard: t('nav_dashboard'), maps: t('nav_maps'), climate: t('nav_climate'),
@@ -4005,12 +4389,24 @@ let geeLayer = null;
 let currentGEEIndex = 'NDVI';
 
 const INDEX_META = {
-  NDVI:  { title: 'NDVI — Normalized Difference Vegetation Index', formula: '(NIR − RED) / (NIR + RED) · Bandas B8, B4', gradient: 'linear-gradient(to right,#d73027,#f46d43,#fdae61,#fee08b,#d9ef8b,#a6d96a,#66bd63,#1a9850)', labels: ['0.0 (Sin veg.)','0.3','0.5','0.7','0.9 (Alta)'] },
-  NDRE:  { title: 'NDRE — Red Edge Vegetation Index',             formula: '(NIR − RedEdge) / (NIR + RedEdge) · Bandas B8, B5', gradient: 'linear-gradient(to right,#d73027,#fdae61,#fee08b,#d9ef8b,#66bd63,#1a9850)', labels: ['-0.1','0.1','0.2','0.4','0.5'] },
-  MSAVI: { title: 'MSAVI — Modified Soil-Adjusted VI',            formula: '(2·NIR+1 − √((2·NIR+1)²−8(NIR−RED))) / 2', gradient: 'linear-gradient(to right,#d73027,#fdae61,#d9ef8b,#1a9850)', labels: ['0.0','0.2','0.4','0.6','0.8'] },
-  TCARI: { title: 'TCARI — Transformed Chlorophyll Absorption',   formula: '3·((B5−B4)−0.2·(B5−B3)·(B5/B4))', gradient: 'linear-gradient(to right,#1a9850,#d9ef8b,#fdae61,#d73027)', labels: ['Bajo (sano)','0.1','0.2','0.4','Alto (estrés)'] },
-  RGB:   { title: 'Color Real — RGB',                             formula: 'Bandas B4 (Red), B3 (Green), B2 (Blue)', gradient: 'linear-gradient(to right,#1a5ca8,#2e8b57,#8B4513,#c8a46e,#f5f5f5)', labels: ['Agua','Vegetación','Suelo','Seco','Nubes'] },
-  FALSE: { title: 'Falso Color — NIR composit',                  formula: 'Bandas B8 (NIR), B4 (Red), B3 (Green) · veg.=rojo', gradient: 'linear-gradient(to right,#1a1a2e,#0d4a1a,#2e8b57,#c0392b,#8b0000)', labels: ['No veg.','Baja','Media','Alta','Muy alta'] }
+  // ── Vigor ──
+  NDVI:  { title: 'NDVI — Normalized Difference Vegetation Index', formula: '(NIR − RED) / (NIR + RED) · B8, B4', gradient: 'linear-gradient(to right,#d73027,#f46d43,#fdae61,#fee08b,#d9ef8b,#a6d96a,#66bd63,#1a9850)', labels: ['0.0 (Sin veg.)','0.3','0.5','0.7','0.9 (Alta)'] },
+  EVI:   { title: 'EVI — Enhanced Vegetation Index', formula: '2.5·(NIR−RED)/(NIR+6·RED−7.5·BLUE+1) · B8, B4, B2', gradient: 'linear-gradient(to right,#d73027,#f46d43,#fdae61,#fee08b,#d9ef8b,#a6d96a,#66bd63,#1a9850)', labels: ['0.0','0.15','0.3','0.5','0.7+'] },
+  SAVI:  { title: 'SAVI — Soil-Adjusted Vegetation Index', formula: '1.5·(NIR−RED)/(NIR+RED+0.5) · B8, B4', gradient: 'linear-gradient(to right,#d73027,#fdae61,#fee08b,#d9ef8b,#66bd63,#1a9850)', labels: ['0.0','0.2','0.4','0.6','0.8+'] },
+  MSAVI: { title: 'MSAVI — Modified Soil-Adjusted VI', formula: '(2·NIR+1 − √((2·NIR+1)²−8(NIR−RED))) / 2', gradient: 'linear-gradient(to right,#d73027,#fdae61,#d9ef8b,#1a9850)', labels: ['0.0','0.2','0.4','0.6','0.8'] },
+  // ── Salud ──
+  NDRE:  { title: 'NDRE — Red Edge Vegetation Index', formula: '(NIR − RedEdge) / (NIR + RedEdge) · B8, B5', gradient: 'linear-gradient(to right,#d73027,#fdae61,#fee08b,#d9ef8b,#66bd63,#1a9850)', labels: ['-0.1','0.1','0.2','0.4','0.5'] },
+  GNDVI: { title: 'GNDVI — Green NDVI', formula: '(NIR − GREEN) / (NIR + GREEN) · B8, B3', gradient: 'linear-gradient(to right,#d73027,#f46d43,#fdae61,#d9ef8b,#a6d96a,#1a9850)', labels: ['0.0','0.2','0.4','0.6','0.8'] },
+  TCARI: { title: 'TCARI — Transformed Chlorophyll Absorption', formula: '3·((B5−B4)−0.2·(B5−B3)·(B5/B4))', gradient: 'linear-gradient(to right,#1a9850,#d9ef8b,#fdae61,#d73027)', labels: ['Bajo (sano)','0.1','0.2','0.4','Alto (estrés)'] },
+  CIRE:  { title: 'CIre — Chlorophyll Index Red Edge', formula: '(NIR / RedEdge) − 1 · B8, B5', gradient: 'linear-gradient(to right,#d73027,#fdae61,#fee08b,#a6d96a,#1a9850,#006837)', labels: ['0','0.5','1.0','2.0','3.0+'] },
+  // ── Agua ──
+  NDMI:  { title: 'NDMI — Normalized Difference Moisture Index', formula: '(NIR − SWIR) / (NIR + SWIR) · B8, B11', gradient: 'linear-gradient(to right,#d73027,#f46d43,#fdae61,#abd9e9,#74add1,#4575b4)', labels: ['-0.5 (Seco)','−0.2','0.0','0.2','0.4','0.6 (Húmedo)'] },
+  NDWI:  { title: 'NDWI — Normalized Difference Water Index', formula: '(GREEN − NIR) / (GREEN + NIR) · B3, B8', gradient: 'linear-gradient(to right,#a6611a,#dfc27d,#f5f5f5,#80cdc1,#018571)', labels: ['-0.5 (Seco)','−0.2','0.0','0.2','0.5 (Agua)'] },
+  // ── Suelo ──
+  BSI:   { title: 'BSI — Bare Soil Index', formula: '((SWIR+RED)−(NIR+BLUE))/((SWIR+RED)+(NIR+BLUE)) · B11,B4,B8,B2', gradient: 'linear-gradient(to right,#1a9850,#a6d96a,#fee08b,#c8a46e,#8B4513)', labels: ['-0.4 (Veg.)','−0.1','0.0','0.2','0.4 (Suelo)'] },
+  // ── Visual ──
+  RGB:   { title: 'Color Real — RGB', formula: 'B4 (Red), B3 (Green), B2 (Blue)', gradient: 'linear-gradient(to right,#1a5ca8,#2e8b57,#8B4513,#c8a46e,#f5f5f5)', labels: ['Agua','Vegetación','Suelo','Seco','Nubes'] },
+  FALSE: { title: 'Falso Color — NIR composit', formula: 'B8 (NIR), B4 (Red), B3 (Green) · veg.=rojo', gradient: 'linear-gradient(to right,#1a1a2e,#0d4a1a,#2e8b57,#c0392b,#8b0000)', labels: ['No veg.','Baja','Media','Alta','Muy alta'] }
 };
 
 function updateLegend(idx) {
@@ -4425,20 +4821,40 @@ function buildClipGeom() {
 function buildImageAndVis(s2base, idx) {
   let image, visParams;
   switch (idx) {
+    // ── Vigor ──
     case 'NDVI':
       image = s2base.normalizedDifference(['B8','B4']).rename('nd');
       visParams = { min:0, max:0.9, palette:['d73027','f46d43','fdae61','fee08b','d9ef8b','a6d96a','66bd63','1a9850'] }; break;
-    case 'NDRE':
-      image = s2base.normalizedDifference(['B8','B5']).rename('nd');
-      visParams = { min:-0.1, max:0.5, palette:['d73027','fdae61','d9ef8b','66bd63','1a9850'] }; break;
-    case 'MSAVI': {
+    case 'EVI': {
       const nir = s2base.select('B8').divide(10000);
       const red = s2base.select('B4').divide(10000);
-      image = nir.multiply(2).add(1).subtract(
-        nir.multiply(2).add(1).multiply(nir.multiply(2).add(1)).subtract(nir.subtract(red).multiply(8)).sqrt()
+      const blue = s2base.select('B2').divide(10000);
+      image = nir.subtract(red).multiply(2.5)
+        .divide(nir.add(red.multiply(6)).subtract(blue.multiply(7.5)).add(1)).rename('evi');
+      visParams = { min:0, max:0.7, palette:['d73027','f46d43','fdae61','fee08b','d9ef8b','a6d96a','66bd63','1a9850'] }; break;
+    }
+    case 'SAVI': {
+      const nir2 = s2base.select('B8').divide(10000);
+      const red2 = s2base.select('B4').divide(10000);
+      image = nir2.subtract(red2).multiply(1.5)
+        .divide(nir2.add(red2).add(0.5)).rename('savi');
+      visParams = { min:0, max:0.8, palette:['d73027','fdae61','fee08b','d9ef8b','66bd63','1a9850'] }; break;
+    }
+    case 'MSAVI': {
+      const nir3 = s2base.select('B8').divide(10000);
+      const red3 = s2base.select('B4').divide(10000);
+      image = nir3.multiply(2).add(1).subtract(
+        nir3.multiply(2).add(1).multiply(nir3.multiply(2).add(1)).subtract(nir3.subtract(red3).multiply(8)).sqrt()
       ).divide(2).rename('msavi');
       visParams = { min:0, max:0.8, palette:['d73027','fdae61','d9ef8b','1a9850'] }; break;
     }
+    // ── Salud ──
+    case 'NDRE':
+      image = s2base.normalizedDifference(['B8','B5']).rename('nd');
+      visParams = { min:-0.1, max:0.5, palette:['d73027','fdae61','fee08b','d9ef8b','66bd63','1a9850'] }; break;
+    case 'GNDVI':
+      image = s2base.normalizedDifference(['B8','B3']).rename('gndvi');
+      visParams = { min:0, max:0.8, palette:['d73027','f46d43','fdae61','d9ef8b','a6d96a','1a9850'] }; break;
     case 'TCARI': {
       const b3 = s2base.select('B3').divide(10000);
       const b4 = s2base.select('B4').divide(10000);
@@ -4446,6 +4862,30 @@ function buildImageAndVis(s2base, idx) {
       image = b5.subtract(b4).subtract(b5.subtract(b3).multiply(0.2).multiply(b5.divide(b4.add(0.0001)))).multiply(3).rename('tcari');
       visParams = { min:0, max:0.5, palette:['1a9850','d9ef8b','fdae61','d73027'] }; break;
     }
+    case 'CIRE': {
+      const nirCi = s2base.select('B8').divide(10000);
+      const reCi = s2base.select('B5').divide(10000);
+      image = nirCi.divide(reCi.add(0.0001)).subtract(1).rename('cire');
+      visParams = { min:0, max:3, palette:['d73027','fdae61','fee08b','a6d96a','1a9850','006837'] }; break;
+    }
+    // ── Agua ──
+    case 'NDMI':
+      image = s2base.normalizedDifference(['B8','B11']).rename('ndmi');
+      visParams = { min:-0.5, max:0.6, palette:['d73027','f46d43','fdae61','abd9e9','74add1','4575b4'] }; break;
+    case 'NDWI':
+      image = s2base.normalizedDifference(['B3','B8']).rename('ndwi');
+      visParams = { min:-0.5, max:0.5, palette:['a6611a','dfc27d','f5f5f5','80cdc1','018571'] }; break;
+    // ── Suelo ──
+    case 'BSI': {
+      const swir = s2base.select('B11');
+      const red4 = s2base.select('B4');
+      const nir4 = s2base.select('B8');
+      const blue4 = s2base.select('B2');
+      image = swir.add(red4).subtract(nir4).subtract(blue4)
+        .divide(swir.add(red4).add(nir4).add(blue4).add(0.0001)).rename('bsi');
+      visParams = { min:-0.4, max:0.4, palette:['1a9850','a6d96a','fee08b','c8a46e','8B4513'] }; break;
+    }
+    // ── Visual ──
     case 'RGB':
       image = s2base.select(['B4','B3','B2']);
       visParams = { bands:['B4','B3','B2'], min:0, max:3000, gamma:1.4 }; break;
@@ -4487,7 +4927,7 @@ function setMapLoading(show, msg) {
 }
 
 function showGEEHelp() {
-  alert('Google Earth Engine se conecta automáticamente usando la cuenta del proyecto AgrAgent. No necesitas configurar nada.');
+  alert(t('gee_help_msg'));
 }
 
 // ═══════════════════════════════════════
@@ -4765,7 +5205,7 @@ async function loadKMZFile(file) {
     if (file.name.toLowerCase().endsWith('.kmz')) {
       const zip = await JSZip.loadAsync(file);
       const kmlFile = Object.values(zip.files).find(f => f.name.endsWith('.kml'));
-      if (!kmlFile) { alert('No se encontró archivo KML dentro del KMZ.'); return; }
+      if (!kmlFile) { alert(t('alert_no_kml')); return; }
       kmlText = await kmlFile.async('text');
     } else {
       kmlText = await file.text();
@@ -4807,7 +5247,7 @@ async function loadKMZFile(file) {
     });
 
     if (layerCount === 0) {
-      alert('No se encontraron geometrías válidas en el archivo.');
+      alert(t('alert_no_geom'));
     } else {
       vineMap.fitBounds(L.featureGroup(userLayers.map(l => l.layer)).getBounds(), { padding: [30, 30] });
       // Update location, climate, and GEE
@@ -4815,13 +5255,15 @@ async function loadKMZFile(file) {
       if (geeConnected) loadGEELayer(currentGEEIndex);
     }
   } catch (e) {
-    alert('Error al leer el archivo: ' + e.message);
+    alert(t('alert_file_error') + e.message);
   }
 }
 
 function addLayerToMap(layer, name, color, description = '', stage = '') {
   layer._agra = { name, color, description, stage };
-  layer.addTo(vineMap);
+  // Ensure Geoman can edit/remove this layer
+  if (layer.pm) layer.pm.setOptions({ allowRemoval: true, allowEditing: true });
+  if (!vineMap.hasLayer(layer)) layer.addTo(vineMap);
 
   // Popup
   layer.bindPopup(() => buildPopup(layer._agra, layer));
@@ -4884,7 +5326,7 @@ function renderLayerList() {
   const body = document.getElementById('layer-list-body');
   document.getElementById('layer-count').textContent = userLayers.length + ' capa' + (userLayers.length !== 1 ? 's' : '');
   if (userLayers.length === 0) {
-    body.innerHTML = '<div style="padding:14px 16px;font-size:0.8rem;color:var(--text-secondary);">Sube un KMZ/KML o dibuja para agregar capas.</div>';
+    body.innerHTML = '<div style="padding:14px 16px;font-size:0.8rem;color:var(--text-secondary);">' + t('layer_placeholder') + '</div>';
     return;
   }
   body.innerHTML = userLayers.map((l, i) => {
@@ -4911,6 +5353,7 @@ function zoomToLayer(i) {
 function deleteLayer(i) {
   vineMap.removeLayer(userLayers[i].layer);
   userLayers.splice(i, 1);
+  rebuildKmlRawCoords();
   renderLayerList();
 }
 
@@ -4933,18 +5376,58 @@ function initGeoman() {
     stopDraw();
     window._editLayer = layer;
 
+    // Immediately register layer so it can be deleted/edited
+    const defaultName = 'Capa ' + (userLayers.length + 1);
+    addLayerToMap(layer, defaultName, color, '');
+
     // Store polygon coords for GEE clipping
     if (layer instanceof L.Polygon) {
-      const latlngs = layer.getLatLngs()[0];
-      const ring = latlngs.map(ll => [ll.lng, ll.lat]);
-      ring.push(ring[0]); // close ring
-      kmlRawCoords.push(ring);
-      // Update location, climate, and GEE
+      rebuildKmlRawCoords();
       onPolygonAdded();
       if (geeConnected) loadGEELayer(currentGEEIndex);
     }
 
     openEditor(layer, true);
+  });
+
+  // Listen for layer removal (registered once, not per toggleDelete)
+  vineMap.on('pm:remove', e => {
+    const idx = userLayers.findIndex(l => l.layer === e.layer);
+    if (idx !== -1) {
+      userLayers.splice(idx, 1);
+      rebuildKmlRawCoords();
+      renderLayerList();
+    } else {
+      // Layer not in userLayers (orphan) — just remove from map
+      if (vineMap.hasLayer(e.layer)) vineMap.removeLayer(e.layer);
+    }
+  });
+
+  // Listen for edit end to sync coords
+  vineMap.on('pm:globaleditmodetoggled', e => {
+    if (!e.enabled) {
+      rebuildKmlRawCoords();
+      renderLayerList();
+      if (geeConnected && kmlRawCoords.length > 0) loadGEELayer(currentGEEIndex);
+    }
+  });
+}
+
+// Rebuild kmlRawCoords from current userLayers (after edit/delete)
+function rebuildKmlRawCoords() {
+  kmlRawCoords = [];
+  userLayers.forEach(l => {
+    if (l.layer instanceof L.Polygon && l.layer.getLatLngs) {
+      try {
+        const latlngs = l.layer.getLatLngs()[0];
+        const flat = Array.isArray(latlngs[0]) ? latlngs[0] : latlngs;
+        const ring = flat.map(ll => [ll.lng, ll.lat]);
+        if (ring.length > 0) {
+          ring.push(ring[0]); // close ring
+          kmlRawCoords.push(ring);
+        }
+      } catch(e) {}
+    }
   });
 }
 
@@ -4994,11 +5477,6 @@ function toggleDelete() {
   deleteMode = true;
   document.getElementById('btn-delete').classList.add('active');
   vineMap.pm.enableGlobalRemovalMode();
-  vineMap.on('pm:remove', e => {
-    const idx = userLayers.findIndex(l => l.layer === e.layer);
-    if (idx !== -1) userLayers.splice(idx, 1);
-    renderLayerList();
-  });
 }
 function stopDelete() {
   deleteMode = false;
@@ -5146,7 +5624,7 @@ let colorIdx = 0;
 function randomLayerColor() { return LAYER_COLORS[colorIdx++ % LAYER_COLORS.length]; }
 
 // ═══════════════════════════════════════
-// AI CHAT — AgroAgente Integration
+// AI CHAT — AgrAgent Integration
 // ═══════════════════════════════════════
 const CHAT_API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:8000' : 'https://api.agragent.com';
@@ -5260,7 +5738,7 @@ async function chatSend() {
     chatLoadConversations();
   } catch (e) {
     chatHideTyping();
-    chatAddMessage('assistant', '⚠️ Error connecting to AgroAgente API. Make sure the server is running on ' + CHAT_API);
+    chatAddMessage('assistant', '⚠️ Error connecting to AgrAgent API. Make sure the server is running on ' + CHAT_API);
   }
   chatLoading = false;
   chatGetSendBtns().forEach(btn => btn.disabled = false);
@@ -5366,7 +5844,7 @@ async function chatDeleteConv(convId) {
     if (convId === chatConvId) {
       chatConvId = null;
       chatGetContainers().forEach(c => {
-        c.innerHTML = '<div class="chat-welcome"><h2>AgroAgente AI</h2>' +
+        c.innerHTML = '<div class="chat-welcome"><h2><img src=\"logo.png\" alt=\"\" style=\"width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;\">AgrAgent</h2>' +
           '<p>' + t('chat_welcome_text') + '</p>' +
           '<div class="chat-welcome-cards" id="chat-welcome-cards"></div></div>';
       });
@@ -5401,7 +5879,7 @@ function chatToggleConvList() {
 
 const SECTION_CONTEXT = {
   dashboard: { label: 'Dashboard', ctx: 'The user is viewing the Dashboard with KPIs, water balance, risk assessment, and alerts for their field.' },
-  maps: { label: 'Satellite Maps', ctx: 'The user is viewing satellite maps with Sentinel-2 imagery and vegetation indices (NDVI, NDRE, MSAVI, TCARI) from Google Earth Engine.' },
+  maps: { label: 'Satellite Maps', ctx: 'The user is viewing satellite maps with Sentinel-2 imagery and spectral indices from Google Earth Engine. Vigor: NDVI, EVI, SAVI, MSAVI. Health: NDRE, GNDVI, TCARI, CIre. Water: NDMI, NDWI. Soil: BSI. Visual: RGB, False Color.' },
   climate: { label: 'Climate', ctx: 'The user is viewing climate data: temperature, precipitation, humidity, solar radiation, ET0, GDD, chill hours, frost events, and heat waves.' },
   genomic: { label: 'Genomic', ctx: 'The user is viewing genomic analysis of Vitis vinifera RNA-seq DEG data across phenological stages.' },
   images: { label: 'Images', ctx: 'The user is viewing image analysis with the WGISD grape cluster dataset and YOLO bounding box annotations.' },
