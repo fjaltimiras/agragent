@@ -2417,19 +2417,11 @@ function editDisplayName() {
         </div>
       </div>
 
-      <!-- DEG count chart -->
+      <!-- DEG count + accumulation (combined chart) -->
       <div class="card mb-20">
-        <div class="card-title">DEGs per Developmental Stage (vs. E-L 3 baseline)</div>
+        <div class="card-title">DEGs per Stage & Accumulation (vs. E-L 3 baseline)</div>
         <div class="chart-wrap tall">
           <canvas id="degStageChart"></canvas>
-        </div>
-      </div>
-
-      <!-- Sample composition -->
-      <div class="card mb-20">
-        <div class="card-title">DEG Accumulation Across Stages</div>
-        <div class="chart-wrap">
-          <canvas id="degAccumChart"></canvas>
         </div>
       </div>
 
@@ -4399,30 +4391,35 @@ async function loadHistoricalData() {
 // GENOMIC: DEG Stage Chart + Accumulation Chart
 // ═══════════════════════════════════════
 (function() {
-  // Real data from Altimiras et al. supplementary Table S3
-  const stages = ['EL 5','EL 15','EL 17','EL 27','EL 31','EL 35','EL 36','EL 38','EL 41'];
+  // Real data from Altimiras et al. supplementary Tables S3 & S4
+  const stages  = ['EL 5','EL 15','EL 17','EL 27','EL 31','EL 35','EL 36','EL 38','EL 41'];
   const downReg = [0, 11, 91, 304, 455, 1052, 2259, 1675, 2563];
   const upReg   = [0, 84, 80, 214, 590, 596, 634, 661, 840];
+  const accumData = [0, 95, 171, 518, 1045, 1648, 2893, 2336, 3403];
 
   const ctx1 = document.getElementById('degStageChart');
   if (ctx1) {
     chartInstances.degStage = new Chart(ctx1.getContext('2d'), {
-      type: 'bar',
       data: {
         labels: stages,
         datasets: [
           {
-            label: 'Up-regulated', data: upReg,
-            backgroundColor: 'rgba(82,183,136,0.7)', borderColor: '#52b788', borderWidth: 1, borderRadius: 3
+            type: 'bar', label: 'Up-regulated', data: upReg, yAxisID: 'y',
+            backgroundColor: 'rgba(82,183,136,0.7)', borderColor: '#52b788', borderWidth: 1, borderRadius: 3, order: 2
           },
           {
-            label: 'Down-regulated', data: downReg.map(v => -v),
-            backgroundColor: 'rgba(239,68,68,0.6)', borderColor: '#ef4444', borderWidth: 1, borderRadius: 3
+            type: 'bar', label: 'Down-regulated', data: downReg.map(v => -v), yAxisID: 'y',
+            backgroundColor: 'rgba(239,68,68,0.6)', borderColor: '#ef4444', borderWidth: 1, borderRadius: 3, order: 3
+          },
+          {
+            type: 'line', label: 'Total DEGs (accumulated)', data: accumData, yAxisID: 'y2',
+            borderColor: '#a78bfa', backgroundColor: 'rgba(167,139,250,0.08)',
+            borderWidth: 2.5, pointBackgroundColor: '#a78bfa', pointRadius: 5, fill: true, tension: 0.4, order: 1
           }
         ]
       },
       options: {
-        responsive: true, indexAxis: 'x',
+        responsive: true,
         animation: { duration: 1200 },
         plugins: {
           legend: { labels: { color: '#7fa892', boxWidth: 14, font: { size: 11 } } },
@@ -4437,41 +4434,15 @@ async function loadHistoricalData() {
         scales: {
           x: { grid: gridOpts, ticks: tickOpts },
           y: {
-            grid: gridOpts,
+            position: 'left', grid: gridOpts,
             ticks: { ...tickOpts, callback: v => Math.abs(v) },
-            title: { display: true, text: 'Number of DEGs', color: '#7fa892', font: { size: 11 } }
+            title: { display: true, text: 'Up / Down DEGs', color: '#7fa892', font: { size: 11 } }
+          },
+          y2: {
+            position: 'right', grid: { display: false },
+            ticks: { ...tickOpts, color: '#a78bfa' },
+            title: { display: true, text: 'Total DEGs', color: '#a78bfa', font: { size: 11 } }
           }
-        }
-      }
-    });
-  }
-
-  // DEG accumulation (total unique DEGs from Table S4)
-  const accumLabels = ['EL 15','EL 17','EL 27','EL 31','EL 35','EL 36','EL 38','EL 41'];
-  const accumData   = [95, 171, 518, 1045, 1648, 2893, 2336, 3403];
-
-  const ctx2 = document.getElementById('degAccumChart');
-  if (ctx2) {
-    const grad = ctx2.getContext('2d').createLinearGradient(0, 0, 0, 180);
-    grad.addColorStop(0, 'rgba(167,139,250,0.35)');
-    grad.addColorStop(1, 'rgba(167,139,250,0.02)');
-    chartInstances.degAccum = new Chart(ctx2.getContext('2d'), {
-      type: 'line',
-      data: {
-        labels: accumLabels,
-        datasets: [{
-          label: 'Total DEGs', data: accumData,
-          borderColor: '#a78bfa', backgroundColor: grad,
-          borderWidth: 2.5, pointBackgroundColor: '#a78bfa', pointRadius: 5, fill: true, tension: 0.4
-        }]
-      },
-      options: {
-        responsive: true, animation: { duration: 1200 },
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid: gridOpts, ticks: tickOpts },
-          y: { grid: gridOpts, ticks: tickOpts,
-            title: { display: true, text: 'Total DEGs (FDR<0.05)', color: '#7fa892', font: { size: 11 } } }
         }
       }
     });
