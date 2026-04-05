@@ -6523,13 +6523,13 @@ function chatToggleConvList() {
 }
 
 const SECTION_CONTEXT = {
-  dashboard: { label: 'Dashboard', ctx: 'The user is viewing the Dashboard with KPIs, water balance, risk assessment, and alerts for their field.' },
-  maps: { label: 'Satellite Maps', ctx: 'The user is viewing satellite maps with Sentinel-2 imagery and spectral indices from Google Earth Engine. Vigor: NDVI, EVI, SAVI, MSAVI. Health: NDRE, GNDVI, TCARI, CIre. Water: NDMI, NDWI. Soil: BSI. Visual: RGB, False Color.' },
-  climate: { label: 'Climate', ctx: 'The user is viewing climate data: temperature, precipitation, humidity, solar radiation, ET0, GDD, chill hours, frost events, and heat waves.' },
-  genomic: { label: 'Genomic', ctx: 'The user is viewing genomic analysis of Vitis vinifera RNA-seq DEG data across phenological stages.' },
-  images: { label: 'Images', ctx: 'The user is viewing image analysis with the WGISD grape cluster dataset and YOLO bounding box annotations.' },
-  yield: { label: 'Yield', ctx: 'The user is viewing yield prediction using an Extra Trees Regressor model with confidence intervals and feature importance.' },
-  references: { label: 'References', ctx: 'The user is viewing the references and documentation section.' }
+  dashboard: { label: 'My Field', ctx: 'The user is viewing the Dashboard overview with all KPIs, satellite indices, yield prediction summary, water balance, risk assessment, and alerts. You have access to ALL computed data below — use it to give specific, data-driven advice.' },
+  maps: { label: 'Field Map', ctx: 'The user is viewing the satellite map with Sentinel-2 imagery. Indices available: Plant Health (NDVI), Vigor+ (EVI), Young Vines (SAVI), Sparse (MSAVI), Nutrition (NDRE), Early Stress (GNDVI), Chlorophyll (TCARI), N-Status (CIre), Moisture (NDMI), Leaf Water (NDWI), Bare Soil (BSI). Use the satellite index values below to assess crop condition.' },
+  climate: { label: 'Weather', ctx: 'The user is viewing detailed climate data. You have access to all computed KPIs below (GDD, chill hours, frost, heat waves, precipitation, ET0, etc.). Use these to give specific agronomic recommendations for their vineyard.' },
+  genomic: { label: 'Genetics', ctx: 'The user is viewing genomic analysis: 3,603 DEGs from RNA-seq of Vitis vinifera across 8 phenological stages (E-L 3 to E-L 41). Data from Altimiras et al. 2024, Agronomy.' },
+  images: { label: 'Photos', ctx: 'The user is viewing grape cluster image analysis using YOLOv11 trained on WGISD (Embrapa). 5 varieties: Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc, Syrah. They can upload their own vineyard images for real-time detection.' },
+  yield: { label: 'Harvest', ctx: 'The user is viewing the harvest forecast. The prediction uses PyCaret Extra Trees Regressor (R²=0.972) with 15 features from climate + satellite data. Use ALL the computed data below to explain the prediction and give harvest recommendations.' },
+  references: { label: 'About', ctx: 'The user is viewing the About section with author info and publications.' }
 };
 
 function chatCollectAppContext() {
@@ -6541,11 +6541,11 @@ function chatCollectAppContext() {
   const sCtx = SECTION_CONTEXT[section];
   if (sCtx) parts.push('Active section: ' + sCtx.ctx);
 
-  // Polygon / field info
+  // ═══ FIELD INFO ═══
   const location = el('dashLocation');
   const area = el('dashArea');
   if (location && location !== '—') parts.push('Field location: ' + location);
-  if (area && area !== '—') parts.push('Field area: ' + area);
+  if (area && area !== '—') parts.push('Field area: ' + area + ' (' + agAreaHa.toFixed(2) + ' hectares)');
   if (typeof userLayers !== 'undefined' && userLayers.length > 0) {
     parts.push('Loaded polygons: ' + userLayers.length + ' (' + userLayers.map(l => l.name || 'unnamed').join(', ') + ')');
   }
@@ -6557,45 +6557,124 @@ function chatCollectAppContext() {
     }
   }
 
-  // Climate KPIs
-  const gdd = el('kpiGDD'), chill = el('kpiChill'), frost = el('kpiFrost');
-  const heatWave = el('kpiHeatWave'), humidity = el('kpiHumidity');
-  const solar = el('kpiSolar'), et = el('kpiET'), dry = el('kpiDry');
-  if (gdd && gdd !== '—' && typeof climateDataLoaded !== 'undefined' && climateDataLoaded) {
-    parts.push('Climate KPIs (current season): GDD=' + gdd + ', Chill Hours=' + chill +
-      ', Frost Days=' + frost + ', Heat Waves=' + heatWave +
-      ', Avg Humidity=' + humidity + ', Solar Radiation=' + solar + ' MJ/m²' +
-      ', ET0=' + et + ' mm, Dry Months=' + dry);
-  }
-
-  // Water balance
-  const precipBar = el('dashPrecipBarVal'), etBar = el('dashETBarVal');
-  if (precipBar && etBar) {
-    parts.push('Water Balance: Precipitation=' + precipBar + ', ET0=' + etBar);
+  // ═══ CLIMATE DATA (full) ═══
+  if (typeof agClimate === 'object' && agClimate.totalGDD) {
+    const C = agClimate;
+    parts.push('--- CLIMATE DATA (Season 2025-2026) ---');
+    parts.push('GDD (Growing Degree Days, base 10°C): ' + C.totalGDD);
+    parts.push('Chill Hours (0-7.2°C, Apr-Sep): ' + C.chillHours);
+    parts.push('Total Precipitation: ' + C.totalPrecip + ' mm');
+    parts.push('Total Evapotranspiration (ET0): ' + C.totalET + ' mm');
+    parts.push('Water Balance: ' + (C.totalPrecip - C.totalET) + ' mm (' + (C.totalPrecip >= C.totalET ? 'surplus' : 'deficit — irrigation needed') + ')');
+    parts.push('Average Max Temperature: ' + C.meanMax + '°C');
+    parts.push('Average Min Temperature: ' + C.meanMin + '°C');
+    parts.push('Average Humidity: ' + C.meanHumidity + '%');
+    parts.push('Total Solar Radiation: ' + C.totalSolar + ' MJ/m²');
+    parts.push('Frost Days: ' + C.frostDays);
+    parts.push('Heat Waves (≥3 days >35°C): ' + C.heatWaves);
   }
 
   // Dashboard alerts
-  const alerts = el('dashAlerts') || el('climateAlert');
-  if (alerts && alerts.length > 5 && !alerts.includes('No significant')) {
-    parts.push('Active alerts: ' + alerts.replace(/\n/g, '; '));
+  const alertsEl = document.getElementById('dashAlerts') || document.getElementById('climateAlert');
+  if (alertsEl) {
+    const alertText = alertsEl.textContent.trim();
+    if (alertText && alertText.length > 5 && !alertText.includes('No alerts') && !alertText.includes('looking good')) {
+      parts.push('Active alerts: ' + alertText.replace(/\n/g, '; '));
+    }
   }
 
-  // Satellite / GEE
+  // Climate summary
+  const summaryEl = document.getElementById('dashClimateSummary');
+  if (summaryEl && summaryEl.textContent.trim() !== 'Loading...') {
+    parts.push('Climate Summary: ' + summaryEl.textContent.trim().replace(/\s+/g, ' '));
+  }
+
+  // Risk assessment
+  const riskEl = document.getElementById('dashRiskAssessment');
+  if (riskEl && riskEl.textContent.trim() !== 'Loading...') {
+    parts.push('Risk Assessment: ' + riskEl.textContent.trim().replace(/\s+/g, ' '));
+  }
+
+  // ═══ SATELLITE INDICES ═══
   if (typeof geeConnected !== 'undefined' && geeConnected) {
-    parts.push('Google Earth Engine: Connected');
-    if (typeof currentGEEIndex !== 'undefined') parts.push('Current vegetation index: ' + currentGEEIndex);
+    parts.push('--- SATELLITE DATA ---');
+    parts.push('Google Earth Engine: Connected, Sentinel-2 SR Harmonized');
+    if (typeof currentGEEIndex !== 'undefined') parts.push('Currently viewing index: ' + currentGEEIndex);
+    const geeStart = document.getElementById('gee-start');
+    const geeEnd = document.getElementById('gee-end');
+    if (geeStart && geeEnd) parts.push('Satellite date range: ' + geeStart.value + ' to ' + geeEnd.value);
     if (typeof availableScenes !== 'undefined' && availableScenes.length > 0) {
       parts.push('Available Sentinel-2 scenes: ' + availableScenes.length +
         ' (latest: ' + availableScenes[0].date + ', cloud: ' + availableScenes[0].cloud + '%)');
     }
   }
 
-  // Yield prediction
+  if (typeof agIndices === 'object' && agIndices.NDVI) {
+    const S = agIndices;
+    parts.push('Satellite indices (polygon mean from Sentinel-2):');
+    parts.push('  NDVI (plant health/vigor): ' + S.NDVI.toFixed(4) + (S.NDVI > 0.6 ? ' (good)' : S.NDVI > 0.3 ? ' (moderate)' : ' (low — possible stress)'));
+    parts.push('  NDRE (nitrogen/chlorophyll): ' + S.NDRE.toFixed(4) + (S.NDRE > 0.4 ? ' (good)' : S.NDRE > 0.2 ? ' (moderate)' : ' (low — possible N deficiency)'));
+    parts.push('  EVI (enhanced vigor): ' + S.EVI.toFixed(4));
+    parts.push('  MSAVI (soil-adjusted vigor): ' + S.MSAVI.toFixed(4));
+    parts.push('  TCARI (chlorophyll absorption): ' + S.TCARI.toFixed(4) + (S.TCARI < 0.15 ? ' (healthy)' : S.TCARI < 0.25 ? ' (moderate stress)' : ' (high stress)'));
+    parts.push('  NDMI (soil/plant moisture): ' + S.NDMI.toFixed(4) + (S.NDMI > 0.3 ? ' (well hydrated)' : S.NDMI > 0.1 ? ' (moderate)' : ' (dry — water stress)'));
+  }
+
+  // ═══ YIELD PREDICTION ═══
   const yieldVal = document.getElementById('yield-value');
-  if (yieldVal && yieldVal.textContent !== '—') parts.push('Yield prediction: ' + yieldVal.textContent + ' t/ha');
+  const yieldTotal = document.getElementById('yield-total');
+  const yieldCI = document.getElementById('yield-ci');
+  const yieldHarvest = document.getElementById('yield-harvest-date');
+  if (yieldVal && yieldVal.textContent !== '—') {
+    parts.push('--- YIELD PREDICTION ---');
+    parts.push('Predicted yield: ' + yieldVal.textContent + ' tonnes/hectare');
+    if (yieldTotal) parts.push('Total production: ' + yieldTotal.textContent + ' (area: ' + agAreaHa.toFixed(1) + ' ha)');
+    if (yieldCI) parts.push('Confidence interval: ' + yieldCI.textContent);
+    if (yieldHarvest && yieldHarvest.textContent !== '—') parts.push('Estimated harvest date: ' + yieldHarvest.textContent);
+    parts.push('Model: PyCaret Extra Trees Regressor (R²=0.972, MAPE=3.8%)');
+
+    // Feature contributions
+    const fiEl = document.getElementById('yield-feature-importance');
+    if (fiEl && fiEl.children.length > 0) {
+      const features = Array.from(fiEl.querySelectorAll('.hbar-row')).map(row => {
+        const label = row.querySelector('.hbar-label');
+        return label ? label.textContent.trim() : '';
+      }).filter(Boolean);
+      if (features.length > 0) parts.push('Top factors influencing yield: ' + features.join(', '));
+    }
+  }
+
+  // ═══ IMAGE ANALYSIS (last detection) ═══
+  const uploadResult = document.getElementById('upload-result');
+  if (uploadResult && uploadResult.style.display !== 'none' && uploadResult.textContent.trim().length > 10) {
+    const metaRows = uploadResult.querySelectorAll('.img-meta-row');
+    if (metaRows.length > 0) {
+      parts.push('--- IMAGE ANALYSIS (last upload) ---');
+      metaRows.forEach(row => {
+        parts.push('  ' + row.textContent.trim().replace(/\s+/g, ' '));
+      });
+    }
+  }
+
+  // ═══ WGISD VIEWER (if open) ═══
+  const vmClusters = el('vm-clusters');
+  const vmBerries = el('vm-berries');
+  const viewerTitle = el('viewer-title');
+  if (vmClusters && vmClusters !== '—' && document.getElementById('img-viewer').style.display !== 'none') {
+    parts.push('--- WGISD IMAGE VIEWER ---');
+    if (viewerTitle) parts.push('Image: ' + viewerTitle);
+    parts.push('Clusters detected: ' + vmClusters);
+    parts.push('Berries estimated: ' + vmBerries);
+  }
+
+  // ═══ CURRENT VARIETY (Image Analysis section) ═══
+  if (typeof currentVariety !== 'undefined') {
+    const varietyNames = { CDY: 'Chardonnay (white)', CFR: 'Cabernet Franc (red)', CSV: 'Cabernet Sauvignon (red)', SVB: 'Sauvignon Blanc (white)', SYH: 'Syrah (red)' };
+    parts.push('Currently viewing grape variety: ' + (varietyNames[currentVariety] || currentVariety));
+  }
 
   if (parts.length === 0) return '';
-  return '[App Context]\n' + parts.join('\n') + '\n[/App Context]\n\n';
+  return '[App Context — All computed data from agragent platform]\n' + parts.join('\n') + '\n[/App Context]\n\n';
 }
 
 function chatGetActiveSection() {
