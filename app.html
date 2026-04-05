@@ -1943,6 +1943,14 @@ function editDisplayName() {
         <div id="gee-status" class="gee-status"></div>
       </div>
 
+      <!-- Location Search -->
+      <div class="location-search" id="location-search">
+        <span style="font-size:1rem;">📍</span>
+        <input type="text" id="location-input" placeholder="Buscar localidad... (ej. Valparaíso, Valle de Casablanca)" autocomplete="off" data-i18n-placeholder="search_location_placeholder">
+        <button class="location-search-btn" onclick="searchLocation()">🔎 Buscar</button>
+        <div class="location-results" id="location-results"></div>
+      </div>
+
       <!-- GEE Layer Controls (shown after connect) -->
       <div class="gee-layer-controls collapsed-ctrl" id="gee-layer-controls">
         <div class="gee-ctrl-toggle-wrap">
@@ -2051,14 +2059,6 @@ function editDisplayName() {
         <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:6px;">
           💡 <span data-i18n="gee_sentinel_info">Sentinel-2 SR Harmonized · 10m resolution · Auto cloud masking (QA60) · Polygon area only</span>
         </div>
-      </div>
-
-      <!-- Location Search -->
-      <div class="location-search" id="location-search">
-        <span style="font-size:1rem;">📍</span>
-        <input type="text" id="location-input" placeholder="Buscar localidad... (ej. Valparaíso, Valle de Casablanca)" autocomplete="off" data-i18n-placeholder="search_location_placeholder">
-        <button class="location-search-btn" onclick="searchLocation()">🔎 Buscar</button>
-        <div class="location-results" id="location-results"></div>
       </div>
 
       <!-- Toolbar: KMZ Upload + Draw Tools -->
