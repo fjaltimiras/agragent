@@ -37,7 +37,7 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 |---|---|
 | **Login** | Username/password authentication with role-based access (Admin, Viewer) |
 | **Dashboard** | Dynamic agronomic overview: 8 KPIs, water balance, risk assessment, alerts, charts — all derived from the user's polygon |
-| **Satellite Maps** | Sentinel-2 imagery via Google Earth Engine (auto-connected via service account) with 13 spectral indices grouped by category, scene browsing, and split-screen temporal comparison |
+| **Satellite Maps** | Sentinel-2 imagery via Google Earth Engine (auto-connected via service account) with 13 spectral indices grouped by category, scene browsing, split-screen temporal comparison, and **location search** (Nominatim geocoding) |
 | **Climate Data** | Real-time climate analytics from Open-Meteo — temperature, precipitation, humidity, solar radiation, ET₀, GDD, chill hours, frost, heat waves (8 KPIs + 6 charts) |
 | **Genomic Analysis** | Real RNA-seq DEG data from Altimiras et al. (2024) — 3,603 DEGs across 8 phenological stages of *Vitis vinifera* |
 | **Image Analysis** | Integration with the WGISD dataset (Embrapa) — 300+ grape cluster images with YOLO bounding box annotations |
@@ -104,6 +104,14 @@ The dashboard starts empty and automatically populates when the user uploads a K
 Charts: monthly temperature (min/max), precipitation, relative humidity, solar radiation, evapotranspiration, GDD accumulation.
 
 All climate data is fetched dynamically from the [Open-Meteo Archive API](https://open-meteo.com/) based on the polygon centroid — **any location worldwide**.
+
+### Location Search
+
+- **Search bar** in the Satellite Maps section for quick navigation to any location worldwide
+- Autocomplete with debounced requests (350ms) to the Nominatim geocoding API
+- Results display location name and administrative details
+- Selecting a result triggers a smooth `flyTo` animation with a temporary marker and popup
+- Supports Enter key to search and Escape to dismiss results
 
 ### Field Management
 
