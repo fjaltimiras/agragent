@@ -2711,6 +2711,10 @@ function editDisplayName() {
               <div>📷 Canon EOS REBEL T3i / Motorola Z2</div>
               <div style="margin-top:8px;"><span data-i18n="img_data_source">Data:</span> <a href="https://github.com/thsant/wgisd" target="_blank" style="color:var(--accent)">Embrapa WGISD</a> · CC BY-NC 4.0</div>
             </div>
+            <div class="viewer-divider"></div>
+            <div style="font-size:0.68rem;color:var(--text-secondary);line-height:1.6;background:rgba(255,255,255,0.03);padding:8px 10px;border-radius:6px;" data-i18n="img_berry_method">
+              <strong style="color:var(--text-primary);">Berry estimation method:</strong> Estimated from bounding box area of each detected cluster. Small clusters (~1% image area) ≈ 20 berries, large clusters (~8%) ≈ 80 berries. Linear interpolation, capped at 80/cluster. This is an approximation — real berry count requires instance segmentation.
+            </div>
           </div>
         </div>
         <div class="viewer-annotation-bar" id="viewer-annotation-bar">
@@ -3064,6 +3068,7 @@ const i18n = {
     img_loading: 'Loading image and annotations...', img_clusters_detected: 'Clusters detected', img_berries_est: 'Berries estimated',
     img_annotations: 'Annotations: YOLO (bounding box)', img_resolution: 'Resolution: 2048 × 1365 px', img_data_source: 'Data:', img_show_bbox: 'Show bounding boxes',
     img_analyzing: 'Analyzing image with YOLOv11...', img_api_offline: 'Detection server offline. Start the API to enable real-time detection.',
+    img_berry_method: '<strong style="color:var(--text-primary);">Berry estimation method:</strong> Estimated from bounding box area of each detected cluster. Small clusters (~1% image area) ≈ 20 berries, large clusters (~8%) ≈ 80 berries. Linear interpolation, capped at 80/cluster. This is an approximation — real berry count requires instance segmentation.',
     editor_title: '✏️ Field Properties', editor_name: 'Name', editor_name_ph: 'e.g. North Parcel',
     editor_desc: 'Description', editor_desc_ph: 'Notes, variety, observations...',
     editor_stage: 'Growth stage', editor_select: '— Select —',
@@ -3187,6 +3192,7 @@ const i18n = {
     img_loading: 'Cargando imagen y anotaciones...', img_clusters_detected: 'Racimos detectados', img_berries_est: 'Bayas estimadas',
     img_annotations: 'Anotaciones: YOLO (bounding box)', img_resolution: 'Resolución: 2048 × 1365 px', img_data_source: 'Datos:', img_show_bbox: 'Mostrar bounding boxes',
     img_analyzing: 'Analizando imagen con YOLOv11...', img_api_offline: 'Servidor de detección offline. Inicia la API para habilitar detección en tiempo real.',
+    img_berry_method: '<strong style="color:var(--text-primary);">Método de estimación de bayas:</strong> Estimado a partir del área del bounding box de cada racimo detectado. Racimos pequeños (~1% del área) ≈ 20 bayas, racimos grandes (~8%) ≈ 80 bayas. Interpolación lineal, máximo 80/racimo. Es una aproximación — el conteo real requiere segmentación de instancias.',
     editor_title: '✏️ Propiedades del Campo', editor_name: 'Nombre', editor_name_ph: 'ej: Parcela Norte',
     editor_desc: 'Descripción', editor_desc_ph: 'Notas, variedad, observaciones...',
     editor_stage: 'Etapa de crecimiento', editor_select: '— Seleccionar —',
@@ -3305,6 +3311,7 @@ const i18n = {
     img_loading: 'Carregando imagem e anotações...', img_clusters_detected: 'Cachos detectados', img_berries_est: 'Bagas estimadas',
     img_annotations: 'Anotações: YOLO (bounding box)', img_resolution: 'Resolução: 2048 × 1365 px', img_data_source: 'Dados:', img_show_bbox: 'Mostrar bounding boxes',
     img_analyzing: 'Analisando imagem com YOLOv11...', img_api_offline: 'Servidor de detecção offline. Inicie a API para habilitar detecção em tempo real.',
+    img_berry_method: '<strong style="color:var(--text-primary);">Método de estimativa de bagas:</strong> Estimado a partir da área do bounding box de cada cacho detectado. Cachos pequenos (~1% da área) ≈ 20 bagas, cachos grandes (~8%) ≈ 80 bagas. Interpolação linear, máximo 80/cacho. É uma aproximação — contagem real requer segmentação de instâncias.',
     editor_title: '✏️ Propriedades do Campo', editor_name: 'Nome', editor_name_ph: 'ex: Parcela Norte',
     editor_desc: 'Descrição', editor_desc_ph: 'Notas, variedade, observações...',
     editor_stage: 'Etapa de crescimento', editor_select: '— Selecionar —',
