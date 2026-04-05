@@ -1961,6 +1961,32 @@ function editDisplayName() {
         <div class="location-results" id="location-results"></div>
       </div>
 
+      <!-- Toolbar: KMZ Upload + Draw Tools -->
+      <div class="map-toolbar collapsed" id="map-toolbar">
+        <button class="toolbar-toggle" id="toolbar-toggle" onclick="var tb=document.getElementById('map-toolbar');tb.classList.toggle('collapsed');this.querySelector('.tgl-arrow').textContent=tb.classList.contains('collapsed')?'▸':'▾'">
+          🗂 <span data-i18n="layers">Layers</span> &amp; Tools <span class="tgl-arrow">▸</span>
+        </button>
+        <span class="toolbar-label" data-i18n="layers">Layers</span>
+        <button class="tb-btn" onclick="document.getElementById('kmz-file-input').click()">
+          📂 <span data-i18n="upload_kmz">Upload KMZ/KML</span>
+        </button>
+        <input type="file" id="kmz-file-input" accept=".kmz,.kml" onchange="handleKMZUpload(event)">
+        <div class="tb-divider"></div>
+        <span class="toolbar-label" data-i18n="draw">Draw</span>
+        <button class="tb-btn" id="btn-draw-poly" onclick="toggleDraw('Polygon')">✏️ <span data-i18n="polygon_btn">Polygon</span></button>
+        <button class="tb-btn" id="btn-draw-marker" onclick="toggleDraw('Marker')">📍 <span data-i18n="point_btn">Point</span></button>
+        <div class="tb-divider"></div>
+        <button class="tb-btn" id="btn-edit" onclick="toggleEdit()">🖊 <span data-i18n="edit">Edit</span></button>
+        <button class="tb-btn danger" id="btn-delete" onclick="toggleDelete()">🗑 <span data-i18n="delete">Delete</span></button>
+        <div class="tb-divider"></div>
+        <button class="tb-btn" onclick="exportKML()">⬇️ <span data-i18n="export_kml">Export KML</span></button>
+        <div class="tb-divider"></div>
+        <span class="toolbar-label">Base:</span>
+        <button class="tb-btn active" id="base-satellite" onclick="setBaseMap('satellite',this)">🛰️ Satellite</button>
+        <button class="tb-btn" id="base-streets" onclick="setBaseMap('streets',this)">🗺️ Streets</button>
+        <button class="tb-btn" id="base-hybrid" onclick="setBaseMap('hybrid',this)">🌐 Hybrid</button>
+      </div>
+
       <!-- GEE Layer Controls (shown after connect) -->
       <div class="gee-layer-controls collapsed-ctrl" id="gee-layer-controls">
         <div class="gee-ctrl-toggle-wrap">
@@ -2069,32 +2095,6 @@ function editDisplayName() {
         <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:6px;">
           💡 <span data-i18n="gee_sentinel_info">Sentinel-2 SR Harmonized · 10m resolution · Auto cloud masking (QA60) · Polygon area only</span>
         </div>
-      </div>
-
-      <!-- Toolbar: KMZ Upload + Draw Tools -->
-      <div class="map-toolbar collapsed" id="map-toolbar">
-        <button class="toolbar-toggle" id="toolbar-toggle" onclick="var tb=document.getElementById('map-toolbar');tb.classList.toggle('collapsed');this.querySelector('.tgl-arrow').textContent=tb.classList.contains('collapsed')?'▸':'▾'">
-          🗂 <span data-i18n="layers">Layers</span> &amp; Tools <span class="tgl-arrow">▸</span>
-        </button>
-        <span class="toolbar-label" data-i18n="layers">Layers</span>
-        <button class="tb-btn" onclick="document.getElementById('kmz-file-input').click()">
-          📂 <span data-i18n="upload_kmz">Upload KMZ/KML</span>
-        </button>
-        <input type="file" id="kmz-file-input" accept=".kmz,.kml" onchange="handleKMZUpload(event)">
-        <div class="tb-divider"></div>
-        <span class="toolbar-label" data-i18n="draw">Draw</span>
-        <button class="tb-btn" id="btn-draw-poly" onclick="toggleDraw('Polygon')">✏️ <span data-i18n="polygon_btn">Polygon</span></button>
-        <button class="tb-btn" id="btn-draw-marker" onclick="toggleDraw('Marker')">📍 <span data-i18n="point_btn">Point</span></button>
-        <div class="tb-divider"></div>
-        <button class="tb-btn" id="btn-edit" onclick="toggleEdit()">🖊 <span data-i18n="edit">Edit</span></button>
-        <button class="tb-btn danger" id="btn-delete" onclick="toggleDelete()">🗑 <span data-i18n="delete">Delete</span></button>
-        <div class="tb-divider"></div>
-        <button class="tb-btn" onclick="exportKML()">⬇️ <span data-i18n="export_kml">Export KML</span></button>
-        <div class="tb-divider"></div>
-        <span class="toolbar-label">Base:</span>
-        <button class="tb-btn active" id="base-satellite" onclick="setBaseMap('satellite',this)">🛰️ Satellite</button>
-        <button class="tb-btn" id="base-streets" onclick="setBaseMap('streets',this)">🗺️ Streets</button>
-        <button class="tb-btn" id="base-hybrid" onclick="setBaseMap('hybrid',this)">🌐 Hybrid</button>
       </div>
 
       <!-- Index Selector + GEE Badge -->
