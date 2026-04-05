@@ -314,13 +314,20 @@
   .chat-full-sidebar {
     width: 260px; min-width: 260px; background: var(--sidebar-bg);
     border-right: 1px solid var(--border); display: flex; flex-direction: column;
+    transition: width 0.2s, min-width 0.2s;
   }
+  .chat-full-sidebar.collapsed { width: 0; min-width: 0; overflow: hidden; border-right: none; }
+  .chat-sidebar-toggle {
+    background: none; border: none; color: var(--accent); font-size: 0.85rem;
+    cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: background 0.15s;
+  }
+  .chat-sidebar-toggle:hover { background: rgba(82,183,136,0.1); }
   .chat-full-sidebar .chat-sidebar-header {
     padding: 14px 16px; border-bottom: 1px solid var(--border);
     display: flex; align-items: center; justify-content: space-between;
   }
   .chat-full-sidebar .chat-sidebar-header h3 { font-size: 0.9rem; color: var(--text-primary); }
-  .chat-full-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .chat-full-main { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
 
   @media (max-width: 768px) {
     .chat-full-sidebar { display: none; }
@@ -2995,14 +3002,18 @@ function editDisplayName() {
     <!-- ═══════════════ SECTION 8: AI CHAT (full page) ═══════════════ -->
     <section id="section-chat" class="section">
       <div class="chat-full-layout">
-        <div class="chat-full-sidebar">
+        <div class="chat-full-sidebar" id="chat-full-sidebar">
           <div class="chat-sidebar-header">
             <h3 data-i18n="chat_conversations">Conversations</h3>
-            <button class="chat-new-btn" onclick="chatNewConversation()" data-i18n="chat_new">+ New</button>
+            <div style="display:flex;gap:6px;">
+              <button class="chat-new-btn" onclick="chatNewConversation()" data-i18n="chat_new">+ New</button>
+              <button class="chat-sidebar-toggle" onclick="document.getElementById('chat-full-sidebar').classList.add('collapsed');document.getElementById('chat-sidebar-show').style.display=''" title="Hide">◀</button>
+            </div>
           </div>
           <div class="chat-conv-list" id="chat-full-conv-list"></div>
         </div>
         <div class="chat-full-main">
+          <button id="chat-sidebar-show" class="chat-sidebar-toggle" style="display:none;position:absolute;left:4px;top:8px;z-index:10;font-size:1rem;" onclick="document.getElementById('chat-full-sidebar').classList.remove('collapsed');this.style.display='none'" title="Show conversations">☰</button>
           <div class="chat-messages" id="chat-full-messages">
             <div class="chat-welcome" id="chat-full-welcome">
               <h2><img src="logo.png" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;">AgrAgent</h2>
