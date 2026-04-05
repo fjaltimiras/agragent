@@ -4865,11 +4865,22 @@ function runYieldPrediction() {
     ? harvestDate.toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' })
     : 'Insufficient data';
 
-  // ── Feature importance for display (sorted) ──
+  // ── Feature importance: effective contribution (weight × normalized value) ──
+  const contributions = {};
+  let totalContrib = 0;
+  for (const k in weights) {
+    contributions[k] = weights[k] * (features[k] || 0);
+    totalContrib += contributions[k];
+  }
   const featureImportance = Object.entries(weights)
-    .map(([k, w]) => ({ name: k, weight: w, value: features[k] || 0 }))
-    .sort((a, b) => b.weight - a.weight)
-    .slice(0, 8);
+    .map(([k, w]) => ({
+      name: k,
+      weight: w,
+      value: features[k] || 0,
+      contribution: totalContrib > 0 ? contributions[k] / totalContrib : w
+    }))
+    .sort((a, b) => b.contribution - a.contribution)
+    .slice(0, 10);
 
   console.log('🍇 Yield prediction:', { yieldPerHa, totalYield, ci, harvestStr, score, features });
 
@@ -4890,16 +4901,18 @@ function updateYieldSection(p) {
   // Feature importance bars
   const fiEl = el('yield-feature-importance');
   if (fiEl) {
-    const colors = ['var(--accent)', '#60a5fa', '#f87171', '#4ade80', '#a78bfa', '#fb923c', '#fbbf24', '#e879f9'];
+    const colors = ['var(--accent)', '#60a5fa', '#f87171', '#4ade80', '#a78bfa', '#fb923c', '#fbbf24', '#e879f9', '#38bdf8', '#fb7185'];
+    const maxContrib = p.featureImportance[0]?.contribution || 1;
     fiEl.innerHTML = p.featureImportance.map((f, i) => {
-      const pct = (f.weight * 100 / p.featureImportance[0].weight * 100 / 100).toFixed(0);
+      const pct = Math.round((f.contribution / maxContrib) * 100);
       const label = {
         precipitation: 'Precipitation', gdd: 'GDD Accumulated', maxTemp: 'Max Temperature',
         ndvi: 'NDVI', ndre: 'NDRE', msavi: 'MSAVI', tcari: 'TCARI', chillHours: 'Chill Hours',
         evi: 'EVI', humidity: 'Humidity', et0: 'ET₀', solarRad: 'Solar Radiation',
         ndmi: 'NDMI', frostDays: 'Frost Days', heatWaves: 'Heat Waves'
       }[f.name] || f.name;
-      return `<div class="hbar-row"><div class="hbar-label">${label} <span>${f.weight.toFixed(3)}</span></div><div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${colors[i % colors.length]}"></div></div></div>`;
+      const contribPct = (f.contribution * 100).toFixed(1);
+      return `<div class="hbar-row"><div class="hbar-label">${label} <span>${contribPct}%</span></div><div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${colors[i % colors.length]}"></div></div></div>`;
     }).join('');
   }
 
