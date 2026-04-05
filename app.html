@@ -693,16 +693,17 @@
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 14px 18px;
-    margin-bottom: 16px;
+    padding: 8px 14px;
+    margin-bottom: 10px;
   }
+  .map-legend .card-title { font-size: 0.75rem; margin-bottom: 4px; }
   .legend-gradient {
-    height: 16px;
-    border-radius: 8px;
+    height: 10px;
+    border-radius: 5px;
     background: linear-gradient(to right, #d73027, #fc8d59, #fee08b, #91cf60, #1a9850);
-    margin: 8px 0;
+    margin: 4px 0;
   }
-  .legend-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-secondary); }
+  .legend-labels { display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-secondary); }
 
   .map-source-badge {
     font-size: 0.75rem;
@@ -1501,8 +1502,11 @@
 
     /* Legend + Layer list stack */
     .grid-2 { grid-template-columns: 1fr; gap: 10px; }
-    .legend-labels { font-size: 0.62rem; }
-    #legend-formula { font-size: 0.62rem; }
+    .map-legend { padding: 6px 10px; }
+    .map-legend .card-title { font-size: 0.68rem; }
+    .legend-gradient { height: 8px; }
+    .legend-labels { font-size: 0.55rem; gap: 2px; }
+    #legend-formula { font-size: 0.55rem; }
 
     /* Layer list */
     .layer-item { padding: 7px 10px; font-size: 0.75rem; gap: 6px; }
@@ -2175,7 +2179,7 @@ function editDisplayName() {
           <div class="legend-labels" id="legend-labels">
             <span>0.0 (Sin veg.)</span><span>0.3</span><span>0.6</span><span>0.8</span><span>0.9 (Alta)</span>
           </div>
-          <div style="font-size:0.7rem;color:var(--text-secondary);margin-top:8px;" id="legend-formula">
+          <div style="font-size:0.62rem;color:var(--text-secondary);margin-top:4px;" id="legend-formula">
             Fórmula: (NIR − RED) / (NIR + RED) · Bandas B8, B4
           </div>
         </div>
