@@ -3695,6 +3695,49 @@ async function updateLocationName(lat, lng) {
   }
 }
 
+// Called when polygons are removed or edited — resets or recalculates all sections
+function onPolygonChanged() {
+  if (kmlRawCoords.length === 0) {
+    // No polygons left — reset everything
+    agClimate = {};
+    agIndices = {};
+    agAreaHa = 0;
+    climateDataLoaded = false;
+    histDataLoaded = false;
+
+    // Reset dashboard
+    const dashEmpty = document.getElementById('dash-empty');
+    const dashContent = document.getElementById('dash-content');
+    if (dashEmpty) dashEmpty.style.display = '';
+    if (dashContent) dashContent.style.display = 'none';
+    const dashSatRow = document.getElementById('dashSatYieldRow');
+    if (dashSatRow) dashSatRow.style.display = 'none';
+
+    // Reset yield section
+    const yieldEmpty = document.getElementById('yield-empty');
+    const yieldContent = document.getElementById('yield-content');
+    if (yieldEmpty) yieldEmpty.style.display = '';
+    if (yieldContent) yieldContent.style.display = 'none';
+
+    // Reset header location
+    document.getElementById('location-label').textContent = '';
+
+    // Remove GEE layer
+    if (geeLayer) { vineMap.removeLayer(geeLayer); geeLayer = null; }
+
+    // Reset climate section
+    ['kpiGDD','kpiChill','kpiFrost','kpiHeatWave','kpiDry','kpiHumidity','kpiSolar','kpiET'].forEach(id => {
+      const e = document.getElementById(id);
+      if (e) e.textContent = '—';
+    });
+
+    return;
+  }
+  // Polygons still exist — recalculate with updated geometry
+  onPolygonAdded();
+  if (geeConnected) loadGEELayer(currentGEEIndex);
+}
+
 // Called when polygons are added (upload or draw)
 function onPolygonAdded() {
   if (kmlRawCoords.length === 0) return;
@@ -5747,6 +5790,7 @@ function deleteLayer(i) {
   userLayers.splice(i, 1);
   rebuildKmlRawCoords();
   renderLayerList();
+  onPolygonChanged();
 }
 
 // ═══════════════════════════════════════
@@ -5789,6 +5833,7 @@ function initGeoman() {
       userLayers.splice(idx, 1);
       rebuildKmlRawCoords();
       renderLayerList();
+      onPolygonChanged();
     } else {
       // Layer not in userLayers (orphan) — just remove from map
       if (vineMap.hasLayer(e.layer)) vineMap.removeLayer(e.layer);
@@ -5800,7 +5845,7 @@ function initGeoman() {
     if (!e.enabled) {
       rebuildKmlRawCoords();
       renderLayerList();
-      if (geeConnected && kmlRawCoords.length > 0) loadGEELayer(currentGEEIndex);
+      onPolygonChanged();
     }
   });
 }
