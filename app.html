@@ -3110,6 +3110,7 @@ const i18n = {
     img_upload_title: '📤 Analyze your own image', img_upload_text: 'Drag or click to upload a vineyard image', img_upload_sub: 'Accepts .jpg · .png · .tiff — Max 50MB',
     img_loading: 'Loading image and annotations...', img_clusters_detected: 'Clusters detected', img_berries_est: 'Berries estimated',
     img_annotations: 'Annotations: YOLO (bounding box)', img_resolution: 'Resolution: 2048 × 1365 px', img_data_source: 'Data:', img_show_bbox: 'Show bounding boxes',
+    img_analyzing: 'Analyzing image with YOLOv11...', img_api_offline: 'Detection server offline. Start the API to enable real-time detection.',
     editor_title: '✏️ Field Properties', editor_name: 'Name', editor_name_ph: 'e.g. North Parcel',
     editor_desc: 'Description', editor_desc_ph: 'Notes, variety, observations...',
     editor_stage: 'Growth stage', editor_select: '— Select —',
@@ -3232,6 +3233,7 @@ const i18n = {
     img_upload_title: '📤 Analizar imagen propia', img_upload_text: 'Arrastra o haz clic para subir imagen de viñedo', img_upload_sub: 'Acepta .jpg · .png · .tiff — Máx 50MB',
     img_loading: 'Cargando imagen y anotaciones...', img_clusters_detected: 'Racimos detectados', img_berries_est: 'Bayas estimadas',
     img_annotations: 'Anotaciones: YOLO (bounding box)', img_resolution: 'Resolución: 2048 × 1365 px', img_data_source: 'Datos:', img_show_bbox: 'Mostrar bounding boxes',
+    img_analyzing: 'Analizando imagen con YOLOv11...', img_api_offline: 'Servidor de detección offline. Inicia la API para habilitar detección en tiempo real.',
     editor_title: '✏️ Propiedades del Campo', editor_name: 'Nombre', editor_name_ph: 'ej: Parcela Norte',
     editor_desc: 'Descripción', editor_desc_ph: 'Notas, variedad, observaciones...',
     editor_stage: 'Etapa de crecimiento', editor_select: '— Seleccionar —',
@@ -3349,6 +3351,7 @@ const i18n = {
     img_upload_title: '📤 Analisar imagem própria', img_upload_text: 'Arraste ou clique para carregar imagem do vinhedo', img_upload_sub: 'Aceita .jpg · .png · .tiff — Máx 50MB',
     img_loading: 'Carregando imagem e anotações...', img_clusters_detected: 'Cachos detectados', img_berries_est: 'Bagas estimadas',
     img_annotations: 'Anotações: YOLO (bounding box)', img_resolution: 'Resolução: 2048 × 1365 px', img_data_source: 'Dados:', img_show_bbox: 'Mostrar bounding boxes',
+    img_analyzing: 'Analisando imagem com YOLOv11...', img_api_offline: 'Servidor de detecção offline. Inicie a API para habilitar detecção em tempo real.',
     editor_title: '✏️ Propriedades do Campo', editor_name: 'Nome', editor_name_ph: 'ex: Parcela Norte',
     editor_desc: 'Descrição', editor_desc_ph: 'Notas, variedade, observações...',
     editor_stage: 'Etapa de crescimento', editor_select: '— Selecionar —',
@@ -5715,38 +5718,112 @@ window.addEventListener('resize', () => {
 // ═══════════════════════════════════════
 // UPLOAD & ANALYZE OWN IMAGE
 // ═══════════════════════════════════════
-function analyzeUploadedImage(event) {
+// Detection API endpoint (agro-agent backend)
+const DETECT_API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:8000/api/detect' : 'https://api.agragent.com/api/detect';
+
+async function analyzeUploadedImage(event) {
   const file = event.target.files[0];
   if (!file) return;
   const resultEl = document.getElementById('upload-result');
   resultEl.style.display = 'block';
   resultEl.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:10px;color:var(--yellow);">
-    <div class="map-spinner" style="width:20px;height:20px;border-width:2px;"></div> Analizando imagen...</div>`;
+    <div class="map-spinner" style="width:20px;height:20px;border-width:2px;"></div> <span data-i18n="img_analyzing">${t('img_analyzing')}</span></div>`;
 
-  const reader = new FileReader();
-  reader.onload = e => {
-    setTimeout(() => {
-      const clusters = Math.floor(Math.random() * 18) + 5;
-      const berries  = clusters * Math.floor(Math.random() * 30 + 30);
-      const health   = ['Buena','Buena','Buena','Media','Baja'][Math.floor(Math.random()*5)];
-      const stage    = ['Floración','Cuaja','Envero','Madurez'][Math.floor(Math.random()*4)];
-      const badgeClass = health === 'Buena' ? 'badge-green' : health === 'Media' ? 'badge-yellow' : 'badge-red';
-      resultEl.innerHTML = `
-        <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;">
-          <img src="${e.target.result}" style="width:180px;height:130px;object-fit:cover;border-radius:8px;border:1px solid var(--border);">
-          <div>
-            <div style="font-weight:700;margin-bottom:10px;">${file.name}</div>
-            <div class="img-meta-row"><span class="img-meta-label">Racimos detectados</span><span class="img-meta-val">${clusters}</span></div>
-            <div class="img-meta-row"><span class="img-meta-label">Bayas estimadas</span><span class="img-meta-val">${berries}</span></div>
-            <div class="img-meta-row"><span class="img-meta-label">Etapa fenológica</span><span class="img-meta-val">${stage}</span></div>
-            <div class="img-meta-row"><span class="img-meta-label">Salud del racimo</span><span class="badge ${badgeClass}">${health}</span></div>
-            <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:8px;">Modelo basado en WGISD · Embrapa</div>
-          </div>
-        </div>`;
-    }, 1800);
-  };
-  reader.readAsDataURL(file);
+  // Read file as data URL for preview
+  const dataUrl = await new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result);
+    reader.readAsDataURL(file);
+  });
+
+  // Try API inference first
+  let apiResult = null;
+  try {
+    const formData = new FormData();
+    formData.append('image', file);
+    const resp = await fetch(DETECT_API, { method: 'POST', body: formData });
+    if (resp.ok) apiResult = await resp.json();
+  } catch (e) {
+    console.log('Detection API not available, using local analysis');
+  }
+
+  const boxes = apiResult ? apiResult.boxes : [];
+  const clusters = apiResult ? apiResult.count : 0;
+  const berries = apiResult ? apiResult.berries_est : 0;
+  const modelName = apiResult ? apiResult.model : 'API offline';
+  const hasDetections = clusters > 0;
+
+  // Render result with canvas for bounding boxes
+  const uniqueId = 'upload-' + Date.now();
+  resultEl.innerHTML = `
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;">
+      <div style="position:relative;width:320px;max-width:100%;">
+        <img id="${uniqueId}-img" src="${dataUrl}" style="width:100%;border-radius:8px;border:1px solid var(--border);display:block;" crossorigin="anonymous">
+        <canvas id="${uniqueId}-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></canvas>
+      </div>
+      <div>
+        <div style="font-weight:700;margin-bottom:10px;">${file.name}</div>
+        <div class="img-meta-row"><span class="img-meta-label">${t('img_clusters_detected')}</span><span class="img-meta-val" style="color:var(--accent);font-weight:700;">${clusters}</span></div>
+        <div class="img-meta-row"><span class="img-meta-label">${t('img_berries_est')}</span><span class="img-meta-val">${berries}</span></div>
+        ${hasDetections ? `<div class="img-meta-row"><span class="img-meta-label">${t('yield_th_best')}</span><span class="img-meta-val">${(Math.max(...boxes.map(b => b.confidence)) * 100).toFixed(1)}%</span></div>` : ''}
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="badge badge-accent">YOLOv11 · WGISD</span>
+          <span class="badge" style="background:rgba(96,165,250,0.15);color:#60a5fa;">${modelName}</span>
+        </div>
+        ${!apiResult ? `<div style="font-size:0.75rem;color:var(--yellow);margin-top:10px;">⚠ ${t('img_api_offline')}</div>` : ''}
+        ${hasDetections ? `<div style="margin-top:10px;"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;color:var(--text-secondary);">
+          <input type="checkbox" checked onchange="toggleUploadBBoxes('${uniqueId}', this.checked, ${JSON.stringify(boxes).replace(/"/g,'&quot;')})">
+          ${t('img_show_bbox')}</label></div>` : ''}
+      </div>
+    </div>`;
+
+  // Draw bounding boxes on canvas after image loads
+  if (hasDetections) {
+    const img = document.getElementById(`${uniqueId}-img`);
+    const drawOnLoad = () => {
+      const canvas = document.getElementById(`${uniqueId}-canvas`);
+      canvas.width = img.clientWidth;
+      canvas.height = img.clientHeight;
+      drawUploadBoxes(canvas, img, boxes);
+    };
+    if (img.complete) drawOnLoad();
+    else img.onload = drawOnLoad;
+  }
+
   event.target.value = '';
+}
+
+function drawUploadBoxes(canvas, img, boxes) {
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = '#52b788';
+  ctx.lineWidth = 2;
+  ctx.fillStyle = 'rgba(82,183,136,0.12)';
+  ctx.font = '11px sans-serif';
+
+  boxes.forEach(({ cx, cy, w, h, confidence }) => {
+    const x = (cx - w / 2) * canvas.width;
+    const y = (cy - h / 2) * canvas.height;
+    const bw = w * canvas.width;
+    const bh = h * canvas.height;
+    ctx.fillRect(x, y, bw, bh);
+    ctx.strokeRect(x, y, bw, bh);
+    if (confidence) {
+      ctx.fillStyle = 'rgba(10,18,24,0.7)';
+      ctx.fillRect(x, y - 16, 42, 16);
+      ctx.fillStyle = '#52b788';
+      ctx.fillText((confidence * 100).toFixed(0) + '%', x + 3, y - 4);
+      ctx.fillStyle = 'rgba(82,183,136,0.12)';
+    }
+  });
+}
+
+function toggleUploadBBoxes(id, show, boxes) {
+  const canvas = document.getElementById(`${id}-canvas`);
+  const img = document.getElementById(`${id}-img`);
+  if (show) drawUploadBoxes(canvas, img, boxes);
+  else canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 }
 
 // ═══════════════════════════════════════
