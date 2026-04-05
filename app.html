@@ -2417,48 +2417,11 @@ function editDisplayName() {
         </div>
       </div>
 
-      <!-- Gauge + DEG count chart -->
-      <div class="grid-2 mb-20">
-        <div class="card" style="text-align:center;">
-          <div class="card-title">Phenological Stage Progress</div>
-          <div id="pheno-gauge-container">
-            <div class="gauge-container" style="margin-top:16px;">
-              <svg class="gauge-svg" viewBox="0 0 180 180" width="180" height="180">
-                <circle cx="90" cy="90" r="70" fill="none" stroke="rgba(30,58,46,0.8)" stroke-width="14"/>
-                <circle id="pheno-gauge-arc" cx="90" cy="90" r="70" fill="none" stroke="var(--text-secondary)" stroke-width="14"
-                  stroke-dasharray="439.8" stroke-dashoffset="439.8" stroke-linecap="round"/>
-              </svg>
-              <div class="gauge-label">
-                <div class="pct" id="pheno-pct">—</div>
-                <div class="glabel" id="pheno-glabel">Waiting<br>for data</div>
-              </div>
-            </div>
-            <div style="margin-top:12px;">
-              <div style="font-size:1rem;font-weight:700;" id="pheno-stage-name">—</div>
-              <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:2px;" id="pheno-stage-sub">Upload a field to calculate</div>
-            </div>
-          </div>
-          <!-- Stage timeline — updated dynamically -->
-          <div class="stage-timeline" style="margin-top:20px;" id="pheno-timeline">
-            <div class="stage-dot-wrap"><div class="stage-dot" id="dot-el3"></div><div class="stage-label">EL 3<br><small>Bud</small></div></div>
-            <div class="stage-line" id="line-el3"></div>
-            <div class="stage-dot-wrap"><div class="stage-dot" id="dot-el15"></div><div class="stage-label">EL 15<br><small>Inflor.</small></div></div>
-            <div class="stage-line" id="line-el15"></div>
-            <div class="stage-dot-wrap"><div class="stage-dot" id="dot-el27"></div><div class="stage-label">EL 27<br><small>Berry</small></div></div>
-            <div class="stage-line" id="line-el27"></div>
-            <div class="stage-dot-wrap"><div class="stage-dot" id="dot-el35"></div><div class="stage-label">EL 35<br><small>Veraison</small></div></div>
-            <div class="stage-line" id="line-el35"></div>
-            <div class="stage-dot-wrap"><div class="stage-dot" id="dot-el38"></div><div class="stage-label">EL 38<br><small>Ripen</small></div></div>
-            <div class="stage-line" id="line-el38"></div>
-            <div class="stage-dot-wrap"><div class="stage-dot" id="dot-el41"></div><div class="stage-label">EL 41<br><small>Senesc.</small></div></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">DEGs per Developmental Stage (vs. E-L 3 baseline)</div>
-          <div class="chart-wrap tall">
-            <canvas id="degStageChart"></canvas>
-          </div>
+      <!-- DEG count chart -->
+      <div class="card mb-20">
+        <div class="card-title">DEGs per Developmental Stage (vs. E-L 3 baseline)</div>
+        <div class="chart-wrap tall">
+          <canvas id="degStageChart"></canvas>
         </div>
       </div>
 
