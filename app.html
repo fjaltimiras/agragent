@@ -70,10 +70,10 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 11px 20px;
+    padding: 13px 20px;
     cursor: pointer;
     color: var(--text-secondary);
-    font-size: 0.88rem;
+    font-size: 0.92rem;
     font-weight: 500;
     border-left: 3px solid transparent;
     transition: all 0.2s;
@@ -653,15 +653,16 @@
     margin-right: 2px;
   }
   .index-btn {
-    padding: 6px 14px;
-    border-radius: 6px;
+    padding: 8px 14px;
+    border-radius: 8px;
     border: 1px solid var(--border);
     background: transparent;
     color: var(--text-secondary);
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    min-height: 38px;
   }
   .index-btn:hover { border-color: var(--accent); color: var(--accent); }
   .index-btn.active { background: var(--accent); color: #0a1218; border-color: var(--accent); }
@@ -1481,9 +1482,9 @@
 
     /* Index groups — horizontal scroll */
     .map-controls { padding: 8px 10px; gap: 6px; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
-    .index-group { flex-shrink: 0; padding: 2px 4px; gap: 2px; }
-    .index-group-label { font-size: 0.6rem; }
-    .index-btn { padding: 4px 8px; font-size: 0.68rem; }
+    .index-group { flex-shrink: 0; padding: 2px 4px; gap: 4px; }
+    .index-group-label { font-size: 0.65rem; }
+    .index-btn { padding: 8px 12px; font-size: 0.75rem; min-height: 40px; }
 
     /* Map toolbar — collapsible on mobile */
     .toolbar-toggle { display: block; }
@@ -1493,7 +1494,7 @@
     .map-toolbar.collapsed .tb-divider,
     .map-toolbar.collapsed input[type="file"] { display: none !important; }
     .map-toolbar .toolbar-label { font-size: 0.65rem; margin-right: 0; }
-    .tb-btn { padding: 5px 8px; font-size: 0.72rem; gap: 4px; }
+    .tb-btn { padding: 10px 12px; font-size: 0.78rem; gap: 4px; min-height: 42px; }
     .tb-divider { margin: 0 2px; }
 
     /* Map container */
@@ -1753,28 +1754,28 @@ function editDisplayName() {
   <div class="sidebar-logo"><img src="agragent.png" alt="agragent logo" style="height:36px;"></div>
   <div class="sidebar-nav">
     <div class="nav-item active" data-section="dashboard">
-      <span class="nav-icon">📊</span> <span data-i18n="nav_dashboard">Dashboard</span>
+      <span class="nav-icon">📊</span> <span data-i18n="nav_dashboard">My Field</span>
     </div>
     <div class="nav-item" data-section="maps">
-      <span class="nav-icon">🗺️</span> <span data-i18n="nav_maps">Satellite Maps</span>
+      <span class="nav-icon">🗺️</span> <span data-i18n="nav_maps">Field Map</span>
     </div>
     <div class="nav-item" data-section="climate">
-      <span class="nav-icon">🌡️</span> <span data-i18n="nav_climate">Climate Data</span>
+      <span class="nav-icon">🌡️</span> <span data-i18n="nav_climate">Weather & Climate</span>
     </div>
     <div class="nav-item" data-section="genomic">
-      <span class="nav-icon">🧬</span> <span data-i18n="nav_genomic">Genomic Analysis</span>
+      <span class="nav-icon">🧬</span> <span data-i18n="nav_genomic">Crop Genetics</span>
     </div>
     <div class="nav-item" data-section="images">
-      <span class="nav-icon">📸</span> <span data-i18n="nav_images">Image Analysis</span>
+      <span class="nav-icon">📸</span> <span data-i18n="nav_images">Vineyard Photos</span>
     </div>
     <div class="nav-item" data-section="yield">
-      <span class="nav-icon">🌾</span> <span data-i18n="nav_yield">Yield Prediction</span>
+      <span class="nav-icon">🌾</span> <span data-i18n="nav_yield">Harvest Forecast</span>
     </div>
     <div class="nav-item" data-section="chat">
-      <span class="nav-icon"><img src="logo.png" alt="" style="width:18px;height:18px;border-radius:50%;object-fit:cover;vertical-align:middle;"></span> <span data-i18n="nav_chat">AI Assistant</span>
+      <span class="nav-icon"><img src="logo.png" alt="" style="width:18px;height:18px;border-radius:50%;object-fit:cover;vertical-align:middle;"></span> <span data-i18n="nav_chat">Ask AgrAgent</span>
     </div>
     <div class="nav-item" data-section="references">
-      <span class="nav-icon">📚</span> <span data-i18n="nav_references">References</span>
+      <span class="nav-icon">📚</span> <span data-i18n="nav_references">About</span>
     </div>
   </div>
   <div class="sidebar-footer" style="flex-wrap:wrap;gap:10px;">
@@ -1811,10 +1812,15 @@ function editDisplayName() {
     <section id="section-dashboard" class="section active">
 
       <!-- Empty state -->
-      <div id="dash-empty" class="card" style="text-align:center;padding:60px 20px;">
-        <div style="font-size:2.5rem;margin-bottom:12px;">📍</div>
-        <div style="font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:8px;" data-i18n="welcome_title">Welcome to agragent</div>
-        <div style="font-size:0.85rem;color:var(--text-secondary);max-width:420px;margin:0 auto;line-height:1.7;" data-i18n="welcome_text">To get started, go to <strong style="color:var(--accent)">Satellite Maps</strong> and upload a KML/KMZ file or draw a polygon over your field. The dashboard will update automatically with real data from the location.</div>
+      <div id="dash-empty" class="card" style="text-align:center;padding:50px 20px;">
+        <div style="font-size:2.5rem;margin-bottom:12px;">🌾</div>
+        <div style="font-size:1.2rem;font-weight:700;color:var(--text-primary);margin-bottom:12px;" data-i18n="welcome_title">Welcome to AgrAgent</div>
+        <div style="font-size:0.95rem;color:var(--text-secondary);max-width:460px;margin:0 auto;line-height:1.8;" data-i18n="welcome_text">Mark your field on the map to get started. We'll show you satellite images, weather data, and a harvest forecast for your vineyard.</div>
+        <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;max-width:340px;margin-left:auto;margin-right:auto;text-align:left;">
+          <div style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:var(--text-secondary);"><span style="font-size:1.2rem;">1️⃣</span> Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection('maps')">Field Map</strong></div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:var(--text-secondary);"><span style="font-size:1.2rem;">2️⃣</span> Upload a file or draw your field boundaries</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:var(--text-secondary);"><span style="font-size:1.2rem;">3️⃣</span> All data updates automatically</div>
+        </div>
       </div>
 
       <!-- Dashboard content (hidden until polygon loaded) -->
@@ -1972,8 +1978,8 @@ function editDisplayName() {
         <div class="gee-panel-left">
           <span class="gee-icon">🌍</span>
           <div>
-            <div class="gee-title">Google Earth Engine</div>
-            <div class="gee-sub" id="gee-auto-sub" data-i18n="gee_auto_sub">Conectando automáticamente a Sentinel-2...</div>
+            <div class="gee-title">Satellite Connection</div>
+            <div class="gee-sub" id="gee-auto-sub" data-i18n="gee_auto_sub">Connecting to satellite images...</div>
           </div>
         </div>
         <div id="gee-status" class="gee-status"></div>
@@ -1990,11 +1996,11 @@ function editDisplayName() {
       <!-- Toolbar: KMZ Upload + Draw Tools -->
       <div class="map-toolbar collapsed" id="map-toolbar">
         <button class="toolbar-toggle" id="toolbar-toggle" onclick="var tb=document.getElementById('map-toolbar');tb.classList.toggle('collapsed');this.querySelector('.tgl-arrow').textContent=tb.classList.contains('collapsed')?'▸':'▾'">
-          🗂 <span data-i18n="layers">Layers</span> &amp; Tools <span class="tgl-arrow">▸</span>
+          🗂 <span data-i18n="layers">My Fields</span> &amp; Tools <span class="tgl-arrow">▸</span>
         </button>
         <span class="toolbar-label" data-i18n="layers">Layers</span>
         <button class="tb-btn" onclick="document.getElementById('kmz-file-input').click()">
-          📂 <span data-i18n="upload_kmz">Upload KMZ/KML</span>
+          📂 <span data-i18n="upload_kmz">Upload Field File</span>
         </button>
         <input type="file" id="kmz-file-input" accept=".kmz,.kml" onchange="handleKMZUpload(event)">
         <div class="tb-divider"></div>
@@ -2005,7 +2011,7 @@ function editDisplayName() {
         <button class="tb-btn" id="btn-edit" onclick="toggleEdit()">🖊 <span data-i18n="edit">Edit</span></button>
         <button class="tb-btn danger" id="btn-delete" onclick="toggleDelete()">🗑 <span data-i18n="delete">Delete</span></button>
         <div class="tb-divider"></div>
-        <button class="tb-btn" onclick="exportKML()">⬇️ <span data-i18n="export_kml">Export KML</span></button>
+        <button class="tb-btn" onclick="exportKML()">⬇️ <span data-i18n="export_kml">Save Field</span></button>
         <div class="tb-divider"></div>
         <span class="toolbar-label">Base:</span>
         <button class="tb-btn active" id="base-satellite" onclick="setBaseMap('satellite',this)">🛰️ Satellite</button>
@@ -2017,7 +2023,7 @@ function editDisplayName() {
       <div class="gee-layer-controls collapsed-ctrl" id="gee-layer-controls">
         <div class="gee-ctrl-toggle-wrap">
           <button class="toolbar-toggle gee-ctrl-toggle" onclick="var c=document.getElementById('gee-layer-controls');c.classList.toggle('collapsed-ctrl');this.querySelector('.tgl-arrow').textContent=c.classList.contains('collapsed-ctrl')?'▸':'▾'">
-            🛰 Sentinel-2 Controls <span class="tgl-arrow">▸</span>
+            🛰 Satellite Settings <span class="tgl-arrow">▸</span>
           </button>
         </div>
         <!-- Row 1: date range, cloud, opacity, mode tabs -->
@@ -2119,7 +2125,7 @@ function editDisplayName() {
         </div>
 
         <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:6px;">
-          💡 <span data-i18n="gee_sentinel_info">Sentinel-2 SR Harmonized · 10m resolution · Auto cloud masking (QA60) · Polygon area only</span>
+          💡 <span data-i18n="gee_sentinel_info">Satellite images updated every 5 days · High resolution (10m) · Cloud-free</span>
         </div>
       </div>
 
@@ -2127,36 +2133,36 @@ function editDisplayName() {
       <div class="map-controls collapsed-ctrl" id="index-controls" style="flex-wrap:wrap;gap:6px 4px;">
         <div class="gee-ctrl-toggle-wrap" style="width:100%;">
           <button class="toolbar-toggle gee-ctrl-toggle" onclick="var c=document.getElementById('index-controls');c.classList.toggle('collapsed-ctrl');this.querySelector('.tgl-arrow').textContent=c.classList.contains('collapsed-ctrl')?'▸':'▾'">
-            🌿 Vegetation Indices <span class="tgl-arrow">▸</span>
+            🌿 What to see on the map <span class="tgl-arrow">▸</span>
           </button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">🌿 Vigor</span>
-          <button class="index-btn active" onclick="setIndex(this,'NDVI')">NDVI</button>
-          <button class="index-btn" onclick="setIndex(this,'EVI')">EVI</button>
-          <button class="index-btn" onclick="setIndex(this,'SAVI')">SAVI</button>
-          <button class="index-btn" onclick="setIndex(this,'MSAVI')">MSAVI</button>
+          <span class="index-group-label">🌿 Plant Vigor</span>
+          <button class="index-btn active" onclick="setIndex(this,'NDVI')" title="Overall plant health">Health</button>
+          <button class="index-btn" onclick="setIndex(this,'EVI')" title="Enhanced vigor for dense canopy">Vigor+</button>
+          <button class="index-btn" onclick="setIndex(this,'SAVI')" title="Vigor adjusted for bare soil">Young Vines</button>
+          <button class="index-btn" onclick="setIndex(this,'MSAVI')" title="Best for sparse vegetation">Sparse</button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">🧪 Salud</span>
-          <button class="index-btn" onclick="setIndex(this,'NDRE')">NDRE</button>
-          <button class="index-btn" onclick="setIndex(this,'GNDVI')">GNDVI</button>
-          <button class="index-btn" onclick="setIndex(this,'TCARI')">TCARI</button>
-          <button class="index-btn" onclick="setIndex(this,'CIRE')">CIre</button>
+          <span class="index-group-label">🧪 Crop Health</span>
+          <button class="index-btn" onclick="setIndex(this,'NDRE')" title="Nitrogen & chlorophyll status">Nutrition</button>
+          <button class="index-btn" onclick="setIndex(this,'GNDVI')" title="Early stress detection">Early Stress</button>
+          <button class="index-btn" onclick="setIndex(this,'TCARI')" title="Chlorophyll absorption">Chlorophyll</button>
+          <button class="index-btn" onclick="setIndex(this,'CIRE')" title="Chlorophyll concentration">N-Status</button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">💧 Agua</span>
-          <button class="index-btn" onclick="setIndex(this,'NDMI')">NDMI</button>
-          <button class="index-btn" onclick="setIndex(this,'NDWI')">NDWI</button>
+          <span class="index-group-label">💧 Water</span>
+          <button class="index-btn" onclick="setIndex(this,'NDMI')" title="Soil & plant moisture">Moisture</button>
+          <button class="index-btn" onclick="setIndex(this,'NDWI')" title="Water content in leaves">Leaf Water</button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">🟫 Suelo</span>
-          <button class="index-btn" onclick="setIndex(this,'BSI')">BSI</button>
+          <span class="index-group-label">🟫 Soil</span>
+          <button class="index-btn" onclick="setIndex(this,'BSI')" title="Detect bare soil areas">Bare Soil</button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">🎨 Visual</span>
-          <button class="index-btn" onclick="setIndex(this,'RGB')">Color Real</button>
-          <button class="index-btn" onclick="setIndex(this,'FALSE')">Falso Color</button>
+          <span class="index-group-label">🎨 Photo</span>
+          <button class="index-btn" onclick="setIndex(this,'RGB')" title="Real color photograph">Real Color</button>
+          <button class="index-btn" onclick="setIndex(this,'FALSE')" title="Infrared view highlighting vegetation">Infrared</button>
         </div>
         <div class="gee-connected-badge" id="gee-badge">
           <span class="gee-dot"></span> GEE Activo
@@ -2219,7 +2225,7 @@ function editDisplayName() {
       </div>
 
       <div class="alert-box" id="climateAlert">
-        <span data-i18n="climate_upload_msg">Upload a KML/KMZ or draw a polygon to load climate data for the location.</span>
+        <span data-i18n="climate_upload_msg">Mark your field on the map to see weather and climate data for your area.</span>
       </div>
 
       <!-- KPI Row 1 -->
@@ -2766,11 +2772,11 @@ function editDisplayName() {
       </div>
 
       <!-- Empty state -->
-      <div id="yield-empty" style="text-align:center;padding:60px 20px;color:var(--text-secondary);">
+      <div id="yield-empty" style="text-align:center;padding:50px 20px;color:var(--text-secondary);">
         <div style="font-size:2.5rem;margin-bottom:12px;">🍇</div>
-        <div style="font-size:1rem;font-weight:600;color:var(--text-primary);margin-bottom:8px;">Upload a polygon to predict yield</div>
-        <div style="font-size:0.85rem;max-width:400px;margin:0 auto;line-height:1.6;">
-          Go to <strong style="color:var(--accent);">Satellite Maps</strong> and upload a KML/KMZ or draw a polygon. The system will automatically compute satellite indices, climate data, and predict yield.
+        <div style="font-size:1.1rem;font-weight:600;color:var(--text-primary);margin-bottom:8px;">Mark your field to see your harvest forecast</div>
+        <div style="font-size:0.9rem;max-width:420px;margin:0 auto;line-height:1.7;">
+          Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection('maps')">Field Map</strong> and draw your vineyard boundaries. We'll calculate estimated yield, total production, and the best harvest date.
         </div>
       </div>
 
@@ -3024,51 +3030,51 @@ const i18n = {
     // Nav
     nav_dashboard: 'Dashboard', nav_maps: 'Satellite Maps', nav_climate: 'Climate Data',
     nav_genomic: 'Genomic Analysis', nav_images: 'Image Analysis', nav_yield: 'Yield Prediction',
-    nav_chat: 'AI Assistant', chat_conversations: 'Conversations', chat_new: '+ New',
-    chat_welcome_text: 'Ask me about climate data, satellite imagery, soil analysis, irrigation planning, or any agronomic question about your fields.',
+    nav_chat: 'Ask AgrAgent', chat_conversations: 'Conversations', chat_new: '+ New',
+    chat_welcome_text: 'Ask me about the weather, your vineyard health, watering, soil, or any question about your field.',
     chat_placeholder: 'Ask AgrAgent...',
-    chat_q1: 'What is the current NDVI status of my field?',
-    chat_q1_label: '🛰️ NDVI status',
-    chat_q2: 'Show me the climate summary for my area',
-    chat_q2_label: '🌤️ Climate summary',
-    chat_q3: 'Calculate an irrigation plan for my vineyard',
-    chat_q3_label: '💧 Irrigation plan',
-    chat_q4: 'Analyze soil conditions and recommend fertilization',
-    chat_q4_label: '🧪 Soil & fertilization',
-    nav_references: 'References',
+    chat_q1: 'How healthy are my plants right now?',
+    chat_q1_label: '🌿 Plant health',
+    chat_q2: 'How has the weather been in my area?',
+    chat_q2_label: '🌤️ Weather summary',
+    chat_q3: 'How much should I water my vineyard?',
+    chat_q3_label: '💧 Watering plan',
+    chat_q4: 'What fertilizer does my vineyard need?',
+    chat_q4_label: '🧪 Fertilization',
+    nav_references: 'About',
     // Topbar
-    season: 'Season 2025–2026', upload_polygon: 'Upload a polygon to start',
+    season: 'Season 2025–2026', upload_polygon: '',
     // Dashboard
-    welcome_title: 'Welcome to agragent',
-    welcome_text: 'To get started, go to <strong style="color:var(--accent)">Satellite Maps</strong> and upload a KML/KMZ file or draw a polygon over your field.<br>The dashboard will update automatically with real data from the location.',
-    location: 'Location', field_area: 'Field Area', season_gdd: 'Season GDD', season_precip: 'Season Precip.',
-    climate_summary: 'Climate Summary', active_alerts: 'Active Alerts', monthly_temp_overview: 'Monthly Temperature Overview',
-    loaded_polygons: 'Loaded Polygons', no_polygons: 'No polygons loaded.', no_alerts: 'No alerts yet.',
+    welcome_title: 'Welcome to AgrAgent',
+    welcome_text: 'Mark your field on the map to get started. We\'ll show you satellite images, weather data, and a harvest forecast for your vineyard.',
+    location: 'Location', field_area: 'Field Area', season_gdd: 'Heat Units', season_precip: 'Total Rainfall',
+    climate_summary: 'Climate Summary', active_alerts: 'Alerts', monthly_temp_overview: 'Monthly Temperature',
+    loaded_polygons: 'Your Fields', no_polygons: 'No fields added yet.', no_alerts: 'No alerts — looking good!',
     // Climate
-    climate_title: 'Climate Data', climate_upload_msg: 'Upload a KML/KMZ or draw a polygon to load climate data for the location.',
-    annual_gdd: 'Annual GDD', gdd_sub: 'Growing Degree Days (base 10°C)', chill_hours: 'Chill Hours', chill_sub: 'Hours 0–7.2°C (Apr–Sep)',
-    frost_days: 'Frost Days', frost_sub: 'Days with Tmin ≤ 0°C', heat_waves: 'Heat Waves', heat_wave_sub: '≥3 consecutive days >35°C',
-    dry_months: 'Dry Months', dry_sub: '<30mm precipitation', avg_humidity: 'Avg Humidity', total_solar: 'Total Solar Radiation',
-    total_et: 'Total ET₀', et_sub: 'Evapotranspiration (mm)',
+    climate_title: 'Weather & Climate', climate_upload_msg: 'Mark your field on the map to see weather and climate data for your area.',
+    annual_gdd: 'Heat Units', gdd_sub: 'Warmth accumulated for ripening', chill_hours: 'Cold Hours', chill_sub: 'Cold needed for bud break',
+    frost_days: 'Frost Days', frost_sub: 'Days below freezing', heat_waves: 'Heat Waves', heat_wave_sub: '3+ very hot days in a row',
+    dry_months: 'Dry Months', dry_sub: 'Low rainfall months', avg_humidity: 'Humidity', total_solar: 'Sunlight',
+    total_et: 'Water Loss', et_sub: 'Water evaporated from soil & plants',
     temp_chart: 'Monthly Temperature (Min/Max) — 12-Month Season', precip_chart: 'Monthly Precipitation (mm)',
     humidity_chart: 'Monthly Relative Humidity (%)', solar_chart: 'Monthly Solar Radiation (MJ/m²)',
     et_chart: 'Monthly Evapotranspiration ET₀ (mm)', gdd_chart: 'Growing Degree Days (GDD) Accumulation',
     // Maps
-    maps_title: 'Satellite Maps', maps_sub: 'Google Earth Engine · Sentinel-2 · Real Imagery',
-    gee_connect: 'Connect', gee_help: '? Help', gee_connect_desc: 'Auto-connecting to Sentinel-2 imagery...',
-    layers: 'Layers', upload_kmz: 'Upload KMZ/KML', draw: 'Draw', polygon: 'Polygon', line: 'Line', point: 'Point',
-    edit: 'Edit', delete: 'Delete', export_kml: 'Export KML', index_label: 'Index:',
+    maps_title: 'Field Map', maps_sub: 'Satellite images of your vineyard',
+    gee_connect: 'Connect', gee_help: '? Help', gee_connect_desc: 'Connecting to satellite images...',
+    layers: 'My Fields', upload_kmz: 'Upload Field File', draw: 'Draw', polygon: 'Area', line: 'Line', point: 'Point',
+    edit: 'Edit', delete: 'Delete', export_kml: 'Save Field', index_label: 'View:',
     real_color: 'Real Color', false_color: 'False Color',
     median: 'Median', captures: 'Captures', compare: 'Compare', refresh: 'Refresh',
-    no_polygon_gee: 'Upload a KML/KMZ or draw a polygon first.',
+    no_polygon_gee: 'First, mark your field on the map by uploading a file or drawing the boundaries.',
     // Genomic
-    genomic_title: 'Genomic Analysis', genomic_sub: 'RNA-seq Differential Expression — Vitis vinifera phenological stages (Altimiras et al.)',
+    genomic_title: 'Crop Genetics', genomic_sub: 'Gene activity across grape growth stages',
     // Images
-    images_title: 'Crop Image Analysis',
+    images_title: 'Vineyard Photos',
     // Yield
-    yield_title: 'Yield Prediction',
+    yield_title: 'Harvest Forecast',
     // References
-    references_title: 'References & Credits', references_sub: 'Author, publications, and data sources',
+    references_title: 'About', references_sub: 'About this app',
     author: 'Author', assoc_publications: 'Associated Publications', datasets_sources: 'Datasets & Data Sources',
     license_source: 'License & Source Code',
     // Maps toolbar
@@ -3080,30 +3086,30 @@ const i18n = {
     gee_median: 'Median', gee_captures: 'Captures', gee_compare: 'Compare', gee_refresh: 'Refresh',
     gee_available_captures: 'AVAILABLE CAPTURES', gee_search: 'Search',
     gee_search_msg: 'Click "Search" to list captures for the period.',
-    gee_loading: 'Loading GEE imagery...', gee_sentinel_info: 'Sentinel-2 SR Harmonized · 10m resolution · Auto cloud masking (QA60) · Polygon area only',
-    gee_auto_sub: 'Auto-connecting to Sentinel-2...',
+    gee_loading: 'Loading satellite images...', gee_sentinel_info: 'Satellite images updated every 5 days · High resolution · Cloud-free',
+    gee_auto_sub: 'Connecting to satellite images...',
     // Compare
     compare_left: 'LEFT', compare_right: 'RIGHT', compare_select_date: '— Select date —',
     compare_btn: 'Compare', compare_exit: 'Exit',
     // Layer list
-    active_layers_header: 'Active layers', layer_placeholder: 'Upload a KMZ/KML or draw to add layers.',
+    active_layers_header: 'Your fields', layer_placeholder: 'Upload a file or draw to add your fields.',
     // Map misc
-    map_drop: 'Drop your KMZ/KML file here', map_source: 'Sentinel-2 · OpenStreetMap base · GEE connected',
+    map_drop: 'Drop your field file here', map_source: 'Satellite images · Map connected',
     real_color: 'Real Color', false_color: 'False Color',
     // Login
-    login_sub: 'Precision & Digital Agriculture', login_user: 'Username', login_pass: 'Password',
-    login_btn: 'Sign In', login_error: 'Invalid username or password', logout: 'Logout',
+    login_sub: 'Smart Farming for Your Vineyard', login_user: 'Username', login_pass: 'Password',
+    login_btn: 'Sign In', login_error: 'Wrong username or password. Please try again.', logout: 'Logout',
     // Dashboard extra
-    water_balance: 'Water Balance (Precip. vs ET₀)', precip_et_monthly: 'Precipitation & ET₀ Monthly',
-    risk_assessment: 'Agronomic Risk Assessment', precipitation_label: 'Precipitation', et_label: 'Evapotranspiration',
-    gdd_base: 'Growing Degree Days (base 10°C)', precip_total: 'Total mm (Apr–present)',
-    chill_range: '0–7.2°C (Apr–Sep)', tmin_label: 'Tmin ≤ 0°C', heat_label: '≥3 days >35°C',
+    water_balance: 'Water Balance (Rain vs Water Loss)', precip_et_monthly: 'Rainfall & Water Loss Monthly',
+    risk_assessment: 'Risk Assessment', precipitation_label: 'Rainfall', et_label: 'Water Loss',
+    gdd_base: 'Warmth accumulated for ripening', precip_total: 'Total rainfall this season',
+    chill_range: 'Cold needed for bud break', tmin_label: 'Below freezing', heat_label: '3+ very hot days',
     // Historical
     historical_title: 'Historical Analysis (2015–2026)', historical_sub: 'Multi-season comparison',
     hist_gdd: 'Annual GDD Comparison by Season', hist_precip: 'Annual Precipitation by Season (mm)',
     hist_temp: 'Average Temperature by Season (°C)', hist_frost: 'Frost Days per Season',
     hist_heat: 'Heat Stress Days per Season (>35°C)', hist_table: 'Season Comparison Table',
-    hist_upload: 'Upload a polygon to load historical data.',
+    hist_upload: 'Mark your field on the map to see past seasons.',
     // Genomic
     genomic_sub: 'RNA-seq Differential Expression — Vitis vinifera phenological stages (Altimiras et al.)',
     total_reads: 'Total Reads', reads_sub: '68 RNA-seq samples', data_processed: 'Data Processed', data_sub: 'FASTQ files',
@@ -3118,115 +3124,115 @@ const i18n = {
     // Misc
     active_layers: 'Active layers', polygon_word: 'polygon(s)', no_geom: 'No valid geometries found.',
     // Alerts
-    alert_no_kml: 'No KML file found inside KMZ.', alert_no_geom: 'No valid geometries found in file.',
-    alert_file_error: 'Error reading file: ',
-    gee_help_msg: 'Google Earth Engine connects automatically using the AgrAgent project account. No configuration needed.',
-    climate_upload_sub: 'Upload a polygon to see climate data',
+    alert_no_kml: 'Could not find field data in this file. Try a different file.', alert_no_geom: 'No field boundaries found in this file.',
+    alert_file_error: 'Could not read this file: ',
+    gee_help_msg: 'Satellite images connect automatically. No setup needed — just mark your field!',
+    climate_upload_sub: 'Mark your field to see weather data',
   },
   es: {
-    nav_dashboard: 'Panel', nav_maps: 'Mapas Satelitales', nav_climate: 'Datos Climáticos',
-    nav_genomic: 'Análisis Genómico', nav_images: 'Análisis de Imágenes', nav_yield: 'Predicción de Rendimiento',
-    nav_chat: 'Asistente IA', chat_conversations: 'Conversaciones', chat_new: '+ Nueva',
-    chat_welcome_text: 'Pregúntame sobre datos climáticos, imágenes satelitales, análisis de suelo, planificación de riego o cualquier consulta agronómica sobre tus campos.',
+    nav_dashboard: 'Mi Campo', nav_maps: 'Mapa del Campo', nav_climate: 'Clima',
+    nav_genomic: 'Genética del Cultivo', nav_images: 'Fotos del Viñedo', nav_yield: 'Pronóstico de Cosecha',
+    nav_chat: 'Consultar AgrAgent', chat_conversations: 'Conversaciones', chat_new: '+ Nueva',
+    chat_welcome_text: 'Pregúntame sobre el clima, las imágenes satelitales, el riego, el suelo o cualquier duda sobre tu viñedo.',
     chat_placeholder: 'Pregunta a AgrAgent...',
-    chat_q1: '¿Cuál es el estado actual del NDVI de mi campo?',
-    chat_q1_label: '🛰️ Estado NDVI',
-    chat_q2: 'Muéstrame el resumen climático de mi zona',
-    chat_q2_label: '🌤️ Resumen climático',
-    chat_q3: 'Calcula un plan de riego para mi viñedo',
+    chat_q1: '¿Cómo está la salud de mis plantas?',
+    chat_q1_label: '🌿 Salud del cultivo',
+    chat_q2: '¿Cómo ha estado el clima en mi zona?',
+    chat_q2_label: '🌤️ Resumen del clima',
+    chat_q3: '¿Cuánto debo regar mi viñedo?',
     chat_q3_label: '💧 Plan de riego',
-    chat_q4: 'Analiza las condiciones del suelo y recomienda fertilización',
-    chat_q4_label: '🧪 Suelo y fertilización',
-    nav_references: 'Referencias',
-    season: 'Temporada 2025–2026', upload_polygon: 'Sube un polígono para comenzar',
-    welcome_title: 'Bienvenido a agragent',
-    welcome_text: 'Para comenzar, ve a <strong style="color:var(--accent)">Mapas Satelitales</strong> y sube un archivo KML/KMZ o dibuja un polígono sobre tu campo.<br>El panel se actualizará automáticamente con datos reales de la localidad.',
-    location: 'Ubicación', field_area: 'Área del Campo', season_gdd: 'GDD Temporada', season_precip: 'Precip. Temporada',
-    climate_summary: 'Resumen Climático', active_alerts: 'Alertas Activas', monthly_temp_overview: 'Temperatura Mensual',
-    loaded_polygons: 'Polígonos Cargados', no_polygons: 'Sin polígonos cargados.', no_alerts: 'Sin alertas.',
-    climate_title: 'Datos Climáticos', climate_upload_msg: 'Sube un KML/KMZ o dibuja un polígono para cargar datos climáticos de la localidad.',
-    annual_gdd: 'GDD Anual', gdd_sub: 'Grados Día de Crecimiento (base 10°C)', chill_hours: 'Horas Frío', chill_sub: 'Horas 0–7.2°C (Abr–Sep)',
-    frost_days: 'Días de Helada', frost_sub: 'Días con Tmin ≤ 0°C', heat_waves: 'Olas de Calor', heat_wave_sub: '≥3 días consecutivos >35°C',
-    dry_months: 'Meses Secos', dry_sub: '<30mm precipitación', avg_humidity: 'Humedad Promedio', total_solar: 'Radiación Solar Total',
-    total_et: 'ET₀ Total', et_sub: 'Evapotranspiración (mm)',
-    temp_chart: 'Temperatura Mensual (Min/Max) — Temporada 12 Meses', precip_chart: 'Precipitación Mensual (mm)',
-    humidity_chart: 'Humedad Relativa Mensual (%)', solar_chart: 'Radiación Solar Mensual (MJ/m²)',
-    et_chart: 'Evapotranspiración Mensual ET₀ (mm)', gdd_chart: 'Acumulación de Grados Día (GDD)',
-    maps_title: 'Mapas Satelitales', maps_sub: 'Google Earth Engine · Sentinel-2 · Imágenes Reales',
-    gee_connect: 'Conectar', gee_help: '? Ayuda', gee_connect_desc: 'Conectando automáticamente a Sentinel-2...',
-    layers: 'Capas', upload_kmz: 'Subir KMZ/KML', draw: 'Dibujar', polygon: 'Polígono', line: 'Línea', point: 'Punto',
-    edit: 'Editar', delete: 'Borrar', export_kml: 'Exportar KML', index_label: 'Índice:',
-    real_color: 'Color Real', false_color: 'Falso Color',
-    median: 'Mediana', captures: 'Capturas', compare: 'Comparar', refresh: 'Actualizar',
-    no_polygon_gee: 'Primero sube un KML/KMZ o dibuja un polígono.',
-    genomic_title: 'Análisis Genómico', genomic_sub: 'Expresión Diferencial RNA-seq — Etapas fenológicas de Vitis vinifera (Altimiras et al.)',
-    images_title: 'Análisis de Imágenes de Cultivo',
-    yield_title: 'Predicción de Rendimiento',
-    references_title: 'Referencias y Créditos', references_sub: 'Autor, publicaciones y fuentes de datos',
-    author: 'Autor', assoc_publications: 'Publicaciones Asociadas', datasets_sources: 'Datasets y Fuentes de Datos',
-    license_source: 'Licencia y Código Fuente',
+    chat_q4: '¿Qué fertilizante necesita mi viñedo?',
+    chat_q4_label: '🧪 Fertilización',
+    nav_references: 'Acerca de',
+    season: 'Temporada 2025–2026', upload_polygon: '',
+    welcome_title: 'Bienvenido a AgrAgent',
+    welcome_text: 'Marca tu campo en el mapa para comenzar. Te mostraremos imágenes satelitales, datos del clima y un pronóstico de cosecha para tu viñedo.',
+    location: 'Ubicación', field_area: 'Superficie', season_gdd: 'Calor Acumulado', season_precip: 'Lluvia Total',
+    climate_summary: 'Resumen del Clima', active_alerts: 'Alertas', monthly_temp_overview: 'Temperatura Mensual',
+    loaded_polygons: 'Tus Campos', no_polygons: 'Aún no has agregado campos.', no_alerts: 'Sin alertas — todo bien.',
+    climate_title: 'Clima', climate_upload_msg: 'Marca tu campo en el mapa para ver el clima de tu zona.',
+    annual_gdd: 'Calor Acumulado', gdd_sub: 'Calor necesario para madurar la uva', chill_hours: 'Horas de Frío', chill_sub: 'Frío necesario para la brotación',
+    frost_days: 'Días de Helada', frost_sub: 'Días bajo cero', heat_waves: 'Olas de Calor', heat_wave_sub: '3+ días muy calurosos seguidos',
+    dry_months: 'Meses Secos', dry_sub: 'Meses con poca lluvia', avg_humidity: 'Humedad', total_solar: 'Luz Solar',
+    total_et: 'Pérdida de Agua', et_sub: 'Agua evaporada del suelo y plantas',
+    temp_chart: 'Temperatura Mensual (Mín/Máx)', precip_chart: 'Lluvia Mensual (mm)',
+    humidity_chart: 'Humedad Mensual (%)', solar_chart: 'Radiación Solar Mensual',
+    et_chart: 'Pérdida de Agua Mensual (mm)', gdd_chart: 'Acumulación de Calor para Maduración',
+    maps_title: 'Mapa del Campo', maps_sub: 'Imágenes satelitales de tu viñedo',
+    gee_connect: 'Conectar', gee_help: '? Ayuda', gee_connect_desc: 'Conectando a las imágenes satelitales...',
+    layers: 'Mis Campos', upload_kmz: 'Subir Archivo', draw: 'Dibujar', polygon: 'Área', line: 'Línea', point: 'Punto',
+    edit: 'Editar', delete: 'Borrar', export_kml: 'Guardar Campo', index_label: 'Ver:',
+    real_color: 'Color Real', false_color: 'Infrarrojo',
+    median: 'Promedio', captures: 'Capturas', compare: 'Comparar', refresh: 'Actualizar',
+    no_polygon_gee: 'Primero marca tu campo en el mapa subiendo un archivo o dibujando los límites.',
+    genomic_title: 'Genética del Cultivo', genomic_sub: 'Actividad genética durante el crecimiento de la uva',
+    images_title: 'Fotos del Viñedo',
+    yield_title: 'Pronóstico de Cosecha',
+    references_title: 'Acerca de', references_sub: 'Sobre esta aplicación',
+    author: 'Autor', assoc_publications: 'Publicaciones', datasets_sources: 'Fuentes de Datos',
+    license_source: 'Licencia',
     // Maps toolbar
-    polygon_btn: 'Polígono', point_btn: 'Punto',
-    export_kml_title: 'Exportar todas las capas como KML',
+    polygon_btn: 'Área', point_btn: 'Punto',
+    export_kml_title: 'Guardar todos los campos',
     base_label: 'Base:', fullscreen: 'Pantalla completa',
     // GEE controls
-    gee_from: 'Desde:', gee_to: 'Hasta:', gee_cloud_max: 'Nube máx:', gee_opacity: 'Opacidad:',
-    gee_median: 'Mediana', gee_captures: 'Capturas', gee_compare: 'Comparar', gee_refresh: 'Actualizar',
-    gee_available_captures: 'CAPTURAS DISPONIBLES', gee_search: 'Buscar',
-    gee_search_msg: 'Haz clic en "Buscar" para listar las capturas del período.',
-    gee_loading: 'Cargando imágenes GEE...', gee_sentinel_info: 'Sentinel-2 SR Harmonized · 10m resolución · Cloud masking automático (QA60) · Solo área del polígono',
-    gee_auto_sub: 'Conectando automáticamente a Sentinel-2...',
+    gee_from: 'Desde:', gee_to: 'Hasta:', gee_cloud_max: 'Nubes máx:', gee_opacity: 'Opacidad:',
+    gee_median: 'Promedio', gee_captures: 'Capturas', gee_compare: 'Comparar', gee_refresh: 'Actualizar',
+    gee_available_captures: 'IMÁGENES DISPONIBLES', gee_search: 'Buscar',
+    gee_search_msg: 'Presiona "Buscar" para ver las imágenes disponibles.',
+    gee_loading: 'Cargando imágenes satelitales...', gee_sentinel_info: 'Imágenes satelitales cada 5 días · Alta resolución · Sin nubes',
+    gee_auto_sub: 'Conectando a imágenes satelitales...',
     // Compare
-    compare_left: 'IZQUIERDA', compare_right: 'DERECHA', compare_select_date: '— Seleccionar fecha —',
+    compare_left: 'IZQUIERDA', compare_right: 'DERECHA', compare_select_date: '— Elegir fecha —',
     compare_btn: 'Comparar', compare_exit: 'Salir',
     // Layer list
-    active_layers_header: 'Capas activas', layer_placeholder: 'Sube un KMZ/KML o dibuja para agregar capas.',
+    active_layers_header: 'Tus campos', layer_placeholder: 'Sube un archivo o dibuja para agregar tu campo.',
     // Map misc
-    map_drop: 'Suelta el archivo KMZ/KML aquí', map_source: 'Sentinel-2 · OpenStreetMap base · GEE conectado',
-    real_color: 'Color Real', false_color: 'Falso Color',
+    map_drop: 'Suelta tu archivo aquí', map_source: 'Imágenes satelitales conectadas',
+    real_color: 'Color Real', false_color: 'Infrarrojo',
     // Login
-    login_sub: 'Agricultura de Precisión y Digital', login_user: 'Usuario', login_pass: 'Contraseña',
-    login_btn: 'Iniciar Sesión', login_error: 'Usuario o contraseña incorrectos', logout: 'Cerrar sesión',
+    login_sub: 'Agricultura Inteligente para tu Viñedo', login_user: 'Usuario', login_pass: 'Contraseña',
+    login_btn: 'Entrar', login_error: 'Usuario o contraseña incorrectos. Intenta de nuevo.', logout: 'Salir',
     // Dashboard extra
-    water_balance: 'Balance Hídrico (Precip. vs ET₀)', precip_et_monthly: 'Precipitación y ET₀ Mensual',
-    risk_assessment: 'Evaluación de Riesgo Agronómico', precipitation_label: 'Precipitación', et_label: 'Evapotranspiración',
-    gdd_base: 'Grados Día de Crecimiento (base 10°C)', precip_total: 'Total mm (Abr–presente)',
-    chill_range: '0–7.2°C (Abr–Sep)', tmin_label: 'Tmin ≤ 0°C', heat_label: '≥3 días >35°C',
+    water_balance: 'Balance de Agua (Lluvia vs Pérdida)', precip_et_monthly: 'Lluvia y Pérdida de Agua Mensual',
+    risk_assessment: 'Evaluación de Riesgos', precipitation_label: 'Lluvia', et_label: 'Pérdida de Agua',
+    gdd_base: 'Calor acumulado para maduración', precip_total: 'Lluvia total esta temporada',
+    chill_range: 'Frío necesario para brotación', tmin_label: 'Bajo cero', heat_label: '3+ días muy calurosos',
     // Historical
-    historical_title: 'Análisis Histórico (2015–2026)', historical_sub: 'Comparación multi-temporada',
-    hist_gdd: 'Comparación GDD Anual por Temporada', hist_precip: 'Precipitación Anual por Temporada (mm)',
-    hist_temp: 'Temperatura Promedio por Temporada (°C)', hist_frost: 'Días de Helada por Temporada',
-    hist_heat: 'Días de Estrés Térmico por Temporada (>35°C)', hist_table: 'Tabla Comparativa de Temporadas',
-    hist_upload: 'Sube un polígono para cargar datos históricos.',
+    historical_title: 'Historial (2015–2026)', historical_sub: 'Comparar temporadas anteriores',
+    hist_gdd: 'Calor Acumulado por Temporada', hist_precip: 'Lluvia por Temporada (mm)',
+    hist_temp: 'Temperatura Promedio por Temporada (°C)', hist_frost: 'Heladas por Temporada',
+    hist_heat: 'Días de Calor Extremo por Temporada (>35°C)', hist_table: 'Tabla de Temporadas',
+    hist_upload: 'Marca tu campo en el mapa para ver temporadas anteriores.',
     // Genomic
-    genomic_sub: 'Expresión Diferencial RNA-seq — Etapas fenológicas de Vitis vinifera (Altimiras et al.)',
-    total_reads: 'Lecturas Totales', reads_sub: '68 muestras RNA-seq', data_processed: 'Datos Procesados', data_sub: 'Archivos FASTQ',
-    pheno_stages: 'Etapas Fenológicas', stages_sub: 'E-L 3 → E-L 41', unique_degs: 'DEGs Únicos', degs_sub: 'FDR < 0.05 (edgeR)',
-    pheno_progress: 'Progreso Fenológico', season_progress: 'Progreso de Temporada',
-    veraison: 'Envero', stage_35: 'Etapa 35 — Escala E-L Modificada',
-    bud: 'Yema', inflor: 'Inflor.', berry: 'Baya', ripen: 'Madurez', senesc: 'Senesc.',
-    degs_per_stage: 'DEGs por Etapa de Desarrollo (vs. E-L 3 base)',
-    sample_composition: 'Composición de Muestras por Variedad', samples: 'muestras',
-    deg_accumulation: 'Acumulación de DEGs por Etapa',
-    top_degs: 'Genes Diferencialmente Expresados Top por Etapa',
+    genomic_sub: 'Actividad genética durante el crecimiento de la uva (Altimiras et al.)',
+    total_reads: 'Muestras Analizadas', reads_sub: '68 muestras de ARN', data_processed: 'Datos Procesados', data_sub: 'Archivos genéticos',
+    pheno_stages: 'Etapas de Crecimiento', stages_sub: 'Desde brotación hasta senescencia', unique_degs: 'Genes Activos', degs_sub: 'Genes con cambios significativos',
+    pheno_progress: 'Progreso del Cultivo', season_progress: 'Progreso de Temporada',
+    veraison: 'Envero', stage_35: 'Etapa 35 — Escala de crecimiento',
+    bud: 'Yema', inflor: 'Flor', berry: 'Baya', ripen: 'Madurez', senesc: 'Caída',
+    degs_per_stage: 'Genes activos por etapa de crecimiento',
+    sample_composition: 'Variedades analizadas', samples: 'muestras',
+    deg_accumulation: 'Acumulación de genes activos',
+    top_degs: 'Genes más importantes por etapa',
     // Misc
-    active_layers: 'Capas activas', polygon_word: 'polígono(s)', no_geom: 'No se encontraron geometrías válidas.',
+    active_layers: 'Tus campos', polygon_word: 'campo(s)', no_geom: 'No se encontraron límites de campo en el archivo.',
     // Alerts
-    alert_no_kml: 'No se encontró archivo KML dentro del KMZ.', alert_no_geom: 'No se encontraron geometrías válidas en el archivo.',
-    alert_file_error: 'Error al leer el archivo: ',
-    gee_help_msg: 'Google Earth Engine se conecta automáticamente usando la cuenta del proyecto AgrAgent. No necesitas configurar nada.',
-    climate_upload_sub: 'Sube un polígono para ver datos climáticos',
+    alert_no_kml: 'No se encontraron datos del campo en este archivo. Prueba con otro.', alert_no_geom: 'No se encontraron límites de campo en este archivo.',
+    alert_file_error: 'No se pudo leer este archivo: ',
+    gee_help_msg: 'Las imágenes satelitales se conectan automáticamente. No necesitas configurar nada — solo marca tu campo.',
+    climate_upload_sub: 'Marca tu campo para ver el clima',
   },
   pt: {
-    nav_dashboard: 'Painel', nav_maps: 'Mapas Satelitais', nav_climate: 'Dados Climáticos',
-    nav_genomic: 'Análise Genômica', nav_images: 'Análise de Imagens', nav_yield: 'Previsão de Rendimento',
-    nav_chat: 'Assistente IA', chat_conversations: 'Conversas', chat_new: '+ Nova',
-    chat_welcome_text: 'Pergunte-me sobre dados climáticos, imagens de satélite, análise de solo, planejamento de irrigação ou qualquer questão agronômica sobre seus campos.',
+    nav_dashboard: 'Meu Campo', nav_maps: 'Mapa do Campo', nav_climate: 'Clima',
+    nav_genomic: 'Genética', nav_images: 'Fotos do Vinhedo', nav_yield: 'Previsão de Colheita',
+    nav_chat: 'Perguntar ao AgrAgent', chat_conversations: 'Conversas', chat_new: '+ Nova',
+    chat_welcome_text: 'Pergunte sobre o clima, imagens de satélite, irrigação, solo ou qualquer dúvida sobre seu vinhedo.',
     chat_placeholder: 'Pergunte ao AgrAgent...',
-    chat_q1: 'Qual é o estado atual do NDVI do meu campo?',
-    chat_q1_label: '🛰️ Status NDVI',
-    chat_q2: 'Mostre-me o resumo climático da minha área',
-    chat_q2_label: '🌤️ Resumo climático',
+    chat_q1: 'Como está a saúde das minhas plantas?',
+    chat_q1_label: '🌿 Saúde do cultivo',
+    chat_q2: 'Como está o clima na minha região?',
+    chat_q2_label: '🌤️ Resumo do clima',
     chat_q3: 'Calcule um plano de irrigação para meu vinhedo',
     chat_q3_label: '💧 Plano de irrigação',
     chat_q4: 'Analise as condições do solo e recomende fertilização',
