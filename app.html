@@ -1988,8 +1988,8 @@ function editDisplayName() {
       <!-- Location Search -->
       <div class="location-search" id="location-search">
         <span style="font-size:1rem;">📍</span>
-        <input type="text" id="location-input" placeholder="Buscar localidad... (ej. Valparaíso, Valle de Casablanca)" autocomplete="off">
-        <button class="location-search-btn" onclick="searchLocation()">🔎 Buscar</button>
+        <input type="text" id="location-input" placeholder="Search location..." data-i18n-placeholder="search_placeholder" autocomplete="off">
+        <button class="location-search-btn" onclick="searchLocation()">🔎 <span data-i18n="search_btn">Search</span></button>
         <div class="location-results" id="location-results"></div>
       </div>
 
@@ -2014,9 +2014,9 @@ function editDisplayName() {
         <button class="tb-btn" onclick="exportKML()">⬇️ <span data-i18n="export_kml">Save Field</span></button>
         <div class="tb-divider"></div>
         <span class="toolbar-label">Base:</span>
-        <button class="tb-btn active" id="base-satellite" onclick="setBaseMap('satellite',this)">🛰️ Satellite</button>
-        <button class="tb-btn" id="base-streets" onclick="setBaseMap('streets',this)">🗺️ Streets</button>
-        <button class="tb-btn" id="base-hybrid" onclick="setBaseMap('hybrid',this)">🌐 Hybrid</button>
+        <button class="tb-btn active" id="base-satellite" onclick="setBaseMap('satellite',this)">🛰️ <span data-i18n="base_satellite">Satellite</span></button>
+        <button class="tb-btn" id="base-streets" onclick="setBaseMap('streets',this)">🗺️ <span data-i18n="base_streets">Streets</span></button>
+        <button class="tb-btn" id="base-hybrid" onclick="setBaseMap('hybrid',this)">🌐 <span data-i18n="base_hybrid">Hybrid</span></button>
       </div>
 
       <!-- GEE Layer Controls (shown after connect) -->
@@ -2659,10 +2659,10 @@ function editDisplayName() {
           </div>
         </div>
         <div class="wgisd-banner-right">
-          <div class="wgisd-stat"><span class="wgisd-stat-n">300</span><span class="wgisd-stat-l">Imágenes</span></div>
-          <div class="wgisd-stat"><span class="wgisd-stat-n">4,431</span><span class="wgisd-stat-l">Racimos</span></div>
-          <div class="wgisd-stat"><span class="wgisd-stat-n">187K</span><span class="wgisd-stat-l">Bayas anotadas</span></div>
-          <div class="wgisd-stat"><span class="wgisd-stat-n">5</span><span class="wgisd-stat-l">Variedades</span></div>
+          <div class="wgisd-stat"><span class="wgisd-stat-n">300</span><span class="wgisd-stat-l" data-i18n="img_images">Images</span></div>
+          <div class="wgisd-stat"><span class="wgisd-stat-n">4,431</span><span class="wgisd-stat-l" data-i18n="img_clusters">Clusters</span></div>
+          <div class="wgisd-stat"><span class="wgisd-stat-n">187K</span><span class="wgisd-stat-l" data-i18n="img_berries_ann">Annotated berries</span></div>
+          <div class="wgisd-stat"><span class="wgisd-stat-n">5</span><span class="wgisd-stat-l" data-i18n="img_varieties">Varieties</span></div>
         </div>
       </div>
 
@@ -2670,23 +2670,23 @@ function editDisplayName() {
       <div class="variety-tabs" id="variety-tabs">
         <button class="variety-tab active" data-variety="CDY" onclick="switchVariety('CDY',this)">
           <span class="vtab-code">CDY</span><span class="vtab-name">Chardonnay</span>
-          <span class="vtab-tag white">Blanca</span>
+          <span class="vtab-tag white" data-i18n="img_white">White</span>
         </button>
         <button class="variety-tab" data-variety="CFR" onclick="switchVariety('CFR',this)">
           <span class="vtab-code">CFR</span><span class="vtab-name">Cabernet Franc</span>
-          <span class="vtab-tag red">Tinta</span>
+          <span class="vtab-tag red" data-i18n="img_red">Red</span>
         </button>
         <button class="variety-tab" data-variety="CSV" onclick="switchVariety('CSV',this)">
           <span class="vtab-code">CSV</span><span class="vtab-name">Cabernet Sauvignon</span>
-          <span class="vtab-tag red">Tinta</span>
+          <span class="vtab-tag red" data-i18n="img_red">Red</span>
         </button>
         <button class="variety-tab" data-variety="SVB" onclick="switchVariety('SVB',this)">
           <span class="vtab-code">SVB</span><span class="vtab-name">Sauvignon Blanc</span>
-          <span class="vtab-tag white">Blanca</span>
+          <span class="vtab-tag white" data-i18n="img_white">White</span>
         </button>
         <button class="variety-tab" data-variety="SYH" onclick="switchVariety('SYH',this)">
           <span class="vtab-code">SYH</span><span class="vtab-name">Syrah</span>
-          <span class="vtab-tag red">Tinta</span>
+          <span class="vtab-tag red" data-i18n="img_red">Red</span>
         </button>
       </div>
 
@@ -2699,7 +2699,7 @@ function editDisplayName() {
         <span id="vinfo-masks">308 con máscara de instancia</span>
         <span class="vinfo-dot">·</span>
         <span id="vinfo-source">Canon EOS REBEL T3i · 2048×1365px</span>
-        <span style="margin-left:auto;font-size:0.72rem;color:var(--text-secondary);">Clic en imagen para ver anotaciones</span>
+        <span style="margin-left:auto;font-size:0.72rem;color:var(--text-secondary);" data-i18n="img_click_hint">Click image to see annotations</span>
       </div>
 
       <!-- Image Grid -->
@@ -2709,11 +2709,11 @@ function editDisplayName() {
 
       <!-- Upload your own image -->
       <div class="card mb-20" style="margin-top:8px;">
-        <div class="card-title">📤 Analizar imagen propia</div>
+        <div class="card-title" data-i18n="img_upload_title">📤 Analyze your own image</div>
         <div class="upload-zone" style="margin-top:12px;padding:28px 20px;" onclick="document.getElementById('fileInput').click()">
           <div class="upload-icon" style="font-size:2rem;">🖼️</div>
-          <div class="upload-text">Arrastra o haz clic para subir imagen de viñedo</div>
-          <div class="upload-sub">Acepta .jpg · .png · .tiff — Máx 50MB</div>
+          <div class="upload-text" data-i18n="img_upload_text">Drag or click to upload a vineyard image</div>
+          <div class="upload-sub" data-i18n="img_upload_sub">Accepts .jpg · .png · .tiff — Max 50MB</div>
           <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.tiff" style="display:none" onchange="analyzeUploadedImage(event)">
         </div>
         <div id="upload-result" style="display:none;margin-top:16px;"></div>
@@ -2731,7 +2731,7 @@ function editDisplayName() {
             <img id="viewer-img" src="" alt="" crossorigin="anonymous">
             <canvas id="viewer-canvas"></canvas>
             <div id="viewer-loading" class="viewer-loading">
-              <div class="map-spinner"></div><span>Cargando imagen y anotaciones...</span>
+              <div class="map-spinner"></div><span data-i18n="img_loading">Loading image and annotations...</span>
             </div>
           </div>
           <div class="viewer-meta">
@@ -2739,24 +2739,24 @@ function editDisplayName() {
             <div class="viewer-meta-variety" id="viewer-variety">—</div>
             <div class="viewer-divider"></div>
             <div class="viewer-stat-row">
-              <div class="viewer-stat"><span class="vs-n" id="vm-clusters">—</span><span class="vs-l">Racimos detectados</span></div>
-              <div class="viewer-stat"><span class="vs-n" id="vm-berries">—</span><span class="vs-l">Bayas estimadas</span></div>
+              <div class="viewer-stat"><span class="vs-n" id="vm-clusters">—</span><span class="vs-l" data-i18n="img_clusters_detected">Clusters detected</span></div>
+              <div class="viewer-stat"><span class="vs-n" id="vm-berries">—</span><span class="vs-l" data-i18n="img_berries_est">Berries estimated</span></div>
             </div>
             <div class="viewer-divider"></div>
             <div class="viewer-info-list" id="viewer-info-list"></div>
             <div class="viewer-divider"></div>
             <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.7;">
-              <div>📦 Anotaciones: YOLO (bounding box)</div>
-              <div>📐 Resolución: 2048 × 1365 px</div>
+              <div>📦 <span data-i18n="img_annotations">Annotations: YOLO (bounding box)</span></div>
+              <div>📐 <span data-i18n="img_resolution">Resolution: 2048 × 1365 px</span></div>
               <div>📷 Canon EOS REBEL T3i / Motorola Z2</div>
-              <div style="margin-top:8px;">Datos: <a href="https://github.com/thsant/wgisd" target="_blank" style="color:var(--accent)">Embrapa WGISD</a> · CC BY-NC 4.0</div>
+              <div style="margin-top:8px;"><span data-i18n="img_data_source">Data:</span> <a href="https://github.com/thsant/wgisd" target="_blank" style="color:var(--accent)">Embrapa WGISD</a> · CC BY-NC 4.0</div>
             </div>
           </div>
         </div>
         <div class="viewer-annotation-bar" id="viewer-annotation-bar">
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
             <input type="checkbox" id="toggle-bbox" checked onchange="toggleBBoxes(this.checked)">
-            <span>Mostrar bounding boxes</span>
+            <span data-i18n="img_show_bbox">Show bounding boxes</span>
           </label>
           <span id="viewer-bbox-count" style="color:var(--accent);font-size:0.8rem;"></span>
           <span style="margin-left:auto;font-size:0.75rem;color:var(--text-secondary);" id="viewer-img-id"></span>
@@ -2774,10 +2774,8 @@ function editDisplayName() {
       <!-- Empty state -->
       <div id="yield-empty" style="text-align:center;padding:50px 20px;color:var(--text-secondary);">
         <div style="font-size:2.5rem;margin-bottom:12px;">🍇</div>
-        <div style="font-size:1.1rem;font-weight:600;color:var(--text-primary);margin-bottom:8px;">Mark your field to see your harvest forecast</div>
-        <div style="font-size:0.9rem;max-width:420px;margin:0 auto;line-height:1.7;">
-          Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection('maps')">Field Map</strong> and draw your vineyard boundaries. We'll calculate estimated yield, total production, and the best harvest date.
-        </div>
+        <div style="font-size:1.1rem;font-weight:600;color:var(--text-primary);margin-bottom:8px;" data-i18n="yield_empty_title">Mark your field to see your harvest forecast</div>
+        <div style="font-size:0.9rem;max-width:420px;margin:0 auto;line-height:1.7;" data-i18n="yield_empty_text">Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection('maps')">Field Map</strong> and draw your vineyard boundaries. We'll calculate estimated yield, total production, and the best harvest date.</div>
       </div>
 
       <!-- Dynamic content (shown after prediction) -->
@@ -2789,7 +2787,7 @@ function editDisplayName() {
           <div style="display:flex;align-items:baseline;justify-content:center;gap:16px;flex-wrap:wrap;">
             <div>
               <div class="value" id="yield-value">—</div>
-              <div class="unit">tonnes / hectare</div>
+              <div class="unit" data-i18n="yield_unit">tonnes / hectare</div>
             </div>
             <div style="text-align:center;">
               <div style="font-size:2rem;font-weight:700;color:#60a5fa;" id="yield-total">—</div>
@@ -2798,7 +2796,7 @@ function editDisplayName() {
           </div>
           <div class="ci" id="yield-ci">—</div>
           <div style="margin-top:10px;padding:10px 16px;background:rgba(74,222,128,0.08);border:1px solid var(--accent-dim);border-radius:8px;display:inline-block;">
-            <span style="font-size:0.85rem;color:var(--text-secondary);">Estimated harvest:</span>
+            <span style="font-size:0.85rem;color:var(--text-secondary);" data-i18n="yield_harvest_label">Estimated harvest:</span>
             <strong style="color:var(--accent);font-size:0.95rem;margin-left:6px;" id="yield-harvest-date">—</strong>
           </div>
           <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:12px;">
@@ -2811,23 +2809,23 @@ function editDisplayName() {
         <!-- Feature Importance + Input Data -->
         <div class="grid-2 mb-20">
           <div class="card">
-            <div class="card-title">Feature Importance (Extra Trees Model)</div>
+            <div class="card-title" data-i18n="yield_features_title">What matters most for your harvest</div>
             <div style="padding-top:8px;" id="yield-feature-importance">
               <!-- Populated dynamically -->
             </div>
           </div>
 
           <div class="card">
-            <div class="card-title">Satellite Indices (Sentinel-2 Mean)</div>
+            <div class="card-title" data-i18n="yield_sat_title">Satellite Readings</div>
             <table class="data-table">
-              <thead><tr><th>Index</th><th>Value</th></tr></thead>
+              <thead><tr><th data-i18n="yield_th_index">Reading</th><th data-i18n="yield_th_value">Value</th></tr></thead>
               <tbody id="yield-sat-indices">
                 <!-- Populated dynamically -->
               </tbody>
             </table>
-            <div class="card-title" style="margin-top:16px;">Climate Inputs</div>
+            <div class="card-title" style="margin-top:16px;" data-i18n="yield_climate_title">Climate Data</div>
             <table class="data-table">
-              <thead><tr><th>Variable</th><th>Value</th></tr></thead>
+              <thead><tr><th data-i18n="yield_th_variable">Variable</th><th data-i18n="yield_th_value2">Value</th></tr></thead>
               <tbody id="yield-climate-inputs">
                 <!-- Populated dynamically -->
               </tbody>
@@ -2837,10 +2835,10 @@ function editDisplayName() {
 
         <!-- Model Comparison -->
         <div class="card">
-          <div class="card-title">PyCaret Model Comparison (Classification Module)</div>
+          <div class="card-title" data-i18n="yield_model_title">Model Comparison</div>
           <table class="data-table">
             <thead>
-              <tr><th>Model</th><th>Prediction (t/ha)</th><th>R²</th><th>MAPE (%)</th><th>RMSE</th><th>Best</th></tr>
+              <tr><th data-i18n="yield_th_model">Model</th><th data-i18n="yield_th_pred">Prediction (t/ha)</th><th>R²</th><th>MAPE (%)</th><th>RMSE</th><th data-i18n="yield_th_best">Best</th></tr>
             </thead>
             <tbody id="yield-model-comparison">
               <!-- Populated dynamically -->
@@ -2861,7 +2859,7 @@ function editDisplayName() {
 
       <!-- Author -->
       <div class="card mb-20">
-        <div class="card-title">Author</div>
+        <div class="card-title" data-i18n="author">Author</div>
         <div style="display:flex;align-items:center;gap:16px;padding:8px 0;">
           <div class="avatar" style="width:56px;height:56px;font-size:1.2rem;flex-shrink:0;">FA</div>
           <div>
@@ -2879,7 +2877,7 @@ function editDisplayName() {
 
       <!-- Publications -->
       <div class="card mb-20">
-        <div class="card-title">Associated Publications</div>
+        <div class="card-title" data-i18n="assoc_publications">Associated Publications</div>
         <div style="padding:8px 0;">
 
           <div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);">
@@ -2939,7 +2937,7 @@ function editDisplayName() {
 
       <!-- Datasets & Data Sources -->
       <div class="card mb-20">
-        <div class="card-title">Datasets & Data Sources</div>
+        <div class="card-title" data-i18n="datasets_sources">Datasets & Data Sources</div>
         <table class="data-table">
           <thead>
             <tr><th>Resource</th><th>Description</th><th>Usage in agragent</th></tr>
@@ -3066,6 +3064,27 @@ const i18n = {
     welcome_title: 'Welcome to AgrAgent',
     welcome_text: 'Mark your field on the map to get started. We\'ll show you satellite images, weather data, and a harvest forecast for your vineyard.',
     step1: 'Go to', step1_link: 'Field Map', step2: 'Upload a file or draw your field boundaries', step3: 'All data updates automatically',
+    search_placeholder: 'Search location... (e.g. Napa Valley, Bordeaux)', search_btn: 'Search',
+    base_satellite: 'Satellite', base_streets: 'Streets', base_hybrid: 'Hybrid',
+    yield_empty_title: 'Mark your field to see your harvest forecast',
+    yield_empty_text: 'Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Field Map</strong> and draw your vineyard boundaries. We\'ll calculate estimated yield, total production, and the best harvest date.',
+    yield_unit: 'tonnes / hectare', yield_harvest_label: 'Estimated harvest:',
+    yield_features_title: 'What matters most for your harvest', yield_sat_title: 'Satellite Readings',
+    yield_climate_title: 'Climate Data', yield_model_title: 'Model Comparison',
+    yield_th_index: 'Reading', yield_th_value: 'Value', yield_th_variable: 'Variable', yield_th_value2: 'Value',
+    yield_th_model: 'Model', yield_th_pred: 'Prediction (t/ha)', yield_th_best: 'Best',
+    img_images: 'Images', img_clusters: 'Clusters', img_berries_ann: 'Annotated berries', img_varieties: 'Varieties',
+    img_white: 'White', img_red: 'Red', img_click_hint: 'Click image to see annotations',
+    img_upload_title: '📤 Analyze your own image', img_upload_text: 'Drag or click to upload a vineyard image', img_upload_sub: 'Accepts .jpg · .png · .tiff — Max 50MB',
+    img_loading: 'Loading image and annotations...', img_clusters_detected: 'Clusters detected', img_berries_est: 'Berries estimated',
+    img_annotations: 'Annotations: YOLO (bounding box)', img_resolution: 'Resolution: 2048 × 1365 px', img_data_source: 'Data:', img_show_bbox: 'Show bounding boxes',
+    editor_title: '✏️ Field Properties', editor_name: 'Name', editor_name_ph: 'e.g. North Parcel',
+    editor_desc: 'Description', editor_desc_ph: 'Notes, variety, observations...',
+    editor_stage: 'Growth stage', editor_select: '— Select —',
+    stage_bud: 'Bud break', stage_flower: 'Flowering', stage_fruit: 'Fruit set', stage_veraison: 'Veraison',
+    stage_ripen: 'Ripening', stage_harvest: 'Harvest', stage_post: 'Post-harvest',
+    editor_color: 'Color', editor_cancel: 'Cancel', editor_save: 'Save',
+    alert_no_layers: 'No fields to save. Add a field first.',
     location: 'Location', field_area: 'Field Area', season_gdd: 'Heat Units', season_precip: 'Total Rainfall',
     climate_summary: 'Climate Summary', active_alerts: 'Alerts', monthly_temp_overview: 'Monthly Temperature',
     loaded_polygons: 'Your Fields', no_polygons: 'No fields added yet.', no_alerts: 'No alerts — looking good!',
@@ -3167,6 +3186,27 @@ const i18n = {
     welcome_title: 'Bienvenido a AgrAgent',
     welcome_text: 'Marca tu campo en el mapa para comenzar. Te mostraremos imágenes satelitales, datos del clima y un pronóstico de cosecha para tu viñedo.',
     step1: 'Ve a', step1_link: 'Mapa del Campo', step2: 'Sube un archivo o dibuja los límites de tu campo', step3: 'Todos los datos se actualizan automáticamente',
+    search_placeholder: 'Buscar localidad... (ej. Casablanca, Maule)', search_btn: 'Buscar',
+    base_satellite: 'Satélite', base_streets: 'Calles', base_hybrid: 'Híbrido',
+    yield_empty_title: 'Marca tu campo para ver el pronóstico de cosecha',
+    yield_empty_text: 'Ve a <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa del Campo</strong> y dibuja los límites de tu viñedo. Calcularemos el rendimiento estimado, producción total y la mejor fecha de cosecha.',
+    yield_unit: 'toneladas / hectárea', yield_harvest_label: 'Cosecha estimada:',
+    yield_features_title: 'Lo que más influye en tu cosecha', yield_sat_title: 'Lecturas Satelitales',
+    yield_climate_title: 'Datos Climáticos', yield_model_title: 'Comparación de Modelos',
+    yield_th_index: 'Lectura', yield_th_value: 'Valor', yield_th_variable: 'Variable', yield_th_value2: 'Valor',
+    yield_th_model: 'Modelo', yield_th_pred: 'Predicción (t/ha)', yield_th_best: 'Mejor',
+    img_images: 'Imágenes', img_clusters: 'Racimos', img_berries_ann: 'Bayas anotadas', img_varieties: 'Variedades',
+    img_white: 'Blanca', img_red: 'Tinta', img_click_hint: 'Clic en imagen para ver anotaciones',
+    img_upload_title: '📤 Analizar imagen propia', img_upload_text: 'Arrastra o haz clic para subir imagen de viñedo', img_upload_sub: 'Acepta .jpg · .png · .tiff — Máx 50MB',
+    img_loading: 'Cargando imagen y anotaciones...', img_clusters_detected: 'Racimos detectados', img_berries_est: 'Bayas estimadas',
+    img_annotations: 'Anotaciones: YOLO (bounding box)', img_resolution: 'Resolución: 2048 × 1365 px', img_data_source: 'Datos:', img_show_bbox: 'Mostrar bounding boxes',
+    editor_title: '✏️ Propiedades del Campo', editor_name: 'Nombre', editor_name_ph: 'ej: Parcela Norte',
+    editor_desc: 'Descripción', editor_desc_ph: 'Notas, variedad, observaciones...',
+    editor_stage: 'Etapa de crecimiento', editor_select: '— Seleccionar —',
+    stage_bud: 'Brotación', stage_flower: 'Floración', stage_fruit: 'Cuaja', stage_veraison: 'Envero',
+    stage_ripen: 'Madurez', stage_harvest: 'Cosecha', stage_post: 'Post-cosecha',
+    editor_color: 'Color', editor_cancel: 'Cancelar', editor_save: 'Guardar',
+    alert_no_layers: 'No hay campos para guardar. Agrega un campo primero.',
     location: 'Ubicación', field_area: 'Superficie', season_gdd: 'Calor Acumulado', season_precip: 'Lluvia Total',
     climate_summary: 'Resumen del Clima', active_alerts: 'Alertas', monthly_temp_overview: 'Temperatura Mensual',
     loaded_polygons: 'Tus Campos', no_polygons: 'Aún no has agregado campos.', no_alerts: 'Sin alertas — todo bien.',
@@ -3262,6 +3302,27 @@ const i18n = {
     welcome_title: 'Bem-vindo ao agragent',
     welcome_text: 'Marque seu campo no mapa para começar. Mostraremos imagens de satélite, dados do clima e uma previsão de colheita para seu vinhedo.',
     step1: 'Vá para', step1_link: 'Mapa do Campo', step2: 'Carregue um arquivo ou desenhe os limites do seu campo', step3: 'Todos os dados se atualizam automaticamente',
+    search_placeholder: 'Buscar localidade... (ex. Douro, Alentejo)', search_btn: 'Buscar',
+    base_satellite: 'Satélite', base_streets: 'Ruas', base_hybrid: 'Híbrido',
+    yield_empty_title: 'Marque seu campo para ver a previsão de colheita',
+    yield_empty_text: 'Vá para <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa do Campo</strong> e desenhe os limites do seu vinhedo. Calcularemos o rendimento estimado, produção total e a melhor data de colheita.',
+    yield_unit: 'toneladas / hectare', yield_harvest_label: 'Colheita estimada:',
+    yield_features_title: 'O que mais influencia sua colheita', yield_sat_title: 'Leituras de Satélite',
+    yield_climate_title: 'Dados Climáticos', yield_model_title: 'Comparação de Modelos',
+    yield_th_index: 'Leitura', yield_th_value: 'Valor', yield_th_variable: 'Variável', yield_th_value2: 'Valor',
+    yield_th_model: 'Modelo', yield_th_pred: 'Previsão (t/ha)', yield_th_best: 'Melhor',
+    img_images: 'Imagens', img_clusters: 'Cachos', img_berries_ann: 'Bagas anotadas', img_varieties: 'Variedades',
+    img_white: 'Branca', img_red: 'Tinta', img_click_hint: 'Clique na imagem para ver anotações',
+    img_upload_title: '📤 Analisar imagem própria', img_upload_text: 'Arraste ou clique para carregar imagem do vinhedo', img_upload_sub: 'Aceita .jpg · .png · .tiff — Máx 50MB',
+    img_loading: 'Carregando imagem e anotações...', img_clusters_detected: 'Cachos detectados', img_berries_est: 'Bagas estimadas',
+    img_annotations: 'Anotações: YOLO (bounding box)', img_resolution: 'Resolução: 2048 × 1365 px', img_data_source: 'Dados:', img_show_bbox: 'Mostrar bounding boxes',
+    editor_title: '✏️ Propriedades do Campo', editor_name: 'Nome', editor_name_ph: 'ex: Parcela Norte',
+    editor_desc: 'Descrição', editor_desc_ph: 'Notas, variedade, observações...',
+    editor_stage: 'Etapa de crescimento', editor_select: '— Selecionar —',
+    stage_bud: 'Brotação', stage_flower: 'Floração', stage_fruit: 'Frutificação', stage_veraison: 'Veraison',
+    stage_ripen: 'Maturação', stage_harvest: 'Colheita', stage_post: 'Pós-colheita',
+    editor_color: 'Cor', editor_cancel: 'Cancelar', editor_save: 'Salvar',
+    alert_no_layers: 'Nenhum campo para salvar. Adicione um campo primeiro.',
     location: 'Localização', field_area: 'Área do Campo', season_gdd: 'GDD da Safra', season_precip: 'Precip. da Safra',
     climate_summary: 'Resumo Climático', active_alerts: 'Alertas Ativos', monthly_temp_overview: 'Temperatura Mensal',
     loaded_polygons: 'Polígonos Carregados', no_polygons: 'Nenhum polígono carregado.', no_alerts: 'Sem alertas.',
@@ -6030,7 +6091,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // EXPORT KML
 // ═══════════════════════════════════════
 function exportKML() {
-  if (userLayers.length === 0) { alert('No hay capas para exportar.'); return; }
+  if (userLayers.length === 0) { alert(t('alert_no_layers')); return; }
 
   const placemarks = userLayers.map(({ layer, name }) => {
     const a = layer._agra || {};
@@ -6468,30 +6529,30 @@ document.querySelectorAll('.nav-item').forEach(item => {
 <!-- Polygon / Layer Editor Modal -->
 <div id="poly-editor">
   <div class="poly-editor-box">
-    <h3>✏️ Propiedades de la Capa</h3>
+    <h3 data-i18n="editor_title">✏️ Field Properties</h3>
     <div class="form-field">
-      <label>Nombre</label>
-      <input type="text" id="editor-name" placeholder="ej: Parcela Norte">
+      <label data-i18n="editor_name">Name</label>
+      <input type="text" id="editor-name" placeholder="e.g. North Parcel" data-i18n-placeholder="editor_name_ph">
     </div>
     <div class="form-field">
-      <label>Descripción</label>
-      <textarea id="editor-desc" placeholder="Notas, variedad, observaciones..."></textarea>
+      <label data-i18n="editor_desc">Description</label>
+      <textarea id="editor-desc" placeholder="Notes, variety, observations..." data-i18n-placeholder="editor_desc_ph"></textarea>
     </div>
     <div class="form-field">
-      <label>Etapa fenológica</label>
+      <label data-i18n="editor_stage">Growth stage</label>
       <select id="editor-stage">
-        <option value="">— Seleccionar —</option>
-        <option value="Brotación">Brotación</option>
-        <option value="Floración">Floración</option>
-        <option value="Cuaja">Cuaja (Fruit Set)</option>
-        <option value="Envero">Envero (Veraison)</option>
-        <option value="Madurez">Madurez</option>
-        <option value="Cosecha">Cosecha</option>
-        <option value="Post-cosecha">Post-cosecha</option>
+        <option value="" data-i18n="editor_select">— Select —</option>
+        <option value="Bud break" data-i18n="stage_bud">Bud break</option>
+        <option value="Flowering" data-i18n="stage_flower">Flowering</option>
+        <option value="Fruit set" data-i18n="stage_fruit">Fruit set</option>
+        <option value="Veraison" data-i18n="stage_veraison">Veraison</option>
+        <option value="Ripening" data-i18n="stage_ripen">Ripening</option>
+        <option value="Harvest" data-i18n="stage_harvest">Harvest</option>
+        <option value="Post-harvest" data-i18n="stage_post">Post-harvest</option>
       </select>
     </div>
     <div class="form-field">
-      <label>Color</label>
+      <label data-i18n="editor_color">Color</label>
       <div class="color-row" id="color-row">
         <div class="color-opt selected" data-color="#52b788" style="background:#52b788"></div>
         <div class="color-opt" data-color="#3b82f6" style="background:#3b82f6"></div>
@@ -6504,8 +6565,8 @@ document.querySelectorAll('.nav-item').forEach(item => {
       </div>
     </div>
     <div class="editor-actions">
-      <button class="btn-cancel" onclick="closeEditor()">Cancelar</button>
-      <button class="btn-save" onclick="saveEditor()">💾 Guardar</button>
+      <button class="btn-cancel" onclick="closeEditor()" data-i18n="editor_cancel">Cancel</button>
+      <button class="btn-save" onclick="saveEditor()">💾 <span data-i18n="editor_save">Save</span></button>
     </div>
   </div>
 </div>
