@@ -983,44 +983,44 @@
   .poly-editor-box {
     background: var(--card-bg);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 28px 32px;
-    width: 420px;
+    border-radius: 10px;
+    padding: 16px 20px;
+    width: 360px;
     max-width: 95vw;
   }
-  .poly-editor-box h3 { font-size: 1rem; margin-bottom: 20px; color: var(--accent); }
-  .form-field { margin-bottom: 16px; }
-  .form-field label { display: block; font-size: 0.77rem; color: var(--text-secondary); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .poly-editor-box h3 { font-size: 0.85rem; margin-bottom: 12px; color: var(--accent); }
+  .form-field { margin-bottom: 10px; }
+  .form-field label { display: block; font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
   .form-field input, .form-field select, .form-field textarea {
     width: 100%;
     background: rgba(0,0,0,0.3);
     border: 1px solid var(--border);
-    border-radius: 7px;
-    padding: 8px 12px;
+    border-radius: 6px;
+    padding: 6px 10px;
     color: var(--text-primary);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     outline: none;
     transition: border-color 0.2s;
     font-family: inherit;
   }
   .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--accent); }
-  .form-field textarea { resize: vertical; min-height: 60px; }
-  .color-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .form-field textarea { resize: vertical; min-height: 44px; }
+  .color-row { display: flex; gap: 6px; flex-wrap: wrap; }
   .color-opt {
-    width: 26px; height: 26px;
-    border-radius: 6px;
+    width: 22px; height: 22px;
+    border-radius: 5px;
     cursor: pointer;
     border: 2px solid transparent;
     transition: border-color 0.15s;
   }
   .color-opt.selected { border-color: #fff; }
-  .editor-actions { display: flex; gap: 10px; margin-top: 22px; }
+  .editor-actions { display: flex; gap: 8px; margin-top: 14px; }
   .editor-actions button {
     flex: 1;
-    padding: 9px;
-    border-radius: 7px;
+    padding: 7px;
+    border-radius: 6px;
     border: none;
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
     transition: opacity 0.2s;
@@ -1557,7 +1557,12 @@
     .chat-context-badge { font-size: 0.62rem; padding: 1px 6px; }
 
     /* Poly editor modal */
-    .poly-editor-box { width: calc(100vw - 20px); padding: 20px 16px; }
+    .poly-editor-box { width: calc(100vw - 20px); padding: 14px 12px; }
+    .poly-editor-box h3 { font-size: 0.8rem; margin-bottom: 10px; }
+    .form-field { margin-bottom: 8px; }
+    .form-field input, .form-field select, .form-field textarea { padding: 5px 8px; font-size: 0.75rem; }
+    .color-opt { width: 20px; height: 20px; }
+    .editor-actions button { padding: 6px; font-size: 0.72rem; }
 
     /* Map source badge */
     .map-source-badge { font-size: 0.65rem; }
