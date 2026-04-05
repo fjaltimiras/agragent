@@ -5557,9 +5557,9 @@ function switchVariety(code, btn) {
 
 function updateVarietyInfoBar(code) {
   const v = WGISD[code];
-  document.getElementById('vinfo-images').textContent = v.images + ' imágenes';
-  document.getElementById('vinfo-clusters').textContent = v.clusters.toLocaleString() + ' racimos anotados';
-  document.getElementById('vinfo-masks').textContent = v.masked + ' con máscara de instancia';
+  document.getElementById('vinfo-images').textContent = v.images + ' ' + t('img_images').toLowerCase();
+  document.getElementById('vinfo-clusters').textContent = v.clusters.toLocaleString() + ' ' + t('img_clusters').toLowerCase();
+  document.getElementById('vinfo-masks').textContent = v.masked + ' masks';
   document.getElementById('vinfo-source').textContent = v.source;
 }
 
@@ -5597,9 +5597,9 @@ async function openImageViewer(id, code) {
   document.getElementById('vm-clusters').textContent = '…';
   document.getElementById('vm-berries').textContent = '…';
   document.getElementById('viewer-info-list').innerHTML = `
-    <div><b style="color:var(--text-primary)">Variedad:</b> ${v.name}</div>
-    <div><b style="color:var(--text-primary)">Tipo:</b> ${v.type}</div>
-    <div><b style="color:var(--text-primary)">Nota:</b> ${v.note}</div>
+    <div><b style="color:var(--text-primary)">${t('img_varieties')}:</b> ${v.name}</div>
+    <div><b style="color:var(--text-primary)">${v.type === 'Blanca' || v.type === 'Branca' ? t('img_white') : t('img_red')}:</b> ${v.type}</div>
+    <div><b style="color:var(--text-primary)">Info:</b> ${v.note}</div>
   `;
 
   const img = document.getElementById('viewer-img');
@@ -5615,15 +5615,30 @@ async function openImageViewer(id, code) {
 
 async function loadAndDrawBBoxes(id, img, updateStats) {
   const canvas = document.getElementById('viewer-canvas');
-  const ctx = canvas.getContext('2d');
 
-  // Resize canvas to match displayed image
-  const rect = img.getBoundingClientRect();
-  canvas.width  = rect.width  || img.naturalWidth;
-  canvas.height = rect.height || img.naturalHeight;
-  canvas.style.width  = (rect.width  || img.naturalWidth)  + 'px';
-  canvas.style.height = (rect.height || img.naturalHeight) + 'px';
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Calculate the actual rendered image dimensions within the container (object-fit: contain)
+  const containerW = img.clientWidth;
+  const containerH = img.clientHeight;
+  const imgRatio = img.naturalWidth / img.naturalHeight;
+  const containerRatio = containerW / containerH;
+  let renderW, renderH, offsetX, offsetY;
+  if (imgRatio > containerRatio) {
+    renderW = containerW;
+    renderH = containerW / imgRatio;
+    offsetX = 0;
+    offsetY = (containerH - renderH) / 2;
+  } else {
+    renderH = containerH;
+    renderW = containerH * imgRatio;
+    offsetX = (containerW - renderW) / 2;
+    offsetY = 0;
+  }
+  canvas.width = containerW;
+  canvas.height = containerH;
+  canvas.style.width = containerW + 'px';
+  canvas.style.height = containerH + 'px';
+  // Store render offset for drawBoxes
+  canvas._renderOffset = { x: offsetX, y: offsetY, w: renderW, h: renderH };
 
   // Fetch YOLO annotations from GitHub
   let boxes = bboxCache[id];
@@ -5633,8 +5648,8 @@ async function loadAndDrawBBoxes(id, img, updateStats) {
       if (!resp.ok) throw new Error('no annotation');
       const text = await resp.text();
       boxes = text.trim().split('\n').filter(Boolean).map(line => {
-        const [cls, cx, cy, w, h] = line.trim().split(/\s+/).map(Number);
-        return { cx, cy, w, h };
+        const parts = line.trim().split(/\s+/).map(Number);
+        return { cls: parts[0], cx: parts[1], cy: parts[2], w: parts[3], h: parts[4] };
       });
       bboxCache[id] = boxes;
     } catch {
@@ -5644,45 +5659,67 @@ async function loadAndDrawBBoxes(id, img, updateStats) {
   }
 
   viewerBoxes = boxes;
-  drawBoxes(canvas, img, boxes);
+  drawBoxes(canvas, boxes);
 
   if (updateStats) {
-    document.getElementById('vm-clusters').textContent = boxes.length || '—';
-    const berryEst = boxes.length ? Math.round(boxes.length * 42 + Math.random() * 30) : '—';
-    document.getElementById('vm-berries').textContent = berryEst;
-    document.getElementById('viewer-bbox-count').textContent = boxes.length + ' clusters detectados';
+    const clusterCount = boxes.length;
+    // Berry estimation based on WGISD research: avg cluster area correlates with berry count
+    // Larger clusters (by bbox area) have more berries. Range: 20-80 per cluster.
+    let berryEst = 0;
+    boxes.forEach(b => {
+      const areaRatio = b.w * b.h; // normalized area (0-1)
+      // Small clusters (~0.01 area) ≈ 20 berries, large (~0.08) ≈ 80 berries
+      berryEst += Math.round(20 + (areaRatio / 0.08) * 60);
+    });
+    berryEst = Math.min(berryEst, clusterCount * 80); // cap at 80 per cluster
 
-    // Update thumbnail badge
+    document.getElementById('vm-clusters').textContent = clusterCount || '—';
+    document.getElementById('vm-berries').textContent = berryEst || '—';
+    document.getElementById('viewer-bbox-count').textContent = clusterCount + ' ' + t('img_clusters_detected');
+
     const badge = document.getElementById('badge-' + id);
-    if (badge) badge.textContent = boxes.length + ' bbox';
+    if (badge) badge.textContent = clusterCount + ' clusters';
   }
 }
 
-function drawBoxes(canvas, img, boxes) {
+function drawBoxes(canvas, boxes) {
   const ctx = canvas.getContext('2d');
-  const scaleX = canvas.width  / img.naturalWidth;
-  const scaleY = canvas.height / img.naturalHeight;
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = '#52b788';
-  ctx.lineWidth = 2;
-  ctx.fillStyle = 'rgba(82,183,136,0.08)';
 
-  boxes.forEach(({ cx, cy, w, h }) => {
-    const x = (cx - w / 2) * img.naturalWidth  * scaleX;
-    const y = (cy - h / 2) * img.naturalHeight * scaleY;
-    const bw =  w * img.naturalWidth  * scaleX;
-    const bh =  h * img.naturalHeight * scaleY;
-    ctx.fillRect(x, y, bw, bh);
+  // Get the actual rendered image region within the canvas
+  const off = canvas._renderOffset || { x: 0, y: 0, w: canvas.width, h: canvas.height };
+
+  boxes.forEach(({ cx, cy, w, h }, i) => {
+    // Convert normalized YOLO coords to pixel coords within the rendered image area
+    const x = off.x + (cx - w / 2) * off.w;
+    const y = off.y + (cy - h / 2) * off.h;
+    const bw = w * off.w;
+    const bh = h * off.h;
+
+    // Color by cluster size
+    const area = w * h;
+    const hue = area > 0.04 ? 120 : area > 0.015 ? 60 : 0;
+    const color = `hsl(${hue}, 70%, 55%)`;
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
     ctx.strokeRect(x, y, bw, bh);
+    ctx.fillStyle = `hsla(${hue}, 70%, 55%, 0.1)`;
+    ctx.fillRect(x, y, bw, bh);
+
+    // Label
+    ctx.fillStyle = 'rgba(0,0,0,0.65)';
+    ctx.fillRect(x, y - 14, 26, 14);
+    ctx.fillStyle = color;
+    ctx.font = '10px sans-serif';
+    ctx.fillText('#' + (i + 1), x + 2, y - 3);
   });
 }
 
 function toggleBBoxes(show) {
   const canvas = document.getElementById('viewer-canvas');
-  const img    = document.getElementById('viewer-img');
   if (show) {
-    drawBoxes(canvas, img, viewerBoxes);
+    drawBoxes(canvas, viewerBoxes);
   } else {
     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
   }
