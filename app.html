@@ -1817,9 +1817,9 @@ function editDisplayName() {
         <div style="font-size:1.2rem;font-weight:700;color:var(--text-primary);margin-bottom:12px;" data-i18n="welcome_title">Welcome to AgrAgent</div>
         <div style="font-size:0.95rem;color:var(--text-secondary);max-width:460px;margin:0 auto;line-height:1.8;" data-i18n="welcome_text">Mark your field on the map to get started. We'll show you satellite images, weather data, and a harvest forecast for your vineyard.</div>
         <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;max-width:340px;margin-left:auto;margin-right:auto;text-align:left;">
-          <div style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:var(--text-secondary);"><span style="font-size:1.2rem;">1️⃣</span> Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection('maps')">Field Map</strong></div>
-          <div style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:var(--text-secondary);"><span style="font-size:1.2rem;">2️⃣</span> Upload a file or draw your field boundaries</div>
-          <div style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:var(--text-secondary);"><span style="font-size:1.2rem;">3️⃣</span> All data updates automatically</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:var(--text-secondary);"><span style="font-size:1.2rem;">1️⃣</span> <span data-i18n="step1">Go to</span> <strong style="color:var(--accent);cursor:pointer;" onclick="showSection('maps')" data-i18n="step1_link">Field Map</strong></div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:var(--text-secondary);"><span style="font-size:1.2rem;">2️⃣</span> <span data-i18n="step2">Upload a file or draw your field boundaries</span></div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:var(--text-secondary);"><span style="font-size:1.2rem;">3️⃣</span> <span data-i18n="step3">All data updates automatically</span></div>
         </div>
       </div>
 
@@ -3047,6 +3047,7 @@ const i18n = {
     // Dashboard
     welcome_title: 'Welcome to AgrAgent',
     welcome_text: 'Mark your field on the map to get started. We\'ll show you satellite images, weather data, and a harvest forecast for your vineyard.',
+    step1: 'Go to', step1_link: 'Field Map', step2: 'Upload a file or draw your field boundaries', step3: 'All data updates automatically',
     location: 'Location', field_area: 'Field Area', season_gdd: 'Heat Units', season_precip: 'Total Rainfall',
     climate_summary: 'Climate Summary', active_alerts: 'Alerts', monthly_temp_overview: 'Monthly Temperature',
     loaded_polygons: 'Your Fields', no_polygons: 'No fields added yet.', no_alerts: 'No alerts — looking good!',
@@ -3147,6 +3148,7 @@ const i18n = {
     season: 'Temporada 2025–2026', upload_polygon: '',
     welcome_title: 'Bienvenido a AgrAgent',
     welcome_text: 'Marca tu campo en el mapa para comenzar. Te mostraremos imágenes satelitales, datos del clima y un pronóstico de cosecha para tu viñedo.',
+    step1: 'Ve a', step1_link: 'Mapa del Campo', step2: 'Sube un archivo o dibuja los límites de tu campo', step3: 'Todos los datos se actualizan automáticamente',
     location: 'Ubicación', field_area: 'Superficie', season_gdd: 'Calor Acumulado', season_precip: 'Lluvia Total',
     climate_summary: 'Resumen del Clima', active_alerts: 'Alertas', monthly_temp_overview: 'Temperatura Mensual',
     loaded_polygons: 'Tus Campos', no_polygons: 'Aún no has agregado campos.', no_alerts: 'Sin alertas — todo bien.',
@@ -3240,7 +3242,8 @@ const i18n = {
     nav_references: 'Referências',
     season: 'Safra 2025–2026', upload_polygon: 'Carregue um polígono para começar',
     welcome_title: 'Bem-vindo ao agragent',
-    welcome_text: 'Para começar, vá a <strong style="color:var(--accent)">Mapas Satelitais</strong> e carregue um arquivo KML/KMZ ou desenhe um polígono sobre seu campo.<br>O painel será atualizado automaticamente com dados reais da localidade.',
+    welcome_text: 'Marque seu campo no mapa para começar. Mostraremos imagens de satélite, dados do clima e uma previsão de colheita para seu vinhedo.',
+    step1: 'Vá para', step1_link: 'Mapa do Campo', step2: 'Carregue um arquivo ou desenhe os limites do seu campo', step3: 'Todos os dados se atualizam automaticamente',
     location: 'Localização', field_area: 'Área do Campo', season_gdd: 'GDD da Safra', season_precip: 'Precip. da Safra',
     climate_summary: 'Resumo Climático', active_alerts: 'Alertas Ativos', monthly_temp_overview: 'Temperatura Mensal',
     loaded_polygons: 'Polígonos Carregados', no_polygons: 'Nenhum polígono carregado.', no_alerts: 'Sem alertas.',
