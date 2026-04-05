@@ -878,7 +878,7 @@
     margin-right: 4px;
   }
   .toolbar-toggle {
-    display: none;
+    display: block;
     background: none;
     border: none;
     color: var(--accent);
@@ -889,6 +889,12 @@
     width: 100%;
     text-align: left;
   }
+  .map-toolbar.collapsed .toolbar-label,
+  .map-toolbar.collapsed .tb-btn,
+  .map-toolbar.collapsed .tb-divider,
+  .map-toolbar.collapsed input[type="file"] { display: none !important; }
+  .gee-layer-controls.collapsed-ctrl > *:not(.gee-ctrl-toggle-wrap) { display: none !important; }
+  .gee-layer-controls.collapsed-ctrl .gee-ctrl-toggle-wrap { display: block !important; }
   .tb-btn {
     display: flex;
     align-items: center;
