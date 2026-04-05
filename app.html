@@ -2421,52 +2421,36 @@ function editDisplayName() {
       <div class="grid-2 mb-20">
         <div class="card" style="text-align:center;">
           <div class="card-title">Phenological Stage Progress</div>
-          <div class="gauge-container" style="margin-top:16px;">
-            <svg class="gauge-svg" viewBox="0 0 180 180" width="180" height="180">
-              <circle cx="90" cy="90" r="70" fill="none" stroke="rgba(30,58,46,0.8)" stroke-width="14"/>
-              <circle cx="90" cy="90" r="70" fill="none" stroke="#f59e0b" stroke-width="14"
-                stroke-dasharray="439.8" stroke-dashoffset="140.7" stroke-linecap="round"/>
-            </svg>
-            <div class="gauge-label">
-              <div class="pct">68%</div>
-              <div class="glabel">Season<br>Progress</div>
+          <div id="pheno-gauge-container">
+            <div class="gauge-container" style="margin-top:16px;">
+              <svg class="gauge-svg" viewBox="0 0 180 180" width="180" height="180">
+                <circle cx="90" cy="90" r="70" fill="none" stroke="rgba(30,58,46,0.8)" stroke-width="14"/>
+                <circle id="pheno-gauge-arc" cx="90" cy="90" r="70" fill="none" stroke="var(--text-secondary)" stroke-width="14"
+                  stroke-dasharray="439.8" stroke-dashoffset="439.8" stroke-linecap="round"/>
+              </svg>
+              <div class="gauge-label">
+                <div class="pct" id="pheno-pct">—</div>
+                <div class="glabel" id="pheno-glabel">Waiting<br>for data</div>
+              </div>
+            </div>
+            <div style="margin-top:12px;">
+              <div style="font-size:1rem;font-weight:700;" id="pheno-stage-name">—</div>
+              <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:2px;" id="pheno-stage-sub">Upload a field to calculate</div>
             </div>
           </div>
-          <div style="margin-top:12px;">
-            <div style="font-size:1rem;font-weight:700;color:var(--yellow);">Veraison</div>
-            <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:2px;">Stage 35 — Modified E-L Scale</div>
-          </div>
-          <!-- Stage timeline matching paper's 8 stages -->
-          <div class="stage-timeline" style="margin-top:20px;">
-            <div class="stage-dot-wrap">
-              <div class="stage-dot done"></div>
-              <div class="stage-label">EL 3<br><small>Bud</small></div>
-            </div>
-            <div class="stage-line done"></div>
-            <div class="stage-dot-wrap">
-              <div class="stage-dot done"></div>
-              <div class="stage-label">EL 15<br><small>Inflor.</small></div>
-            </div>
-            <div class="stage-line done"></div>
-            <div class="stage-dot-wrap">
-              <div class="stage-dot done"></div>
-              <div class="stage-label">EL 27<br><small>Berry</small></div>
-            </div>
-            <div class="stage-line done"></div>
-            <div class="stage-dot-wrap">
-              <div class="stage-dot current"></div>
-              <div class="stage-label">EL 35<br><small>Veraison</small></div>
-            </div>
-            <div class="stage-line"></div>
-            <div class="stage-dot-wrap">
-              <div class="stage-dot"></div>
-              <div class="stage-label">EL 38<br><small>Ripen</small></div>
-            </div>
-            <div class="stage-line"></div>
-            <div class="stage-dot-wrap">
-              <div class="stage-dot"></div>
-              <div class="stage-label">EL 41<br><small>Senesc.</small></div>
-            </div>
+          <!-- Stage timeline — updated dynamically -->
+          <div class="stage-timeline" style="margin-top:20px;" id="pheno-timeline">
+            <div class="stage-dot-wrap"><div class="stage-dot" id="dot-el3"></div><div class="stage-label">EL 3<br><small>Bud</small></div></div>
+            <div class="stage-line" id="line-el3"></div>
+            <div class="stage-dot-wrap"><div class="stage-dot" id="dot-el15"></div><div class="stage-label">EL 15<br><small>Inflor.</small></div></div>
+            <div class="stage-line" id="line-el15"></div>
+            <div class="stage-dot-wrap"><div class="stage-dot" id="dot-el27"></div><div class="stage-label">EL 27<br><small>Berry</small></div></div>
+            <div class="stage-line" id="line-el27"></div>
+            <div class="stage-dot-wrap"><div class="stage-dot" id="dot-el35"></div><div class="stage-label">EL 35<br><small>Veraison</small></div></div>
+            <div class="stage-line" id="line-el35"></div>
+            <div class="stage-dot-wrap"><div class="stage-dot" id="dot-el38"></div><div class="stage-label">EL 38<br><small>Ripen</small></div></div>
+            <div class="stage-line" id="line-el38"></div>
+            <div class="stage-dot-wrap"><div class="stage-dot" id="dot-el41"></div><div class="stage-label">EL 41<br><small>Senesc.</small></div></div>
           </div>
         </div>
 
@@ -3870,6 +3854,16 @@ function onPolygonChanged() {
       if (e) e.textContent = '—';
     });
 
+    // Reset phenological stage
+    const arc = document.getElementById('pheno-gauge-arc');
+    if (arc) { arc.setAttribute('stroke-dashoffset', '439.8'); arc.setAttribute('stroke', 'var(--text-secondary)'); }
+    const pctEl = document.getElementById('pheno-pct');
+    if (pctEl) pctEl.textContent = '—';
+    const nameEl = document.getElementById('pheno-stage-name');
+    if (nameEl) { nameEl.textContent = '—'; nameEl.style.color = ''; }
+    const subEl = document.getElementById('pheno-stage-sub');
+    if (subEl) subEl.textContent = 'Upload a field to calculate';
+
     return;
   }
   // Polygons still exist — recalculate with updated geometry
@@ -4224,6 +4218,9 @@ async function loadClimateData() {
 
     climateDataLoaded = true;
     console.log('✅ Climate data loaded from Open-Meteo');
+
+    // Update phenological stage from GDD
+    updatePhenologicalStage(totalGDD);
 
     // Trigger yield prediction if satellite indices are ready
     if (geeConnected) computeSatelliteIndices();
@@ -5038,6 +5035,70 @@ function loadGEELayer(idx) {
 function refreshGEELayer() {
   if (geeMode === 'compare') loadComparison();
   else loadGEELayer(currentGEEIndex);
+}
+
+// ═══════════════════════════════════════
+// PHENOLOGICAL STAGE (from GDD — Modified E-L Scale)
+// ═══════════════════════════════════════
+// GDD thresholds based on Coombe (1995) Modified E-L system for Vitis vinifera
+// and calibrated with data from Altimiras et al. (2024) RNA-seq phenological stages.
+const PHENO_STAGES = [
+  { el: 3,  name: 'Bud break',       gdd: 0,    color: '#86efac' },
+  { el: 5,  name: 'Shoot growth',     gdd: 50,   color: '#4ade80' },
+  { el: 15, name: 'Inflorescence',    gdd: 200,  color: '#22c55e' },
+  { el: 17, name: 'Flowering',        gdd: 350,  color: '#fbbf24' },
+  { el: 27, name: 'Berry set',        gdd: 500,  color: '#f59e0b' },
+  { el: 31, name: 'Berry growth',     gdd: 750,  color: '#fb923c' },
+  { el: 35, name: 'Veraison',         gdd: 1100, color: '#f87171' },
+  { el: 36, name: 'Ripening',         gdd: 1300, color: '#c084fc' },
+  { el: 38, name: 'Harvest ready',    gdd: 1500, color: '#a78bfa' },
+  { el: 41, name: 'Senescence',       gdd: 1800, color: '#94a3b8' },
+];
+
+function updatePhenologicalStage(gdd) {
+  if (!gdd && gdd !== 0) return;
+
+  // Determine current stage
+  let currentIdx = 0;
+  for (let i = PHENO_STAGES.length - 1; i >= 0; i--) {
+    if (gdd >= PHENO_STAGES[i].gdd) { currentIdx = i; break; }
+  }
+  const stage = PHENO_STAGES[currentIdx];
+  const maxGDD = PHENO_STAGES[PHENO_STAGES.length - 1].gdd;
+  const pct = Math.min(100, Math.round((gdd / maxGDD) * 100));
+
+  // Update gauge
+  const arc = document.getElementById('pheno-gauge-arc');
+  if (arc) {
+    const circumference = 439.8; // 2 * π * 70
+    arc.setAttribute('stroke-dashoffset', circumference - (circumference * pct / 100));
+    arc.setAttribute('stroke', stage.color);
+  }
+  const pctEl = document.getElementById('pheno-pct');
+  if (pctEl) pctEl.textContent = pct + '%';
+  const glabel = document.getElementById('pheno-glabel');
+  if (glabel) glabel.innerHTML = 'Season<br>Progress';
+  const nameEl = document.getElementById('pheno-stage-name');
+  if (nameEl) { nameEl.textContent = stage.name; nameEl.style.color = stage.color; }
+  const subEl = document.getElementById('pheno-stage-sub');
+  if (subEl) subEl.textContent = 'E-L ' + stage.el + ' — GDD: ' + gdd + ' / ' + maxGDD;
+
+  // Update timeline dots and lines
+  const timelineEls = [3, 15, 27, 35, 38, 41];
+  timelineEls.forEach(el => {
+    const dot = document.getElementById('dot-el' + el);
+    const line = document.getElementById('line-el' + el);
+    if (dot) {
+      const stageInfo = PHENO_STAGES.find(s => s.el === el);
+      const reached = stageInfo && gdd >= stageInfo.gdd;
+      const isCurrent = stageInfo && stage.el === el;
+      dot.className = 'stage-dot' + (reached ? ' done' : '') + (isCurrent ? ' current' : '');
+    }
+    if (line) {
+      const nextStage = PHENO_STAGES.find(s => s.el === el);
+      line.className = 'stage-line' + (nextStage && gdd >= nextStage.gdd ? ' done' : '');
+    }
+  });
 }
 
 // ═══════════════════════════════════════
