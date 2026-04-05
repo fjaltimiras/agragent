@@ -1449,6 +1449,7 @@
   @media (max-width: 640px) {
     .wgisd-grid { grid-template-columns: repeat(2, 1fr); }
     .viewer-top { flex-direction: column; }
+    .viewer-canvas-wrap { min-height: 250px; }
     .viewer-meta { width: 100%; min-width: unset; border-left: none; border-top: 1px solid var(--border); }
   }
 
@@ -5880,9 +5881,12 @@ async function openImageViewer(id, code) {
 
   const img = document.getElementById('viewer-img');
   img.src = WGISD_BASE + id + '.jpg';
-  img.onload = async () => {
+  img.onload = () => {
     document.getElementById('viewer-loading').style.display = 'none';
-    await loadAndDrawBBoxes(id, img, true);
+    // Wait for layout to settle (especially on mobile where flex-direction changes)
+    requestAnimationFrame(() => {
+      setTimeout(() => loadAndDrawBBoxes(id, img, true), 50);
+    });
   };
   img.onerror = () => {
     document.getElementById('viewer-loading').innerHTML = '<span style="color:var(--red)">⚠️ No se pudo cargar la imagen</span>';
@@ -5891,10 +5895,14 @@ async function openImageViewer(id, code) {
 
 async function loadAndDrawBBoxes(id, img, updateStats) {
   const canvas = document.getElementById('viewer-canvas');
+  const wrap = canvas.parentElement;
 
-  // Calculate the actual rendered image dimensions within the container (object-fit: contain)
-  const containerW = img.clientWidth;
-  const containerH = img.clientHeight;
+  // Use the wrapper dimensions as reference (works on both desktop and mobile)
+  const wrapRect = wrap.getBoundingClientRect();
+  const containerW = Math.round(wrapRect.width);
+  const containerH = Math.round(wrapRect.height);
+
+  // Calculate the actual rendered image position within the container (object-fit: contain)
   const imgRatio = img.naturalWidth / img.naturalHeight;
   const containerRatio = containerW / containerH;
   let renderW, renderH, offsetX, offsetY;
@@ -5909,10 +5917,14 @@ async function loadAndDrawBBoxes(id, img, updateStats) {
     offsetX = (containerW - renderW) / 2;
     offsetY = 0;
   }
+
+  // Size canvas to fill the wrapper (same as the container, not the image)
   canvas.width = containerW;
   canvas.height = containerH;
   canvas.style.width = containerW + 'px';
   canvas.style.height = containerH + 'px';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
   // Store render offset for drawBoxes
   canvas._renderOffset = { x: offsetX, y: offsetY, w: renderW, h: renderH };
 
@@ -6000,6 +6012,17 @@ function toggleBBoxes(show) {
     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
   }
 }
+
+// Redraw boxes on resize/orientation change
+window.addEventListener('resize', function() {
+  const viewer = document.getElementById('img-viewer');
+  if (viewer && viewer.style.display !== 'none' && viewerBoxes.length > 0) {
+    const img = document.getElementById('viewer-img');
+    if (img && img.complete) {
+      requestAnimationFrame(() => loadAndDrawBBoxes(viewerImgId, img, false));
+    }
+  }
+});
 
 function closeViewer() {
   document.getElementById('img-viewer').style.display = 'none';
