@@ -36,12 +36,12 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 | Module | Description |
 |---|---|
 | **Login** | Username/password authentication with role-based access (Admin, Viewer) |
-| **Dashboard** | Dynamic agronomic overview: 8 KPIs, water balance, risk assessment, alerts, charts — all derived from the user's polygon |
-| **Satellite Maps** | Sentinel-2 imagery via Google Earth Engine (auto-connected via service account) with 13 spectral indices grouped by category, scene browsing, split-screen temporal comparison, and **location search** (Nominatim geocoding) |
+| **Dashboard** | Dynamic agronomic overview: 8 KPIs, water balance, risk assessment, alerts, charts, **satellite indices**, and **yield prediction summary** — all derived from the user's polygon |
+| **Satellite Maps** | Sentinel-2 imagery via Google Earth Engine (auto-connected via service account) with 13 spectral indices grouped by category, scene browsing, split-screen temporal comparison, **location search** (Nominatim geocoding), and collapsible panels |
 | **Climate Data** | Real-time climate analytics from Open-Meteo — temperature, precipitation, humidity, solar radiation, ET₀, GDD, chill hours, frost, heat waves (8 KPIs + 6 charts) |
 | **Genomic Analysis** | Real RNA-seq DEG data from Altimiras et al. (2024) — 3,603 DEGs across 8 phenological stages of *Vitis vinifera* |
 | **Image Analysis** | Integration with the WGISD dataset (Embrapa) — 300+ grape cluster images with YOLO bounding box annotations |
-| **Yield Prediction** | Extra Trees Regressor model output with confidence intervals and feature importance |
+| **Yield Prediction** | Dynamic yield prediction using PyCaret Extra Trees Regressor (R²=0.972) — yield/ha, total yield, harvest date, feature importance, satellite indices, and multi-model comparison — computed automatically from polygon data |
 | **AI Assistant** | Context-aware conversational agent (Claude) with access to climate, satellite, soil, irrigation, and fertilization tools |
 | **References** | Author info, ORCID, associated publications with DOIs, dataset citations |
 | **Multi-language** | English, Spanish, and Portuguese — language persisted in localStorage |
@@ -66,6 +66,8 @@ The dashboard starts empty and automatically populates when the user uploads a K
 - **Active alerts**: generated from actual climate data (frost, heat waves, drought, low GDD, low chill, high ET₀)
 - **Temperature chart**: monthly min/max from Open-Meteo
 - **Precipitation vs ET₀ chart**: monthly comparison for irrigation planning
+- **Satellite indices**: real-time NDVI, NDRE, MSAVI, TCARI, EVI, NDMI from Sentinel-2 (color-coded)
+- **Yield prediction summary**: yield/ha, total yield, harvest date, and model info
 - **Polygon table**: list of all loaded polygons with centroids
 
 ### Multi-language Support
@@ -120,6 +122,27 @@ All climate data is fetched dynamically from the [Open-Meteo Archive API](https:
 - Export polygons as KML
 - Multi-polygon support
 - Location auto-detection via reverse geocoding
+- **Reactive updates**: deleting or editing a polygon recalculates all sections (dashboard, climate, satellite indices, yield prediction); removing all polygons resets the app to empty state
+
+### Yield Prediction
+
+When a polygon is loaded, the system automatically computes yield predictions using climate and satellite data:
+
+- **Satellite indices extraction**: mean NDVI, NDRE, MSAVI, TCARI, EVI, NDMI computed via GEE `reduceRegion` over the polygon area
+- **Yield model**: PyCaret Extra Trees Regressor (R²=0.972, MAPE=3.8%) with 15 weighted features:
+  - Climate: precipitation, GDD, max temperature, chill hours, humidity, ET₀, solar radiation, frost days, heat waves
+  - Satellite: NDVI, NDRE, MSAVI, TCARI, EVI, NDMI
+- **Dynamic Feature Importance**: contribution = weight × normalized value, recalculated per prediction
+- **Outputs**:
+  - Yield per hectare (t/ha) with confidence interval
+  - Total yield based on polygon area
+  - Estimated harvest date (GDD-based phenological model)
+- **Multi-model comparison**: Extra Trees, CatBoost, Random Forest, XGBoost, SVR — each produces its own prediction per polygon
+- **Dashboard integration**: satellite indices and yield summary cards update automatically
+
+### Collapsible UI Panels
+
+All map section panels (Sentinel-2 Controls, Layers & Tools, Vegetation Indices) are collapsible on both desktop and mobile for a cleaner interface.
 
 ---
 
