@@ -1922,7 +1922,23 @@ function editDisplayName() {
           </div>
         </div>
 
-        <!-- Row 6: Parcel table -->
+        <!-- Row 6: Satellite Indices + Yield Prediction -->
+        <div class="grid-2 mb-20" id="dashSatYieldRow" style="display:none;">
+          <div class="card">
+            <div class="card-title">Satellite Indices (Sentinel-2)</div>
+            <div id="dashSatIndices" style="padding:8px 0;">
+              <div style="font-size:0.85rem;color:var(--text-secondary);">Waiting for GEE data...</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Yield Prediction</div>
+            <div id="dashYieldSummary" style="padding:8px 0;">
+              <div style="font-size:0.85rem;color:var(--text-secondary);">Waiting for data...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 7: Parcel table -->
         <div class="card">
           <div class="card-title" data-i18n="loaded_polygons">Loaded Polygons</div>
           <div id="dashParcelTable">
@@ -4950,6 +4966,46 @@ function updateYieldSection(p) {
         <td>${isBest ? '<span class="model-best">★</span>' : ''}</td>
       </tr>`;
     }).join('');
+  }
+
+  // ── Update Dashboard: Satellite Indices + Yield cards ──
+  const dashRow = document.getElementById('dashSatYieldRow');
+  if (dashRow) dashRow.style.display = '';
+
+  const dashSat = document.getElementById('dashSatIndices');
+  if (dashSat) {
+    const indexColors = { NDVI: 'green', NDRE: 'accent', MSAVI: 'green', TCARI: 'yellow', EVI: 'green', NDMI: 'blue' };
+    const S = agIndices;
+    dashSat.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;">` +
+      Object.entries(S).map(([k, v]) => {
+        const color = k === 'TCARI' ? (v < 0.15 ? 'green' : v < 0.25 ? 'yellow' : 'red') :
+          (v > 0.5 ? 'green' : v > 0.3 ? 'accent' : 'red');
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:0.82rem;color:var(--text-secondary);font-weight:600;">${k}</span>
+          <span style="font-size:0.9rem;font-weight:700;color:var(--${color});">${v.toFixed(3)}</span>
+        </div>`;
+      }).join('') + `</div>
+      <div style="font-size:0.7rem;color:var(--text-secondary);margin-top:8px;">Sentinel-2 SR · Median composite · 10m resolution</div>`;
+  }
+
+  const dashYield = document.getElementById('dashYieldSummary');
+  if (dashYield) {
+    const bestModel = p.modelResults ? p.modelResults[0] : null;
+    dashYield.innerHTML = `
+      <div style="text-align:center;padding:8px 0;">
+        <div style="font-size:2.2rem;font-weight:800;color:var(--accent);">${p.yieldPerHa} <span style="font-size:1rem;font-weight:400;">t/ha</span></div>
+        <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:2px;">CI: ${el('yield-ci')?.textContent || '—'}</div>
+        <div style="margin:10px 0;padding:8px 12px;background:rgba(96,165,250,0.08);border-radius:6px;display:inline-block;">
+          <span style="font-size:0.8rem;color:var(--text-secondary);">Total:</span>
+          <strong style="color:#60a5fa;font-size:1rem;margin-left:4px;">${p.totalYield} t</strong>
+          <span style="font-size:0.75rem;color:var(--text-secondary);margin-left:6px;">(${agAreaHa.toFixed(1)} ha)</span>
+        </div>
+        <div style="margin-top:8px;padding:6px 12px;background:rgba(74,222,128,0.08);border-radius:6px;display:inline-block;">
+          <span style="font-size:0.8rem;color:var(--text-secondary);">Harvest:</span>
+          <strong style="color:var(--accent);font-size:0.88rem;margin-left:4px;">${p.harvestStr}</strong>
+        </div>
+        ${bestModel ? `<div style="font-size:0.7rem;color:var(--text-secondary);margin-top:8px;">Model: ${bestModel.name} · R²=${bestModel.r2} · MAPE=${bestModel.mape}%</div>` : ''}
+      </div>`;
   }
 
   // Show yield section content
