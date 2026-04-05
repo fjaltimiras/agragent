@@ -789,6 +789,70 @@
     accent-color: var(--accent) !important;
   }
 
+  /* ───── Location Search ───── */
+  .location-search {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+  }
+  .location-search input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 12px;
+    color: var(--text);
+    font-size: 0.82rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .location-search input:focus { border-color: var(--accent); }
+  .location-search input::placeholder { color: var(--text-secondary); }
+  .location-search-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .location-search-btn:hover { filter: brightness(1.15); }
+  .location-results {
+    position: absolute;
+    top: 100%;
+    left: 14px;
+    right: 14px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 0 0 8px 8px;
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 999;
+    display: none;
+  }
+  .location-results.visible { display: block; }
+  .location-result-item {
+    padding: 9px 14px;
+    font-size: 0.8rem;
+    color: var(--text);
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .location-result-item:last-child { border-bottom: none; }
+  .location-result-item:hover { background: rgba(74,222,128,0.1); }
+  .location-result-item .loc-name { font-weight: 600; }
+  .location-result-item .loc-detail { font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px; }
+
   /* ───── KMZ/KML UPLOAD & DRAW TOOLS ───── */
   .map-toolbar {
     background: var(--card-bg);
@@ -1987,6 +2051,14 @@ function editDisplayName() {
         <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:6px;">
           💡 <span data-i18n="gee_sentinel_info">Sentinel-2 SR Harmonized · 10m resolution · Auto cloud masking (QA60) · Polygon area only</span>
         </div>
+      </div>
+
+      <!-- Location Search -->
+      <div class="location-search" id="location-search">
+        <span style="font-size:1rem;">📍</span>
+        <input type="text" id="location-input" placeholder="Search location... (e.g. Valparaíso, Casablanca Valley)" autocomplete="off" data-i18n-placeholder="search_location_placeholder">
+        <button class="location-search-btn" onclick="searchLocation()">🔎 <span data-i18n="search_btn">Search</span></button>
+        <div class="location-results" id="location-results"></div>
       </div>
 
       <!-- Toolbar: KMZ Upload + Draw Tools -->
@@ -4370,6 +4442,68 @@ function initMap() {
 }
 
 // ═══════════════════════════════════════
+// LOCATION SEARCH (Nominatim Geocoding)
+// ═══════════════════════════════════════
+let searchTimeout = null;
+const locationInput = document.getElementById('location-input');
+const locationResults = document.getElementById('location-results');
+
+locationInput.addEventListener('input', function() {
+  clearTimeout(searchTimeout);
+  const q = this.value.trim();
+  if (q.length < 3) { locationResults.classList.remove('visible'); return; }
+  searchTimeout = setTimeout(() => searchLocation(), 350);
+});
+
+locationInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); clearTimeout(searchTimeout); searchLocation(); }
+  if (e.key === 'Escape') { locationResults.classList.remove('visible'); }
+});
+
+document.addEventListener('click', function(e) {
+  if (!document.getElementById('location-search').contains(e.target)) {
+    locationResults.classList.remove('visible');
+  }
+});
+
+async function searchLocation() {
+  const q = locationInput.value.trim();
+  if (q.length < 2) return;
+  locationResults.innerHTML = '<div class="location-result-item" style="color:var(--text-secondary);cursor:default;">Searching...</div>';
+  locationResults.classList.add('visible');
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=6&addressdetails=1`, {
+      headers: { 'Accept-Language': document.documentElement.lang || 'en' }
+    });
+    const data = await res.json();
+    if (!data.length) {
+      locationResults.innerHTML = '<div class="location-result-item" style="color:var(--text-secondary);cursor:default;">No results found</div>';
+      return;
+    }
+    locationResults.innerHTML = data.map((r, i) => {
+      const name = r.display_name.split(',').slice(0, 2).join(',');
+      const detail = r.display_name.split(',').slice(2).join(',').trim();
+      return `<div class="location-result-item" onclick="goToLocation(${r.lat},${r.lon},'${name.replace(/'/g,"\\'")}')">
+        <div class="loc-name">${name}</div>
+        <div class="loc-detail">${detail}</div>
+      </div>`;
+    }).join('');
+  } catch (err) {
+    locationResults.innerHTML = '<div class="location-result-item" style="color:#f87171;cursor:default;">Search error — try again</div>';
+  }
+}
+
+let searchMarker = null;
+function goToLocation(lat, lon, name) {
+  locationResults.classList.remove('visible');
+  locationInput.value = name;
+  vineMap.flyTo([lat, lon], 14, { duration: 1.5 });
+  if (searchMarker) vineMap.removeLayer(searchMarker);
+  searchMarker = L.marker([lat, lon]).addTo(vineMap)
+    .bindPopup(`<strong>${name}</strong><br><small>${lat.toFixed(5)}, ${lon.toFixed(5)}</small>`)
+    .openPopup();
+}
+
 // ═══════════════════════════════════════
 // MAP INDEX BUTTONS
 // ═══════════════════════════════════════
