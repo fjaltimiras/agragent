@@ -2591,13 +2591,21 @@ function editDisplayName() {
           </div>
           <div id="go-enrichment-summary">
             <div style="padding:12px 0;font-size:0.82rem;color:var(--text-secondary);">
-              <div style="margin-bottom:8px;"><strong style="color:var(--text-primary);">Top GO Terms in DEGs (Biological Process):</strong></div>
-              <div class="hbar-row"><div class="hbar-label">Response to stimulus <span>GO:0050896</span></div><div class="hbar-track"><div class="hbar-fill" style="width:85%;background:var(--accent)"></div></div></div>
-              <div class="hbar-row"><div class="hbar-label">Metabolic process <span>GO:0008152</span></div><div class="hbar-track"><div class="hbar-fill" style="width:78%;background:#60a5fa"></div></div></div>
-              <div class="hbar-row"><div class="hbar-label">Biosynthetic process <span>GO:0009058</span></div><div class="hbar-track"><div class="hbar-fill" style="width:65%;background:#a78bfa"></div></div></div>
-              <div class="hbar-row"><div class="hbar-label">Transport <span>GO:0006810</span></div><div class="hbar-track"><div class="hbar-fill" style="width:52%;background:#fb923c"></div></div></div>
-              <div class="hbar-row"><div class="hbar-label">Signal transduction <span>GO:0007165</span></div><div class="hbar-track"><div class="hbar-fill" style="width:45%;background:#f87171"></div></div></div>
-              <div class="hbar-row"><div class="hbar-label">Cell wall organization <span>GO:0071555</span></div><div class="hbar-track"><div class="hbar-fill" style="width:38%;background:#fbbf24"></div></div></div>
+              <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <strong style="color:var(--text-primary);">GO Term Frequency in DEGs:</strong>
+                <select id="go-aspect-filter" onchange="renderGOEnrichment()" style="background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:5px;padding:3px 8px;font-size:0.75rem;">
+                  <option value="BP">Biological Process</option>
+                  <option value="MF">Molecular Function</option>
+                  <option value="CC">Cellular Component</option>
+                </select>
+                <button onclick="computeGOEnrichment()" style="background:var(--accent);color:#000;border:none;border-radius:5px;padding:4px 12px;font-size:0.72rem;font-weight:600;cursor:pointer;">Compute from UniProt</button>
+                <span id="go-enrich-status" style="font-size:0.7rem;color:var(--text-secondary);"></span>
+              </div>
+              <div id="go-enrich-bars">
+                <div style="text-align:center;padding:16px;color:var(--text-secondary);font-size:0.8rem;">
+                  Press <strong style="color:var(--accent);">Compute from UniProt</strong> to fetch real GO annotations for all genes in the DEG tables.
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -4666,6 +4674,114 @@ function renderGeneDetail(panel, geneId, data) {
   }
 
   panel.innerHTML = html;
+}
+
+// ═══════════════════════════════════════
+// GO ENRICHMENT (real — fetches from UniProt)
+// ═══════════════════════════════════════
+let goEnrichmentData = null; // { BP: {term: count}, MF: {}, CC: {} }
+
+async function computeGOEnrichment() {
+  const statusEl = document.getElementById('go-enrich-status');
+  const barsEl = document.getElementById('go-enrich-bars');
+
+  // Collect all unique gene IDs from the DEG tables
+  const geneEls = document.querySelectorAll('#section-genomic .gene-link');
+  const geneIds = [...new Set(Array.from(geneEls).map(el => el.textContent.trim()))];
+
+  if (geneIds.length === 0) {
+    barsEl.innerHTML = '<div style="color:var(--text-secondary);padding:10px;">No genes found in tables.</div>';
+    return;
+  }
+
+  statusEl.textContent = `Fetching GO terms for ${geneIds.length} genes...`;
+  barsEl.innerHTML = `<div style="display:flex;align-items:center;gap:8px;padding:10px;color:var(--yellow);">
+    <div class="map-spinner" style="width:16px;height:16px;border-width:2px;"></div> Querying UniProt for ${geneIds.length} genes...</div>`;
+
+  const goCounts = { BP: {}, MF: {}, CC: {} };
+  let fetched = 0;
+
+  for (const geneId of geneIds) {
+    // Use cache from gene detail if available
+    if (geneCache[geneId]) {
+      geneCache[geneId].go.forEach(g => {
+        if (goCounts[g.aspect]) {
+          goCounts[g.aspect][g.term] = (goCounts[g.aspect][g.term] || 0) + 1;
+        }
+      });
+      fetched++;
+      continue;
+    }
+
+    try {
+      const url = `https://rest.uniprot.org/uniprotkb/search?query=gene:${geneId}+organism_id:29760&format=json&size=1&fields=accession,protein_name,go_id,go_p,go_c,go_f`;
+      const resp = await fetch(url);
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.results && data.results[0]) {
+          const entry = data.results[0];
+          const goTerms = [];
+          if (entry.uniProtKBCrossReferences) {
+            entry.uniProtKBCrossReferences.forEach(xref => {
+              if (xref.database === 'GO') {
+                const termProp = (xref.properties || []).find(p => p.key === 'GoTerm');
+                if (termProp) {
+                  const term = termProp.value;
+                  let aspect = 'BP';
+                  if (term.startsWith('C:')) aspect = 'CC';
+                  else if (term.startsWith('F:')) aspect = 'MF';
+                  const name = term.substring(2);
+                  goCounts[aspect][name] = (goCounts[aspect][name] || 0) + 1;
+                  goTerms.push({ id: xref.id, term: name, aspect });
+                }
+              }
+            });
+          }
+          // Cache for gene detail viewer
+          geneCache[geneId] = {
+            uniprot: entry.primaryAccession,
+            proteinName: entry.proteinDescription?.recommendedName?.fullName?.value
+              || entry.proteinDescription?.submissionNames?.[0]?.fullName?.value || 'Unknown',
+            go: goTerms, organism: 'Vitis vinifera',
+            length: entry.sequence?.length || 0
+          };
+        }
+      }
+    } catch (e) { /* skip failed fetches */ }
+
+    fetched++;
+    if (fetched % 5 === 0) statusEl.textContent = `Fetched ${fetched}/${geneIds.length} genes...`;
+  }
+
+  goEnrichmentData = goCounts;
+  statusEl.textContent = `Done — ${fetched} genes analyzed`;
+  renderGOEnrichment();
+}
+
+function renderGOEnrichment() {
+  if (!goEnrichmentData) return;
+  const aspect = document.getElementById('go-aspect-filter').value;
+  const counts = goEnrichmentData[aspect] || {};
+  const barsEl = document.getElementById('go-enrich-bars');
+
+  // Sort by frequency
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+  if (sorted.length === 0) {
+    barsEl.innerHTML = '<div style="color:var(--text-secondary);padding:10px;font-size:0.8rem;">No GO terms found for this category.</div>';
+    return;
+  }
+
+  const maxCount = sorted[0][1];
+  const colors = ['var(--accent)', '#60a5fa', '#a78bfa', '#fb923c', '#f87171', '#fbbf24', '#4ade80', '#e879f9', '#38bdf8', '#94a3b8'];
+
+  barsEl.innerHTML = sorted.map(([term, count], i) => {
+    const pct = Math.round((count / maxCount) * 100);
+    return `<div class="hbar-row">
+      <div class="hbar-label">${term} <span>${count} genes</span></div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${colors[i % colors.length]}"></div></div>
+    </div>`;
+  }).join('');
 }
 
 function showDEGStage(stageId, btn) {
