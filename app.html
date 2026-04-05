@@ -630,6 +630,10 @@
     gap: 12px;
     flex-wrap: wrap;
   }
+  .map-controls .gee-ctrl-toggle-wrap { display: block; }
+  .map-controls .gee-ctrl-toggle { display: block; }
+  .map-controls.collapsed-ctrl > *:not(.gee-ctrl-toggle-wrap) { display: none !important; }
+  .map-controls.collapsed-ctrl .gee-ctrl-toggle-wrap { display: block !important; }
   .map-controls .ctrl-label { font-size: 0.77rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
   .index-group {
     display: flex;
@@ -1458,6 +1462,8 @@
     .gee-ctrl-toggle { display: block; }
     .gee-layer-controls.collapsed-ctrl > *:not(.gee-ctrl-toggle-wrap) { display: none !important; }
     .gee-layer-controls.collapsed-ctrl .gee-ctrl-toggle-wrap { display: block !important; }
+    .map-controls.collapsed-ctrl > *:not(.gee-ctrl-toggle-wrap) { display: none !important; }
+    .map-controls.collapsed-ctrl .gee-ctrl-toggle-wrap { display: block !important; }
     .gee-ctrl-row { gap: 8px; }
     .gee-ctrl-row label { font-size: 0.7rem; gap: 4px; }
     .gee-ctrl-row input[type="date"] { padding: 4px 5px; font-size: 0.7rem; width: 120px; }
@@ -2088,7 +2094,12 @@ function editDisplayName() {
       </div>
 
       <!-- Index Selector + GEE Badge -->
-      <div class="map-controls" style="flex-wrap:wrap;gap:6px 4px;">
+      <div class="map-controls collapsed-ctrl" id="index-controls" style="flex-wrap:wrap;gap:6px 4px;">
+        <div class="gee-ctrl-toggle-wrap" style="width:100%;">
+          <button class="toolbar-toggle gee-ctrl-toggle" onclick="var c=document.getElementById('index-controls');c.classList.toggle('collapsed-ctrl');this.querySelector('.tgl-arrow').textContent=c.classList.contains('collapsed-ctrl')?'▸':'▾'">
+            🌿 Vegetation Indices <span class="tgl-arrow">▸</span>
+          </button>
+        </div>
         <div class="index-group">
           <span class="index-group-label">🌿 Vigor</span>
           <button class="index-btn active" onclick="setIndex(this,'NDVI')">NDVI</button>
