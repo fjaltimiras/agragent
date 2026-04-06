@@ -6063,7 +6063,7 @@ window.addEventListener('resize', () => {
 // ═══════════════════════════════════════
 // Detection API endpoint (agro-agent backend)
 const DETECT_API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:8000/api/detect' : 'https://api.agragent.com/api/detect';
+  ? 'http://localhost:8000/api/detect' : 'https://agragent-api-production.up.railway.app/api/detect';
 
 async function analyzeUploadedImage(event) {
   const file = event.target.files[0];
