@@ -1944,7 +1944,7 @@ function editDisplayName() {
             </div>
           </div>
           <div class="card">
-            <div class="card-title">Agronomic Risk Assessment</div>
+            <div class="card-title" data-i18n="risk_assessment">Risk Assessment</div>
             <div id="dashRiskAssessment" style="padding:8px 0;">
               <div style="font-size:0.85rem;color:var(--text-secondary);">Loading...</div>
             </div>
@@ -1954,13 +1954,13 @@ function editDisplayName() {
         <!-- Row 6: Satellite Indices + Yield Prediction -->
         <div class="grid-2 mb-20" id="dashSatYieldRow" style="display:none;">
           <div class="card">
-            <div class="card-title">Satellite Indices (Sentinel-2)</div>
+            <div class="card-title" data-i18n="dash_sat_title">Satellite Indices</div>
             <div id="dashSatIndices" style="padding:8px 0;">
               <div style="font-size:0.85rem;color:var(--text-secondary);">Waiting for GEE data...</div>
             </div>
           </div>
           <div class="card">
-            <div class="card-title">Yield Prediction</div>
+            <div class="card-title" data-i18n="dash_yield_title">Harvest Forecast</div>
             <div id="dashYieldSummary" style="padding:8px 0;">
               <div style="font-size:0.85rem;color:var(--text-secondary);">Waiting for data...</div>
             </div>
@@ -3075,6 +3075,7 @@ const i18n = {
     stage_ripen: 'Ripening', stage_harvest: 'Harvest', stage_post: 'Post-harvest',
     editor_color: 'Color', editor_cancel: 'Cancel', editor_save: 'Save',
     alert_no_layers: 'No fields to save. Add a field first.',
+    dash_sat_title: 'Satellite Indices', dash_yield_title: 'Harvest Forecast',
     location: 'Location', field_area: 'Field Area', season_gdd: 'Heat Units', season_precip: 'Total Rainfall',
     climate_summary: 'Climate Summary', active_alerts: 'Alerts', monthly_temp_overview: 'Monthly Temperature',
     loaded_polygons: 'Your Fields', no_polygons: 'No fields added yet.', no_alerts: 'No alerts — looking good!',
@@ -3199,6 +3200,7 @@ const i18n = {
     stage_ripen: 'Madurez', stage_harvest: 'Cosecha', stage_post: 'Post-cosecha',
     editor_color: 'Color', editor_cancel: 'Cancelar', editor_save: 'Guardar',
     alert_no_layers: 'No hay campos para guardar. Agrega un campo primero.',
+    dash_sat_title: 'Índices Satelitales', dash_yield_title: 'Pronóstico de Cosecha',
     location: 'Ubicación', field_area: 'Superficie', season_gdd: 'Calor Acumulado', season_precip: 'Lluvia Total',
     climate_summary: 'Resumen del Clima', active_alerts: 'Alertas', monthly_temp_overview: 'Temperatura Mensual',
     loaded_polygons: 'Tus Campos', no_polygons: 'Aún no has agregado campos.', no_alerts: 'Sin alertas — todo bien.',
@@ -3318,6 +3320,7 @@ const i18n = {
     stage_ripen: 'Maturação', stage_harvest: 'Colheita', stage_post: 'Pós-colheita',
     editor_color: 'Cor', editor_cancel: 'Cancelar', editor_save: 'Salvar',
     alert_no_layers: 'Nenhum campo para salvar. Adicione um campo primeiro.',
+    dash_sat_title: 'Índices de Satélite', dash_yield_title: 'Previsão de Colheita',
     location: 'Localização', field_area: 'Área do Campo', season_gdd: 'GDD da Safra', season_precip: 'Precip. da Safra',
     climate_summary: 'Resumo Climático', active_alerts: 'Alertas Ativos', monthly_temp_overview: 'Temperatura Mensal',
     loaded_polygons: 'Polígonos Carregados', no_polygons: 'Nenhum polígono carregado.', no_alerts: 'Sem alertas.',

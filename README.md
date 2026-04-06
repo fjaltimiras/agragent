@@ -144,6 +144,30 @@ When a polygon is loaded, the system automatically computes yield predictions us
 
 All map section panels (Sentinel-2 Controls, Layers & Tools, Vegetation Indices) are collapsible on both desktop and mobile for a cleaner interface.
 
+### Genomic Analysis — Gene Ontology & AlphaFold
+
+- **Clickable gene IDs**: Click any VIT_ gene in DEG tables to fetch data from UniProt and AlphaFold
+- **Gene Ontology annotations**: Biological Process, Molecular Function, Cellular Component — fetched in real-time from UniProt REST API
+- **AlphaFold integration**: Direct links to 3D protein structures, PDB and CIF downloads
+- **GO Enrichment**: "Compute from UniProt" button fetches GO terms for all 25 DEGs and shows frequency-ranked bar chart by aspect (BP/MF/CC)
+
+### Image Analysis — YOLOv11 + WGISD
+
+- **WGISD dataset**: 300 images, 5 grape varieties (Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc, Syrah)
+- **Bounding box visualization**: Color-coded by cluster size, numbered labels, accurate canvas overlay
+- **Berry estimation**: Based on bbox area — small clusters ≈ 20 berries, large ≈ 80
+- **Upload your own image**: Sends to backend API (`POST /api/detect/`) for real-time YOLOv11 inference
+- **Backend**: FastAPI + YOLOv11n deployed on Railway (`agragent-api-production.up.railway.app`)
+- **Training script**: `yolo/train_wgisd.py` — downloads WGISD, trains YOLOv11n, exports ONNX
+
+### Farmer-Friendly UX
+
+- **Plain language**: Technical terms replaced with farmer-friendly labels (NDVI → "Plant Health", GDD → "Heat Units", ET₀ → "Water Loss")
+- **Larger touch targets**: Min 40-44px buttons on mobile
+- **Step-by-step onboarding**: 1-2-3 guide in welcome screen
+- **Full i18n**: English, Spanish, Portuguese — ~200 translation keys covering all UI elements
+- **Collapsible conversations**: Chat sidebar can be minimized
+
 ---
 
 ## AI Assistant
