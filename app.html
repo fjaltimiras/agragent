@@ -2396,30 +2396,30 @@ function editDisplayName() {
       <!-- Stats -->
       <div class="grid-4 mb-20">
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Total Reads</div>
+          <div class="kpi-label" data-i18n="total_reads">Total Reads</div>
           <div class="kpi-value" style="font-size:1.5rem;color:var(--accent);">1,336M</div>
-          <div class="kpi-sub">68 RNA-seq samples</div>
+          <div class="kpi-sub" data-i18n="reads_sub">68 RNA-seq samples</div>
         </div>
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Data Processed</div>
+          <div class="kpi-label" data-i18n="data_processed">Data Processed</div>
           <div class="kpi-value" style="font-size:1.5rem;color:var(--accent);">87.0 GB</div>
-          <div class="kpi-sub">FASTQ files</div>
+          <div class="kpi-sub" data-i18n="data_sub">FASTQ files</div>
         </div>
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Phenological Stages</div>
+          <div class="kpi-label" data-i18n="pheno_stages">Phenological Stages</div>
           <div class="kpi-value" style="font-size:1.5rem;color:var(--green);">8</div>
-          <div class="kpi-sub">E-L 3 → E-L 41</div>
+          <div class="kpi-sub" data-i18n="stages_sub">E-L 3 → E-L 41</div>
         </div>
         <div class="card" style="text-align:center;">
-          <div class="kpi-label">Unique DEGs</div>
+          <div class="kpi-label" data-i18n="unique_degs">Unique DEGs</div>
           <div class="kpi-value" style="font-size:1.5rem;color:var(--yellow);">3,603</div>
-          <div class="kpi-sub">FDR &lt; 0.05 (edgeR)</div>
+          <div class="kpi-sub" data-i18n="degs_sub">FDR &lt; 0.05 (edgeR)</div>
         </div>
       </div>
 
       <!-- DEG count + accumulation (combined chart) -->
       <div class="card mb-20">
-        <div class="card-title">DEGs per Stage & Accumulation (vs. E-L 3 baseline)</div>
+        <div class="card-title" data-i18n="degs_per_stage">DEGs per Stage & Accumulation (vs. E-L 3 baseline)</div>
         <div class="chart-wrap tall">
           <canvas id="degStageChart"></canvas>
         </div>
@@ -2427,7 +2427,7 @@ function editDisplayName() {
 
       <!-- DEG Tables by stage — tabbed -->
       <div class="card mb-20">
-        <div class="card-title">Top Differentially Expressed Genes by Stage</div>
+        <div class="card-title" data-i18n="top_degs">Top Differentially Expressed Genes by Stage</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
           <button class="chip active" onclick="showDEGStage('el15',this)">EL 15</button>
           <button class="chip" onclick="showDEGStage('el17',this)">EL 17</button>
@@ -2441,7 +2441,7 @@ function editDisplayName() {
 
         <!-- EL 15 — Shoot/Inflorescence -->
         <table class="data-table" id="deg-el15">
-          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_03s0063g01440</strong></td><td style="color:var(--green)">+7.71</td><td>1.89e-16</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_01s0011g00140</strong></td><td style="color:var(--green)">+6.76</td><td>1.37e-14</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
@@ -2454,7 +2454,7 @@ function editDisplayName() {
 
         <!-- EL 17 -->
         <table class="data-table" id="deg-el17" style="display:none">
-          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_03s0063g01440</strong></td><td style="color:var(--green)">+8.65</td><td>2.07e-19</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_00s0199g00200</strong></td><td style="color:var(--green)">+6.94</td><td>2.03e-18</td><td>Shoot &amp; Inflor.</td><td><span class="badge badge-green">UP</span></td></tr>
@@ -2466,7 +2466,7 @@ function editDisplayName() {
 
         <!-- EL 27 — Berry development -->
         <table class="data-table" id="deg-el27" style="display:none">
-          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_14s0108g00810</strong></td><td style="color:var(--green)">+11.85</td><td>1.56e-75</td><td>Berry dev.</td><td><span class="badge badge-green">UP</span></td></tr>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_10s0003g02070</strong></td><td style="color:var(--green)">+5.60</td><td>1.82e-24</td><td>Berry dev.</td><td><span class="badge badge-green">UP</span></td></tr>
@@ -2478,7 +2478,7 @@ function editDisplayName() {
 
         <!-- EL 31 — Berry development -->
         <table class="data-table" id="deg-el31" style="display:none">
-          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_14s0108g00810</strong></td><td style="color:var(--green)">+13.47</td><td>2.92e-105</td><td>Berry dev.</td><td><span class="badge badge-green">UP</span></td></tr>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_16s0022g02190</strong></td><td style="color:var(--red)">−12.85</td><td>9.13e-71</td><td>Berry dev.</td><td><span class="badge badge-red">DOWN</span></td></tr>
@@ -2490,7 +2490,7 @@ function editDisplayName() {
 
         <!-- EL 35 — Veraison / Ripening -->
         <table class="data-table" id="deg-el35" style="display:none">
-          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_04s0008g00880</strong></td><td style="color:var(--red)">−8.34</td><td>6.93e-179</td><td>Ripening</td><td><span class="badge badge-red">DOWN</span></td></tr>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_09s0002g01350</strong></td><td style="color:var(--red)">−8.34</td><td>2.04e-156</td><td>Ripening</td><td><span class="badge badge-red">DOWN</span></td></tr>
@@ -2502,7 +2502,7 @@ function editDisplayName() {
 
         <!-- EL 36 — Ripening -->
         <table class="data-table" id="deg-el36" style="display:none">
-          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_14s0108g00810</strong></td><td style="color:var(--green)">+15.03</td><td>1.28e-121</td><td>Ripening</td><td><span class="badge badge-green">UP</span></td></tr>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_01s0011g04140</strong></td><td style="color:var(--green)">+5.33</td><td>6.86e-81</td><td>Ripening</td><td><span class="badge badge-green">UP</span></td></tr>
@@ -2514,7 +2514,7 @@ function editDisplayName() {
 
         <!-- EL 38 — Ripening -->
         <table class="data-table" id="deg-el38" style="display:none">
-          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_16s0039g01450</strong></td><td style="color:var(--red)">−9.59</td><td>3.75e-165</td><td>Ripening</td><td><span class="badge badge-red">DOWN</span></td></tr>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_09s0002g01350</strong></td><td style="color:var(--red)">−9.84</td><td>3.66e-189</td><td>Ripening</td><td><span class="badge badge-red">DOWN</span></td></tr>
@@ -2526,7 +2526,7 @@ function editDisplayName() {
 
         <!-- EL 41 — Senescence -->
         <table class="data-table" id="deg-el41" style="display:none">
-          <thead><tr><th>Gene ID</th><th>Log2FC</th><th>FDR</th><th>Stage</th><th>Regulation</th></tr></thead>
+          <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_14s0108g00810</strong></td><td style="color:var(--green)">+13.89</td><td>3.10e-105</td><td>Senescence</td><td><span class="badge badge-green">UP</span></td></tr>
             <tr><td><strong class="gene-link" onclick="showGeneDetail(this.textContent)">VIT_08s0105g00400</strong></td><td style="color:var(--green)">+8.57</td><td>5.54e-86</td><td>Senescence</td><td><span class="badge badge-green">UP</span></td></tr>
@@ -2540,37 +2540,37 @@ function editDisplayName() {
       <!-- Gene Ontology & AlphaFold Panel -->
       <div class="grid-2 mb-20">
         <div class="card">
-          <div class="card-title">🧬 Gene Ontology Enrichment</div>
-          <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:10px;">
+          <div class="card-title" data-i18n="go_enrichment_title">🧬 Gene Ontology Enrichment</div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:10px;" data-i18n="go_enrichment_hint">
             Click any <strong style="color:var(--accent)">Gene ID</strong> in the tables above to view its GO annotations and protein structure.
           </div>
           <div id="go-enrichment-summary">
             <div style="padding:12px 0;font-size:0.82rem;color:var(--text-secondary);">
               <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <strong style="color:var(--text-primary);">GO Term Frequency in DEGs:</strong>
+                <strong style="color:var(--text-primary);" data-i18n="go_term_freq">GO Term Frequency in DEGs:</strong>
                 <select id="go-aspect-filter" onchange="renderGOEnrichment()" style="background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:5px;padding:3px 8px;font-size:0.75rem;">
-                  <option value="BP">Biological Process</option>
-                  <option value="MF">Molecular Function</option>
-                  <option value="CC">Cellular Component</option>
+                  <option value="BP" data-i18n="go_bp">Biological Process</option>
+                  <option value="MF" data-i18n="go_mf">Molecular Function</option>
+                  <option value="CC" data-i18n="go_cc">Cellular Component</option>
                 </select>
-                <button onclick="computeGOEnrichment()" style="background:var(--accent);color:#000;border:none;border-radius:5px;padding:4px 12px;font-size:0.72rem;font-weight:600;cursor:pointer;">Compute from UniProt</button>
+                <button onclick="computeGOEnrichment()" style="background:var(--accent);color:#000;border:none;border-radius:5px;padding:4px 12px;font-size:0.72rem;font-weight:600;cursor:pointer;" data-i18n="go_compute">Compute from UniProt</button>
                 <span id="go-enrich-status" style="font-size:0.7rem;color:var(--text-secondary);"></span>
               </div>
               <div id="go-enrich-bars">
                 <div style="text-align:center;padding:16px;color:var(--text-secondary);font-size:0.8rem;">
-                  Press <strong style="color:var(--accent);">Compute from UniProt</strong> to fetch real GO annotations for all genes in the DEG tables.
+                  <span data-i18n="go_compute_hint">Press <strong style="color:var(--accent);">Compute from UniProt</strong> to fetch real GO annotations for all genes in the DEG tables.</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div class="card">
-          <div class="card-title">🔬 Gene Detail Viewer</div>
+          <div class="card-title" data-i18n="gene_detail_title">🔬 Gene Detail Viewer</div>
           <div id="gene-detail-panel" style="padding:8px 0;">
             <div style="text-align:center;padding:30px 10px;color:var(--text-secondary);font-size:0.85rem;">
               <div style="font-size:1.5rem;margin-bottom:8px;">👆</div>
-              Click a <strong style="color:var(--accent);">VIT_ gene ID</strong> in any table to see:<br>
-              Gene Ontology annotations · UniProt protein info · AlphaFold 3D structure
+              <span data-i18n="gene_detail_hint">Click a <strong style="color:var(--accent);">VIT_ gene ID</strong> in any table to see:<br>
+              Gene Ontology annotations · UniProt protein info · AlphaFold 3D structure</span>
             </div>
           </div>
         </div>
@@ -2578,11 +2578,11 @@ function editDisplayName() {
 
       <!-- DEG count summary table -->
       <div class="card">
-        <div class="card-title">Differential Expression Summary — All Comparisons vs. E-L 3 (Baseline)</div>
+        <div class="card-title" data-i18n="deg_summary_title">Differential Expression Summary — All Comparisons vs. E-L 3 (Baseline)</div>
         <table class="data-table">
           <thead>
             <tr>
-              <th>Comparison</th><th>Major Stage</th><th>Tissue</th><th>Replicates</th><th>Down-regulated</th><th>Up-regulated</th><th>Total DEGs</th>
+              <th data-i18n="th_comparison">Comparison</th><th data-i18n="th_major_stage">Major Stage</th><th data-i18n="th_tissue">Tissue</th><th data-i18n="th_replicates">Replicates</th><th data-i18n="th_down">Down-regulated</th><th data-i18n="th_up">Up-regulated</th><th data-i18n="th_total_degs">Total DEGs</th>
             </tr>
           </thead>
           <tbody>
@@ -3156,6 +3156,18 @@ const i18n = {
     sample_composition: 'Sample Composition by Variety', samples: 'samples',
     deg_accumulation: 'DEG Accumulation Across Stages',
     top_degs: 'Top Differentially Expressed Genes by Stage',
+    go_enrichment_title: '🧬 Gene Ontology Enrichment',
+    go_enrichment_hint: 'Click any <strong style="color:var(--accent)">Gene ID</strong> in the tables above to view its GO annotations and protein structure.',
+    go_term_freq: 'GO Term Frequency in DEGs:',
+    go_bp: 'Biological Process', go_mf: 'Molecular Function', go_cc: 'Cellular Component',
+    go_compute: 'Compute from UniProt',
+    go_compute_hint: 'Press <strong style="color:var(--accent);">Compute from UniProt</strong> to fetch real GO annotations for all genes in the DEG tables.',
+    gene_detail_title: '🔬 Gene Detail Viewer',
+    gene_detail_hint: 'Click a <strong style="color:var(--accent);">VIT_ gene ID</strong> in any table to see:<br>Gene Ontology annotations · UniProt protein info · AlphaFold 3D structure',
+    deg_summary_title: 'Differential Expression Summary — All Comparisons vs. E-L 3 (Baseline)',
+    th_comparison: 'Comparison', th_major_stage: 'Major Stage', th_tissue: 'Tissue', th_replicates: 'Replicates',
+    th_down: 'Down-regulated', th_up: 'Up-regulated', th_total_degs: 'Total DEGs',
+    th_gene_id: 'Gene ID', th_stage: 'Stage', th_regulation: 'Regulation',
     // Misc
     active_layers: 'Active layers', polygon_word: 'polygon(s)', no_geom: 'No valid geometries found.',
     // Alerts
@@ -3282,6 +3294,18 @@ const i18n = {
     sample_composition: 'Variedades analizadas', samples: 'muestras',
     deg_accumulation: 'Acumulación de genes activos',
     top_degs: 'Genes más importantes por etapa',
+    go_enrichment_title: '🧬 Enriquecimiento de Ontología Génica',
+    go_enrichment_hint: 'Haz clic en cualquier <strong style="color:var(--accent)">ID de Gen</strong> en las tablas para ver sus anotaciones GO y estructura proteica.',
+    go_term_freq: 'Frecuencia de términos GO en genes activos:',
+    go_bp: 'Proceso Biológico', go_mf: 'Función Molecular', go_cc: 'Componente Celular',
+    go_compute: 'Calcular desde UniProt',
+    go_compute_hint: 'Presiona <strong style="color:var(--accent);">Calcular desde UniProt</strong> para obtener anotaciones GO reales de todos los genes en las tablas.',
+    gene_detail_title: '🔬 Detalle del Gen',
+    gene_detail_hint: 'Haz clic en un <strong style="color:var(--accent);">ID VIT_</strong> en cualquier tabla para ver:<br>Anotaciones de Ontología Génica · Info proteica UniProt · Estructura 3D AlphaFold',
+    deg_summary_title: 'Resumen de Expresión Diferencial — Todas las comparaciones vs. E-L 3 (Línea base)',
+    th_comparison: 'Comparación', th_major_stage: 'Etapa Principal', th_tissue: 'Tejido', th_replicates: 'Réplicas',
+    th_down: 'Sub-expresados', th_up: 'Sobre-expresados', th_total_degs: 'Total Genes',
+    th_gene_id: 'ID del Gen', th_stage: 'Etapa', th_regulation: 'Regulación',
     // Misc
     active_layers: 'Tus campos', polygon_word: 'campo(s)', no_geom: 'No se encontraron límites de campo en el archivo.',
     // Alerts
@@ -3407,6 +3431,18 @@ const i18n = {
     sample_composition: 'Composição de Amostras por Variedade', samples: 'amostras',
     deg_accumulation: 'Acumulação de DEGs por Estágio',
     top_degs: 'Genes Diferencialmente Expressos Top por Estágio',
+    go_enrichment_title: '🧬 Enriquecimento de Ontologia Gênica',
+    go_enrichment_hint: 'Clique em qualquer <strong style="color:var(--accent)">ID do Gene</strong> nas tabelas para ver suas anotações GO e estrutura proteica.',
+    go_term_freq: 'Frequência de termos GO nos DEGs:',
+    go_bp: 'Processo Biológico', go_mf: 'Função Molecular', go_cc: 'Componente Celular',
+    go_compute: 'Calcular via UniProt',
+    go_compute_hint: 'Pressione <strong style="color:var(--accent);">Calcular via UniProt</strong> para buscar anotações GO reais de todos os genes nas tabelas.',
+    gene_detail_title: '🔬 Detalhe do Gene',
+    gene_detail_hint: 'Clique em um <strong style="color:var(--accent);">ID VIT_</strong> em qualquer tabela para ver:<br>Anotações de Ontologia Gênica · Info proteica UniProt · Estrutura 3D AlphaFold',
+    deg_summary_title: 'Resumo de Expressão Diferencial — Todas comparações vs. E-L 3 (Base)',
+    th_comparison: 'Comparação', th_major_stage: 'Estágio Principal', th_tissue: 'Tecido', th_replicates: 'Réplicas',
+    th_down: 'Sub-expressos', th_up: 'Sobre-expressos', th_total_degs: 'Total DEGs',
+    th_gene_id: 'ID do Gene', th_stage: 'Estágio', th_regulation: 'Regulação',
     // Misc
     active_layers: 'Camadas ativas', polygon_word: 'polígono(s)', no_geom: 'Nenhuma geometria válida encontrada.',
     // Alerts
