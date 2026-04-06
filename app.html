@@ -470,7 +470,6 @@
     z-index: 0;
     border: 1px solid var(--border);
     margin-bottom: 16px;
-    transition: all 0.3s ease;
   }
   #map-container.fullscreen {
     position: fixed;
@@ -3457,9 +3456,9 @@ navItems.forEach(item => {
     // Initialize map when first shown
     if (target === 'maps') {
       if (!mapInitialized) {
-        setTimeout(() => { initMap(); updateLegend('NDVI'); mapInitialized = true; autoConnectGEE(); }, 100);
+        setTimeout(() => { initMap(); updateLegend('NDVI'); mapInitialized = true; autoConnectGEE(); setTimeout(() => vineMap && vineMap.invalidateSize(), 300); }, 100);
       } else {
-        if (vineMap) setTimeout(() => vineMap.invalidateSize(), 150);
+        if (vineMap) { vineMap.invalidateSize(); setTimeout(() => vineMap.invalidateSize(), 300); }
         if (!geeConnected) autoConnectGEE();
       }
     }
@@ -6430,6 +6429,7 @@ function toggleDraw(shape) {
   stopDelete();
   drawMode = shape;
   document.getElementById(btnMap[shape]).classList.add('active');
+  vineMap.invalidateSize();
   vineMap.pm.enableDraw(shape, {
     snappable: true,
     snapDistance: 20,
