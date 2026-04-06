@@ -4771,6 +4771,20 @@ function initMap() {
   // Init draw/edit tools
   initGeoman();
 
+  // Fix Leaflet click offset: invalidateSize when #content scrolls or map is interacted with
+  const contentEl = document.getElementById('content');
+  if (contentEl) {
+    let scrollTimer;
+    contentEl.addEventListener('scroll', () => {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => vineMap.invalidateSize(), 50);
+    }, { passive: true });
+  }
+  // Invalidate on every mouse interaction to keep coordinates accurate
+  vineMap.getContainer().addEventListener('mouseenter', () => vineMap.invalidateSize(), { passive: true });
+  vineMap.getContainer().addEventListener('touchstart', () => vineMap.invalidateSize(), { passive: true });
+  vineMap.getContainer().addEventListener('pointerdown', () => vineMap.invalidateSize(), { passive: true });
+
   // No default polygons — user must upload KML/KMZ or draw a polygon
   renderLayerList();
 }
@@ -6429,12 +6443,24 @@ function toggleDraw(shape) {
   stopDelete();
   drawMode = shape;
   document.getElementById(btnMap[shape]).classList.add('active');
-  vineMap.invalidateSize();
-  vineMap.pm.enableDraw(shape, {
-    snappable: true,
-    snapDistance: 20,
-    allowSelfIntersection: false
-  });
+
+  // Scroll map into full view and force Leaflet to recalculate container position
+  const mapEl = document.getElementById('map-container');
+  mapEl.scrollIntoView({ block: 'center', behavior: 'instant' });
+  vineMap.invalidateSize({ animate: false, pan: false });
+
+  // Wait for scroll + layout to fully settle before enabling draw
+  setTimeout(() => {
+    vineMap.invalidateSize({ animate: false, pan: false });
+    setTimeout(() => {
+      vineMap.invalidateSize({ animate: false, pan: false });
+      vineMap.pm.enableDraw(shape, {
+        snappable: true,
+        snapDistance: 20,
+        allowSelfIntersection: false
+      });
+    }, 150);
+  }, 150);
 }
 
 function stopDraw() {
