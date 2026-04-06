@@ -12,6 +12,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@mapbox/togeojson@0.16.0/togeojson.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/digidem/leaflet-side-by-side@gh-pages/leaflet-side-by-side.min.js"></script>
+<script src="https://3Dmol.org/build/3Dmol-min.js"></script>
 <!-- Google Earth Engine JS API loaded dynamically on connect -->
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -4637,26 +4638,53 @@ function renderGeneDetail(panel, geneId, data) {
 
   // AlphaFold
   if (data.alphafold) {
+    const viewerId = 'af-viewer-' + Date.now();
     html += `<div style="border-top:1px solid var(--border);padding-top:10px;">
       <div style="font-size:0.78rem;font-weight:600;color:var(--text-primary);margin-bottom:6px;">🔬 AlphaFold Predicted Structure</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <div id="${viewerId}" style="width:100%;height:300px;border-radius:8px;border:1px solid var(--border);background:#1a1a2e;position:relative;"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
         <a href="${data.alphafold.url}" target="_blank" rel="noopener"
-           style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;color:var(--accent);font-size:0.78rem;text-decoration:none;transition:border-color 0.2s;"
+           style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;color:var(--accent);font-size:0.72rem;text-decoration:none;transition:border-color 0.2s;"
            onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-          🌐 View 3D Structure
+          🌐 AlphaFold Entry
         </a>
         ${data.alphafold.pdbUrl ? `<a href="${data.alphafold.pdbUrl}" target="_blank" rel="noopener"
-           style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;color:#60a5fa;font-size:0.78rem;text-decoration:none;transition:border-color 0.2s;"
+           style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;color:#60a5fa;font-size:0.72rem;text-decoration:none;transition:border-color 0.2s;"
            onmouseover="this.style.borderColor='#60a5fa'" onmouseout="this.style.borderColor='var(--border)'">
-          📥 Download PDB
+          📥 PDB
         </a>` : ''}
         ${data.alphafold.cifUrl ? `<a href="${data.alphafold.cifUrl}" target="_blank" rel="noopener"
-           style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;color:#a78bfa;font-size:0.78rem;text-decoration:none;transition:border-color 0.2s;"
+           style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;color:#a78bfa;font-size:0.72rem;text-decoration:none;transition:border-color 0.2s;"
            onmouseover="this.style.borderColor='#a78bfa'" onmouseout="this.style.borderColor='var(--border)'">
-          📥 Download CIF
+          📥 CIF
         </a>` : ''}
       </div>
+      ${data.alphafold.confidence ? `<div style="font-size:0.68rem;color:var(--text-secondary);margin-top:6px;">pLDDT confidence: <span style="color:var(--accent);font-weight:600;">${data.alphafold.confidence.toFixed(1)}</span> · Color: <span style="color:#0053d6;">■</span> Very high &gt;90 <span style="color:#65cbf3;">■</span> High 70–90 <span style="color:#ffdb13;">■</span> Low 50–70 <span style="color:#ff7d45;">■</span> Very low &lt;50</div>` : ''}
     </div>`;
+
+    // Load 3D structure after DOM update
+    setTimeout(() => {
+      const container = document.getElementById(viewerId);
+      if (!container || typeof $3Dmol === 'undefined') return;
+      const viewer = $3Dmol.createViewer(container, { backgroundColor: '#1a1a2e' });
+      const structUrl = data.alphafold.pdbUrl || data.alphafold.cifUrl;
+      const fmt = data.alphafold.pdbUrl ? 'pdb' : 'cif';
+      fetch(structUrl).then(r => r.text()).then(txt => {
+        viewer.addModel(txt, fmt);
+        viewer.setStyle({}, { cartoon: { colorfunc: function(atom) {
+          const b = atom.b;
+          if (b > 90) return '#0053d6';
+          if (b > 70) return '#65cbf3';
+          if (b > 50) return '#ffdb13';
+          return '#ff7d45';
+        }}});
+        viewer.zoomTo();
+        viewer.render();
+        viewer.spin('y', 0.5);
+      }).catch(() => {
+        container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-secondary);font-size:0.8rem;">Could not load 3D structure</div>';
+      });
+    }, 100);
   } else if (data.uniprot) {
     html += `<div style="font-size:0.78rem;color:var(--text-secondary);border-top:1px solid var(--border);padding-top:10px;">
       No AlphaFold structure available for this protein.
