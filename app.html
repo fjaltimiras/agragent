@@ -2009,7 +2009,7 @@ function editDisplayName() {
       <!-- Toolbar: KMZ Upload + Draw Tools -->
       <div class="map-toolbar collapsed" id="map-toolbar">
         <button class="toolbar-toggle" id="toolbar-toggle" onclick="var tb=document.getElementById('map-toolbar');tb.classList.toggle('collapsed');this.querySelector('.tgl-arrow').textContent=tb.classList.contains('collapsed')?'▸':'▾'">
-          🗂 <span data-i18n="layers">My Fields</span> &amp; Tools <span class="tgl-arrow">▸</span>
+          🗂 <span data-i18n="toolbar_title">My Fields &amp; Tools</span> <span class="tgl-arrow">▸</span>
         </button>
         <span class="toolbar-label" data-i18n="layers">Layers</span>
         <button class="tb-btn" onclick="document.getElementById('kmz-file-input').click()">
@@ -2036,7 +2036,7 @@ function editDisplayName() {
       <div class="gee-layer-controls collapsed-ctrl" id="gee-layer-controls">
         <div class="gee-ctrl-toggle-wrap">
           <button class="toolbar-toggle gee-ctrl-toggle" onclick="var c=document.getElementById('gee-layer-controls');c.classList.toggle('collapsed-ctrl');this.querySelector('.tgl-arrow').textContent=c.classList.contains('collapsed-ctrl')?'▸':'▾'">
-            🛰 Satellite Settings <span class="tgl-arrow">▸</span>
+            🛰 <span data-i18n="gee_settings">Satellite Settings</span> <span class="tgl-arrow">▸</span>
           </button>
         </div>
         <!-- Row 1: date range, cloud, opacity, mode tabs -->
@@ -2146,36 +2146,36 @@ function editDisplayName() {
       <div class="map-controls collapsed-ctrl" id="index-controls" style="flex-wrap:wrap;gap:6px 4px;">
         <div class="gee-ctrl-toggle-wrap" style="width:100%;">
           <button class="toolbar-toggle gee-ctrl-toggle" onclick="var c=document.getElementById('index-controls');c.classList.toggle('collapsed-ctrl');this.querySelector('.tgl-arrow').textContent=c.classList.contains('collapsed-ctrl')?'▸':'▾'">
-            🌿 What to see on the map <span class="tgl-arrow">▸</span>
+            🌿 <span data-i18n="idx_title">What to see on the map</span> <span class="tgl-arrow">▸</span>
           </button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">🌿 Plant Vigor</span>
-          <button class="index-btn active" onclick="setIndex(this,'NDVI')" title="Overall plant health">Health</button>
-          <button class="index-btn" onclick="setIndex(this,'EVI')" title="Enhanced vigor for dense canopy">Vigor+</button>
-          <button class="index-btn" onclick="setIndex(this,'SAVI')" title="Vigor adjusted for bare soil">Young Vines</button>
-          <button class="index-btn" onclick="setIndex(this,'MSAVI')" title="Best for sparse vegetation">Sparse</button>
+          <span class="index-group-label">🌿 <span data-i18n="idx_vigor">Plant Vigor</span></span>
+          <button class="index-btn active" onclick="setIndex(this,'NDVI')"><span data-i18n="idx_health">Health</span></button>
+          <button class="index-btn" onclick="setIndex(this,'EVI')"><span data-i18n="idx_vigor_plus">Vigor+</span></button>
+          <button class="index-btn" onclick="setIndex(this,'SAVI')"><span data-i18n="idx_young">Young Vines</span></button>
+          <button class="index-btn" onclick="setIndex(this,'MSAVI')"><span data-i18n="idx_sparse">Sparse</span></button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">🧪 Crop Health</span>
-          <button class="index-btn" onclick="setIndex(this,'NDRE')" title="Nitrogen & chlorophyll status">Nutrition</button>
-          <button class="index-btn" onclick="setIndex(this,'GNDVI')" title="Early stress detection">Early Stress</button>
-          <button class="index-btn" onclick="setIndex(this,'TCARI')" title="Chlorophyll absorption">Chlorophyll</button>
-          <button class="index-btn" onclick="setIndex(this,'CIRE')" title="Chlorophyll concentration">N-Status</button>
+          <span class="index-group-label">🧪 <span data-i18n="idx_crop_health">Crop Health</span></span>
+          <button class="index-btn" onclick="setIndex(this,'NDRE')"><span data-i18n="idx_nutrition">Nutrition</span></button>
+          <button class="index-btn" onclick="setIndex(this,'GNDVI')"><span data-i18n="idx_early_stress">Early Stress</span></button>
+          <button class="index-btn" onclick="setIndex(this,'TCARI')"><span data-i18n="idx_chlorophyll">Chlorophyll</span></button>
+          <button class="index-btn" onclick="setIndex(this,'CIRE')"><span data-i18n="idx_nstatus">N-Status</span></button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">💧 Water</span>
-          <button class="index-btn" onclick="setIndex(this,'NDMI')" title="Soil & plant moisture">Moisture</button>
-          <button class="index-btn" onclick="setIndex(this,'NDWI')" title="Water content in leaves">Leaf Water</button>
+          <span class="index-group-label">💧 <span data-i18n="idx_water">Water</span></span>
+          <button class="index-btn" onclick="setIndex(this,'NDMI')"><span data-i18n="idx_moisture">Moisture</span></button>
+          <button class="index-btn" onclick="setIndex(this,'NDWI')"><span data-i18n="idx_leaf_water">Leaf Water</span></button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">🟫 Soil</span>
-          <button class="index-btn" onclick="setIndex(this,'BSI')" title="Detect bare soil areas">Bare Soil</button>
+          <span class="index-group-label">🟫 <span data-i18n="idx_soil">Soil</span></span>
+          <button class="index-btn" onclick="setIndex(this,'BSI')"><span data-i18n="idx_bare_soil">Bare Soil</span></button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">🎨 Photo</span>
-          <button class="index-btn" onclick="setIndex(this,'RGB')" title="Real color photograph">Real Color</button>
-          <button class="index-btn" onclick="setIndex(this,'FALSE')" title="Infrared view highlighting vegetation">Infrared</button>
+          <span class="index-group-label">🎨 <span data-i18n="idx_photo">Photo</span></span>
+          <button class="index-btn" onclick="setIndex(this,'RGB')"><span data-i18n="idx_real_color">Real Color</span></button>
+          <button class="index-btn" onclick="setIndex(this,'FALSE')"><span data-i18n="idx_infrared">Infrared</span></button>
         </div>
         <div class="gee-connected-badge" id="gee-badge">
           <span class="gee-dot"></span> GEE Activo
@@ -3076,6 +3076,12 @@ const i18n = {
     editor_color: 'Color', editor_cancel: 'Cancel', editor_save: 'Save',
     alert_no_layers: 'No fields to save. Add a field first.',
     dash_sat_title: 'Satellite Indices', dash_yield_title: 'Harvest Forecast',
+    toolbar_title: 'My Fields &amp; Tools', gee_settings: 'Satellite Settings',
+    idx_title: 'What to see on the map', idx_vigor: 'Plant Vigor', idx_health: 'Health', idx_vigor_plus: 'Vigor+',
+    idx_young: 'Young Vines', idx_sparse: 'Sparse', idx_crop_health: 'Crop Health', idx_nutrition: 'Nutrition',
+    idx_early_stress: 'Early Stress', idx_chlorophyll: 'Chlorophyll', idx_nstatus: 'N-Status',
+    idx_water: 'Water', idx_moisture: 'Moisture', idx_leaf_water: 'Leaf Water',
+    idx_soil: 'Soil', idx_bare_soil: 'Bare Soil', idx_photo: 'Photo', idx_real_color: 'Real Color', idx_infrared: 'Infrared',
     location: 'Location', field_area: 'Field Area', season_gdd: 'Heat Units', season_precip: 'Total Rainfall',
     climate_summary: 'Climate Summary', active_alerts: 'Alerts', monthly_temp_overview: 'Monthly Temperature',
     loaded_polygons: 'Your Fields', no_polygons: 'No fields added yet.', no_alerts: 'No alerts — looking good!',
@@ -3201,6 +3207,12 @@ const i18n = {
     editor_color: 'Color', editor_cancel: 'Cancelar', editor_save: 'Guardar',
     alert_no_layers: 'No hay campos para guardar. Agrega un campo primero.',
     dash_sat_title: 'Índices Satelitales', dash_yield_title: 'Pronóstico de Cosecha',
+    toolbar_title: 'Mis Campos y Herramientas', gee_settings: 'Ajustes Satelitales',
+    idx_title: 'Qué ver en el mapa', idx_vigor: 'Vigor', idx_health: 'Salud', idx_vigor_plus: 'Vigor+',
+    idx_young: 'Viñas Jóvenes', idx_sparse: 'Disperso', idx_crop_health: 'Salud del Cultivo', idx_nutrition: 'Nutrición',
+    idx_early_stress: 'Estrés Temprano', idx_chlorophyll: 'Clorofila', idx_nstatus: 'Nitrógeno',
+    idx_water: 'Agua', idx_moisture: 'Humedad', idx_leaf_water: 'Agua Foliar',
+    idx_soil: 'Suelo', idx_bare_soil: 'Suelo Expuesto', idx_photo: 'Foto', idx_real_color: 'Color Real', idx_infrared: 'Infrarrojo',
     location: 'Ubicación', field_area: 'Superficie', season_gdd: 'Calor Acumulado', season_precip: 'Lluvia Total',
     climate_summary: 'Resumen del Clima', active_alerts: 'Alertas', monthly_temp_overview: 'Temperatura Mensual',
     loaded_polygons: 'Tus Campos', no_polygons: 'Aún no has agregado campos.', no_alerts: 'Sin alertas — todo bien.',
@@ -3321,6 +3333,12 @@ const i18n = {
     editor_color: 'Cor', editor_cancel: 'Cancelar', editor_save: 'Salvar',
     alert_no_layers: 'Nenhum campo para salvar. Adicione um campo primeiro.',
     dash_sat_title: 'Índices de Satélite', dash_yield_title: 'Previsão de Colheita',
+    toolbar_title: 'Meus Campos e Ferramentas', gee_settings: 'Configurações de Satélite',
+    idx_title: 'O que ver no mapa', idx_vigor: 'Vigor', idx_health: 'Saúde', idx_vigor_plus: 'Vigor+',
+    idx_young: 'Vinhas Jovens', idx_sparse: 'Disperso', idx_crop_health: 'Saúde do Cultivo', idx_nutrition: 'Nutrição',
+    idx_early_stress: 'Estresse Precoce', idx_chlorophyll: 'Clorofila', idx_nstatus: 'Nitrogênio',
+    idx_water: 'Água', idx_moisture: 'Umidade', idx_leaf_water: 'Água Foliar',
+    idx_soil: 'Solo', idx_bare_soil: 'Solo Exposto', idx_photo: 'Foto', idx_real_color: 'Cor Real', idx_infrared: 'Infravermelho',
     location: 'Localização', field_area: 'Área do Campo', season_gdd: 'GDD da Safra', season_precip: 'Precip. da Safra',
     climate_summary: 'Resumo Climático', active_alerts: 'Alertas Ativos', monthly_temp_overview: 'Temperatura Mensal',
     loaded_polygons: 'Polígonos Carregados', no_polygons: 'Nenhum polígono carregado.', no_alerts: 'Sem alertas.',
