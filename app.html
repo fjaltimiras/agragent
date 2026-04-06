@@ -4771,17 +4771,24 @@ function initMap() {
   // Init draw/edit tools
   initGeoman();
 
-  // Fix Leaflet click offset: invalidateSize when #content scrolls or map is interacted with
+  // Fix Leaflet click coordinate offset caused by scrollable #content container
+  // and collapsible toolbars changing layout above the map.
+  // Strategy: invalidateSize on scroll, mouseenter, touchstart, and periodically during draw mode.
   const contentEl = document.getElementById('content');
   if (contentEl) {
     let scrollTimer;
     contentEl.addEventListener('scroll', () => {
       clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(() => vineMap.invalidateSize(), 50);
+      scrollTimer = setTimeout(() => vineMap.invalidateSize({ animate: false }), 30);
     }, { passive: true });
   }
-  // Invalidate on every mouse interaction to keep coordinates accurate
-  vineMap.getContainer().addEventListener('mouseenter', () => vineMap.invalidateSize(), { passive: true });
+  const mapEl = vineMap.getContainer();
+  mapEl.addEventListener('mouseenter', () => vineMap.invalidateSize({ animate: false }), { passive: true });
+  mapEl.addEventListener('touchstart', () => vineMap.invalidateSize({ animate: false }), { passive: true });
+  // Continuously sync during draw mode (catches toolbar collapse/expand changes)
+  setInterval(() => {
+    if (drawMode && vineMap) vineMap.invalidateSize({ animate: false });
+  }, 500);
   vineMap.getContainer().addEventListener('touchstart', () => vineMap.invalidateSize(), { passive: true });
   vineMap.getContainer().addEventListener('pointerdown', () => vineMap.invalidateSize(), { passive: true });
 
