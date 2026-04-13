@@ -4,3 +4,7 @@ __pycache__/
 node_modules/
 .env
 .vercel
+agragent-*.json
+yolo/runs/
+yolo/wgisd_dataset/
+yolo/yolo11n.pt

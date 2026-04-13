@@ -19,6 +19,8 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 - [KML/KMZ Support](#kmlkmz-support)
 - [Google Earth Engine Integration](#google-earth-engine-integration)
 - [Climate Data Pipeline](#climate-data-pipeline)
+- [GDD Comparison Between Dates](#gdd-comparison-between-dates)
+- [Field Action Plan](#field-action-plan)
 - [Genomic Analysis](#genomic-analysis)
 - [Image Analysis — WGISD Dataset](#image-analysis--wgisd-dataset)
 - [Vegetation Indices](#vegetation-indices)
@@ -38,10 +40,11 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 | **Login** | Username/password authentication with role-based access (Admin, Viewer) |
 | **Dashboard** | Dynamic agronomic overview: 8 KPIs, water balance, risk assessment, alerts, charts, **satellite indices**, and **yield prediction summary** — all derived from the user's polygon |
 | **Satellite Maps** | Sentinel-2 imagery via Google Earth Engine (auto-connected via service account) with 13 spectral indices grouped by category, scene browsing, split-screen temporal comparison, **location search** (Nominatim geocoding), and collapsible panels |
-| **Climate Data** | Real-time climate analytics from Open-Meteo — temperature, precipitation, humidity, solar radiation, ET₀, GDD, chill hours, frost, heat waves (8 KPIs + 6 charts) |
+| **Climate Data** | Real-time climate analytics from Open-Meteo — temperature, precipitation, humidity, solar radiation, ET₀, GDD, chill hours, frost, heat waves (8 KPIs + 6 charts), **GDD comparison between custom date ranges** |
 | **Genomic Analysis** | Real RNA-seq DEG data from Altimiras et al. (2024) — 3,603 DEGs across 8 phenological stages of *Vitis vinifera* |
 | **Image Analysis** | Integration with the WGISD dataset (Embrapa) — 300+ grape cluster images with YOLO bounding box annotations |
 | **Yield Prediction** | Dynamic yield prediction using PyCaret Extra Trees Regressor (R²=0.972) — yield/ha, total yield, harvest date, feature importance, satellite indices, and multi-model comparison — computed automatically from polygon data |
+| **Field Action Plan** | Phenological delay analysis (GDD-based), chill hours assessment, seasonal activity calendar with stage-specific field operations, and climate alerts with agronomic recommendations |
 | **AI Assistant** | Context-aware conversational agent (Claude) with access to climate, satellite, soil, irrigation, and fertilization tools |
 | **References** | Author info, ORCID, associated publications with DOIs, dataset citations |
 | **Multi-language** | English, Spanish, and Portuguese — language persisted in localStorage |
@@ -106,6 +109,29 @@ The dashboard starts empty and automatically populates when the user uploads a K
 Charts: monthly temperature (min/max), precipitation, relative humidity, solar radiation, evapotranspiration, GDD accumulation.
 
 All climate data is fetched dynamically from the [Open-Meteo Archive API](https://open-meteo.com/) based on the polygon centroid — **any location worldwide**.
+
+### GDD Comparison Between Dates
+
+- Select two custom date ranges (Period A and Period B) to compare GDD accumulation
+- Fetches data from Open-Meteo in a single optimized request
+- Displays 3 KPI cards: total GDD for each period and the absolute/percentage difference
+- Overlay line chart showing daily accumulated GDD for both periods aligned by day number
+- Interactive tooltips with GDD values per day
+- Useful for comparing current vs. previous season, or any two arbitrary periods
+
+### Field Action Plan
+
+A dedicated section for phenological tracking and seasonal planning:
+
+- **Phenological Delay Analysis**: table comparing real GDD accumulation rate against reference thresholds (Coombe 1995, Modified E-L scale) to estimate delays or advances for each of the 10 growth stages (E-L 3 through E-L 41). Shows expected date, status (Reached / On track / Delayed / Advanced), and shift in days.
+- **Chill Hours Assessment**: real accumulated chill hours (0–7.2°C, Apr–Sep) vs. the 400–600h typical requirement for *Vitis vinifera*, with status indicator (Sufficient / Marginal / Insufficient) and bud break uniformity recommendation.
+- **Seasonal Activity Calendar**: visual timeline of recommended field operations per phenological stage — includes protection, canopy management, nutrition, irrigation, phytosanitary, monitoring, and harvest activities. Current stage highlighted, completed stages dimmed.
+- **Climate Alerts & Recommendations**: automatic alerts based on real field data:
+  - Slow/fast GDD accumulation (cool vs. warm season)
+  - Frost days with protection recommendations
+  - Heat waves with irrigation and shade recommendations
+  - Insufficient chill hours with cyanamide suggestion
+  - Low precipitation with supplementary irrigation planning
 
 ### Location Search
 

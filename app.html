@@ -1785,6 +1785,9 @@ function editDisplayName() {
     <div class="nav-item" data-section="images">
       <span class="nav-icon">📸</span> <span data-i18n="nav_images">Vineyard Photos</span>
     </div>
+    <div class="nav-item" data-section="plan">
+      <span class="nav-icon">📋</span> <span data-i18n="nav_plan">Field Plan</span>
+    </div>
     <div class="nav-item" data-section="chat">
       <span class="nav-icon"><img src="logo.png" alt="" style="width:18px;height:18px;border-radius:50%;object-fit:cover;vertical-align:middle;"></span> <span data-i18n="nav_chat">Ask AgrAgent</span>
     </div>
@@ -2287,6 +2290,50 @@ function editDisplayName() {
           <div class="kpi-label" data-i18n="total_et">Total ET₀</div>
           <div class="kpi-value" id="kpiET" style="font-size:1.7rem;color:var(--accent);">—</div>
           <div class="kpi-sub" data-i18n="et_sub">Evapotranspiration (mm)</div>
+        </div>
+      </div>
+
+      <!-- GDD Comparison Between Dates -->
+      <div class="card mb-20">
+        <div class="card-title" data-i18n="gdd_compare_title">GDD Comparison Between Dates</div>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin-bottom:16px;">
+          <div style="flex:1;min-width:200px;">
+            <label style="font-size:0.78rem;color:var(--text-secondary);display:block;margin-bottom:4px;" data-i18n="gdd_period_a">Period A</label>
+            <div style="display:flex;gap:6px;">
+              <input type="date" id="gddCompStartA" value="2025-09-01" style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:5px;padding:6px 8px;color:#fff;font-size:0.78rem;flex:1;">
+              <input type="date" id="gddCompEndA" value="2026-03-31" style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:5px;padding:6px 8px;color:#fff;font-size:0.78rem;flex:1;">
+            </div>
+          </div>
+          <div style="flex:1;min-width:200px;">
+            <label style="font-size:0.78rem;color:var(--text-secondary);display:block;margin-bottom:4px;" data-i18n="gdd_period_b">Period B</label>
+            <div style="display:flex;gap:6px;">
+              <input type="date" id="gddCompStartB" value="2024-09-01" style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:5px;padding:6px 8px;color:#fff;font-size:0.78rem;flex:1;">
+              <input type="date" id="gddCompEndB" value="2025-03-31" style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:5px;padding:6px 8px;color:#fff;font-size:0.78rem;flex:1;">
+            </div>
+          </div>
+          <button id="gddCompareBtn" onclick="compareGDD()" style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 20px;font-size:0.82rem;cursor:pointer;font-weight:600;white-space:nowrap;" data-i18n="gdd_compare_btn">Compare GDD</button>
+        </div>
+        <div id="gddCompareResult" style="display:none;margin-bottom:14px;">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+            <div id="gddCompKpiA" class="kpi-card" style="flex:1;min-width:140px;text-align:center;padding:12px;background:rgba(82,183,136,0.1);border:1px solid rgba(82,183,136,0.3);border-radius:8px;">
+              <div style="font-size:0.72rem;color:var(--text-secondary);" data-i18n="gdd_period_a">Period A</div>
+              <div id="gddCompTotalA" style="font-size:1.5rem;font-weight:700;color:#52b788;">—</div>
+              <div id="gddCompDatesA" style="font-size:0.68rem;color:var(--text-secondary);"></div>
+            </div>
+            <div id="gddCompKpiB" class="kpi-card" style="flex:1;min-width:140px;text-align:center;padding:12px;background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.3);border-radius:8px;">
+              <div style="font-size:0.72rem;color:var(--text-secondary);" data-i18n="gdd_period_b">Period B</div>
+              <div id="gddCompTotalB" style="font-size:1.5rem;font-weight:700;color:#60a5fa;">—</div>
+              <div id="gddCompDatesB" style="font-size:0.68rem;color:var(--text-secondary);"></div>
+            </div>
+            <div class="kpi-card" style="flex:1;min-width:140px;text-align:center;padding:12px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);border-radius:8px;">
+              <div style="font-size:0.72rem;color:var(--text-secondary);" data-i18n="gdd_difference">Difference</div>
+              <div id="gddCompDiff" style="font-size:1.5rem;font-weight:700;color:#a78bfa;">—</div>
+              <div id="gddCompPct" style="font-size:0.68rem;color:var(--text-secondary);"></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="gddCompareChart"></canvas>
         </div>
       </div>
 
@@ -2814,7 +2861,84 @@ function editDisplayName() {
 
     </section>
 
-    <!-- ═══════════════ SECTION 7: REFERENCES ═══════════════ -->
+    <!-- ═══════════════ SECTION 7: FIELD ACTION PLAN ═══════════════ -->
+    <section id="section-plan" class="section">
+
+      <div class="section-header">
+        <h2 data-i18n="plan_title">Field Action Plan</h2>
+        <p class="sub" data-i18n="plan_sub">Phenological tracking and seasonal activity calendar based on climate data</p>
+      </div>
+
+      <!-- Empty state -->
+      <div id="plan-empty" style="text-align:center;padding:50px 20px;color:var(--text-secondary);">
+        <div style="font-size:2.5rem;margin-bottom:12px;">📋</div>
+        <div style="font-size:1.1rem;font-weight:600;color:var(--text-primary);margin-bottom:8px;" data-i18n="plan_empty_title">Mark your field to generate the action plan</div>
+        <div style="font-size:0.9rem;max-width:460px;margin:0 auto;line-height:1.7;" data-i18n="plan_empty_text">Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection('maps')">Field Map</strong> and draw your vineyard boundaries. We'll calculate phenological stage delays and recommend field activities based on your real climate data.</div>
+      </div>
+
+      <!-- Dynamic content -->
+      <div id="plan-content" style="display:none;">
+
+        <!-- Phenological Delay Summary -->
+        <div class="card mb-20">
+          <div class="card-title" data-i18n="plan_pheno_delay">Phenological Stage Delay Analysis</div>
+          <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:14px;" data-i18n="plan_pheno_delay_sub">Comparing your field's real GDD accumulation rate against reference thresholds to estimate delays or advances in each growth stage.</p>
+          <div style="overflow-x:auto;">
+            <table class="data-table" id="plan-pheno-table">
+              <thead>
+                <tr>
+                  <th data-i18n="plan_th_stage">Stage</th>
+                  <th>E-L</th>
+                  <th data-i18n="plan_th_gdd_req">GDD Required</th>
+                  <th data-i18n="plan_th_expected_date">Expected Date</th>
+                  <th data-i18n="plan_th_status">Status</th>
+                  <th data-i18n="plan_th_shift">Shift (days)</th>
+                </tr>
+              </thead>
+              <tbody id="plan-pheno-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Chill Hours Assessment -->
+        <div class="card mb-20">
+          <div class="card-title" data-i18n="plan_chill_title">Chill Hours Assessment</div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:180px;text-align:center;padding:16px;background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.3);border-radius:8px;">
+              <div style="font-size:0.72rem;color:var(--text-secondary);" data-i18n="plan_chill_accumulated">Accumulated</div>
+              <div id="plan-chill-actual" style="font-size:1.8rem;font-weight:700;color:#60a5fa;">—</div>
+              <div style="font-size:0.7rem;color:var(--text-secondary);">0–7.2°C (Apr–Sep)</div>
+            </div>
+            <div style="flex:1;min-width:180px;text-align:center;padding:16px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);border-radius:8px;">
+              <div style="font-size:0.72rem;color:var(--text-secondary);" data-i18n="plan_chill_required">Required (variety avg.)</div>
+              <div style="font-size:1.8rem;font-weight:700;color:#a78bfa;">400–600</div>
+              <div style="font-size:0.7rem;color:var(--text-secondary);" data-i18n="plan_chill_vitis">Vitis vinifera typical range</div>
+            </div>
+            <div style="flex:1;min-width:180px;text-align:center;padding:16px;border-radius:8px;" id="plan-chill-status-card">
+              <div style="font-size:0.72rem;color:var(--text-secondary);" data-i18n="plan_chill_status">Status</div>
+              <div id="plan-chill-status" style="font-size:1.4rem;font-weight:700;">—</div>
+              <div id="plan-chill-status-sub" style="font-size:0.7rem;color:var(--text-secondary);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seasonal Activity Timeline -->
+        <div class="card mb-20">
+          <div class="card-title" data-i18n="plan_activities_title">Seasonal Activity Calendar</div>
+          <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:14px;" data-i18n="plan_activities_sub">Recommended field operations aligned with phenological stages and current climate conditions.</p>
+          <div id="plan-activities-timeline" style="display:grid;gap:10px;"></div>
+        </div>
+
+        <!-- Alerts & Recommendations -->
+        <div class="card mb-20">
+          <div class="card-title" data-i18n="plan_alerts_title">Climate Alerts & Recommendations</div>
+          <div id="plan-alerts-list" style="display:grid;gap:8px;"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════ SECTION 8: REFERENCES ═══════════════ -->
     <section id="section-references" class="section">
 
       <div class="section-header">
@@ -3095,6 +3219,7 @@ const i18n = {
     temp_chart: 'Monthly Temperature (Min/Max) — 12-Month Season', precip_chart: 'Monthly Precipitation (mm)',
     humidity_chart: 'Monthly Relative Humidity (%)', solar_chart: 'Monthly Solar Radiation (MJ/m²)',
     et_chart: 'Monthly Evapotranspiration ET₀ (mm)', gdd_chart: 'Growing Degree Days (GDD) Accumulation',
+    gdd_compare_title: 'GDD Comparison Between Dates', gdd_period_a: 'Period A', gdd_period_b: 'Period B', gdd_compare_btn: 'Compare GDD', gdd_difference: 'Difference',
     // Maps
     maps_title: 'Field Map', maps_sub: 'Satellite images of your vineyard',
     gee_connect: 'Connect', gee_help: '? Help', gee_connect_desc: 'Connecting to satellite images...',
@@ -3109,6 +3234,16 @@ const i18n = {
     images_title: 'Vineyard Photos',
     // Yield
     yield_title: 'Harvest Forecast',
+    // Plan
+    nav_plan: 'Field Plan', plan_title: 'Field Action Plan', plan_sub: 'Phenological tracking and seasonal activity calendar based on climate data',
+    plan_empty_title: 'Mark your field to generate the action plan', plan_empty_text: 'Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Field Map</strong> and draw your vineyard boundaries. We\'ll calculate phenological stage delays and recommend field activities based on your real climate data.',
+    plan_pheno_delay: 'Phenological Stage Delay Analysis', plan_pheno_delay_sub: 'Comparing your field\'s real GDD accumulation rate against reference thresholds to estimate delays or advances in each growth stage.',
+    plan_th_stage: 'Stage', plan_th_gdd_req: 'GDD Required', plan_th_expected_date: 'Expected Date', plan_th_status: 'Status', plan_th_shift: 'Shift (days)',
+    plan_chill_title: 'Chill Hours Assessment', plan_chill_accumulated: 'Accumulated', plan_chill_required: 'Required (variety avg.)', plan_chill_vitis: 'Vitis vinifera typical range', plan_chill_status: 'Status',
+    plan_activities_title: 'Seasonal Activity Calendar', plan_activities_sub: 'Recommended field operations aligned with phenological stages and current climate conditions.',
+    plan_alerts_title: 'Climate Alerts & Recommendations',
+    plan_on_track: 'On track', plan_delayed: 'Delayed', plan_advanced: 'Advanced', plan_reached: 'Reached', plan_pending: 'Pending',
+    plan_chill_ok: 'Sufficient', plan_chill_low: 'Insufficient', plan_chill_partial: 'Marginal',
     // References
     references_title: 'About', references_sub: 'About this app',
     author: 'Author', assoc_publications: 'Associated Publications', datasets_sources: 'Data Sources',
@@ -3237,6 +3372,7 @@ const i18n = {
     temp_chart: 'Temperatura Mensual (Mín/Máx)', precip_chart: 'Lluvia Mensual (mm)',
     humidity_chart: 'Humedad Mensual (%)', solar_chart: 'Radiación Solar Mensual',
     et_chart: 'Pérdida de Agua Mensual (mm)', gdd_chart: 'Acumulación de Calor para Maduración',
+    gdd_compare_title: 'Comparación de Grados Día entre Fechas', gdd_period_a: 'Período A', gdd_period_b: 'Período B', gdd_compare_btn: 'Comparar GDD', gdd_difference: 'Diferencia',
     maps_title: 'Mapa del Campo', maps_sub: 'Imágenes satelitales de tu viñedo',
     gee_connect: 'Conectar', gee_help: '? Ayuda', gee_connect_desc: 'Conectando a las imágenes satelitales...',
     layers: 'Mis Campos', upload_kmz: 'Subir Archivo', draw: 'Dibujar', polygon: 'Área', line: 'Línea', point: 'Punto',
@@ -3247,6 +3383,16 @@ const i18n = {
     genomic_title: 'Genética del Cultivo', genomic_sub: 'Actividad genética durante el crecimiento de la uva',
     images_title: 'Fotos del Viñedo',
     yield_title: 'Pronóstico de Cosecha',
+    // Plan
+    nav_plan: 'Plan de Campo', plan_title: 'Plan de Acción del Campo', plan_sub: 'Seguimiento fenológico y calendario de actividades basado en datos climáticos',
+    plan_empty_title: 'Marca tu campo para generar el plan de acción', plan_empty_text: 'Ve al <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa del Campo</strong> y dibuja los límites de tu viñedo. Calcularemos los desfases fenológicos y recomendaremos actividades según tu clima real.',
+    plan_pheno_delay: 'Análisis de Desfase Fenológico', plan_pheno_delay_sub: 'Comparando la acumulación real de GDD de tu campo con los umbrales de referencia para estimar retrasos o adelantos en cada etapa de crecimiento.',
+    plan_th_stage: 'Etapa', plan_th_gdd_req: 'GDD Requeridos', plan_th_expected_date: 'Fecha Esperada', plan_th_status: 'Estado', plan_th_shift: 'Desfase (días)',
+    plan_chill_title: 'Evaluación de Horas Frío', plan_chill_accumulated: 'Acumuladas', plan_chill_required: 'Requeridas (promedio varietal)', plan_chill_vitis: 'Rango típico de Vitis vinifera', plan_chill_status: 'Estado',
+    plan_activities_title: 'Calendario de Actividades de Temporada', plan_activities_sub: 'Operaciones de campo recomendadas alineadas con las etapas fenológicas y las condiciones climáticas actuales.',
+    plan_alerts_title: 'Alertas Climáticas y Recomendaciones',
+    plan_on_track: 'A tiempo', plan_delayed: 'Retrasado', plan_advanced: 'Adelantado', plan_reached: 'Alcanzado', plan_pending: 'Pendiente',
+    plan_chill_ok: 'Suficientes', plan_chill_low: 'Insuficientes', plan_chill_partial: 'Marginal',
     references_title: 'Acerca de', references_sub: 'Sobre esta aplicación',
     author: 'Autor', assoc_publications: 'Publicaciones', datasets_sources: 'Fuentes de Datos',
 
@@ -3375,6 +3521,7 @@ const i18n = {
     temp_chart: 'Temperatura Mensal (Min/Max) — Safra 12 Meses', precip_chart: 'Precipitação Mensal (mm)',
     humidity_chart: 'Umidade Relativa Mensal (%)', solar_chart: 'Radiação Solar Mensal (MJ/m²)',
     et_chart: 'Evapotranspiração Mensal ET₀ (mm)', gdd_chart: 'Acumulação de Graus-Dia (GDD)',
+    gdd_compare_title: 'Comparação de GDD entre Datas', gdd_period_a: 'Período A', gdd_period_b: 'Período B', gdd_compare_btn: 'Comparar GDD', gdd_difference: 'Diferença',
     maps_title: 'Mapas Satelitais', maps_sub: 'Google Earth Engine · Sentinel-2 · Imagens Reais',
     gee_connect: 'Conectar', gee_help: '? Ajuda', gee_connect_desc: 'Conectando automaticamente ao Sentinel-2...',
     layers: 'Camadas', upload_kmz: 'Carregar KMZ/KML', draw: 'Desenhar', polygon: 'Polígono', line: 'Linha', point: 'Ponto',
@@ -3385,6 +3532,16 @@ const i18n = {
     genomic_title: 'Análise Genômica', genomic_sub: 'Expressão Diferencial RNA-seq — Estágios fenológicos de Vitis vinifera (Altimiras et al.)',
     images_title: 'Análise de Imagens de Cultivo',
     yield_title: 'Previsão de Rendimento',
+    // Plan
+    nav_plan: 'Plano de Campo', plan_title: 'Plano de Ação do Campo', plan_sub: 'Acompanhamento fenológico e calendário de atividades baseado em dados climáticos',
+    plan_empty_title: 'Marque seu campo para gerar o plano de ação', plan_empty_text: 'Vá ao <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa do Campo</strong> e desenhe os limites do vinhedo. Calcularemos os desvios fenológicos e recomendaremos atividades com base no clima real.',
+    plan_pheno_delay: 'Análise de Desvio Fenológico', plan_pheno_delay_sub: 'Comparando a acumulação real de GDD do campo com os limiares de referência para estimar atrasos ou avanços em cada estágio de crescimento.',
+    plan_th_stage: 'Estágio', plan_th_gdd_req: 'GDD Necessários', plan_th_expected_date: 'Data Esperada', plan_th_status: 'Estado', plan_th_shift: 'Desvio (dias)',
+    plan_chill_title: 'Avaliação de Horas de Frio', plan_chill_accumulated: 'Acumuladas', plan_chill_required: 'Necessárias (média varietal)', plan_chill_vitis: 'Faixa típica de Vitis vinifera', plan_chill_status: 'Estado',
+    plan_activities_title: 'Calendário de Atividades da Safra', plan_activities_sub: 'Operações de campo recomendadas alinhadas com os estágios fenológicos e condições climáticas atuais.',
+    plan_alerts_title: 'Alertas Climáticos e Recomendações',
+    plan_on_track: 'No prazo', plan_delayed: 'Atrasado', plan_advanced: 'Adiantado', plan_reached: 'Alcançado', plan_pending: 'Pendente',
+    plan_chill_ok: 'Suficientes', plan_chill_low: 'Insuficientes', plan_chill_partial: 'Marginal',
     references_title: 'Referências e Créditos', references_sub: 'Autor, publicações e fontes de dados',
     author: 'Autor', assoc_publications: 'Publicações Associadas', datasets_sources: 'Fontes de Dados',
     license_source: 'Licença e Código Fonte',
@@ -4250,6 +4407,9 @@ async function loadClimateData() {
     // Update phenological stage from GDD
     updatePhenologicalStage(totalGDD);
 
+    // Update field action plan
+    updateFieldPlan();
+
     // Trigger yield prediction if satellite indices are ready
     if (geeConnected) computeSatelliteIndices();
 
@@ -4261,6 +4421,165 @@ async function loadClimateData() {
 }
 
 // Climate data loads when user adds a polygon (via onPolygonAdded)
+
+// ═══════════════════════════════════════
+// GDD COMPARISON BETWEEN DATES
+// ═══════════════════════════════════════
+async function compareGDD() {
+  if (kmlRawCoords.length === 0) {
+    alert('Please mark a field on the map first.');
+    return;
+  }
+
+  const startA = document.getElementById('gddCompStartA').value;
+  const endA   = document.getElementById('gddCompEndA').value;
+  const startB = document.getElementById('gddCompStartB').value;
+  const endB   = document.getElementById('gddCompEndB').value;
+
+  if (!startA || !endA || !startB || !endB) return;
+  if (startA >= endA || startB >= endB) { alert('Start date must be before end date.'); return; }
+
+  const btn = document.getElementById('gddCompareBtn');
+  btn.disabled = true;
+  btn.textContent = '...';
+
+  let sumLat = 0, sumLng = 0, n = 0;
+  kmlRawCoords.forEach(ring => { ring.forEach(([lo, la]) => { sumLng += lo; sumLat += la; n++; }); });
+  const lat = sumLat / n, lng = sumLng / n;
+
+  // Determine the overall range to fetch in a single request
+  const overallStart = startA < startB ? startA : startB;
+  const overallEnd   = endA > endB ? endA : endB;
+
+  try {
+    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}`
+      + `&start_date=${overallStart}&end_date=${overallEnd}`
+      + `&daily=temperature_2m_max,temperature_2m_min`
+      + `&timezone=America%2FSantiago`;
+
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+
+    const dates = data.daily.time;
+    const tmax  = data.daily.temperature_2m_max;
+    const tmin  = data.daily.temperature_2m_min;
+
+    // Calculate daily GDD and accumulate for each period
+    function calcGDD(start, end) {
+      const dailyGDD = [];
+      const dayLabels = [];
+      let accum = 0;
+      const accumArr = [];
+      let dayNum = 0;
+
+      dates.forEach((d, i) => {
+        if (d < start || d > end) return;
+        if (tmax[i] == null || tmin[i] == null) return;
+        const tavg = (tmax[i] + tmin[i]) / 2;
+        const gdd = Math.max(0, tavg - 10);
+        accum += gdd;
+        dailyGDD.push(+gdd.toFixed(1));
+        accumArr.push(Math.round(accum));
+        dayNum++;
+        dayLabels.push(dayNum);
+      });
+
+      return { dailyGDD, accumArr, dayLabels, total: Math.round(accum), days: dayNum };
+    }
+
+    const resultA = calcGDD(startA, endA);
+    const resultB = calcGDD(startB, endB);
+
+    // Normalize labels to day numbers (align by relative day)
+    const maxDays = Math.max(resultA.days, resultB.days);
+    const labels = Array.from({ length: maxDays }, (_, i) => i + 1);
+
+    // Show results
+    document.getElementById('gddCompareResult').style.display = 'block';
+    document.getElementById('gddCompTotalA').textContent = resultA.total.toLocaleString();
+    document.getElementById('gddCompTotalB').textContent = resultB.total.toLocaleString();
+    document.getElementById('gddCompDatesA').textContent = `${startA} → ${endA} (${resultA.days}d)`;
+    document.getElementById('gddCompDatesB').textContent = `${startB} → ${endB} (${resultB.days}d)`;
+
+    const diff = resultA.total - resultB.total;
+    const pct = resultB.total > 0 ? ((diff / resultB.total) * 100).toFixed(1) : '—';
+    document.getElementById('gddCompDiff').textContent = (diff > 0 ? '+' : '') + diff.toLocaleString();
+    document.getElementById('gddCompDiff').style.color = diff >= 0 ? '#52b788' : '#ef4444';
+    document.getElementById('gddCompPct').textContent = pct !== '—' ? `${diff >= 0 ? '+' : ''}${pct}%` : '';
+
+    // Chart
+    if (chartInstances.gddCompare) chartInstances.gddCompare.destroy();
+    const ctx = document.getElementById('gddCompareChart').getContext('2d');
+    const gradA = ctx.createLinearGradient(0, 0, 0, 200);
+    gradA.addColorStop(0, 'rgba(82,183,136,0.25)');
+    gradA.addColorStop(1, 'rgba(82,183,136,0.02)');
+    const gradB = ctx.createLinearGradient(0, 0, 0, 200);
+    gradB.addColorStop(0, 'rgba(96,165,250,0.25)');
+    gradB.addColorStop(1, 'rgba(96,165,250,0.02)');
+
+    chartInstances.gddCompare = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: `${startA} → ${endA}`,
+            data: resultA.accumArr,
+            borderColor: '#52b788',
+            backgroundColor: gradA,
+            borderWidth: 2.5,
+            pointRadius: 0,
+            fill: true,
+            tension: 0.3
+          },
+          {
+            label: `${startB} → ${endB}`,
+            data: resultB.accumArr,
+            borderColor: '#60a5fa',
+            backgroundColor: gradB,
+            borderWidth: 2.5,
+            pointRadius: 0,
+            fill: true,
+            tension: 0.3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        animation: { duration: 800 },
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { labels: { color: '#7fa892', boxWidth: 14, font: { size: 11 } } },
+          tooltip: {
+            callbacks: {
+              title: (items) => `Day ${items[0].label}`,
+              label: (item) => `${item.dataset.label}: ${item.raw.toLocaleString()} GDD`
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: gridOpts, ticks: { ...tickOpts, maxTicksLimit: 10 },
+            title: { display: true, text: 'Day of period', color: '#7fa892', font: { size: 11 } }
+          },
+          y: {
+            grid: gridOpts, ticks: tickOpts,
+            title: { display: true, text: 'GDD Accumulated (base 10°C)', color: '#7fa892', font: { size: 11 } }
+          }
+        }
+      }
+    });
+
+  } catch (err) {
+    console.error('GDD comparison error:', err);
+    alert('Error fetching climate data: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    const lang = localStorage.getItem('agragent_lang') || 'en';
+    btn.textContent = (translations[lang] && translations[lang].gdd_compare_btn) || 'Compare GDD';
+  }
+}
 
 // ═══════════════════════════════════════
 // HISTORICAL CLIMATE ANALYSIS (2015–2026)
@@ -5262,6 +5581,233 @@ function updatePhenologicalStage(gdd) {
       line.className = 'stage-line' + (nextStage && gdd >= nextStage.gdd ? ' done' : '');
     }
   });
+}
+
+// ═══════════════════════════════════════
+// FIELD ACTION PLAN — Phenological Delay & Activities
+// ═══════════════════════════════════════
+
+// Activities per phenological stage (keyed by E-L number)
+const FIELD_ACTIVITIES = {
+  3:  [{ activity: 'Bud inspection & frost protection setup', icon: '🛡️', category: 'protection' },
+       { activity: 'Apply dormant oil spray', icon: '💧', category: 'phytosanitary' }],
+  5:  [{ activity: 'Shoot thinning — remove weak shoots', icon: '✂️', category: 'canopy' },
+       { activity: 'First foliar fertilization (N)', icon: '🧪', category: 'nutrition' }],
+  15: [{ activity: 'Canopy management — leaf removal (basal)', icon: '🍃', category: 'canopy' },
+       { activity: 'Pest monitoring — grape moth', icon: '🔍', category: 'phytosanitary' }],
+  17: [{ activity: 'Avoid irrigation stress during flowering', icon: '💧', category: 'irrigation' },
+       { activity: 'Botrytis preventive spray', icon: '🧴', category: 'phytosanitary' }],
+  27: [{ activity: 'Berry thinning (cluster adjustment)', icon: '✂️', category: 'canopy' },
+       { activity: 'Soil analysis & mid-season fertilization', icon: '🧪', category: 'nutrition' }],
+  31: [{ activity: 'Irrigation scheduling — deficit irrigation phase', icon: '💧', category: 'irrigation' },
+       { activity: 'Second pest monitoring pass', icon: '🔍', category: 'phytosanitary' }],
+  35: [{ activity: 'Reduce irrigation — promote sugar concentration', icon: '💧', category: 'irrigation' },
+       { activity: 'Bird netting installation', icon: '🛡️', category: 'protection' },
+       { activity: 'Monitor Brix, pH, titratable acidity', icon: '📊', category: 'monitoring' }],
+  36: [{ activity: 'Leaf pulling (sun exposure for ripening)', icon: '🍃', category: 'canopy' },
+       { activity: 'Foliar K application for berry quality', icon: '🧪', category: 'nutrition' }],
+  38: [{ activity: 'Harvest readiness sampling (Brix ≥ 22–24°)', icon: '🍇', category: 'monitoring' },
+       { activity: 'Coordinate harvest logistics & crew', icon: '🚜', category: 'harvest' }],
+  41: [{ activity: 'Post-harvest irrigation (recharge)', icon: '💧', category: 'irrigation' },
+       { activity: 'Fall fertilization (P, K)', icon: '🧪', category: 'nutrition' }]
+};
+
+const ACTIVITY_COLORS = {
+  protection: { bg: 'rgba(96,165,250,0.1)', border: 'rgba(96,165,250,0.4)' },
+  phytosanitary: { bg: 'rgba(167,139,250,0.1)', border: 'rgba(167,139,250,0.4)' },
+  canopy: { bg: 'rgba(74,222,128,0.1)', border: 'rgba(74,222,128,0.4)' },
+  nutrition: { bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.4)' },
+  irrigation: { bg: 'rgba(56,189,248,0.1)', border: 'rgba(56,189,248,0.4)' },
+  monitoring: { bg: 'rgba(251,191,36,0.1)', border: 'rgba(251,191,36,0.4)' },
+  harvest: { bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.4)' }
+};
+
+function updateFieldPlan() {
+  const C = agClimate;
+  if (!C || !C.totalGDD) {
+    document.getElementById('plan-empty').style.display = '';
+    document.getElementById('plan-content').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('plan-empty').style.display = 'none';
+  document.getElementById('plan-content').style.display = '';
+
+  const lang = localStorage.getItem('agragent_lang') || 'en';
+  const t = translations[lang] || translations.en;
+  const totalGDD = C.totalGDD;
+  const chillHours = C.chillHours || 0;
+
+  // --- Calculate daily GDD rate from season start (Sep 1) ---
+  // Season start: Sep 1 of the current growing season
+  const now = new Date();
+  const seasonYear = now.getMonth() >= 8 ? now.getFullYear() : now.getFullYear() - 1;
+  const seasonStart = new Date(seasonYear, 8, 1); // Sep 1
+  const daysSinceSep1 = Math.max(1, Math.floor((now - seasonStart) / 86400000));
+  const dailyGDDRate = totalGDD / daysSinceSep1;
+
+  // --- Phenological delay table ---
+  const tbody = document.getElementById('plan-pheno-tbody');
+  let html = '';
+
+  PHENO_STAGES.forEach(stage => {
+    const daysToReach = dailyGDDRate > 0 ? Math.round(stage.gdd / dailyGDDRate) : null;
+    const expectedDate = daysToReach !== null ? new Date(seasonStart.getTime() + daysToReach * 86400000) : null;
+
+    // Reference: typical days from Sep 1 for each stage (based on Coombe 1995, ~7.5 GDD/day avg)
+    const refRate = 7.5;
+    const refDays = Math.round(stage.gdd / refRate);
+    const refDate = new Date(seasonStart.getTime() + refDays * 86400000);
+
+    const shiftDays = daysToReach !== null ? daysToReach - refDays : null;
+    const reached = totalGDD >= stage.gdd;
+
+    let status, statusColor;
+    if (reached) {
+      status = t.plan_reached || 'Reached';
+      statusColor = '#52b788';
+    } else if (shiftDays !== null && shiftDays > 5) {
+      status = t.plan_delayed || 'Delayed';
+      statusColor = '#ef4444';
+    } else if (shiftDays !== null && shiftDays < -5) {
+      status = t.plan_advanced || 'Advanced';
+      statusColor = '#60a5fa';
+    } else {
+      status = t.plan_on_track || 'On track';
+      statusColor = '#52b788';
+    }
+
+    const dateStr = expectedDate ? expectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+    const shiftStr = reached ? '—' : (shiftDays !== null ? (shiftDays > 0 ? '+' + shiftDays : shiftDays) : '—');
+    const shiftColor = shiftDays > 5 ? '#ef4444' : shiftDays < -5 ? '#60a5fa' : '#52b788';
+
+    html += `<tr>
+      <td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${stage.color};margin-right:6px;vertical-align:middle;"></span>${stage.name}</td>
+      <td>E-L ${stage.el}</td>
+      <td>${stage.gdd.toLocaleString()}</td>
+      <td>${dateStr}</td>
+      <td><span style="color:${statusColor};font-weight:600;">${status}</span></td>
+      <td style="color:${reached ? 'var(--text-secondary)' : shiftColor};font-weight:600;">${shiftStr}</td>
+    </tr>`;
+  });
+
+  tbody.innerHTML = html;
+
+  // --- Chill hours assessment ---
+  document.getElementById('plan-chill-actual').textContent = chillHours.toLocaleString();
+  const chillCard = document.getElementById('plan-chill-status-card');
+  const chillStatus = document.getElementById('plan-chill-status');
+  const chillSub = document.getElementById('plan-chill-status-sub');
+
+  if (chillHours >= 400) {
+    chillStatus.textContent = t.plan_chill_ok || 'Sufficient';
+    chillStatus.style.color = '#52b788';
+    chillCard.style.background = 'rgba(82,183,136,0.1)';
+    chillCard.style.border = '1px solid rgba(82,183,136,0.3)';
+    chillSub.textContent = lang === 'es' ? 'Brotación uniforme esperada' : lang === 'pt' ? 'Brotação uniforme esperada' : 'Uniform bud break expected';
+  } else if (chillHours >= 250) {
+    chillStatus.textContent = t.plan_chill_partial || 'Marginal';
+    chillStatus.style.color = '#f59e0b';
+    chillCard.style.background = 'rgba(245,158,11,0.1)';
+    chillCard.style.border = '1px solid rgba(245,158,11,0.3)';
+    chillSub.textContent = lang === 'es' ? 'Posible brotación irregular' : lang === 'pt' ? 'Possível brotação irregular' : 'Possible uneven bud break';
+  } else {
+    chillStatus.textContent = t.plan_chill_low || 'Insufficient';
+    chillStatus.style.color = '#ef4444';
+    chillCard.style.background = 'rgba(239,68,68,0.1)';
+    chillCard.style.border = '1px solid rgba(239,68,68,0.3)';
+    chillSub.textContent = lang === 'es' ? 'Riesgo de brotación pobre — considerar cianamida' : lang === 'pt' ? 'Risco de brotação fraca — considerar cianamida' : 'Risk of poor bud break — consider cyanamide';
+  }
+
+  // --- Activities timeline ---
+  const timeline = document.getElementById('plan-activities-timeline');
+  let timelineHTML = '';
+
+  PHENO_STAGES.forEach(stage => {
+    const activities = FIELD_ACTIVITIES[stage.el];
+    if (!activities) return;
+
+    const reached = totalGDD >= stage.gdd;
+    const nextStage = PHENO_STAGES.find(s => s.gdd > stage.gdd);
+    const isCurrent = reached && (!nextStage || totalGDD < nextStage.gdd);
+
+    const refDays = Math.round(stage.gdd / (dailyGDDRate > 0 ? dailyGDDRate : 7.5));
+    const estDate = new Date(seasonStart.getTime() + refDays * 86400000);
+    const dateStr = estDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    const borderLeft = isCurrent ? `4px solid ${stage.color}` : reached ? '4px solid rgba(82,183,136,0.4)' : '4px solid rgba(148,163,184,0.3)';
+    const opacity = reached && !isCurrent ? '0.6' : '1';
+
+    timelineHTML += `<div style="border-left:${borderLeft};padding:10px 14px;border-radius:0 8px 8px 0;background:${isCurrent ? 'rgba(82,183,136,0.06)' : 'rgba(0,0,0,0.15)'};opacity:${opacity};">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${stage.color};"></span>
+        <strong style="font-size:0.85rem;color:var(--text-primary);">${stage.name}</strong>
+        <span style="font-size:0.72rem;color:var(--text-secondary);">E-L ${stage.el} · ~${dateStr} · ${stage.gdd} GDD</span>
+        ${isCurrent ? '<span style="font-size:0.68rem;background:var(--accent);color:#fff;padding:2px 8px;border-radius:10px;margin-left:auto;">CURRENT</span>' : ''}
+        ${reached && !isCurrent ? '<span style="font-size:0.68rem;color:#52b788;margin-left:auto;">✓</span>' : ''}
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        ${activities.map(a => {
+          const c = ACTIVITY_COLORS[a.category] || ACTIVITY_COLORS.monitoring;
+          return `<span style="font-size:0.78rem;padding:4px 10px;border-radius:6px;background:${c.bg};border:1px solid ${c.border};">${a.icon} ${a.activity}</span>`;
+        }).join('')}
+      </div>
+    </div>`;
+  });
+
+  timeline.innerHTML = timelineHTML;
+
+  // --- Climate alerts & recommendations ---
+  const alertsEl = document.getElementById('plan-alerts-list');
+  const alerts = [];
+
+  // GDD-based alerts
+  const avgRef = 7.5;
+  if (dailyGDDRate < avgRef * 0.75) {
+    alerts.push({ icon: '🥶', color: '#60a5fa', text: lang === 'es' ? `Acumulación de GDD lenta (${dailyGDDRate.toFixed(1)}/día vs ${avgRef} referencia). Temporada fría — las etapas fenológicas llegarán tarde. Considerar manejos para acelerar maduración.`
+      : lang === 'pt' ? `Acumulação de GDD lenta (${dailyGDDRate.toFixed(1)}/dia vs ${avgRef} ref). Safra fria — estágios fenológicos atrasados.`
+      : `Slow GDD accumulation (${dailyGDDRate.toFixed(1)}/day vs ${avgRef} reference). Cool season — phenological stages will arrive late. Consider canopy management to accelerate ripening.` });
+  } else if (dailyGDDRate > avgRef * 1.25) {
+    alerts.push({ icon: '🔥', color: '#ef4444', text: lang === 'es' ? `Acumulación de GDD rápida (${dailyGDDRate.toFixed(1)}/día vs ${avgRef} referencia). Temporada calurosa — maduración acelerada. Monitorear estrés hídrico y proteger racimos del sol.`
+      : lang === 'pt' ? `Acumulação de GDD rápida (${dailyGDDRate.toFixed(1)}/dia vs ${avgRef} ref). Safra quente — maturação acelerada. Monitorar estresse hídrico.`
+      : `Fast GDD accumulation (${dailyGDDRate.toFixed(1)}/day vs ${avgRef} reference). Warm season — accelerated ripening. Monitor water stress and protect clusters from sunburn.` });
+  }
+
+  if (C.frostDays > 0) {
+    alerts.push({ icon: '❄️', color: '#93c5fd', text: lang === 'es' ? `${C.frostDays} días de helada registrados. Instalar protección antihelada en parcelas vulnerables.`
+      : lang === 'pt' ? `${C.frostDays} dias de geada registrados. Instalar proteção contra geada.`
+      : `${C.frostDays} frost days recorded. Install frost protection in vulnerable plots.` });
+  }
+
+  if (C.heatWaves > 0) {
+    alerts.push({ icon: '🌡️', color: '#fca5a5', text: lang === 'es' ? `${C.heatWaves} ola(s) de calor detectada(s). Aumentar frecuencia de riego y considerar mallas de sombra.`
+      : lang === 'pt' ? `${C.heatWaves} onda(s) de calor detectada(s). Aumentar frequência de irrigação.`
+      : `${C.heatWaves} heat wave(s) detected. Increase irrigation frequency and consider shade nets.` });
+  }
+
+  if (chillHours < 400) {
+    alerts.push({ icon: '⚠️', color: '#fbbf24', text: lang === 'es' ? `Horas frío insuficientes (${chillHours} de 400–600 requeridas). Brotación puede ser desuniforme. Evaluar aplicación de cianamida de hidrógeno.`
+      : lang === 'pt' ? `Horas de frio insuficientes (${chillHours} de 400–600). Brotação pode ser irregular. Avaliar cianamida de hidrogênio.`
+      : `Insufficient chill hours (${chillHours} of 400–600 required). Bud break may be uneven. Evaluate hydrogen cyanamide application.` });
+  }
+
+  const totalPrecip = C.totalPrecip || 0;
+  if (totalPrecip < 300) {
+    alerts.push({ icon: '🏜️', color: '#f59e0b', text: lang === 'es' ? `Precipitación baja (${totalPrecip}mm). Planificar riego suplementario durante envero y maduración.`
+      : lang === 'pt' ? `Precipitação baixa (${totalPrecip}mm). Planejar irrigação suplementar.`
+      : `Low precipitation (${totalPrecip}mm). Plan supplementary irrigation during veraison and ripening.` });
+  }
+
+  if (alerts.length === 0) {
+    alerts.push({ icon: '✅', color: '#52b788', text: lang === 'es' ? 'Condiciones climáticas normales. No se detectan anomalías significativas.'
+      : lang === 'pt' ? 'Condições climáticas normais. Sem anomalias significativas.'
+      : 'Normal climate conditions. No significant anomalies detected.' });
+  }
+
+  alertsEl.innerHTML = alerts.map(a => `<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(0,0,0,0.15);border-left:3px solid ${a.color};border-radius:0 6px 6px 0;">
+    <span style="font-size:1.2rem;">${a.icon}</span>
+    <span style="font-size:0.82rem;color:var(--text-primary);line-height:1.5;">${a.text}</span>
+  </div>`).join('');
 }
 
 // ═══════════════════════════════════════
@@ -6732,8 +7278,7 @@ function randomLayerColor() { return LAYER_COLORS[colorIdx++ % LAYER_COLORS.leng
 // ═══════════════════════════════════════
 // AI CHAT — AgrAgent Integration
 // ═══════════════════════════════════════
-const CHAT_API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:8000' : 'https://api.agragent.com';
+const CHAT_API = 'https://api.agragent.com';
 
 let chatUserId = localStorage.getItem('chat_user_id');
 if (!chatUserId) { chatUserId = crypto.randomUUID(); localStorage.setItem('chat_user_id', chatUserId); }

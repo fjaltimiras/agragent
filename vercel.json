@@ -4,6 +4,10 @@
   "framework": null,
   "rewrites": [
     {
+      "source": "/Altimiras2026.pdf",
+      "destination": "/Altimiras2026.pdf"
+    },
+    {
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "app.agragent.com" }],
       "destination": "/app.html"
