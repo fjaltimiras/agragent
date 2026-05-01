@@ -516,6 +516,15 @@
   }
   #vinewatch-map { height: 100%; width: 100%; }
 
+  /* Hide Google Maps "Map data not yet available" overlay injected by GEE JS API */
+  #vinewatch-map .gm-style-nologging,
+  #vinewatch-map .gm-err-container,
+  #vinewatch-map .gm-style .gm-style-nologging,
+  .gm-style-nologging { display: none !important; }
+
+  /* Also hide any GEE-injected attribution that overlaps the map */
+  #vinewatch-map .gm-style-cc { display: none !important; }
+
   /* GEE Connect Panel */
   .gee-panel {
     background: linear-gradient(135deg, #0d2b1d 0%, #0f1f2e 100%);
