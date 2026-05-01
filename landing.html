@@ -411,7 +411,35 @@ section {
 }
 
 /* ───── FEATURES ───── */
-#features { background: var(--bg-alt); }
+#features {
+  background: var(--bg-alt);
+  position: relative;
+  overflow: hidden;
+  --fmx: 50%;
+  --fmy: 50%;
+}
+#features > .container { position: relative; z-index: 2; }
+
+.feat-network {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.feat-network-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle 380px at var(--fmx) var(--fmy), rgba(82, 183, 136, 0.10), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 0% 100%, rgba(34, 197, 94, 0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 100% 0%, rgba(82, 183, 136, 0.04) 0%, transparent 60%);
+  transition: background 0.18s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .feat-network { display: none; }
+}
 
 /* ── FEATURES SHOWCASE ── */
 .feat-showcase {
@@ -1187,6 +1215,113 @@ section {
   background: rgba(82,183,136,0.1); color: var(--accent);
   border: 1px solid rgba(82,183,136,0.2); padding: 2px 8px; border-radius: 50px;
 }
+
+/* ═══════════════ INTERACTIVE BACKGROUNDS ═══════════════ */
+
+/* Soft gradient transitions between sections */
+section { position: relative; }
+section + section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(82,183,136,0.18), transparent);
+  pointer-events: none;
+}
+
+/* ── USE CASES — topographic contours + cursor glow on cards ── */
+#use-cases { overflow: hidden; }
+#use-cases > .container { position: relative; z-index: 2; }
+.uc-topo {
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  opacity: 0.5;
+  mask-image: radial-gradient(ellipse 80% 90% at 50% 50%, black 30%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 90% at 50% 50%, black 30%, transparent 90%);
+}
+.uc-topo svg { width: 100%; height: 100%; display: block; }
+.uc-topo path {
+  fill: none; stroke: rgba(82,183,136,0.18); stroke-width: 1;
+  animation: topoDrift 22s ease-in-out infinite alternate;
+}
+.uc-topo path:nth-child(2) { animation-duration: 26s; stroke: rgba(82,183,136,0.13); }
+.uc-topo path:nth-child(3) { animation-duration: 30s; stroke: rgba(82,183,136,0.10); }
+.uc-topo path:nth-child(4) { animation-duration: 34s; stroke: rgba(82,183,136,0.08); }
+.uc-topo path:nth-child(5) { animation-duration: 38s; stroke: rgba(82,183,136,0.06); }
+@keyframes topoDrift {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-30px); }
+}
+
+.uc-card {
+  position: relative;
+  overflow: hidden;
+  --umx: 50%; --umy: 50%;
+}
+.uc-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle 220px at var(--umx) var(--umy), rgba(82,183,136,0.18), transparent 60%);
+  opacity: 0; transition: opacity 0.25s ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.uc-card:hover::after { opacity: 1; }
+
+/* ── HOW IT WORKS — data stream lines ── */
+#how-it-works { overflow: hidden; }
+#how-it-works > .container { position: relative; z-index: 2; }
+.how-stream {
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  mask-image: linear-gradient(180deg, transparent 0%, black 20%, black 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 20%, black 80%, transparent 100%);
+}
+
+/* ── DATA SOURCES — constellation ── */
+#data { overflow: hidden; }
+#data > .container { position: relative; z-index: 2; }
+.data-stars {
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+}
+.data-table tbody tr { transition: background 0.2s; }
+.data-table tbody tr:hover { background: rgba(82,183,136,0.05); }
+
+/* ── CTA — mouse spotlight + magnetic buttons ── */
+.cta-section { overflow: hidden; --cmx: 50%; --cmy: 50%; }
+.cta-section::before {
+  background:
+    radial-gradient(circle 360px at var(--cmx) var(--cmy), rgba(82,183,136,0.18), transparent 65%),
+    radial-gradient(ellipse 70% 70% at 50% 50%, rgba(82,183,136,0.08) 0%, transparent 70%);
+  transition: background 0.18s ease-out;
+}
+.cta-section .btn {
+  transition: transform 0.18s ease-out, box-shadow 0.25s, background 0.25s, border-color 0.25s;
+}
+
+/* ── APP PREVIEW — scroll parallax + soft glow under ── */
+.app-preview-section { position: relative; perspective: 1400px; }
+.app-preview-section::after {
+  content: '';
+  position: absolute;
+  left: 50%; bottom: 40px;
+  width: min(820px, 80%); height: 80px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse 60% 100% at 50% 0%, rgba(82,183,136,0.22), transparent 70%);
+  pointer-events: none; z-index: 0;
+  filter: blur(10px);
+}
+.app-preview-browser {
+  position: relative; z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uc-topo path { animation: none !important; }
+  .uc-card::after { transition: none !important; }
+  .cta-section::before { transition: none !important; }
+  .app-preview-browser { transition: none !important; }
+}
 </style>
 </head>
 <body>
@@ -1240,8 +1375,8 @@ section {
     </div>
     <div class="hero-stats fade-in">
       <div class="hero-stat">
-        <div class="number" data-count="97" data-suffix="%">0%</div>
-        <div class="label" data-i18n="stat1_label">Yield Model Accuracy</div>
+        <div class="number" data-count="80" data-suffix=" yrs">0 yrs</div>
+        <div class="label" data-i18n="stat1_label">Climate History</div>
       </div>
       <div class="hero-stat">
         <div class="number" data-count="13" data-suffix="">0</div>
@@ -1249,7 +1384,7 @@ section {
       </div>
       <div class="hero-stat">
         <div class="number" data-count="19" data-suffix="K+">0</div>
-        <div class="label" data-i18n="stat3_label">INIA Publications</div>
+        <div class="label" data-i18n="stat3_label">Agronomic Knowledge</div>
       </div>
       <div class="hero-stat">
         <div class="number" data-count="5" data-suffix=" days">0</div>
@@ -1418,6 +1553,15 @@ section {
 
 <!-- ═══════ USE CASES ═══════ -->
 <section id="use-cases" style="background:var(--bg-alt)">
+  <div class="uc-topo" aria-hidden="true">
+    <svg viewBox="0 0 1200 600" preserveAspectRatio="none">
+      <path d="M -30 90  C 200 60, 400 130, 600 100 S 1000 70, 1230 110"/>
+      <path d="M -30 200 C 220 170, 440 240, 640 210 S 1020 180, 1230 230"/>
+      <path d="M -30 320 C 260 300, 480 360, 680 330 S 1040 300, 1230 350"/>
+      <path d="M -30 440 C 240 410, 460 480, 660 450 S 1020 420, 1230 470"/>
+      <path d="M -30 540 C 260 520, 480 580, 680 560 S 1040 530, 1230 580"/>
+    </svg>
+  </div>
   <div class="container">
     <div class="section-header fade-in">
       <div class="section-label" data-i18n="uc_label">Who uses agragent</div>
@@ -1448,6 +1592,8 @@ section {
 
 <!-- ═══════ FEATURES ═══════ -->
 <section id="features">
+  <div class="feat-network-bg"></div>
+  <canvas class="feat-network" id="featNetwork"></canvas>
   <div class="container">
     <div class="section-header fade-in">
       <div class="section-label" data-i18n="features_label">Platform Capabilities</div>
@@ -1576,6 +1722,7 @@ function showFeat(idx, btn) {
 
 <!-- ═══════ HOW IT WORKS ═══════ -->
 <section id="how-it-works">
+  <canvas class="how-stream" id="howStream"></canvas>
   <div class="container">
     <div class="section-header fade-in">
       <div class="section-label" data-i18n="how_label">How it works</div>
@@ -1986,6 +2133,7 @@ function showFeat(idx, btn) {
 
 <!-- ═══════ DATA SOURCES ═══════ -->
 <section id="data">
+  <canvas class="data-stars" id="dataStars"></canvas>
   <div class="container">
     <div class="section-header fade-in">
       <div class="section-label" data-i18n="data_label">Data Sources</div>
@@ -2146,9 +2294,9 @@ function showFeat(idx, btn) {
 const translations = {
   en: {
     nav_features: "Features",
-    stat1_label: "Yield Model Accuracy",
+    stat1_label: "Climate History",
     stat2_label: "Spectral Indices",
-    stat3_label: "INIA Publications",
+    stat3_label: "Agronomic Knowledge",
     stat4_label: "Satellite Revisit",
     open_app: "Open →",
     slide1_title: "Satellite Remote Sensing",
@@ -2247,9 +2395,9 @@ const translations = {
   },
   es: {
     nav_features: "Funcionalidades",
-    stat1_label: "Precisi\u00f3n Modelo Rendimiento",
+    stat1_label: "Historia Clim\u00e1tica",
     stat2_label: "\u00cdndices Espectrales",
-    stat3_label: "Publicaciones INIA",
+    stat3_label: "Conocimiento Agronómico",
     stat4_label: "Revisita Satelital",
     open_app: "Abrir \u2192",
     slide1_title: "Teledetecci\u00f3n Satelital",
@@ -2349,9 +2497,9 @@ const translations = {
   },
   pt: {
     nav_features: "Funcionalidades",
-    stat1_label: "Precisão Modelo de Rendimento",
+    stat1_label: "Histórico Climático",
     stat2_label: "Índices Espectrais",
-    stat3_label: "Publicações INIA",
+    stat3_label: "Conhecimento Agronômico",
     stat4_label: "Revisita Satelital",
     open_app: "Abrir →",
     slide1_title: "Sensoriamento Remoto Satelital",
@@ -2703,6 +2851,12 @@ setLang(currentLang);
   function agMd(t) {
     if (!t) return '';
     t = t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    // Markdown links [text](url) → clickable
+    t = t.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    // Bare URLs → clickable (avoid those already inside links)
+    t = t.replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g,
+      '$1<a href="$2" target="_blank" rel="noopener">$2</a>');
     t = t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
     t = t.replace(/\*([^*]+?)\*/g,'<em>$1</em>');
     t = t.replace(/^[-•*] (.+)$/gm,'<li>$1</li>');
@@ -2928,6 +3082,404 @@ setLang(currentLang);
     requestAnimationFrame(loop);
   }
   loop();
+})();
+</script>
+
+<!-- ═══════ FEATURES — NEURAL NETWORK BACKGROUND ═══════ -->
+<script>
+(function(){
+  const section = document.getElementById('features');
+  const canvas  = document.getElementById('featNetwork');
+  if (!section || !canvas) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const ctx = canvas.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let w = 0, h = 0, nodes = [], running = false;
+  const mouse = { x: -9999, y: -9999, active: false };
+  // Mouse spotlight CSS vars
+  let smx = 50, smy = 50, tmx = 50, tmy = 50, smRaf = null;
+
+  function resize(){
+    const r = section.getBoundingClientRect();
+    w = r.width; h = r.height;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function spawn(){
+    const target = Math.round((w * h) / 18000);     // densidad
+    const count  = Math.min(110, Math.max(40, target));
+    nodes = Array.from({length: count}, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.18,
+      vy: (Math.random() - 0.5) * 0.18,
+      r: 1.1 + Math.random() * 1.6,
+      // pulse / firing
+      pulse: 0,                                       // 0..1 brillo extra
+      nextFire: 600 + Math.random() * 1800,          // ms hasta siguiente disparo
+      lastFire: performance.now() + Math.random() * 4000,
+    }));
+  }
+
+  resize(); spawn();
+  const onResize = () => { resize(); spawn(); };
+  window.addEventListener('resize', onResize);
+
+  // Mouse — actualiza spotlight (CSS vars) y posición para el canvas
+  section.addEventListener('mousemove', (e) => {
+    const r = section.getBoundingClientRect();
+    mouse.x = e.clientX - r.left;
+    mouse.y = e.clientY - r.top;
+    mouse.active = true;
+    tmx = (mouse.x / r.width) * 100;
+    tmy = (mouse.y / r.height) * 100;
+    if (!smRaf) smRaf = requestAnimationFrame(spotlightTick);
+  });
+  section.addEventListener('mouseleave', () => {
+    mouse.active = false; mouse.x = -9999; mouse.y = -9999;
+    tmx = 50; tmy = 50;
+    if (!smRaf) smRaf = requestAnimationFrame(spotlightTick);
+  });
+  function spotlightTick(){
+    smx += (tmx - smx) * 0.14;
+    smy += (tmy - smy) * 0.14;
+    section.style.setProperty('--fmx', smx + '%');
+    section.style.setProperty('--fmy', smy + '%');
+    if (Math.abs(tmx - smx) > 0.05 || Math.abs(tmy - smy) > 0.05) {
+      smRaf = requestAnimationFrame(spotlightTick);
+    } else { smRaf = null; }
+  }
+
+  // Click → onda expansiva: hace "fire" a los nodos cercanos
+  section.addEventListener('click', (e) => {
+    const r = section.getBoundingClientRect();
+    const cx = e.clientX - r.left, cy = e.clientY - r.top;
+    nodes.forEach(n => {
+      const d = Math.hypot(n.x - cx, n.y - cy);
+      if (d < 220) n.pulse = Math.max(n.pulse, 1 - d / 220);
+    });
+  });
+
+  // Pause cuando la sección está fuera de viewport
+  const io = new IntersectionObserver((entries) => {
+    const wasRunning = running;
+    running = entries[0].isIntersecting;
+    if (running && !wasRunning) loop();
+  }, { threshold: 0 });
+  io.observe(section);
+
+  const LINK_DIST  = 130;
+  const MOUSE_DIST = 170;
+
+  let last = performance.now();
+  function loop(){
+    if (!running) return;
+    const now = performance.now();
+    const dt = Math.min(50, now - last); last = now;
+    ctx.clearRect(0, 0, w, h);
+
+    // Update positions + pulses
+    for (const n of nodes) {
+      n.x += n.vx; n.y += n.vy;
+      // bounce on edges
+      if (n.x < -10) { n.x = -10; n.vx *= -1; } else if (n.x > w + 10) { n.x = w + 10; n.vx *= -1; }
+      if (n.y < -10) { n.y = -10; n.vy *= -1; } else if (n.y > h + 10) { n.y = h + 10; n.vy *= -1; }
+      // firing: cada cierto tiempo, dispara
+      if (now - n.lastFire > n.nextFire) {
+        n.pulse = 1;
+        n.lastFire = now;
+        n.nextFire = 1200 + Math.random() * 4500;
+      }
+      // decay
+      n.pulse *= Math.pow(0.94, dt / 16);
+      if (n.pulse < 0.01) n.pulse = 0;
+    }
+
+    // Lines
+    ctx.lineWidth = 0.6;
+    for (let i = 0; i < nodes.length; i++) {
+      const a = nodes[i];
+      for (let j = i + 1; j < nodes.length; j++) {
+        const b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const d = Math.hypot(dx, dy);
+        if (d < LINK_DIST) {
+          const t = 1 - d / LINK_DIST;                    // proximidad 0..1
+          const fire = Math.max(a.pulse, b.pulse);
+          // base alpha + extra cuando el mouse cerca del segmento
+          let alpha = 0.10 * t + 0.55 * t * fire;
+          if (mouse.active) {
+            const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+            const md = Math.hypot(mx - mouse.x, my - mouse.y);
+            if (md < MOUSE_DIST) alpha += 0.35 * t * (1 - md / MOUSE_DIST);
+          }
+          if (alpha < 0.02) continue;
+          ctx.strokeStyle = `rgba(116, 201, 157, ${Math.min(0.85, alpha).toFixed(3)})`;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Mouse → nodes (link directo del cursor)
+    if (mouse.active) {
+      for (const n of nodes) {
+        const d = Math.hypot(n.x - mouse.x, n.y - mouse.y);
+        if (d < MOUSE_DIST) {
+          const t = 1 - d / MOUSE_DIST;
+          ctx.strokeStyle = `rgba(167, 243, 208, ${(0.45 * t).toFixed(3)})`;
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(mouse.x, mouse.y);
+          ctx.lineTo(n.x, n.y);
+          ctx.stroke();
+          // suave "atracción" hacia cursor
+          n.vx += (mouse.x - n.x) * 0.00002 * t;
+          n.vy += (mouse.y - n.y) * 0.00002 * t;
+        }
+        // límite de velocidad
+        const sp = Math.hypot(n.vx, n.vy);
+        if (sp > 0.6) { n.vx *= 0.6 / sp; n.vy *= 0.6 / sp; }
+      }
+    }
+
+    // Nodes
+    for (const n of nodes) {
+      const fire = n.pulse;
+      // halo
+      if (fire > 0.05) {
+        const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 14 + fire * 16);
+        grd.addColorStop(0, `rgba(167, 243, 208, ${(0.45 * fire).toFixed(3)})`);
+        grd.addColorStop(1, 'rgba(167, 243, 208, 0)');
+        ctx.fillStyle = grd;
+        ctx.beginPath(); ctx.arc(n.x, n.y, 14 + fire * 16, 0, Math.PI * 2); ctx.fill();
+      }
+      // dot
+      ctx.fillStyle = fire > 0.1
+        ? `rgba(220, 252, 231, ${(0.7 + 0.3 * fire).toFixed(3)})`
+        : 'rgba(116, 201, 157, 0.55)';
+      ctx.beginPath(); ctx.arc(n.x, n.y, n.r + fire * 1.4, 0, Math.PI * 2); ctx.fill();
+    }
+
+    requestAnimationFrame(loop);
+  }
+  // kick
+  if (section.getBoundingClientRect().top < window.innerHeight) { running = true; loop(); }
+})();
+</script>
+
+<!-- ═══════ SECTION-LEVEL INTERACTIVE EFFECTS ═══════ -->
+<script>
+(function(){
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  // Helper: viewport pause for canvas-based effects
+  function makePauser(el, onShow){
+    let running = false;
+    const io = new IntersectionObserver((entries) => {
+      const wasRunning = running;
+      running = entries[0].isIntersecting;
+      if (running && !wasRunning) onShow();
+    }, { threshold: 0 });
+    io.observe(el);
+    return { isRunning: () => running };
+  }
+
+  // ── 1. USE CASES — cursor glow on each card ──
+  if (!reduced) {
+    document.querySelectorAll('.uc-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--umx', ((e.clientX - r.left) / r.width * 100) + '%');
+        card.style.setProperty('--umy', ((e.clientY - r.top)  / r.height * 100) + '%');
+      });
+    });
+  }
+
+  // ── 2. HOW IT WORKS — data packet stream ──
+  (function(){
+    const section = document.getElementById('how-it-works');
+    const canvas  = document.getElementById('howStream');
+    if (!section || !canvas || reduced) return;
+    const ctx = canvas.getContext('2d');
+    let w = 0, h = 0, packets = [];
+
+    function resize(){
+      const r = section.getBoundingClientRect();
+      w = r.width; h = r.height;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function spawn(){
+      const lanes = Math.max(6, Math.min(14, Math.floor(h / 70)));
+      packets = [];
+      for (let i = 0; i < lanes; i++) {
+        const y = (i + 0.5) * (h / lanes) + (Math.random() - 0.5) * 20;
+        packets.push({
+          y, x: Math.random() * w,
+          speed: 0.45 + Math.random() * 0.7,
+          len: 60 + Math.random() * 90,
+          alpha: 0.08 + Math.random() * 0.10,
+        });
+      }
+    }
+    resize(); spawn();
+    window.addEventListener('resize', () => { resize(); spawn(); });
+
+    const p = makePauser(section, loop);
+
+    function loop(){
+      if (!p.isRunning()) return;
+      ctx.clearRect(0, 0, w, h);
+      for (const k of packets) {
+        k.x += k.speed;
+        if (k.x - k.len > w) k.x = -k.len;
+        // line trail
+        const grd = ctx.createLinearGradient(k.x - k.len, k.y, k.x, k.y);
+        grd.addColorStop(0, 'rgba(82,183,136,0)');
+        grd.addColorStop(1, `rgba(82,183,136,${k.alpha.toFixed(3)})`);
+        ctx.strokeStyle = grd;
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(k.x - k.len, k.y); ctx.lineTo(k.x, k.y); ctx.stroke();
+        // packet head
+        ctx.fillStyle = `rgba(167,243,208,${(k.alpha * 3).toFixed(3)})`;
+        ctx.beginPath(); ctx.arc(k.x, k.y, 1.6, 0, Math.PI * 2); ctx.fill();
+      }
+      requestAnimationFrame(loop);
+    }
+  })();
+
+  // ── 3. DATA SOURCES — constellation ──
+  (function(){
+    const section = document.getElementById('data');
+    const canvas  = document.getElementById('dataStars');
+    if (!section || !canvas || reduced) return;
+    const ctx = canvas.getContext('2d');
+    let w = 0, h = 0, stars = [];
+
+    function resize(){
+      const r = section.getBoundingClientRect();
+      w = r.width; h = r.height;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function spawn(){
+      const count = Math.min(80, Math.max(30, Math.floor(w * h / 22000)));
+      stars = Array.from({length: count}, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: 0.6 + Math.random() * 1.4,
+        baseA: 0.18 + Math.random() * 0.30,
+        ph: Math.random() * Math.PI * 2,
+        speed: 0.6 + Math.random() * 1.4,
+      }));
+    }
+    resize(); spawn();
+    window.addEventListener('resize', () => { resize(); spawn(); });
+
+    const p = makePauser(section, loop);
+
+    let last = performance.now();
+    function loop(){
+      if (!p.isRunning()) return;
+      const now = performance.now();
+      const dt = Math.min(50, now - last); last = now;
+      ctx.clearRect(0, 0, w, h);
+
+      // faint connections within distance
+      const D = 130;
+      ctx.lineWidth = 0.5;
+      for (let i = 0; i < stars.length; i++) {
+        const a = stars[i];
+        for (let j = i + 1; j < stars.length; j++) {
+          const b = stars[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const d = Math.hypot(dx, dy);
+          if (d < D) {
+            ctx.strokeStyle = `rgba(82,183,136,${(0.10 * (1 - d / D)).toFixed(3)})`;
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          }
+        }
+      }
+
+      for (const s of stars) {
+        s.ph += (dt / 1000) * s.speed;
+        const tw = (Math.sin(s.ph) + 1) * 0.5;
+        const a = (s.baseA * 0.5 + s.baseA * tw).toFixed(3);
+        ctx.fillStyle = `rgba(167,243,208,${a})`;
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+      }
+      requestAnimationFrame(loop);
+    }
+  })();
+
+  // ── 4. CTA — mouse spotlight + magnetic buttons ──
+  (function(){
+    const cta = document.querySelector('.cta-section');
+    if (!cta || reduced) return;
+    let smx = 50, smy = 50, tmx = 50, tmy = 50, raf = null;
+    cta.addEventListener('mousemove', (e) => {
+      const r = cta.getBoundingClientRect();
+      tmx = (e.clientX - r.left) / r.width * 100;
+      tmy = (e.clientY - r.top)  / r.height * 100;
+      if (!raf) raf = requestAnimationFrame(tick);
+    });
+    cta.addEventListener('mouseleave', () => {
+      tmx = 50; tmy = 50;
+      if (!raf) raf = requestAnimationFrame(tick);
+    });
+    function tick(){
+      smx += (tmx - smx) * 0.14; smy += (tmy - smy) * 0.14;
+      cta.style.setProperty('--cmx', smx + '%');
+      cta.style.setProperty('--cmy', smy + '%');
+      if (Math.abs(tmx - smx) > 0.05 || Math.abs(tmy - smy) > 0.05) {
+        raf = requestAnimationFrame(tick);
+      } else { raf = null; }
+    }
+
+    // Magnetic buttons within CTA
+    cta.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const r = btn.getBoundingClientRect();
+        const dx = (e.clientX - (r.left + r.width / 2)) * 0.18;
+        const dy = (e.clientY - (r.top + r.height / 2)) * 0.18;
+        btn.style.transform = `translate(${dx}px, ${dy}px)`;
+      });
+      btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+    });
+  })();
+
+  // ── 5. APP PREVIEW — scroll-driven subtle parallax ──
+  (function(){
+    const browser = document.querySelector('.app-preview-browser');
+    if (!browser || reduced) return;
+    const parent = browser.closest('.app-preview-section');
+    if (!parent) return;
+    let raf = null;
+    function update(){
+      const r = parent.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // visibility ratio centered: 0 when far away, 1 when centered
+      const center = r.top + r.height / 2;
+      const t = Math.max(-1, Math.min(1, (center - vh / 2) / (vh / 2)));
+      const ty = -t * 14;          // px
+      const rot = -t * 1.2;        // deg
+      browser.style.transform = `translateY(${ty}px) rotateX(${rot}deg)`;
+      raf = null;
+    }
+    window.addEventListener('scroll', () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    }, { passive: true });
+    update();
+  })();
 })();
 </script>
 </body>
