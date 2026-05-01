@@ -12,6 +12,7 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 
 - [Features](#features)
 - [WhatsApp Demo](#whatsapp-demo)
+- [WhatsApp Production Channel](#whatsapp-production-channel-meta-cloud-api)
 - [INIA Knowledge Base — Two-Layer RAG](#inia-knowledge-base--two-layer-rag)
 - [AI Assistant](#ai-assistant)
 - [How It Works](#how-it-works)
@@ -270,6 +271,40 @@ Pull from Vercel automatically:
 cd agragent-api
 npx vercel env pull ../agragent-app/backend/.env --environment=production
 ```
+
+---
+
+## WhatsApp Production Channel (Meta Cloud API)
+
+Beyond the demo HTML, AgrAgent connects to **real WhatsApp** via Meta's free Cloud API. Code lives in `backend/app/routers/whatsapp.py`, `backend/app/services/meta_whatsapp.py`, and `backend/app/services/wa_formatter.py`.
+
+### What's supported
+
+| Mensaje del usuario | Comportamiento del agente |
+|---|---|
+| Texto | Conversación normal con las 8 tools |
+| 📍 Location | Inyecta coordenadas como contexto |
+| 📂 PDF/Excel | Parsea informe de suelo o foliar |
+| 📂 KML/KMZ | Extrae polígono → centroide y área |
+| 🖼️ Imagen | Acuse de recibo (YOLOv11 = roadmap) |
+| 🎤 Voice note | Acuse de recibo (Whisper = roadmap) |
+| 🔘 Botón interactivo | Reply text se procesa como mensaje normal |
+
+### Setup
+
+Ver guía completa en [`backend/WHATSAPP_SETUP.md`](backend/WHATSAPP_SETUP.md).
+
+Pasos resumidos:
+1. Crear app en developers.facebook.com con producto WhatsApp
+2. Obtener `META_WHATSAPP_TOKEN`, `META_WHATSAPP_PHONE_ID`, definir `META_WHATSAPP_VERIFY_TOKEN`
+3. Exponer backend con HTTPS público (ngrok local o Railway producción)
+4. Configurar webhook URL en Meta: `https://TU_URL/api/whatsapp/webhook`
+5. Suscribir al campo `messages`
+6. Probar enviando un mensaje al número de prueba de Meta
+
+### Persistencia
+
+Cada usuario WhatsApp = un `user_id = "whatsapp:<phone>"` en la misma tabla `conversations` que el demo. Una sola conversation por número (el agente recuerda todo el historial).
 
 ---
 
