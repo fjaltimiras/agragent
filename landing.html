@@ -254,29 +254,26 @@ body {
   display: flex;
   justify-content: center;
   gap: 48px;
-  margin-top: 64px;
-  padding-top: 40px;
-  border-top: 1px solid var(--border);
+  margin-top: 56px;
+  padding-top: 36px;
+  border-top: 1px solid rgba(30,58,46,0.5);
+  flex-wrap: wrap;
 }
-
-.hero-stat {
-  text-align: center;
-}
-
+.hero-stat { text-align: center; }
 .hero-stat .number {
-  font-size: 1.8rem;
+  font-size: 2.2rem;
   font-weight: 800;
   color: var(--accent);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
-
 .hero-stat .label {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   font-weight: 500;
-  margin-top: 4px;
+  margin-top: 6px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
 /* ───── SECTIONS ───── */
@@ -814,72 +811,35 @@ section {
 /* ───── FOOTER ───── */
 .footer {
   border-top: 1px solid var(--border);
-  padding: 48px 24px;
+  padding: 56px 24px 32px;
   background: var(--bg);
 }
-
-.footer-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 24px;
+.footer-grid {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px; margin-bottom: 40px;
 }
-
-.footer-left {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.footer-col-title {
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--text-secondary);
+  margin-bottom: 14px;
 }
-
-.footer-logo {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--accent);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.footer-grid a {
+  display: block; font-size: 0.85rem; color: var(--text-muted);
+  text-decoration: none; margin-bottom: 8px; transition: color 0.15s;
 }
-
-.footer-copy {
-  font-size: 0.82rem;
-  color: var(--text-muted);
+.footer-grid a:hover { color: var(--accent); }
+.footer-bottom {
+  max-width: 1200px; margin: 0 auto;
+  padding-top: 24px; border-top: 1px solid rgba(30,58,46,0.3);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px;
+  font-size: 0.8rem; color: var(--text-muted);
 }
-
-.footer-links {
-  display: flex;
-  gap: 28px;
+@media(max-width:768px){
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-bottom { flex-direction: column; text-align: center; }
 }
-
-.footer-links a {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 0.88rem;
-  transition: color 0.2s;
-}
-
-.footer-links a:hover { color: var(--accent); }
-
-.footer-author {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  text-align: center;
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(30, 58, 46, 0.3);
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.footer-author a {
-  color: var(--accent);
-  text-decoration: none;
-}
-
-.footer-author a:hover { text-decoration: underline; }
 
 /* ───── i18n SWITCHER ───── */
 .lang-switcher {
@@ -1054,11 +1014,6 @@ section {
 
   .steps-grid::before { display: none; }
 
-  .footer-inner {
-    flex-direction: column;
-    text-align: center;
-  }
-
   .preview-placeholder { height: 300px; }
 
   section { padding: 64px 20px; }
@@ -1074,6 +1029,36 @@ section {
 .fade-in.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ───── USE CASES ───── */
+.uc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 20px; }
+.uc-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px 28px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.uc-card:hover { border-color: rgba(82,183,136,0.3); transform: translateY(-3px); }
+.uc-card-featured {
+  border-color: rgba(82,183,136,0.35);
+  background: linear-gradient(135deg, var(--card-bg) 0%, rgba(45,106,79,0.12) 100%);
+  position: relative;
+}
+.uc-card-featured::before {
+  content: '★';
+  position: absolute; top: -1px; right: 20px;
+  background: var(--accent); color: #0a0f14;
+  font-size: 0.7rem; padding: 2px 8px;
+  border-radius: 0 0 8px 8px; font-weight: 700;
+}
+.uc-icon { font-size: 2rem; margin-bottom: 14px; }
+.uc-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; }
+.uc-card p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.65; margin-bottom: 16px; }
+.uc-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.uc-tags span {
+  font-size: 0.72rem; font-weight: 600;
+  background: rgba(82,183,136,0.1); color: var(--accent);
+  border: 1px solid rgba(82,183,136,0.2); padding: 2px 8px; border-radius: 50px;
 }
 </style>
 </head>
@@ -1120,62 +1105,213 @@ section {
         White Paper
       </a>
     </div>
+    <div class="hero-stats fade-in">
+      <div class="hero-stat">
+        <div class="number" data-count="97" data-suffix="%">0%</div>
+        <div class="label" data-i18n="stat1_label">Yield Model Accuracy</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number" data-count="13" data-suffix="">0</div>
+        <div class="label" data-i18n="stat2_label">Spectral Indices</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number" data-count="19" data-suffix="K+">0</div>
+        <div class="label" data-i18n="stat3_label">INIA Publications</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number" data-count="5" data-suffix=" days">0</div>
+        <div class="label" data-i18n="stat4_label">Satellite Revisit</div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ═══════ PREVIEW CAROUSEL ═══════ -->
-<div class="preview-section fade-in">
-  <div class="preview-wrapper" style="position:relative;overflow:hidden;">
-    <div class="preview-bar">
-      <span class="preview-dot"></span>
-      <span class="preview-dot"></span>
-      <span class="preview-dot"></span>
-      <span class="preview-url">app.agragent.com</span>
+<!-- ═══════ APP PREVIEW (CSS CARDS) ═══════ -->
+<section class="app-preview-section">
+  <div class="app-preview-browser fade-in">
+    <div class="apb-bar">
+      <span class="apb-dot" style="background:#ef4444"></span>
+      <span class="apb-dot" style="background:#f59e0b"></span>
+      <span class="apb-dot" style="background:#22c55e"></span>
+      <span class="apb-url">app.agragent.com</span>
+      <a href="https://app.agragent.com" class="apb-open" target="_blank" data-i18n="open_app">Open →</a>
     </div>
-    <a href="https://app.agragent.com" style="display:block;position:relative;overflow:hidden;">
-      <div id="carousel" style="display:flex;transition:transform 0.6s ease;aspect-ratio:16/10;">
-        <img src="slide1.jpg" alt="Satellite Maps - NDVI" style="min-width:100%;height:100%;object-fit:cover;object-position:top;display:block;border-radius:0 0 12px 12px;">
-        <img src="slide2.jpg" alt="Satellite Maps - Compare" style="min-width:100%;height:100%;object-fit:cover;object-position:top;display:block;border-radius:0 0 12px 12px;">
-        <img src="slide3.jpg" alt="Dashboard" style="min-width:100%;height:100%;object-fit:cover;object-position:top;display:block;border-radius:0 0 12px 12px;">
-        <img src="slide4.jpg" alt="Image Analysis" style="min-width:100%;height:100%;object-fit:cover;object-position:top;display:block;border-radius:0 0 12px 12px;">
-        <img src="slide5.jpg" alt="Yield Prediction" style="min-width:100%;height:100%;object-fit:cover;object-position:top;display:block;border-radius:0 0 12px 12px;">
-        <img src="slide6.jpg" alt="AI Assistant" style="min-width:100%;height:100%;object-fit:cover;object-position:top;display:block;border-radius:0 0 12px 12px;">
+    <div class="apb-content">
+      <div id="apb-carousel" class="apb-carousel">
+        <div class="apb-slide" style="background:linear-gradient(135deg,#0f2318 0%,#1a4a2e 50%,#0a2e20 100%)">
+          <div class="apb-slide-icon">🛰️</div>
+          <div class="apb-slide-title" data-i18n="slide1_title">Satellite Remote Sensing</div>
+          <div class="apb-slide-metric">NDVI · NDRE · MSAVI · TCARI · EVI · NDMI</div>
+          <div class="apb-slide-sub" data-i18n="slide1_sub">13 vegetation indices at 10m resolution via Sentinel-2 / Google Earth Engine</div>
+          <div class="apb-slide-visual">
+            <div class="apb-ndvi-grid">
+              <div style="--c:#1a4731"></div><div style="--c:#2d6a4f"></div><div style="--c:#52b788"></div>
+              <div style="--c:#74c99d"></div><div style="--c:#52b788"></div><div style="--c:#2d6a4f"></div>
+              <div style="--c:#a7f3d0"></div><div style="--c:#74c99d"></div><div style="--c:#52b788"></div>
+            </div>
+          </div>
+        </div>
+        <div class="apb-slide" style="background:linear-gradient(135deg,#0f1a2e 0%,#1a2e4a 50%,#0a1a2e 100%)">
+          <div class="apb-slide-icon">🌡️</div>
+          <div class="apb-slide-title" data-i18n="slide2_title">Climate Analytics</div>
+          <div class="apb-slide-metric">GDD · Chill Hours · Frost · Heat Waves · ET₀</div>
+          <div class="apb-slide-sub" data-i18n="slide2_sub">Real-time climate data for any location — 80 years of historical records</div>
+          <div class="apb-slide-visual">
+            <div class="apb-chart-bars">
+              <div style="--h:40%"></div><div style="--h:65%"></div><div style="--h:55%"></div>
+              <div style="--h:80%"></div><div style="--h:70%"></div><div style="--h:90%"></div>
+              <div style="--h:75%"></div><div style="--h:85%"></div><div style="--h:95%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="apb-slide" style="background:linear-gradient(135deg,#1a1a0f 0%,#2e2a0a 50%,#1a180a 100%)">
+          <div class="apb-slide-icon">📈</div>
+          <div class="apb-slide-title" data-i18n="slide3_title">Yield Prediction</div>
+          <div class="apb-slide-metric">R² = 0.972 · MAPE = 3.8%</div>
+          <div class="apb-slide-sub" data-i18n="slide3_sub">Extra Trees Regressor with 15 satellite + climate features</div>
+          <div class="apb-slide-visual">
+            <div class="apb-yield-meter">
+              <div class="apb-yield-ring">
+                <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="rgba(82,183,136,0.2)" stroke-width="6"/><circle cx="40" cy="40" r="32" fill="none" stroke="#52b788" stroke-width="6" stroke-dasharray="200 201" stroke-linecap="round" transform="rotate(-90 40 40)"/></svg>
+                <span>97%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="apb-slide" style="background:linear-gradient(135deg,#1a0f1a 0%,#2e1a4a 50%,#1a0a2e 100%)">
+          <div class="apb-slide-icon">🤖</div>
+          <div class="apb-slide-title" data-i18n="slide4_title">AI Agronomic Agent</div>
+          <div class="apb-slide-metric">8 tools · INIA RAG · 19K+ publications</div>
+          <div class="apb-slide-sub" data-i18n="slide4_sub">Claude-powered assistant with real-time field, climate and satellite context</div>
+          <div class="apb-slide-visual">
+            <div class="apb-chat-preview">
+              <div class="apb-chat-msg bot">¿Cómo está el NDVI de mi viñedo?</div>
+              <div class="apb-chat-msg user">El índice NDVI muestra <strong>0.72</strong> — vegetación densa y activa...</div>
+            </div>
+          </div>
+        </div>
       </div>
-    </a>
-    <div style="display:flex;justify-content:center;gap:8px;padding:14px 0;">
-      <button class="carousel-dot active" onclick="goSlide(0)"></button>
-      <button class="carousel-dot" onclick="goSlide(1)"></button>
-      <button class="carousel-dot" onclick="goSlide(2)"></button>
-      <button class="carousel-dot" onclick="goSlide(3)"></button>
-      <button class="carousel-dot" onclick="goSlide(4)"></button>
-      <button class="carousel-dot" onclick="goSlide(5)"></button>
-    </div>
-    <div style="display:flex;justify-content:center;gap:6px;padding-bottom:12px;font-size:0.75rem;color:var(--text-muted);">
-      <span id="carousel-label">Satellite Maps</span>
+      <div class="apb-dots">
+        <button class="apb-dot active" onclick="apbGoSlide(0)"></button>
+        <button class="apb-dot" onclick="apbGoSlide(1)"></button>
+        <button class="apb-dot" onclick="apbGoSlide(2)"></button>
+        <button class="apb-dot" onclick="apbGoSlide(3)"></button>
+      </div>
     </div>
   </div>
-</div>
+</section>
 <style>
-.carousel-dot {
-  width: 10px; height: 10px; border-radius: 50%; border: none;
-  background: var(--text-muted); cursor: pointer; padding: 0; transition: all 0.3s;
+.app-preview-section { padding: 0 24px 80px; }
+.app-preview-browser {
+  max-width: 900px; margin: 0 auto;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
 }
-.carousel-dot.active { background: var(--accent); transform: scale(1.3); }
+.apb-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px;
+  background: #16232e;
+  border-bottom: 1px solid var(--border);
+}
+.apb-dot { width: 12px; height: 12px; border-radius: 50%; }
+.apb-url {
+  flex: 1; text-align: center;
+  font-size: 0.78rem; color: var(--text-muted);
+  background: rgba(0,0,0,0.3); border-radius: 6px;
+  padding: 3px 12px; margin: 0 8px;
+}
+.apb-open {
+  font-size: 0.75rem; font-weight: 600;
+  color: var(--accent); text-decoration: none;
+  padding: 3px 10px; border: 1px solid rgba(82,183,136,0.3);
+  border-radius: 6px; transition: background 0.15s;
+  white-space: nowrap;
+}
+.apb-open:hover { background: rgba(82,183,136,0.1); }
+.apb-content { overflow: hidden; }
+.apb-carousel { display: flex; transition: transform 0.5s ease; }
+.apb-slide {
+  min-width: 100%; padding: 40px 48px 32px;
+  display: flex; flex-direction: column; gap: 10px;
+  min-height: 340px; position: relative;
+}
+.apb-slide-icon { font-size: 2.4rem; }
+.apb-slide-title { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+.apb-slide-metric {
+  display: inline-block; font-size: 0.78rem; font-weight: 600;
+  color: var(--accent); background: rgba(82,183,136,0.1);
+  border: 1px solid rgba(82,183,136,0.2); padding: 3px 12px;
+  border-radius: 50px; width: fit-content;
+}
+.apb-slide-sub { font-size: 0.9rem; color: var(--text-secondary); max-width: 480px; line-height: 1.5; }
+.apb-slide-visual { position: absolute; right: 48px; bottom: 32px; }
+/* NDVI grid */
+.apb-ndvi-grid {
+  display: grid; grid-template-columns: repeat(3,40px); gap: 3px;
+  border-radius: 8px; overflow: hidden; opacity: 0.8;
+}
+.apb-ndvi-grid div { width: 40px; height: 40px; background: var(--c); }
+/* Chart bars */
+.apb-chart-bars { display: flex; gap: 4px; align-items: flex-end; height: 80px; }
+.apb-chart-bars div { width: 14px; height: var(--h); background: var(--accent); border-radius: 3px 3px 0 0; opacity: 0.7; }
+/* Yield ring */
+.apb-yield-meter { position: relative; }
+.apb-yield-ring { position: relative; width: 80px; height: 80px; }
+.apb-yield-ring svg { width: 100%; height: 100%; }
+.apb-yield-ring span { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 0.9rem; font-weight: 800; color: var(--accent); }
+/* Chat preview */
+.apb-chat-preview { display: flex; flex-direction: column; gap: 6px; max-width: 220px; }
+.apb-chat-msg { font-size: 0.72rem; padding: 6px 10px; border-radius: 10px; line-height: 1.4; }
+.apb-chat-msg.bot { background: rgba(82,183,136,0.15); color: var(--text-secondary); border-radius: 10px 10px 10px 3px; }
+.apb-chat-msg.user { background: rgba(45,106,79,0.4); color: var(--text-primary); border-radius: 10px 10px 3px 10px; align-self: flex-end; }
+.apb-dots { display: flex; justify-content: center; gap: 8px; padding: 14px 0; }
+.apb-dot { width: 8px; height: 8px; border-radius: 50%; border: none; background: var(--text-muted); cursor: pointer; padding: 0; transition: all 0.2s; }
+.apb-dot.active { background: var(--accent); transform: scale(1.4); }
+@media(max-width:600px){ .apb-slide { padding: 28px 24px 24px; min-height: 280px; } .apb-slide-visual { display: none; } }
 </style>
 <script>
-(function() {
-  const labels = ['Satellite Maps', 'Satellite Compare', 'Dashboard', 'Image Analysis', 'Yield Prediction', 'AI Assistant'];
-  let currentSlide = 0;
-  const total = 6;
-  window.goSlide = function(n) {
-    currentSlide = n;
-    document.getElementById('carousel').style.transform = 'translateX(-' + (n * 100) + '%)';
-    document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === n));
-    document.getElementById('carousel-label').textContent = labels[n];
+(function(){
+  let cur = 0;
+  window.apbGoSlide = function(n) {
+    cur = n;
+    document.getElementById('apb-carousel').style.transform = 'translateX(-' + (n*100) + '%)';
+    document.querySelectorAll('.apb-dot').forEach((d,i) => d.classList.toggle('active', i===n));
   };
-  setInterval(() => { goSlide((currentSlide + 1) % total); }, 4000);
+  setInterval(() => apbGoSlide((cur+1) % 4), 5000);
 })();
 </script>
+
+<!-- ═══════ USE CASES ═══════ -->
+<section id="use-cases" style="background:var(--bg-alt)">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label" data-i18n="uc_label">Who uses AgrAgent</div>
+      <h2 data-i18n="uc_title">Built for every agricultural professional</h2>
+    </div>
+    <div class="uc-grid fade-in">
+      <div class="uc-card">
+        <div class="uc-icon">🔬</div>
+        <h3 data-i18n="uc1_title">Researchers</h3>
+        <p data-i18n="uc1_desc">Access genomic DEG data, yield models with full feature importance, published RNA-seq datasets, and peer-reviewed bibliographic search across 19,000+ INIA publications.</p>
+        <div class="uc-tags"><span>RNA-seq</span><span>DEG Analysis</span><span>Publications</span></div>
+      </div>
+      <div class="uc-card uc-card-featured">
+        <div class="uc-icon">🌾</div>
+        <h3 data-i18n="uc2_title">Agronomists</h3>
+        <p data-i18n="uc2_desc">Upload soil or foliar reports and get instant recommendations. Calculate irrigation schedules and fertilization plans. Query the AI agent with real-time field context.</p>
+        <div class="uc-tags"><span>Soil Analysis</span><span>Irrigation</span><span>AI Assistant</span></div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-icon">🍇</div>
+        <h3 data-i18n="uc3_title">Farm Managers</h3>
+        <p data-i18n="uc3_desc">Draw your field polygon and instantly see NDVI, climate KPIs, frost alerts, yield predictions, and phenological stage calendar — no technical expertise needed.</p>
+        <div class="uc-tags"><span>NDVI Maps</span><span>Yield Forecast</span><span>Alerts</span></div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ═══════ FEATURES ═══════ -->
 <section id="features">
@@ -1480,20 +1616,33 @@ function showFeat(idx, btn) {
 
 <!-- ═══════ FOOTER ═══════ -->
 <footer class="footer">
-  <div class="footer-inner">
-    <div class="footer-left">
-      <div class="footer-logo">
-        <img src="agragent.png" alt="agragent logo" style="height:48px;">
-      </div>
+  <div class="footer-grid">
+    <div>
+      <img src="agragent.png" alt="agragent" style="height:44px;margin-bottom:12px;display:block;">
+      <p style="font-size:0.82rem;color:var(--text-muted);max-width:240px;line-height:1.6;">Precision & Digital Agriculture Platform. Doctoral research project, PUCV, Chile.</p>
     </div>
-    <div class="footer-links">
+    <div>
+      <div class="footer-col-title">Platform</div>
+      <a href="https://app.agragent.com" data-i18n="footer_app">Web App</a>
       <a href="Altimiras2026.pdf" target="_blank" data-i18n="footer_paper">White Paper</a>
-      <a href="https://app.agragent.com" data-i18n="footer_app">Application</a>
+      <a href="https://github.com/fjaltimiras/agragent" target="_blank">GitHub</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Research</div>
+      <a href="https://doi.org/10.3390/agronomy14030613" target="_blank">Agronomy 2024</a>
+      <a href="https://doi.org/10.1007/978-3-031-80084-9_14" target="_blank">EPIA 2024</a>
       <a href="https://orcid.org/0000-0003-1992-8338" target="_blank">ORCID</a>
     </div>
+    <div>
+      <div class="footer-col-title">Data</div>
+      <a href="https://biblioteca.inia.cl" target="_blank">INIA Library</a>
+      <a href="https://earthengine.google.com" target="_blank">Google Earth Engine</a>
+      <a href="https://open-meteo.com" target="_blank">Open-Meteo</a>
+    </div>
   </div>
-  <div class="footer-author">
-    Copyright &copy; 2026 Developed by Dr. Francisco Altimiras. All rights reserved.
+  <div class="footer-bottom">
+    <span>&copy; 2026 Francisco Altimiras · PUCV, Chile · MIT License</span>
+    <span style="color:var(--text-muted);font-size:0.78rem;">Built with Claude AI · Sentinel-2 · Open-Meteo · Supabase</span>
   </div>
 </footer>
 
@@ -1502,6 +1651,24 @@ function showFeat(idx, btn) {
 const translations = {
   en: {
     nav_features: "Features",
+    stat1_label: "Yield Model Accuracy",
+    stat2_label: "Spectral Indices",
+    stat3_label: "INIA Publications",
+    stat4_label: "Satellite Revisit",
+    open_app: "Open →",
+    slide1_title: "Satellite Remote Sensing",
+    slide1_sub: "13 vegetation indices at 10m resolution via Sentinel-2 / Google Earth Engine",
+    slide2_title: "Climate Analytics",
+    slide2_sub: "Real-time climate data for any location — 80 years of historical records",
+    slide3_title: "Yield Prediction",
+    slide3_sub: "Extra Trees Regressor with 15 satellite + climate features",
+    slide4_title: "AI Agronomic Agent",
+    slide4_sub: "Claude-powered assistant with real-time field, climate and satellite context",
+    uc_label: "Who uses AgrAgent",
+    uc_title: "Built for every agricultural professional",
+    uc1_title: "Researchers", uc1_desc: "Access genomic DEG data, yield models, RNA-seq datasets, and peer-reviewed bibliographic search across 19,000+ INIA publications.",
+    uc2_title: "Agronomists", uc2_desc: "Upload soil or foliar reports for instant recommendations. Calculate irrigation and fertilization plans with real-time field context.",
+    uc3_title: "Farm Managers", uc3_desc: "Draw your field polygon and instantly see NDVI, climate KPIs, frost alerts, yield predictions — no technical expertise needed.",
     nav_how: "How it works",
     nav_tech: "Tech Stack",
     nav_data: "Data Sources",
@@ -1585,6 +1752,24 @@ const translations = {
   },
   es: {
     nav_features: "Funcionalidades",
+    stat1_label: "Precisi\u00f3n Modelo Rendimiento",
+    stat2_label: "\u00cdndices Espectrales",
+    stat3_label: "Publicaciones INIA",
+    stat4_label: "Revisita Satelital",
+    open_app: "Abrir \u2192",
+    slide1_title: "Teledetecci\u00f3n Satelital",
+    slide1_sub: "13 \u00edndices de vegetaci\u00f3n a 10m de resoluci\u00f3n via Sentinel-2 / Google Earth Engine",
+    slide2_title: "Anal\u00edtica Clim\u00e1tica",
+    slide2_sub: "Datos clim\u00e1ticos en tiempo real para cualquier ubicaci\u00f3n \u2014 80 a\u00f1os de registros hist\u00f3ricos",
+    slide3_title: "Predicci\u00f3n de Rendimiento",
+    slide3_sub: "Extra Trees Regressor con 15 variables satelitales y clim\u00e1ticas",
+    slide4_title: "Agente Agron\u00f3mico IA",
+    slide4_sub: "Asistente Claude con contexto de campo, clima e \u00edndices satelitales en tiempo real",
+    uc_label: "\u00bfPara qui\u00e9n es?",
+    uc_title: "Dise\u00f1ado para cada profesional agr\u00edcola",
+    uc1_title: "Investigadores", uc1_desc: "Accede a datos DEGs de RNA-seq, modelos de rendimiento, datasets publicados y b\u00fasqueda bibliogr\u00e1fica en 19.000+ publicaciones del INIA.",
+    uc2_title: "Agr\u00f3nomos", uc2_desc: "Sube informes de suelo o foliar y obt\u00e9n recomendaciones inmediatas. Calcula planes de riego y fertilizaci\u00f3n con contexto de campo en tiempo real.",
+    uc3_title: "Administradores", uc3_desc: "Dibuja el pol\u00edgono de tu campo y visualiza al instante NDVI, KPIs clim\u00e1ticos, alertas de heladas y predicciones de rendimiento.",
     nav_how: "C\u00f3mo funciona",
     nav_tech: "Tecnolog\u00eda",
     nav_data: "Fuentes de datos",
@@ -1669,6 +1854,24 @@ const translations = {
   },
   pt: {
     nav_features: "Funcionalidades",
+    stat1_label: "Precisão Modelo de Rendimento",
+    stat2_label: "Índices Espectrais",
+    stat3_label: "Publicações INIA",
+    stat4_label: "Revisita Satelital",
+    open_app: "Abrir →",
+    slide1_title: "Sensoriamento Remoto Satelital",
+    slide1_sub: "13 índices de vegetação a 10m de resolução via Sentinel-2 / Google Earth Engine",
+    slide2_title: "Analítica Climática",
+    slide2_sub: "Dados climáticos em tempo real para qualquer localização — 80 anos de registros históricos",
+    slide3_title: "Previsão de Rendimento",
+    slide3_sub: "Extra Trees Regressor com 15 variáveis de satélite e clima",
+    slide4_title: "Agente Agronômico IA",
+    slide4_sub: "Assistente Claude com contexto de campo, clima e índices de satélite em tempo real",
+    uc_label: "Para quem é?",
+    uc_title: "Desenvolvido para cada profissional agrícola",
+    uc1_title: "Pesquisadores", uc1_desc: "Acesse dados DEGs de RNA-seq, modelos de rendimento, datasets publicados e busca bibliográfica em 19.000+ publicações do INIA.",
+    uc2_title: "Agrônomos", uc2_desc: "Envie relatórios de solo ou foliar para recomendações imediatas. Calcule planos de irrigação e fertilização com contexto do campo.",
+    uc3_title: "Gestores", uc3_desc: "Desenhe o polígono do seu campo e veja instantaneamente NDVI, KPIs climáticos, alertas de geada e previsões de rendimento.",
     nav_how: "Como funciona",
     nav_tech: "Tecnologia",
     nav_data: "Fontes de dados",
@@ -1767,6 +1970,26 @@ function setLang(lang) {
   // Notificar al widget si está abierto para resetear el idioma
   if (typeof window.agSetLang === 'function') window.agSetLang(lang);
 }
+
+// Animated counters
+const counterObs = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.querySelectorAll('.number[data-count]').forEach(el => {
+      const target = +el.dataset.count;
+      const suffix = el.dataset.suffix || '';
+      let current = 0;
+      const step = target / 40;
+      const timer = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = Math.round(current) + suffix;
+        if (current >= target) clearInterval(timer);
+      }, 30);
+    });
+    counterObs.unobserve(entry.target);
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.hero-stats').forEach(el => counterObs.observe(el));
 
 /* ═══════ SCROLL ANIMATIONS ═══════ */
 const observer = new IntersectionObserver((entries) => {
