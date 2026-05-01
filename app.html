@@ -3695,13 +3695,13 @@ function setBaseMap(type, btn) {
   if (labelsLayer) { vineMap.removeLayer(labelsLayer); labelsLayer = null; }
 
   if (type === 'satellite') {
-    osmLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri', maxZoom: 19 }).addTo(vineMap);
-    labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', { attribution: '© CARTO', maxZoom: 19, pane: 'overlayPane' }).addTo(vineMap);
+    osmLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri', maxNativeZoom: 19, maxZoom: 22 }).addTo(vineMap);
+    labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', { attribution: '© CARTO', maxNativeZoom: 19, maxZoom: 22, pane: 'overlayPane' }).addTo(vineMap);
   } else if (type === 'streets') {
-    osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 19 }).addTo(vineMap);
+    osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxNativeZoom: 19, maxZoom: 22 }).addTo(vineMap);
   } else if (type === 'hybrid') {
-    osmLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri', maxZoom: 19 }).addTo(vineMap);
-    labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', { attribution: '© CARTO', maxZoom: 19, pane: 'overlayPane' }).addTo(vineMap);
+    osmLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri', maxNativeZoom: 19, maxZoom: 22 }).addTo(vineMap);
+    labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', { attribution: '© CARTO', maxNativeZoom: 19, maxZoom: 22, pane: 'overlayPane' }).addTo(vineMap);
   }
   // Keep GEE and labels on top
   if (geeLayer) geeLayer.bringToFront();
@@ -5167,10 +5167,10 @@ function initMap() {
 
   // Satellite base + labels by default
   osmLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    attribution: '© Esri', maxZoom: 19
+    attribution: '© Esri', maxNativeZoom: 19, maxZoom: 22
   }).addTo(vineMap);
   labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
-    attribution: '© CARTO', maxZoom: 19, pane: 'overlayPane'
+    attribution: '© CARTO', maxNativeZoom: 19, maxZoom: 22, pane: 'overlayPane'
   }).addTo(vineMap);
 
   // Init draw/edit tools
@@ -5374,11 +5374,11 @@ async function autoConnectGEE() {
     if (osmLayer) vineMap.removeLayer(osmLayer);
     satelliteLayer = L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      { attribution: '© Esri', maxZoom: 19 }
+      { attribution: '© Esri', maxNativeZoom: 19, maxZoom: 22 }
     ).addTo(vineMap);
     labelsLayer = L.tileLayer(
       'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',
-      { attribution: '© CARTO', maxZoom: 19, pane: 'overlayPane' }
+      { attribution: '© CARTO', maxNativeZoom: 19, maxZoom: 22, pane: 'overlayPane' }
     ).addTo(vineMap);
     if (vineMap.getZoom() > 16) vineMap.setZoom(16);
 
