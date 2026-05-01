@@ -230,6 +230,100 @@
     font-size: 0.82rem; font-family: inherit; outline: none;
   }
 
+  /* ── FOLDER TABS (project organization) ─────────────────── */
+  .chat-folder-tabs {
+    display: flex; align-items: center; gap: 4px;
+    padding: 8px 10px; overflow-x: auto;
+    border-bottom: 1px solid rgba(82,183,136,0.12);
+    background: rgba(0,0,0,0.15);
+    scrollbar-width: none;
+    flex-shrink: 0;
+  }
+  .chat-folder-tabs::-webkit-scrollbar { display: none; }
+  .chat-folder-tab {
+    display: flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 12px;
+    font-size: 0.72rem; white-space: nowrap;
+    cursor: pointer; border: none; font-family: inherit;
+    background: rgba(82,183,136,0.08); color: var(--text-secondary);
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  .chat-folder-tab:hover { color: var(--text-primary); }
+  .chat-folder-tab.active { color: #0a0f14; font-weight: 600; }
+  .chat-folder-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .chat-add-folder {
+    padding: 4px 10px; border-radius: 12px;
+    font-size: 0.72rem; cursor: pointer;
+    background: none; color: var(--text-muted);
+    border: 1px dashed rgba(82,183,136,0.25);
+    font-family: inherit; flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .chat-add-folder:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* Folder badge on conv item */
+  .conv-folder-badge {
+    font-size: 9px; padding: 1px 5px;
+    border-radius: 6px; color: #0a0f14;
+    font-weight: 700; white-space: nowrap;
+    max-width: 70px; overflow: hidden; text-overflow: ellipsis;
+    margin-right: 4px;
+  }
+
+  /* Folder picker dropdown */
+  .chat-folder-picker {
+    position: absolute; right: 8px; top: 30px; z-index: 100;
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 4px 0;
+    min-width: 150px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+  .chat-folder-picker-item {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; cursor: pointer; font-size: 0.78rem;
+    color: var(--text-secondary);
+  }
+  .chat-folder-picker-item:hover { background: rgba(82,183,136,0.08); color: var(--text-primary); }
+  .chat-folder-picker-item.remove { color: var(--text-muted); border-top: 1px solid rgba(82,183,136,0.1); }
+
+  /* Folder modal */
+  #chat-folder-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9000;
+  }
+  #chat-folder-overlay.hidden { display: none; }
+  .chat-folder-modal {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; width: 320px;
+  }
+  .chat-folder-modal h3 { font-size: 1rem; margin-bottom: 14px; color: var(--text-primary); }
+  .chat-folder-modal label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 5px; }
+  .chat-folder-modal input {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 10px; color: var(--text-primary);
+    font-size: 0.85rem; font-family: inherit; outline: none;
+  }
+  .chat-folder-modal input:focus { border-color: var(--accent); }
+  .chat-color-picker { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
+  .chat-color-swatch {
+    width: 24px; height: 24px; border-radius: 50%;
+    cursor: pointer; border: 2px solid transparent; transition: transform 0.1s;
+  }
+  .chat-color-swatch:hover { transform: scale(1.15); }
+  .chat-color-swatch.selected { border-color: var(--text-primary); }
+  .chat-folder-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+  .chat-folder-actions button {
+    border: none; padding: 7px 16px; border-radius: 6px;
+    font-size: 0.82rem; font-family: inherit; cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .chat-folder-actions .btn-cancel { background: var(--border); color: var(--text-primary); }
+  .chat-folder-actions .btn-save   { background: var(--accent); color: #0a0f14; font-weight: 600; }
+  .chat-folder-actions .btn-delete { background: var(--red); color: white; margin-right: auto; }
+
+  .chat-conv-item { position: relative; }
+  .conv-btn.conv-folder { color: var(--text-secondary); }
+
   .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
   .chat-messages {
     flex: 1; overflow-y: auto; padding: 24px; display: flex;
@@ -3092,6 +3186,7 @@ function editDisplayName() {
               <button class="chat-sidebar-toggle" onclick="document.getElementById('chat-full-sidebar').classList.add('collapsed');document.getElementById('chat-sidebar-show').style.display=''" title="Hide">◀</button>
             </div>
           </div>
+          <div class="chat-folder-tabs" id="chat-full-folder-tabs"></div>
           <div class="chat-conv-list" id="chat-full-conv-list"></div>
         </div>
         <div class="chat-full-main">
@@ -7554,26 +7649,194 @@ async function chatNewConversation() {
   }
 }
 
+// ── FOLDERS / PROJECTS (localStorage) ────────────────────────────
+const FOLDER_COLORS = ['#52b788','#2196F3','#FF9800','#9C27B0','#F44336','#795548','#009688','#E91E63'];
+let chatFolders     = JSON.parse(localStorage.getItem('chat_folders')     || '[]');
+let chatAssignments = JSON.parse(localStorage.getItem('chat_assignments') || '{}');
+let chatActiveFolderId = null;
+let chatEditingFolderId = null;
+let chatSelectedColor = FOLDER_COLORS[0];
+let chatOpenPickerId = null;
+let chatAllConversations = [];
+
+function chatSaveFolderState() {
+  localStorage.setItem('chat_folders',     JSON.stringify(chatFolders));
+  localStorage.setItem('chat_assignments', JSON.stringify(chatAssignments));
+}
+
+function chatRenderFolderTabs() {
+  const bar = document.getElementById('chat-full-folder-tabs');
+  if (!bar) return;
+  const allActive = !chatActiveFolderId;
+  let html = `<button class="chat-folder-tab ${allActive ? 'active' : ''}"
+    style="${allActive ? 'background:var(--accent)' : ''}"
+    onclick="chatSetActiveFolder(null)">Todas</button>`;
+  chatFolders.forEach(f => {
+    const active = chatActiveFolderId === f.id;
+    html += `<button class="chat-folder-tab ${active ? 'active' : ''}"
+      style="${active ? `background:${f.color}` : ''}"
+      onclick="chatSetActiveFolder('${f.id}')"
+      oncontextmenu="event.preventDefault();chatEditFolder('${f.id}')">
+        <span class="chat-folder-dot" style="background:${f.color}"></span>
+        ${escapeHtml(f.name)}
+      </button>`;
+  });
+  html += `<button class="chat-add-folder" onclick="chatOpenFolderModal()">+ Carpeta</button>`;
+  bar.innerHTML = html;
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML;
+}
+
+function chatSetActiveFolder(id) {
+  chatActiveFolderId = id;
+  chatClosePickerIfOpen();
+  chatRenderFolderTabs();
+  chatRenderConvList();
+}
+
+function chatFilteredConvs() {
+  if (!chatActiveFolderId) return chatAllConversations;
+  return chatAllConversations.filter(c => chatAssignments[c.id] === chatActiveFolderId);
+}
+
+function chatOpenFolderModal(folderId) {
+  chatEditingFolderId = folderId || null;
+  const folder = folderId ? chatFolders.find(f => f.id === folderId) : null;
+  chatSelectedColor = folder ? folder.color : FOLDER_COLORS[0];
+  document.getElementById('chat-folder-title').textContent = folderId ? '✏️ Editar carpeta' : '📁 Nueva carpeta';
+  document.getElementById('chat-folder-name').value = folder ? folder.name : '';
+
+  const cp = document.getElementById('chat-color-picker');
+  cp.innerHTML = FOLDER_COLORS.map(c => `
+    <div class="chat-color-swatch ${c === chatSelectedColor ? 'selected' : ''}"
+         style="background:${c}" onclick="chatSelectColor('${c}')"></div>
+  `).join('');
+
+  document.getElementById('chat-folder-delete-btn').style.display = folderId ? 'inline-block' : 'none';
+  document.getElementById('chat-folder-overlay').classList.remove('hidden');
+  setTimeout(() => document.getElementById('chat-folder-name').focus(), 50);
+}
+
+function chatCloseFolderModal() {
+  document.getElementById('chat-folder-overlay').classList.add('hidden');
+  chatEditingFolderId = null;
+}
+
+function chatSelectColor(c) {
+  chatSelectedColor = c;
+  document.querySelectorAll('.chat-color-swatch').forEach(s => {
+    s.classList.toggle('selected', s.style.background === c || s.style.backgroundColor === c);
+  });
+}
+
+function chatSaveFolderModal() {
+  const name = document.getElementById('chat-folder-name').value.trim();
+  if (!name) return;
+  if (chatEditingFolderId) {
+    const f = chatFolders.find(x => x.id === chatEditingFolderId);
+    if (f) { f.name = name; f.color = chatSelectedColor; }
+  } else {
+    chatFolders.push({ id: 'f' + Date.now(), name, color: chatSelectedColor });
+  }
+  chatSaveFolderState();
+  chatCloseFolderModal();
+  chatRenderFolderTabs();
+  chatRenderConvList();
+}
+
+function chatEditFolder(id) { chatOpenFolderModal(id); }
+
+function chatDeleteFolder() {
+  if (!chatEditingFolderId) return;
+  if (!confirm('¿Eliminar esta carpeta? Las conversaciones no se borrarán.')) return;
+  chatFolders = chatFolders.filter(f => f.id !== chatEditingFolderId);
+  Object.keys(chatAssignments).forEach(k => { if (chatAssignments[k] === chatEditingFolderId) delete chatAssignments[k]; });
+  chatSaveFolderState();
+  if (chatActiveFolderId === chatEditingFolderId) chatActiveFolderId = null;
+  chatCloseFolderModal();
+  chatRenderFolderTabs();
+  chatRenderConvList();
+}
+
+function chatTogglePicker(convId, btn) {
+  if (chatOpenPickerId === convId) { chatClosePickerIfOpen(); return; }
+  chatClosePickerIfOpen();
+  chatOpenPickerId = convId;
+  const item = btn.closest('.chat-conv-item');
+  if (!item) return;
+  const picker = document.createElement('div');
+  picker.className = 'chat-folder-picker';
+  picker.id = 'cfp-' + convId;
+  const cur = chatAssignments[convId];
+  let html = chatFolders.map(f => `
+    <div class="chat-folder-picker-item" onclick="event.stopPropagation();chatAssignFolder('${convId}','${f.id}')">
+      <span class="chat-folder-dot" style="background:${f.color}"></span>${escapeHtml(f.name)} ${cur === f.id ? '✓' : ''}
+    </div>`).join('');
+  if (!chatFolders.length) html = '<div class="chat-folder-picker-item" style="color:var(--text-muted)">Sin carpetas. Crea una primero.</div>';
+  if (cur) html += `<div class="chat-folder-picker-item remove" onclick="event.stopPropagation();chatAssignFolder('${convId}',null)">✕ Quitar</div>`;
+  html += `<div class="chat-folder-picker-item remove" onclick="event.stopPropagation();chatClosePickerIfOpen();chatOpenFolderModal()">+ Nueva carpeta</div>`;
+  picker.innerHTML = html;
+  picker.addEventListener('click', e => e.stopPropagation());
+  item.appendChild(picker);
+}
+
+function chatClosePickerIfOpen() {
+  if (chatOpenPickerId) {
+    document.getElementById('cfp-' + chatOpenPickerId)?.remove();
+    chatOpenPickerId = null;
+  }
+}
+
+function chatAssignFolder(convId, folderId) {
+  if (folderId) chatAssignments[convId] = folderId;
+  else delete chatAssignments[convId];
+  chatSaveFolderState();
+  chatClosePickerIfOpen();
+  chatRenderConvList();
+}
+
+document.addEventListener('click', e => {
+  if (chatOpenPickerId && !e.target.closest('.chat-folder-picker') && !e.target.closest('.conv-folder')) {
+    chatClosePickerIfOpen();
+  }
+});
+
+function chatRenderConvList() {
+  const convs = chatFilteredConvs();
+  ['chat-conv-list', 'chat-full-conv-list'].forEach(listId => {
+    const list = document.getElementById(listId);
+    if (!list) return;
+    list.innerHTML = '';
+    convs.forEach(c => {
+      const folder = chatFolders.find(f => f.id === chatAssignments[c.id]);
+      const badge = folder
+        ? `<span class="conv-folder-badge" style="background:${folder.color}">${escapeHtml(folder.name)}</span>`
+        : '';
+      const div = document.createElement('div');
+      div.className = 'chat-conv-item' + (c.id === chatConvId ? ' active' : '');
+      div.innerHTML =
+        '<span class="conv-title">' + escapeHtml(c.title || 'New conversation') + '</span>' +
+        badge +
+        '<span class="conv-actions">' +
+        '<button class="conv-btn conv-folder" onclick="event.stopPropagation();chatTogglePicker(\'' + c.id + '\',this)" title="Carpeta">📁</button>' +
+        '<button class="conv-btn conv-edit" onclick="event.stopPropagation();chatRenameConv(this,\'' + c.id + '\')" title="Rename">✏️</button>' +
+        '<button class="conv-btn conv-delete" onclick="event.stopPropagation();chatDeleteConv(\'' + c.id + '\')" title="Delete">✕</button>' +
+        '</span>';
+      div.addEventListener('click', () => chatLoadMessages(c.id));
+      list.appendChild(div);
+    });
+  });
+}
+
 async function chatLoadConversations() {
   try {
     const res = await fetch(CHAT_API + '/api/conversations/' + chatUserId);
     const data = await res.json();
-    ['chat-conv-list', 'chat-full-conv-list'].forEach(listId => {
-      const list = document.getElementById(listId);
-      if (!list) return;
-      list.innerHTML = '';
-      (data.conversations || []).forEach(c => {
-        const div = document.createElement('div');
-        div.className = 'chat-conv-item' + (c.id === chatConvId ? ' active' : '');
-        div.innerHTML = '<span class="conv-title">' + (c.title || 'New conversation') + '</span>' +
-          '<span class="conv-actions">' +
-          '<button class="conv-btn conv-edit" onclick="event.stopPropagation();chatRenameConv(this,\'' + c.id + '\')" title="Rename">✏️</button>' +
-          '<button class="conv-btn conv-delete" onclick="event.stopPropagation();chatDeleteConv(\'' + c.id + '\')" title="Delete">✕</button>' +
-          '</span>';
-        div.addEventListener('click', () => chatLoadMessages(c.id));
-        list.appendChild(div);
-      });
-    });
+    chatAllConversations = data.conversations || [];
+    chatRenderFolderTabs();
+    chatRenderConvList();
   } catch (e) { /* silent */ }
 }
 
@@ -7901,5 +8164,28 @@ document.querySelectorAll('.nav-item').forEach(item => {
     </div>
   </div>
 </div>
+
+<!-- ── Folder modal (chat) ────────────────────────────────── -->
+<div id="chat-folder-overlay" class="hidden">
+  <div class="chat-folder-modal">
+    <h3 id="chat-folder-title">📁 Nueva carpeta</h3>
+    <label>Nombre</label>
+    <input type="text" id="chat-folder-name" placeholder="Ej: Maíz Aconcagua, Cerezo 2026"
+           onkeydown="if(event.key==='Enter') chatSaveFolderModal()">
+    <label style="margin-top:12px">Color</label>
+    <div class="chat-color-picker" id="chat-color-picker"></div>
+    <div class="chat-folder-actions">
+      <button id="chat-folder-delete-btn" class="btn-delete" style="display:none" onclick="chatDeleteFolder()">🗑️ Eliminar</button>
+      <button class="btn-cancel" onclick="chatCloseFolderModal()">Cancelar</button>
+      <button class="btn-save"   onclick="chatSaveFolderModal()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('chat-folder-overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) chatCloseFolderModal();
+});
+</script>
 </body>
 </html>
