@@ -162,15 +162,21 @@
   /* ───── AI CHAT FLOATING WIDGET ───── */
   #chat-fab {
     position: fixed; bottom: 24px; right: 24px; z-index: 9998;
-    width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--accent);
-    background: var(--bg); color: #fff; font-size: 1.5rem;
-    cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-    transition: transform 0.2s, box-shadow 0.2s;
+    width: 60px; height: 60px; border-radius: 50%; border: none;
+    background: var(--accent); cursor: pointer;
+    box-shadow: 0 4px 20px rgba(82,183,136,0.5);
     display: flex; align-items: center; justify-content: center;
-    padding: 0; overflow: hidden;
+    padding: 0; overflow: visible;
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: chatFabPulse 2.5s ease-in-out infinite;
   }
-  #chat-fab:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(0,0,0,0.5); }
+  #chat-fab:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(82,183,136,0.7); }
   #chat-fab.hidden { display: none; }
+  #chat-fab img { width: 38px !important; height: 38px !important; border-radius: 50%; object-fit: cover; }
+  @keyframes chatFabPulse {
+    0%,100% { box-shadow: 0 4px 20px rgba(82,183,136,0.5); }
+    50%     { box-shadow: 0 4px 36px rgba(82,183,136,0.9); }
+  }
 
   #chat-widget {
     position: fixed; bottom: 24px; right: 24px; z-index: 9999;
