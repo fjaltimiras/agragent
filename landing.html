@@ -1510,6 +1510,259 @@ document.querySelectorAll('.nav-links a').forEach(a => {
 /* Init language */
 setLang(currentLang);
 </script>
+
+<!-- ═══════ AGRAGENT CHAT WIDGET ═══════ -->
+<style>
+#ag-widget-btn {
+  position: fixed; bottom: 28px; right: 28px; z-index: 9000;
+  width: 60px; height: 60px; border-radius: 50%;
+  background: var(--accent); border: none; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(82,183,136,0.5);
+  display: flex; align-items: center; justify-content: center;
+  padding: 0; transition: transform 0.2s, box-shadow 0.2s;
+  animation: ag-pulse 2.5s ease-in-out infinite;
+}
+#ag-widget-btn:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(82,183,136,0.7); }
+#ag-widget-btn img  { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; }
+.ag-badge {
+  position: absolute; top: -2px; right: -2px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #22c55e; border: 2px solid var(--bg);
+}
+@keyframes ag-pulse {
+  0%,100% { box-shadow: 0 4px 20px rgba(82,183,136,0.5); }
+  50%      { box-shadow: 0 4px 36px rgba(82,183,136,0.9); }
+}
+#ag-panel {
+  position: fixed; bottom: 100px; right: 28px; z-index: 9001;
+  width: 370px; height: 540px; max-height: 80vh;
+  background: #0f1923; border: 1px solid #1e3a2e;
+  border-radius: 20px; display: flex; flex-direction: column;
+  box-shadow: 0 16px 56px rgba(0,0,0,0.65);
+  transform: scale(0.92) translateY(20px); opacity: 0;
+  pointer-events: none;
+  transition: transform 0.22s ease, opacity 0.22s ease;
+  overflow: hidden;
+}
+#ag-panel.ag-open { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
+#ag-panel-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 16px; background: #16232e;
+  border-bottom: 1px solid #1e3a2e; flex-shrink: 0;
+}
+#ag-panel-header img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+.ag-ht { font-size: 14px; font-weight: 600; color: #e0e8e4; }
+.ag-hs { font-size: 11.5px; color: #52b788; margin-top: 1px; }
+#ag-close {
+  margin-left: auto; background: none; border: none;
+  color: #7fa892; cursor: pointer; font-size: 20px;
+  padding: 4px 6px; border-radius: 6px; transition: color 0.15s;
+}
+#ag-close:hover { color: #e0e8e4; }
+#ag-messages {
+  flex: 1; overflow-y: auto; padding: 14px 14px 8px;
+  display: flex; flex-direction: column; gap: 10px;
+  scrollbar-width: thin; scrollbar-color: #1e3a2e transparent;
+}
+.ag-m { max-width: 84%; display: flex; flex-direction: column; }
+.ag-m.u { align-self: flex-end; }
+.ag-m.b { align-self: flex-start; }
+.ag-bub {
+  padding: 8px 12px; font-size: 13.5px; line-height: 1.5;
+  word-break: break-word; border-radius: 14px;
+}
+.ag-m.u .ag-bub { background: #2d6a4f; color: #e0e8e4; border-radius: 14px 14px 4px 14px; }
+.ag-m.b .ag-bub { background: #16232e; color: #e0e8e4; border-radius: 14px 14px 14px 4px; }
+.ag-bub p { margin: 0 0 4px; } .ag-bub p:last-child { margin: 0; }
+.ag-bub strong { color: #74c99d; }
+.ag-bub ul { padding-left: 16px; margin: 4px 0; }
+.ag-dots { display: flex; gap: 5px; padding: 10px 14px; }
+.ag-dot { width: 7px; height: 7px; border-radius: 50%; background: #52b788; animation: ag-d 1.3s infinite ease-in-out; }
+.ag-dot:nth-child(2){animation-delay:.2s} .ag-dot:nth-child(3){animation-delay:.4s}
+@keyframes ag-d{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+#ag-input-row {
+  display: flex; align-items: flex-end; gap: 8px;
+  padding: 10px 12px; background: #16232e;
+  border-top: 1px solid #1e3a2e; flex-shrink: 0;
+}
+#ag-inp {
+  flex: 1; background: #0a0f14; border: 1px solid #1e3a2e;
+  border-radius: 20px; padding: 8px 14px; color: #e0e8e4;
+  font-size: 13.5px; font-family: inherit; outline: none;
+  resize: none; max-height: 90px; line-height: 1.45;
+  transition: border-color 0.15s;
+}
+#ag-inp:focus { border-color: #52b788; }
+#ag-inp::placeholder { color: #4a6b5d; }
+#ag-snd {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #52b788; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: #0a0f14; flex-shrink: 0;
+  transition: background 0.15s, transform 0.1s;
+}
+#ag-snd:hover { background: #74c99d; }
+#ag-snd:active { transform: scale(0.92); }
+#ag-snd:disabled { background: #1e3a2e; cursor: not-allowed; }
+#ag-foot { text-align: center; font-size: 10.5px; color: #4a6b5d; padding: 5px; flex-shrink: 0; }
+#ag-foot a { color: #52b788; text-decoration: none; }
+@media(max-width:480px){
+  #ag-panel{width:calc(100vw - 16px);right:8px;bottom:88px;}
+  #ag-widget-btn{bottom:16px;right:16px;}
+}
+</style>
+
+<button id="ag-widget-btn" title="Habla con AgrAgent" onclick="agToggle()">
+  <img src="logo.png" alt="AgrAgent">
+  <span class="ag-badge"></span>
+</button>
+
+<div id="ag-panel">
+  <div id="ag-panel-header">
+    <img src="logo.png" alt="AgrAgent">
+    <div><div class="ag-ht">AgrAgent</div><div class="ag-hs">● Asistente Agrónomo IA</div></div>
+    <button id="ag-close" onclick="agToggle()">✕</button>
+  </div>
+  <div id="ag-messages"></div>
+  <div id="ag-input-row">
+    <textarea id="ag-inp" rows="1" placeholder="Consulta sobre tu cultivo, riego, suelo..."
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();agSend();}"
+      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,90)+'px'"></textarea>
+    <button id="ag-snd" onclick="agSend()">➤</button>
+  </div>
+  <div id="ag-foot">Impulsado por <a href="https://agragent.com">AgrAgent</a> · IA Agronómica</div>
+</div>
+
+<script>
+(function(){
+  const API = 'https://agragent-api-production.up.railway.app';
+  const UID = 'visitor_' + Math.random().toString(36).slice(2,10);
+  let convId = null, busy = false, open = false;
+
+  const panel = document.getElementById('ag-panel');
+  const msgs  = document.getElementById('ag-messages');
+  const inp   = document.getElementById('ag-inp');
+  const snd   = document.getElementById('ag-snd');
+
+  window.agToggle = function() {
+    open = !open;
+    panel.classList.toggle('ag-open', open);
+    if (open && msgs.children.length === 0) agWelcome();
+    if (open) setTimeout(() => inp.focus(), 240);
+  };
+
+  function agWelcome() {
+    agAdd('b', 'Hola, soy **AgrAgent**, tu asistente agrónomo. Puedo ayudarte con análisis de suelo, riego, fertilización, datos satelitales NDVI y bibliografía técnica del INIA Chile.\n\n¿En qué cultivo o zona estás trabajando?');
+  }
+
+  function agAdd(role, text, isStream) {
+    const wrap = document.createElement('div');
+    wrap.className = `ag-m ${role}`;
+    const bub = document.createElement('div');
+    bub.className = 'ag-bub';
+    if (isStream) { bub.id = 'ag-stream'; } else { bub.innerHTML = agMd(text); }
+    wrap.appendChild(bub);
+    msgs.appendChild(wrap);
+    msgs.scrollTop = msgs.scrollHeight;
+    return bub;
+  }
+
+  function agTyping(show) {
+    const id = 'ag-typing-el';
+    let el = document.getElementById(id);
+    if (show && !el) {
+      el = document.createElement('div');
+      el.id = id; el.className = 'ag-m b';
+      el.innerHTML = '<div class="ag-bub"><div class="ag-dots"><div class="ag-dot"></div><div class="ag-dot"></div><div class="ag-dot"></div></div></div>';
+      msgs.appendChild(el); msgs.scrollTop = msgs.scrollHeight;
+    } else if (!show && el) el.remove();
+  }
+
+  function agMd(t) {
+    if (!t) return '';
+    t = t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    t = t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+    t = t.replace(/\*([^*]+?)\*/g,'<em>$1</em>');
+    t = t.replace(/^[-•*] (.+)$/gm,'<li>$1</li>');
+    t = t.replace(/(<li>.*<\/li>)/s,'<ul>$1</ul>');
+    t = t.split(/\n{2,}/).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+    return t;
+  }
+
+  window.agSend = async function() {
+    const text = inp.value.trim();
+    if (!text || busy) return;
+    busy = true; snd.disabled = true;
+    inp.value = ''; inp.style.height = 'auto';
+    agAdd('u', text);
+
+    // Crear conversación si no existe
+    if (!convId) {
+      try {
+        const r = await fetch(`${API}/api/chat/new`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({user_id:UID, title:text.slice(0,60)}),
+        });
+        const d = await r.json();
+        convId = d.conversation?.id || null;
+      } catch(e) { convId = null; }
+    }
+
+    agTyping(true);
+
+    try {
+      // Intentar streaming SSE primero
+      const res = await fetch(`${API}/api/chat/stream`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({conversation_id:convId, message:text, user_id:UID}),
+      });
+
+      if (!res.ok || !res.body) throw new Error('no stream');
+
+      agTyping(false);
+      const bub = agAdd('b','',true);
+      let acc = '', buf = '';
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+
+      while(true) {
+        const {done,value} = await reader.read();
+        if(done) break;
+        buf += dec.decode(value,{stream:true});
+        const lines = buf.split('\n'); buf = lines.pop();
+        for(const line of lines){
+          if(!line.startsWith('data: ')) continue;
+          let e; try{e=JSON.parse(line.slice(6));}catch{continue;}
+          if(e.type==='text'){ acc+=e.content; bub.innerHTML=agMd(acc); msgs.scrollTop=msgs.scrollHeight; }
+          if(e.type==='done' && e.conversation_id) convId=e.conversation_id;
+        }
+      }
+      if(!acc) throw new Error('empty stream');
+
+    } catch(e) {
+      // Fallback: API no-streaming
+      agTyping(false);
+      try {
+        const r = await fetch(`${API}/api/chat/`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({conversation_id:convId, message:text, user_id:UID}),
+        });
+        const d = await r.json();
+        const bub = document.getElementById('ag-stream') || agAdd('b','',false);
+        bub.removeAttribute('id');
+        bub.innerHTML = agMd(d.message || 'Sin respuesta.');
+        if(d.conversation_id) convId = d.conversation_id;
+        msgs.scrollTop = msgs.scrollHeight;
+      } catch(e2) {
+        agTyping(false);
+        agAdd('b','Error de conexión. Por favor intenta de nuevo.');
+      }
+    }
+
+    busy=false; snd.disabled=false; inp.focus();
+  };
+})();
+</script>
 </body>
 </html>
 
