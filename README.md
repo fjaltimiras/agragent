@@ -11,6 +11,7 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 ## Table of Contents
 
 - [Features](#features)
+- [WhatsApp Demo](#whatsapp-demo)
 - [AI Assistant](#ai-assistant)
 - [How It Works](#how-it-works)
 - [Architecture](#architecture)
@@ -193,6 +194,75 @@ All map section panels (Sentinel-2 Controls, Layers & Tools, Vegetation Indices)
 - **Step-by-step onboarding**: 1-2-3 guide in welcome screen
 - **Full i18n**: English, Spanish, Portuguese — ~200 translation keys covering all UI elements
 - **Collapsible conversations**: Chat sidebar can be minimized
+
+---
+
+## WhatsApp Demo
+
+`whatsapp-demo.html` is a standalone prototype that simulates how AgrAgent would work as a WhatsApp conversational agent. It is a single HTML file with no build step, connecting directly to the FastAPI backend.
+
+### Purpose
+
+- Test the full agentic loop (Claude + 6 tools) in a messaging-style UI before integrating with a real WhatsApp Business API
+- Demo agronomic conversations with soil/foliar report uploads, field location sharing, and tool call visualization
+
+### Running the demo
+
+```bash
+# 1. Start the FastAPI backend
+cd backend
+python3 -m uvicorn app.main:app --reload --port 8000
+
+# 2. Serve the frontend (from agragent-app/)
+cd ..
+python3 -m http.server 8080
+
+# 3. Open in browser
+open http://localhost:8080/whatsapp-demo.html
+```
+
+Or open `whatsapp-demo.html` directly in the browser — the backend has CORS open for `*`, so `file://` also works.
+
+### Features
+
+| Feature | Description |
+|---|---|
+| **WhatsApp Web UI** | Dark theme, message bubbles, typing indicator, timestamps |
+| **Conversation list** | Sidebar with search, history loaded from Supabase |
+| **Markdown rendering** | Tables, lists, bold, code blocks in assistant responses |
+| **Tool badges** | Each response shows which tools Claude used (🌤️ Climate · 🛰️ NDVI · 🧪 Soil · 💧 Irrigation · 🌱 Fertilization) |
+| **File upload (📎)** | Attach PDF or Excel soil/foliar reports — parsed by backend and sent to the agent automatically |
+| **Field location (📍)** | Share field location via 4 methods (see below) |
+| **Config (⚙️)** | Change backend URL at runtime (useful to point to Railway instead of localhost) |
+
+### Field Location Panel (📍)
+
+Clicking the 📍 button opens a panel with four ways to specify the field:
+
+| Tab | How it works |
+|---|---|
+| **🔍 Buscar** | Type a place name → Nominatim geocoding → pin on map |
+| **🛰️ GPS** | Enter latitude/longitude manually + optional area in ha |
+| **🗂️ KML/KMZ** | Drag and drop or select a KML/KMZ file → polygons parsed in-browser, area and centroid computed |
+| **✏️ Dibujar** | Draw the polygon directly on the map using Leaflet-Geoman tools (free polygon, rectangle, edit, delete) → area and centroid calculated automatically |
+
+On confirm, a structured message is sent to the agent with the centroid coordinates and polygon vertices so Claude can use them in `get_climate_data`, `get_ndvi_data`, and irrigation/fertilization tools.
+
+### Backend requirements
+
+The demo connects to the same FastAPI backend as the main app. Required environment variables in `backend/.env`:
+
+```env
+ANTHROPIC_API_KEY=sk-ant-...
+SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+```
+
+Pull from Vercel automatically:
+```bash
+cd agragent-api
+npx vercel env pull ../agragent-app/backend/.env --environment=production
+```
 
 ---
 
@@ -565,7 +635,10 @@ Frontend dependencies are loaded via CDN — no build step required.
 
 ```
 agragent/
-├── index.html              # Complete SPA — all HTML, CSS, and JS
+├── app.html                # Main SPA — all HTML, CSS, and JS
+├── whatsapp-demo.html      # WhatsApp prototype for AgrAgent chatbot testing
+├── landing.html            # Landing page
+├── logo.png                # AgrAgent logo
 ├── poligono.kml            # Example field boundaries
 ├── README.md               # This file
 ├── LICENSE                 # MIT License
