@@ -7460,7 +7460,7 @@ async function chatSend() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body,
-      signal: AbortSignal.timeout(5000),   // 5s to get first byte
+      // No timeout: tool calls can take 10-20s; let the stream finish naturally
     });
 
     if (!res.ok || !res.body) throw new Error('stream unavailable');
