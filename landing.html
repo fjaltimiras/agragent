@@ -523,6 +523,48 @@ section {
   white-space: nowrap;
 }
 
+/* tech logo grid */
+.tech-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tech-logo-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.2s;
+  min-width: 90px;
+}
+
+.tech-logo-item:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.tech-logo-item img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.tech-logo-item span {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
 /* logo strip */
 .source-logos {
   display: flex;
@@ -1141,63 +1183,39 @@ section {
       <div class="section-label" data-i18n="tech_label">Technology</div>
       <h2 data-i18n="tech_title">Built with modern, proven technologies</h2>
     </div>
-    <div class="tech-grid fade-in">
-      <div class="tech-item">
-        <div class="tech-icon">&#127760;</div>
-        <div>
-          <h4>Leaflet + Geoman</h4>
-          <p data-i18n="tech_leaflet">Interactive geospatial mapping with polygon drawing, editing, and split-screen comparison.</p>
-        </div>
-      </div>
-      <div class="tech-item">
-        <div class="tech-icon">&#128225;</div>
-        <div>
-          <h4>Google Earth Engine</h4>
-          <p data-i18n="tech_gee">Server-side satellite image processing with cloud masking and index computation.</p>
-        </div>
-      </div>
-      <div class="tech-item">
-        <div class="tech-icon">&#128200;</div>
-        <div>
-          <h4>Chart.js</h4>
-          <p data-i18n="tech_chart">10+ interactive charts for climate, genomic, and yield data visualization.</p>
-        </div>
-      </div>
-      <div class="tech-item">
-        <div class="tech-icon">&#9889;</div>
-        <div>
-          <h4>FastAPI</h4>
-          <p data-i18n="tech_fastapi">High-performance Python backend for AI assistant and data processing.</p>
-        </div>
-      </div>
-      <div class="tech-item">
-        <div class="tech-icon">&#129504;</div>
-        <div>
-          <h4>Claude AI (Anthropic)</h4>
-          <p data-i18n="tech_claude">Agentic AI with tool-calling for context-aware agronomic recommendations.</p>
-        </div>
-      </div>
-      <div class="tech-item">
-        <div class="tech-icon">&#9729;</div>
-        <div>
-          <h4>Open-Meteo API</h4>
-          <p data-i18n="tech_meteo">Free, global historical weather data with no API key required.</p>
-        </div>
-      </div>
-      <div class="tech-item">
-        <div class="tech-icon">&#128215;</div>
-        <div>
-          <h4>Supabase</h4>
-          <p data-i18n="tech_supabase">Open-source PostgreSQL backend for data persistence, authentication, and real-time APIs.</p>
-        </div>
-      </div>
-      <div class="tech-item">
-        <div class="tech-icon">&#128065;</div>
-        <div>
-          <h4>YOLO</h4>
-          <p data-i18n="tech_yolo">State-of-the-art object detection model for crop identification and counting in field imagery.</p>
-        </div>
-      </div>
+    <div class="tech-logos fade-in">
+      <a href="https://leafletjs.com" target="_blank" rel="noopener" class="tech-logo-item" title="Leaflet.js">
+        <img src="https://www.google.com/s2/favicons?domain=leafletjs.com&sz=64" alt="Leaflet" loading="lazy">
+        <span>Leaflet</span>
+      </a>
+      <a href="https://earthengine.google.com" target="_blank" rel="noopener" class="tech-logo-item" title="Google Earth Engine">
+        <img src="https://www.google.com/s2/favicons?domain=earthengine.google.com&sz=64" alt="Google Earth Engine" loading="lazy">
+        <span>Earth Engine</span>
+      </a>
+      <a href="https://www.chartjs.org" target="_blank" rel="noopener" class="tech-logo-item" title="Chart.js">
+        <img src="https://www.google.com/s2/favicons?domain=chartjs.org&sz=64" alt="Chart.js" loading="lazy">
+        <span>Chart.js</span>
+      </a>
+      <a href="https://fastapi.tiangolo.com" target="_blank" rel="noopener" class="tech-logo-item" title="FastAPI">
+        <img src="https://www.google.com/s2/favicons?domain=fastapi.tiangolo.com&sz=64" alt="FastAPI" loading="lazy">
+        <span>FastAPI</span>
+      </a>
+      <a href="https://www.anthropic.com" target="_blank" rel="noopener" class="tech-logo-item" title="Claude AI">
+        <img src="https://www.google.com/s2/favicons?domain=anthropic.com&sz=64" alt="Anthropic" loading="lazy">
+        <span>Claude AI</span>
+      </a>
+      <a href="https://supabase.com" target="_blank" rel="noopener" class="tech-logo-item" title="Supabase">
+        <img src="https://www.google.com/s2/favicons?domain=supabase.com&sz=64" alt="Supabase" loading="lazy">
+        <span>Supabase</span>
+      </a>
+      <a href="https://ultralytics.com" target="_blank" rel="noopener" class="tech-logo-item" title="YOLO - Ultralytics">
+        <img src="https://www.google.com/s2/favicons?domain=ultralytics.com&sz=64" alt="YOLO" loading="lazy">
+        <span>YOLO</span>
+      </a>
+      <a href="https://vercel.com" target="_blank" rel="noopener" class="tech-logo-item" title="Vercel">
+        <img src="https://www.google.com/s2/favicons?domain=vercel.com&sz=64" alt="Vercel" loading="lazy">
+        <span>Vercel</span>
+      </a>
     </div>
   </div>
 </section>
