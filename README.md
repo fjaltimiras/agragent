@@ -203,8 +203,9 @@ All map section panels (Sentinel-2 Controls, Layers & Tools, Vegetation Indices)
 
 ### Purpose
 
-- Test the full agentic loop (Claude + 6 tools) in a messaging-style UI before integrating with a real WhatsApp Business API
-- Demo agronomic conversations with soil/foliar report uploads, field location sharing, and tool call visualization
+- Test the full agentic loop (Claude + **7 tools**) in a messaging-style UI before integrating with a real WhatsApp Business API
+- Demo agronomic conversations with soil/foliar report uploads, field location sharing, INIA bibliography search, and tool call visualization
+- Works on desktop and mobile browsers
 
 ### Running the demo
 
@@ -227,13 +228,17 @@ Or open `whatsapp-demo.html` directly in the browser — the backend has CORS op
 
 | Feature | Description |
 |---|---|
-| **WhatsApp Web UI** | Dark theme, message bubbles, typing indicator, timestamps |
-| **Conversation list** | Sidebar with search, history loaded from Supabase |
+| **WhatsApp Web UI** | Dark theme, message bubbles, typing indicator, timestamps — fully responsive (mobile + desktop) |
+| **Conversation list** | Collapsible sidebar with search and history loaded from Supabase |
+| **Projects / folders** | Organize conversations into color-coded folders stored in localStorage; right-click to edit/delete |
+| **Rename & delete** | Hover a conversation → inline rename (Enter to save, Esc to cancel) or delete — no page reload |
 | **Markdown rendering** | Tables, lists, bold, code blocks in assistant responses |
-| **Tool badges** | Each response shows which tools Claude used (🌤️ Climate · 🛰️ NDVI · 🧪 Soil · 💧 Irrigation · 🌱 Fertilization) |
+| **Tool badges** | Each response shows which tools Claude used (🌤️ Climate · 🛰️ NDVI · 🧪 Soil · 💧 Irrigation · 🌱 Fertilization · 📚 INIA) |
+| **INIA library search** | Claude can query 19K+ open-access agricultural documents from Biblioteca Digital INIA Chile in real time |
 | **File upload (📎)** | Attach PDF or Excel soil/foliar reports — parsed by backend and sent to the agent automatically |
 | **Field location (📍)** | Share field location via 4 methods (see below) |
 | **Config (⚙️)** | Change backend URL at runtime (useful to point to Railway instead of localhost) |
+| **Mobile** | Sidebar as full overlay, hamburger menu, full-screen modals, iOS-safe input font size |
 
 ### Field Location Panel (📍)
 
