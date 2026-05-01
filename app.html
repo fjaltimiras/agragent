@@ -5424,22 +5424,9 @@ function loadGEELayer(idx) {
 
   const clipGeom = buildClipGeom();
 
-  // For filterBounds use a simple bbox — faster GEE filter, avoids complex geometry issues
-  // For clip we still use the precise geometry
-  const filterGeom = (kmlRawCoords.length > 1)
-    ? (() => {
-        let minLng=Infinity, maxLng=-Infinity, minLat=Infinity, maxLat=-Infinity;
-        kmlRawCoords.forEach(ring => ring.forEach(([lng,lat]) => {
-          minLng=Math.min(minLng,lng); maxLng=Math.max(maxLng,lng);
-          minLat=Math.min(minLat,lat); maxLat=Math.max(maxLat,lat);
-        }));
-        return ee.Geometry.Rectangle([minLng, minLat, maxLng, maxLat]);
-      })()
-    : clipGeom;
-
   const s2base = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
     .filterDate(startDate, endDate)
-    .filterBounds(filterGeom)
+    .filterBounds(clipGeom)
     .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudPct))
     .map(img => {
       const qa = img.select('QA60');
@@ -5448,7 +5435,7 @@ function loadGEELayer(idx) {
     })
     .median();
 
-  // Clip to precise polygon geometry
+  // Clip to polygon area
   const clipped = s2base.clip(clipGeom);
   const { image, visParams } = buildImageAndVis(clipped, idx);
 
@@ -5848,17 +5835,10 @@ function computeSatelliteIndices() {
   const endDate   = document.getElementById('gee-end').value;
   const cloudPct  = parseInt(document.getElementById('gee-cloud').value) || 20;
   const clipGeom  = buildClipGeom();
-  const filterGeomIdx = (kmlRawCoords.length > 1)
-    ? (() => {
-        let mnLng=Infinity,mxLng=-Infinity,mnLat=Infinity,mxLat=-Infinity;
-        kmlRawCoords.forEach(ring=>ring.forEach(([lo,la])=>{mnLng=Math.min(mnLng,lo);mxLng=Math.max(mxLng,lo);mnLat=Math.min(mnLat,la);mxLat=Math.max(mxLat,la);}));
-        return ee.Geometry.Rectangle([mnLng,mnLat,mxLng,mxLat]);
-      })()
-    : clipGeom;
 
   const s2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
     .filterDate(startDate, endDate)
-    .filterBounds(filterGeomIdx)
+    .filterBounds(clipGeom)
     .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudPct))
     .map(function(img) {
       const qa = img.select('QA60');
@@ -6349,10 +6329,20 @@ function buildClipGeom() {
   if (kmlRawCoords.length === 1) {
     return ee.Geometry.Polygon([kmlRawCoords[0]]);
   }
-  // Multiple polygons: build via FeatureCollection + geometry() union
-  // More robust than ee.Geometry.MultiPolygon which can fail on some GEE API versions
-  const features = kmlRawCoords.map(ring => ee.Feature(ee.Geometry.Polygon([ring])));
-  return ee.FeatureCollection(features).geometry();
+  // Multiple polygons → merge into a single bounding polygon for simplicity
+  // Collect all coordinates and build one polygon from the convex hull-like bbox
+  var allRings = kmlRawCoords;
+  var minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
+  allRings.forEach(function(ring) {
+    ring.forEach(function(pt) {
+      if (pt[0] < minLng) minLng = pt[0];
+      if (pt[0] > maxLng) maxLng = pt[0];
+      if (pt[1] < minLat) minLat = pt[1];
+      if (pt[1] > maxLat) maxLat = pt[1];
+    });
+  });
+  // Return first polygon for clipping, use bbox for filtering
+  return ee.Geometry.MultiPolygon(allRings.map(function(r){ return [r]; }));
 }
 
 function buildImageAndVis(s2base, idx) {
