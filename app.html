@@ -172,6 +172,8 @@
   }
   #chat-fab:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(82,183,136,0.7); }
   #chat-fab.hidden { display: none; }
+  /* Hide FAB when user is already in the full-page chat section */
+  body:has(#section-chat.active) #chat-fab { display: none; }
   #chat-fab img { width: 38px !important; height: 38px !important; border-radius: 50%; object-fit: cover; }
   @keyframes chatFabPulse {
     0%,100% { box-shadow: 0 4px 20px rgba(82,183,136,0.5); }
