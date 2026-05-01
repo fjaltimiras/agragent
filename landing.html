@@ -321,66 +321,143 @@ section {
 /* ───── FEATURES ───── */
 #features { background: var(--bg-alt); }
 
-.features-grid {
+/* ── FEATURES SHOWCASE ── */
+.feat-showcase {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
+  grid-template-columns: 240px 1fr;
+  gap: 20px;
+  align-items: start;
 }
 
-.feature-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 36px 32px;
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
+.feat-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.feature-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.feature-card:hover {
-  border-color: rgba(82, 183, 136, 0.3);
-  background: var(--card-bg-hover);
-  transform: translateY(-4px);
-}
-
-.feature-card:hover::before { opacity: 1; }
-
-.feature-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+.feat-tab {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-  background: var(--accent-glow);
-  border: 1px solid rgba(82, 183, 136, 0.15);
-}
-
-.feature-card h3 {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin-bottom: 10px;
-  letter-spacing: -0.01em;
-}
-
-.feature-card p {
-  font-size: 0.9rem;
+  gap: 12px;
+  padding: 13px 16px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
   color: var(--text-secondary);
+  transition: all 0.18s;
+  width: 100%;
+}
+
+.feat-tab:hover { background: var(--card-bg); color: var(--text-primary); }
+
+.feat-tab.active {
+  background: var(--card-bg);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+.feat-tab.active .feat-ti { color: var(--accent); }
+
+.feat-ti { font-size: 1.4rem; flex-shrink: 0; transition: color 0.18s; }
+.feat-tl { font-size: 0.88rem; font-weight: 600; line-height: 1.3; }
+
+.feat-panels { min-height: 360px; }
+
+.feat-panel {
+  display: none;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px 44px;
+  animation: fp-in 0.28s ease;
+}
+
+.feat-panel.active { display: block; }
+
+@keyframes fp-in {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.feat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(82,183,136,0.1);
+  border: 1px solid rgba(82,183,136,0.22);
+  padding: 4px 14px;
+  border-radius: 50px;
+  margin-bottom: 18px;
+  letter-spacing: 0.03em;
+}
+
+.feat-panel h3 {
+  font-size: 1.7rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.feat-panel .feat-sub {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
   line-height: 1.6;
+}
+
+.feat-bullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feat-bullets li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 0.93rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.feat-bullets li::before {
+  content: '✓';
+  color: var(--accent);
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-size: 0.9rem;
+}
+
+.feat-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 28px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  transition: gap 0.15s;
+}
+
+.feat-cta:hover { gap: 10px; }
+
+@media (max-width: 768px) {
+  .feat-showcase { grid-template-columns: 1fr; }
+  .feat-tabs { flex-direction: row; flex-wrap: wrap; }
+  .feat-tab { flex: 1; min-width: 120px; justify-content: center; flex-direction: column; align-items: center; gap: 4px; padding: 10px 8px; }
+  .feat-tl { font-size: 0.75rem; text-align: center; }
+  .feat-panel { padding: 28px 24px; }
+  .feat-panel h3 { font-size: 1.3rem; }
 }
 
 /* ───── HOW IT WORKS ───── */
@@ -1108,40 +1185,125 @@ section {
       <h2 data-i18n="features_title">Everything you need for precision agriculture</h2>
       <p data-i18n="features_desc">A comprehensive suite of tools designed for researchers, agronomists, and farm managers to monitor and optimize crop production.</p>
     </div>
-    <div class="features-grid">
-      <div class="feature-card fade-in">
-        <div class="feature-icon">&#128752;</div>
-        <h3 data-i18n="f1_title">Satellite Remote Sensing</h3>
-        <p data-i18n="f1_desc">Sentinel-2 imagery via Google Earth Engine with 6 vegetation indices: NDVI, NDRE, MSAVI, TCARI, True Color, and False Color composites at 10m resolution.</p>
+
+    <div class="feat-showcase fade-in">
+
+      <!-- Tabs -->
+      <div class="feat-tabs">
+        <button class="feat-tab active" onclick="showFeat(0, this)">
+          <span class="feat-ti">🛰️</span>
+          <span class="feat-tl" data-i18n="f1_title">Satellite Sensing</span>
+        </button>
+        <button class="feat-tab" onclick="showFeat(1, this)">
+          <span class="feat-ti">🌡️</span>
+          <span class="feat-tl" data-i18n="f2_title">Climate Analytics</span>
+        </button>
+        <button class="feat-tab" onclick="showFeat(2, this)">
+          <span class="feat-ti">🧬</span>
+          <span class="feat-tl" data-i18n="f3_title">Genomic Analysis</span>
+        </button>
+        <button class="feat-tab" onclick="showFeat(3, this)">
+          <span class="feat-ti">📸</span>
+          <span class="feat-tl" data-i18n="f4_title">Computer Vision</span>
+        </button>
+        <button class="feat-tab" onclick="showFeat(4, this)">
+          <span class="feat-ti">📈</span>
+          <span class="feat-tl" data-i18n="f5_title">Yield Prediction</span>
+        </button>
+        <button class="feat-tab" onclick="showFeat(5, this)">
+          <span class="feat-ti">🤖</span>
+          <span class="feat-tl" data-i18n="f6_title">AI Assistant</span>
+        </button>
       </div>
-      <div class="feature-card fade-in">
-        <div class="feature-icon">&#127777;</div>
-        <h3 data-i18n="f2_title">Climate Analytics</h3>
-        <p data-i18n="f2_desc">Real-time climate data from Open-Meteo API: temperature, precipitation, humidity, solar radiation, evapotranspiration, GDD, chill hours, frost risk, and heat waves.</p>
-      </div>
-      <div class="feature-card fade-in">
-        <div class="feature-icon">&#129516;</div>
-        <h3 data-i18n="f3_title">Genomic Analysis</h3>
-        <p data-i18n="f3_desc">RNA-seq differential expression visualization with 3,603 DEGs across 8 phenological stages from 68 samples and multiple crop varieties.</p>
-      </div>
-      <div class="feature-card fade-in">
-        <div class="feature-icon">&#128248;</div>
-        <h3 data-i18n="f4_title">Computer Vision</h3>
-        <p data-i18n="f4_desc">Dataset integration with YOLO annotations for crop detection and counting. Over 300 annotated images for object detection in agricultural fields.</p>
-      </div>
-      <div class="feature-card fade-in">
-        <div class="feature-icon">&#127806;</div>
-        <h3 data-i18n="f5_title">Yield Prediction</h3>
-        <p data-i18n="f5_desc">Machine learning models (Extra Trees Regressor) for yield estimation with confidence intervals and feature importance analysis.</p>
-      </div>
-      <div class="feature-card fade-in">
-        <div class="feature-icon">&#129302;</div>
-        <h3 data-i18n="f6_title">AI Assistant</h3>
-        <p data-i18n="f6_desc">Context-aware Claude-powered assistant providing agronomic recommendations based on real-time field, climate, and satellite data with 6 autonomous tools.</p>
-      </div>
-    </div>
+
+      <!-- Panels -->
+      <div class="feat-panels">
+
+        <div class="feat-panel active" id="fp-0">
+          <div class="feat-badge" data-i18n="f1_metric">13 spectral indices · 10m resolution · 5-day revisit</div>
+          <h3 data-i18n="f1_headline">See your field from space, in real time</h3>
+          <p class="feat-sub" data-i18n="f1_sub">Sentinel-2 imagery via Google Earth Engine — cloud-free composites updated every 5 days, clipped to your exact polygon.</p>
+          <ul class="feat-bullets">
+            <li data-i18n="f1_b1">13 vegetation indices: NDVI, NDRE, MSAVI, TCARI, EVI, NDMI, NDWI, BSI and more for full crop health monitoring</li>
+            <li data-i18n="f1_b2">Split-screen temporal comparison to track crop evolution between any two dates</li>
+            <li data-i18n="f1_b3">Early detection of water stress, pest pressure, and nutritional deficiencies weeks before visible symptoms</li>
+          </ul>
+          <a href="https://app.agragent.com" class="feat-cta" data-i18n="feat_cta">Open platform →</a>
+        </div>
+
+        <div class="feat-panel" id="fp-1">
+          <div class="feat-badge" data-i18n="f2_metric">8 KPIs · 80 years of historical data · worldwide</div>
+          <h3 data-i18n="f2_headline">Make decisions with climate on your side</h3>
+          <p class="feat-sub" data-i18n="f2_sub">Real-time climate data from Open-Meteo for any location on Earth — no API key, no limits, no excuses.</p>
+          <ul class="feat-bullets">
+            <li data-i18n="f2_b1">GDD, chill hours, frost days, heat waves, water balance, solar radiation, and ET₀ (FAO Penman-Monteith)</li>
+            <li data-i18n="f2_b2">Automatic phenological alerts calibrated to your crop and southern-hemisphere season calendar</li>
+            <li data-i18n="f2_b3">Multi-period GDD comparison to benchmark current season against historical averages</li>
+          </ul>
+          <a href="https://app.agragent.com" class="feat-cta" data-i18n="feat_cta">Open platform →</a>
+        </div>
+
+        <div class="feat-panel" id="fp-2">
+          <div class="feat-badge" data-i18n="f3_metric">3,603 DEGs · 8 phenological stages · 68 RNA-seq samples</div>
+          <h3 data-i18n="f3_headline">Genomics meets the vineyard</h3>
+          <p class="feat-sub" data-i18n="f3_sub">Real RNA-seq differential expression data from Altimiras et al. (2024) — published science directly in your browser.</p>
+          <ul class="feat-bullets">
+            <li data-i18n="f3_b1">Interactive DEG tables with logFC and FDR values across 8 E-L growth stages of Vitis vinifera</li>
+            <li data-i18n="f3_b2">Gene Ontology enrichment, UniProt annotations, and AlphaFold 3D protein structures on demand</li>
+            <li data-i18n="f3_b3">RNA-seq pipeline visualization from raw reads to differential expression to ML classification</li>
+          </ul>
+          <a href="https://app.agragent.com" class="feat-cta" data-i18n="feat_cta">Open platform →</a>
+        </div>
+
+        <div class="feat-panel" id="fp-3">
+          <div class="feat-badge" data-i18n="f4_metric">300+ annotated images · 5 grape varieties · YOLOv11</div>
+          <h3 data-i18n="f4_headline">Identify and count clusters from the field</h3>
+          <p class="feat-sub" data-i18n="f4_sub">State-of-the-art computer vision trained on WGISD (Embrapa) — upload your own image and get results in seconds.</p>
+          <ul class="feat-bullets">
+            <li data-i18n="f4_b1">YOLOv11 model trained on Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc, and Syrah</li>
+            <li data-i18n="f4_b2">Real-time inference in the cloud — send a field photo, get annotated bounding boxes and cluster count</li>
+            <li data-i18n="f4_b3">WGISD dataset browser with color-coded bounding boxes and berry-count estimates</li>
+          </ul>
+          <a href="https://app.agragent.com" class="feat-cta" data-i18n="feat_cta">Open platform →</a>
+        </div>
+
+        <div class="feat-panel" id="fp-4">
+          <div class="feat-badge" data-i18n="f5_metric">R² = 0.972 · MAPE = 3.8% · 15 weighted features</div>
+          <h3 data-i18n="f5_headline">Predict your harvest with 97% accuracy</h3>
+          <p class="feat-sub" data-i18n="f5_sub">PyCaret Extra Trees Regressor combining 15 satellite + climate features — updated automatically when you load a new polygon.</p>
+          <ul class="feat-bullets">
+            <li data-i18n="f5_b1">Predicted yield (t/ha), total production, and estimated harvest date from GDD-based phenological model</li>
+            <li data-i18n="f5_b2">Dynamic feature importance: see which variables (NDVI, ET₀, GDD…) drive your prediction</li>
+            <li data-i18n="f5_b3">Multi-model comparison: Extra Trees, CatBoost, Random Forest, XGBoost, SVR — side by side</li>
+          </ul>
+          <a href="https://app.agragent.com" class="feat-cta" data-i18n="feat_cta">Open platform →</a>
+        </div>
+
+        <div class="feat-panel" id="fp-5">
+          <div class="feat-badge" data-i18n="f6_metric">8 autonomous tools · INIA RAG · 19K+ publications</div>
+          <h3 data-i18n="f6_headline">Your expert agronomist, available 24/7</h3>
+          <p class="feat-sub" data-i18n="f6_sub">Claude-powered agent with real-time access to your field data, climate, satellite indices, and the full INIA Chile scientific library.</p>
+          <ul class="feat-bullets">
+            <li data-i18n="f6_b1">Soil and foliar report analysis, irrigation scheduling, and N-P-K fertilization plans — from uploaded PDFs</li>
+            <li data-i18n="f6_b2">Semantic RAG search over 19,000+ INIA Chile technical publications for evidence-based recommendations</li>
+            <li data-i18n="f6_b3">Context-aware: knows your polygon, active satellite indices, climate alerts, and yield prediction automatically</li>
+          </ul>
+          <a href="https://app.agragent.com" class="feat-cta" data-i18n="feat_cta">Open platform →</a>
+        </div>
+
+      </div><!-- feat-panels -->
+    </div><!-- feat-showcase -->
   </div>
 </section>
+
+<script>
+function showFeat(idx, btn) {
+  document.querySelectorAll('.feat-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.feat-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('fp-' + idx).classList.add('active');
+}
+</script>
 
 <!-- ═══════ HOW IT WORKS ═══════ -->
 <section id="how-it-works">
@@ -1402,18 +1564,13 @@ const translations = {
     features_label: "Platform Capabilities",
     features_title: "Everything you need for precision agriculture",
     features_desc: "A comprehensive suite of tools designed for researchers, agronomists, and farm managers to monitor and optimize crop production.",
-    f1_title: "Satellite Remote Sensing",
-    f1_desc: "Sentinel-2 imagery via Google Earth Engine with 6 vegetation indices: NDVI, NDRE, MSAVI, TCARI, True Color, and False Color composites at 10m resolution.",
-    f2_title: "Climate Analytics",
-    f2_desc: "Real-time climate data from Open-Meteo API: temperature, precipitation, humidity, solar radiation, evapotranspiration, GDD, chill hours, frost risk, and heat waves.",
-    f3_title: "Genomic Analysis",
-    f3_desc: "RNA-seq differential expression visualization with 3,603 DEGs across 8 phenological stages from 68 samples and multiple crop varieties.",
-    f4_title: "Computer Vision",
-    f4_desc: "Dataset integration with YOLO annotations for crop detection and counting. Over 300 annotated images for object detection in agricultural fields.",
-    f5_title: "Yield Prediction",
-    f5_desc: "Machine learning models (Extra Trees Regressor) for yield estimation with confidence intervals and feature importance analysis.",
-    f6_title: "AI Assistant",
-    f6_desc: "Context-aware Claude-powered assistant providing agronomic recommendations based on real-time field, climate, and satellite data with 6 autonomous tools.",
+    f1_title: "Satellite Sensing", f1_metric: "13 spectral indices · 10m · 5-day revisit", f1_headline: "See your field from space, in real time", f1_sub: "Sentinel-2 via Google Earth Engine — cloud-free composites updated every 5 days, clipped to your exact polygon.", f1_b1: "13 indices: NDVI, NDRE, MSAVI, TCARI, EVI, NDMI and more for complete crop health monitoring", f1_b2: "Split-screen temporal comparison to track crop evolution between any two dates", f1_b3: "Early detection of water stress, pest pressure, and nutrient deficiencies weeks before visible symptoms",
+    f2_title: "Climate Analytics", f2_metric: "8 KPIs · 80 years historical data · worldwide", f2_headline: "Make decisions with climate on your side", f2_sub: "Real-time data from Open-Meteo for any location on Earth — no API key, no limits.", f2_b1: "GDD, chill hours, frost days, heat waves, water balance, solar radiation, and ET₀ (FAO Penman-Monteith)", f2_b2: "Automatic phenological alerts calibrated to your crop and season calendar", f2_b3: "Multi-period GDD comparison to benchmark current season against historical averages",
+    f3_title: "Genomic Analysis", f3_metric: "3,603 DEGs · 8 phenological stages · 68 RNA-seq samples", f3_headline: "Genomics meets the vineyard", f3_sub: "Real RNA-seq DEG data from Altimiras et al. (2024) — published science directly in your browser.", f3_b1: "Interactive DEG tables with logFC and FDR values across 8 E-L growth stages of Vitis vinifera", f3_b2: "Gene Ontology enrichment, UniProt annotations, and AlphaFold 3D protein structures on demand", f3_b3: "RNA-seq pipeline visualization from raw reads to differential expression",
+    f4_title: "Computer Vision", f4_metric: "300+ annotated images · 5 grape varieties · YOLOv11", f4_headline: "Identify and count clusters from the field", f4_sub: "State-of-the-art vision trained on WGISD (Embrapa) — upload your own image and get results in seconds.", f4_b1: "YOLOv11 trained on Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc, and Syrah", f4_b2: "Real-time cloud inference — send a field photo, get annotated bounding boxes and cluster count", f4_b3: "WGISD dataset browser with color-coded bounding boxes and berry-count estimates",
+    f5_title: "Yield Prediction", f5_metric: "R² = 0.972 · MAPE = 3.8% · 15 weighted features", f5_headline: "Predict your harvest with 97% accuracy", f5_sub: "PyCaret Extra Trees Regressor with 15 satellite + climate features — auto-updates when you load a new polygon.", f5_b1: "Predicted yield (t/ha), total production, and estimated harvest date from GDD-based phenological model", f5_b2: "Dynamic feature importance: see which variables (NDVI, ET₀, GDD…) drive your prediction", f5_b3: "Multi-model comparison: Extra Trees, CatBoost, Random Forest, XGBoost, SVR — side by side",
+    f6_title: "AI Assistant", f6_metric: "8 autonomous tools · INIA RAG · 19K+ publications", f6_headline: "Your expert agronomist, available 24/7", f6_sub: "Claude-powered agent with real-time access to your field data, climate, satellite indices, and INIA Chile library.", f6_b1: "Soil and foliar report analysis, irrigation scheduling, and N-P-K fertilization plans from uploaded PDFs", f6_b2: "Semantic RAG search over 19,000+ INIA Chile technical publications for evidence-based recommendations", f6_b3: "Context-aware: knows your polygon, active satellite indices, climate alerts, and yield prediction automatically",
+    feat_cta: "Open platform →",
     how_label: "How it works",
     how_title: "From field to insight in minutes",
     how_desc: "Upload your field boundaries, connect to satellite and climate data sources, and receive AI-powered recommendations.",
@@ -1490,18 +1647,14 @@ const translations = {
     features_label: "Capacidades de la Plataforma",
     features_title: "Todo lo que necesitas para la agricultura de precisi\u00f3n",
     features_desc: "Un conjunto integral de herramientas dise\u00f1adas para investigadores, agr\u00f3nomos y administradores agr\u00edcolas.",
-    f1_title: "Teledetecci\u00f3n Satelital",
-    f1_desc: "Im\u00e1genes Sentinel-2 v\u00eda Google Earth Engine con 6 \u00edndices de vegetaci\u00f3n: NDVI, NDRE, MSAVI, TCARI, Color Real y Color Falso a resoluci\u00f3n de 10m.",
-    f2_title: "Anal\u00edtica Clim\u00e1tica",
-    f2_desc: "Datos clim\u00e1ticos en tiempo real de Open-Meteo API: temperatura, precipitaci\u00f3n, humedad, radiaci\u00f3n solar, evapotranspiraci\u00f3n, GDD, horas fr\u00edo y heladas.",
-    f3_title: "An\u00e1lisis Gen\u00f3mico",
-    f3_desc: "Visualizaci\u00f3n de expresi\u00f3n diferencial RNA-seq con 3.603 DEGs en 8 etapas fenol\u00f3gicas de 68 muestras y m\u00faltiples variedades de cultivos.",
-    f4_title: "Visi\u00f3n Computacional",
-    f4_desc: "Integraci\u00f3n de datasets con anotaciones YOLO para detecci\u00f3n y conteo de cultivos. M\u00e1s de 300 im\u00e1genes anotadas para detecci\u00f3n de objetos en campos agr\u00edcolas.",
-    f5_title: "Predicci\u00f3n de Rendimiento",
-    f5_desc: "Modelos de aprendizaje autom\u00e1tico (Extra Trees Regressor) para estimaci\u00f3n de rendimiento con intervalos de confianza y an\u00e1lisis de importancia de variables.",
-    f6_title: "Asistente IA",
-    f6_desc: "Asistente Claude con contexto que provee recomendaciones agron\u00f3micas basadas en datos reales del campo, clima y sat\u00e9lite con 6 herramientas aut\u00f3nomas.",
+    f1_title: "Im\u00e1genes Satelitales", f1_metric: "13 \u00edndices espectrales \u00b7 10m \u00b7 revisita 5 d\u00edas", f1_headline: "Observa tu campo desde el espacio, en tiempo real", f1_sub: "Sentinel-2 v\u00eda Google Earth Engine \u2014 composites libres de nubes actualizados cada 5 d\u00edas, recortados a tu pol\u00edgono exacto.", f1_b1: "13 \u00edndices: NDVI, NDRE, MSAVI, TCARI, EVI, NDMI y m\u00e1s para monitoreo completo de salud del cultivo", f1_b2: "Comparaci\u00f3n temporal split-screen para rastrear la evoluci\u00f3n del cultivo entre cualquier par de fechas", f1_b3: "Detecci\u00f3n temprana de estr\u00e9s h\u00eddrico, plagas y deficiencias nutricionales semanas antes de s\u00edntomas visibles",
+    f1_desc: "Im\u00e1genes Sentinel-2 v\u00eda Google Earth Engine con 13 \u00edndices de vegetaci\u00f3n a resoluci\u00f3n de 10m.",
+    f2_title: "Anal\u00edtica Clim\u00e1tica", f2_metric: "8 KPIs \u00b7 80 a\u00f1os de datos \u00b7 cobertura mundial", f2_headline: "Toma decisiones con el clima a tu favor", f2_sub: "Datos en tiempo real de Open-Meteo para cualquier punto del planeta \u2014 sin clave de API, sin l\u00edmites.", f2_b1: "GDD, horas fr\u00edo, heladas, olas de calor, balance h\u00eddrico, radiaci\u00f3n solar y ET\u2080 (FAO Penman-Monteith)", f2_b2: "Alertas fenol\u00f3gicas autom\u00e1ticas calibradas a tu cultivo y calendario del hemisferio sur", f2_b3: "Comparaci\u00f3n de per\u00edodos GDD para comparar la temporada actual con promedios hist\u00f3ricos",
+    f3_title: "An\u00e1lisis Gen\u00f3mico", f3_metric: "3.603 DEGs \u00b7 8 etapas fenol\u00f3gicas \u00b7 68 muestras RNA-seq", f3_headline: "Gen\u00f3mica al servicio del vi\u00f1edo", f3_sub: "Datos RNA-seq reales de Altimiras et al. (2024) \u2014 ciencia publicada directamente en tu navegador.", f3_b1: "Tablas interactivas de DEGs con logFC y FDR en 8 etapas E-L de Vitis vinifera", f3_b2: "Enriquecimiento GO, anotaciones UniProt y estructuras 3D AlphaFold bajo demanda", f3_b3: "Visualizaci\u00f3n del pipeline RNA-seq desde lecturas crudas hasta expresi\u00f3n diferencial",
+    f4_title: "Visi\u00f3n Computacional", f4_metric: "300+ im\u00e1genes anotadas \u00b7 5 variedades \u00b7 YOLOv11", f4_headline: "Identifica y cuenta racimos desde el campo", f4_sub: "Visi\u00f3n de vanguardia entrenada en WGISD (Embrapa) \u2014 sube tu propia foto y obt\u00e9n resultados en segundos.", f4_b1: "YOLOv11 entrenado en Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc y Syrah", f4_b2: "Inferencia en la nube en tiempo real \u2014 env\u00eda una foto de campo, obt\u00e9n bounding boxes y conteo", f4_b3: "Visor del dataset WGISD con cajas de detecci\u00f3n codificadas por color y estimaci\u00f3n de bayas",
+    f5_title: "Predicci\u00f3n de Rendimiento", f5_metric: "R\u00b2 = 0.972 \u00b7 MAPE = 3.8% \u00b7 15 variables ponderadas", f5_headline: "Anticipa tu cosecha con 97% de precisi\u00f3n", f5_sub: "Extra Trees Regressor con 15 variables satelitales y clim\u00e1ticas \u2014 se actualiza autom\u00e1ticamente con cada pol\u00edgono.", f5_b1: "Rendimiento predicho (t/ha), producci\u00f3n total y fecha estimada de cosecha por modelo fenol\u00f3gico GDD", f5_b2: "Importancia din\u00e1mica de variables: NDVI, ET\u2080, GDD y cu\u00e1l explica m\u00e1s tu predicci\u00f3n", f5_b3: "Comparaci\u00f3n multim\u00f3delo: Extra Trees, CatBoost, Random Forest, XGBoost, SVR \u2014 en paralelo",
+    f6_title: "Asistente IA", f6_metric: "8 herramientas aut\u00f3nomas \u00b7 RAG INIA \u00b7 19K+ publicaciones", f6_headline: "Tu agr\u00f3nomo experto disponible 24/7", f6_sub: "Agente Claude con acceso en tiempo real a datos de campo, clima, \u00edndices satelitales y biblioteca INIA Chile.", f6_b1: "An\u00e1lisis de suelo y foliar, planificaci\u00f3n de riego y fertilizaci\u00f3n N-P-K desde PDFs adjuntos", f6_b2: "B\u00fasqueda sem\u00e1ntica RAG en 19.000+ publicaciones t\u00e9cnicas del INIA Chile con citas precisas", f6_b3: "Consciente del contexto: conoce tu pol\u00edgono, alertas clim\u00e1ticas e \u00edndices activos autom\u00e1ticamente",
+    feat_cta: "Abrir plataforma \u2192",
     how_label: "C\u00f3mo funciona",
     how_title: "Del campo al conocimiento en minutos",
     how_desc: "Sube los l\u00edmites de tu campo, conecta fuentes de datos satelitales y clim\u00e1ticos, y recibe recomendaciones impulsadas por IA.",
@@ -1578,18 +1731,13 @@ const translations = {
     features_label: "Capacidades da Plataforma",
     features_title: "Tudo o que voc\u00ea precisa para agricultura de precis\u00e3o",
     features_desc: "Um conjunto abrangente de ferramentas projetadas para pesquisadores, agr\u00f4nomos e gestores agr\u00edcolas.",
-    f1_title: "Sensoriamento Remoto",
-    f1_desc: "Imagens Sentinel-2 via Google Earth Engine com 6 \u00edndices de vegeta\u00e7\u00e3o: NDVI, NDRE, MSAVI, TCARI, Cor Real e Cor Falsa a 10m de resolu\u00e7\u00e3o.",
-    f2_title: "Anal\u00edtica Clim\u00e1tica",
-    f2_desc: "Dados clim\u00e1ticos em tempo real da Open-Meteo API: temperatura, precipita\u00e7\u00e3o, umidade, radia\u00e7\u00e3o solar, evapotranspira\u00e7\u00e3o, GDD, horas de frio e geadas.",
-    f3_title: "An\u00e1lise Gen\u00f4mica",
-    f3_desc: "Visualiza\u00e7\u00e3o de express\u00e3o diferencial RNA-seq com 3.603 DEGs em 8 est\u00e1gios fenol\u00f3gicos de 68 amostras e m\u00faltiplas variedades de culturas.",
-    f4_title: "Vis\u00e3o Computacional",
-    f4_desc: "Integra\u00e7\u00e3o de datasets com anota\u00e7\u00f5es YOLO para detec\u00e7\u00e3o e contagem de culturas. Mais de 300 imagens anotadas para detec\u00e7\u00e3o de objetos em campos agr\u00edcolas.",
-    f5_title: "Predi\u00e7\u00e3o de Rendimento",
-    f5_desc: "Modelos de aprendizado de m\u00e1quina (Extra Trees Regressor) para estima\u00e7\u00e3o de rendimento com intervalos de confian\u00e7a e an\u00e1lise de import\u00e2ncia de vari\u00e1veis.",
-    f6_title: "Assistente IA",
-    f6_desc: "Assistente Claude com contexto que fornece recomenda\u00e7\u00f5es agron\u00f4micas baseadas em dados reais do campo, clima e sat\u00e9lite com 6 ferramentas aut\u00f4nomas.",
+    f1_title: "Imagens Satelitais", f1_metric: "13 \u00edndices espectrais \u00b7 10m \u00b7 revisita 5 dias", f1_headline: "Veja seu campo do espa\u00e7o, em tempo real", f1_sub: "Sentinel-2 via Google Earth Engine \u2014 compostos sem nuvens atualizados a cada 5 dias, recortados ao seu pol\u00edgono.", f1_b1: "13 \u00edndices: NDVI, NDRE, MSAVI, TCARI, EVI, NDMI e mais para monitoramento completo", f1_b2: "Compara\u00e7\u00e3o temporal split-screen para rastrear a evolu\u00e7\u00e3o da cultura entre quaisquer duas datas", f1_b3: "Detec\u00e7\u00e3o precoce de estresse h\u00eddrico, pragas e defici\u00eancias nutricionais semanas antes dos sintomas",
+    f2_title: "Anal\u00edtica Clim\u00e1tica", f2_metric: "8 KPIs \u00b7 80 anos de dados \u00b7 cobertura mundial", f2_headline: "Tome decis\u00f5es com o clima ao seu favor", f2_sub: "Dados em tempo real da Open-Meteo para qualquer ponto do planeta \u2014 sem chave de API, sem limites.", f2_b1: "GDD, horas de frio, geadas, ondas de calor, balan\u00e7o h\u00eddrico, radia\u00e7\u00e3o solar e ET\u2080 (FAO Penman-Monteith)", f2_b2: "Alertas fenol\u00f3gicas autom\u00e1ticas calibradas para sua cultura e calend\u00e1rio do hemisf\u00e9rio sul", f2_b3: "Compara\u00e7\u00e3o de per\u00edodos GDD para comparar a temporada atual com m\u00e9dias hist\u00f3ricas",
+    f3_title: "An\u00e1lise Gen\u00f4mica", f3_metric: "3.603 DEGs \u00b7 8 est\u00e1gios fenol\u00f3gicos \u00b7 68 amostras RNA-seq", f3_headline: "Gen\u00f4mica a servi\u00e7o do vinhedo", f3_sub: "Dados RNA-seq reais de Altimiras et al. (2024) \u2014 ci\u00eancia publicada diretamente no seu navegador.", f3_b1: "Tabelas interativas de DEGs com logFC e FDR em 8 est\u00e1gios E-L de Vitis vinifera", f3_b2: "Enriquecimento GO, anota\u00e7\u00f5es UniProt e estruturas 3D AlphaFold sob demanda", f3_b3: "Visualiza\u00e7\u00e3o do pipeline RNA-seq desde leituras brutas at\u00e9 express\u00e3o diferencial",
+    f4_title: "Vis\u00e3o Computacional", f4_metric: "300+ imagens anotadas \u00b7 5 variedades \u00b7 YOLOv11", f4_headline: "Identifique e conte cachos do campo", f4_sub: "Vis\u00e3o de ponta treinada no WGISD (Embrapa) \u2014 envie sua pr\u00f3pria foto e obtenha resultados em segundos.", f4_b1: "YOLOv11 treinado em Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc e Syrah", f4_b2: "Infer\u00eancia em nuvem em tempo real \u2014 envie uma foto do campo, obtenha bounding boxes e contagem", f4_b3: "Visualizador do dataset WGISD com caixas de detec\u00e7\u00e3o e estimativas de bagas",
+    f5_title: "Previs\u00e3o de Rendimento", f5_metric: "R\u00b2 = 0.972 \u00b7 MAPE = 3.8% \u00b7 15 vari\u00e1veis ponderadas", f5_headline: "Antecipe sua colheita com 97% de precis\u00e3o", f5_sub: "Extra Trees Regressor com 15 vari\u00e1veis de sat\u00e9lite e clima \u2014 atualiza automaticamente com cada pol\u00edgono.", f5_b1: "Rendimento previsto (t/ha), produ\u00e7\u00e3o total e data estimada de colheita por modelo fenol\u00f3gico GDD", f5_b2: "Import\u00e2ncia din\u00e2mica de vari\u00e1veis: NDVI, ET\u2080, GDD e qual explica mais sua previs\u00e3o", f5_b3: "Compara\u00e7\u00e3o multi-modelos: Extra Trees, CatBoost, Random Forest, XGBoost, SVR \u2014 lado a lado",
+    f6_title: "Assistente IA", f6_metric: "8 ferramentas aut\u00f4nomas \u00b7 RAG INIA \u00b7 19K+ publica\u00e7\u00f5es", f6_headline: "Seu agr\u00f4nomo especialista dispon\u00edvel 24/7", f6_sub: "Agente Claude com acesso em tempo real a dados de campo, clima, \u00edndices de sat\u00e9lite e biblioteca INIA Chile.", f6_b1: "An\u00e1lise de solo e foliar, planejamento de irriga\u00e7\u00e3o e fertiliza\u00e7\u00e3o N-P-K a partir de PDFs enviados", f6_b2: "Busca sem\u00e2ntica RAG em 19.000+ publica\u00e7\u00f5es t\u00e9cnicas do INIA Chile com cita\u00e7\u00f5es precisas", f6_b3: "Ciente do contexto: conhece seu pol\u00edgono, alertas clim\u00e1ticos e \u00edndices ativos automaticamente",
+    feat_cta: "Abrir plataforma \u2192",
     how_label: "Como funciona",
     how_title: "Do campo ao conhecimento em minutos",
     how_desc: "Carregue os limites do seu campo, conecte fontes de dados de sat\u00e9lite e clima, e receba recomenda\u00e7\u00f5es com IA.",
