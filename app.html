@@ -289,6 +289,19 @@
   .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
   @keyframes chatBounce { 0%,80%,100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
 
+  /* tool status bubble */
+  .chat-tool-status-bubble {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.82rem; color: var(--accent); font-style: italic;
+  }
+  .chat-tool-dot {
+    animation: chatBounce 1s infinite; display: inline-block;
+  }
+
+  /* streaming content area */
+  .chat-stream-content p { margin: 0 0 6px; }
+  .chat-stream-content p:last-child { margin: 0; }
+
   .chat-input-area {
     padding: 16px 24px; border-top: 1px solid var(--border);
     display: flex; gap: 10px; align-items: flex-end;
@@ -7278,7 +7291,9 @@ function randomLayerColor() { return LAYER_COLORS[colorIdx++ % LAYER_COLORS.leng
 // ═══════════════════════════════════════
 // AI CHAT — AgrAgent Integration
 // ═══════════════════════════════════════
-const CHAT_API = 'https://api.agragent.com';
+// API endpoints: Railway (8 tools + SSE streaming) with Vercel fallback
+const CHAT_API        = 'https://api.agragent.com';                           // Vercel – always up, fallback
+const CHAT_API_STREAM = 'https://agragent-api-production.up.railway.app';     // Railway – 8 tools + streaming
 
 let chatUserId = localStorage.getItem('chat_user_id');
 if (!chatUserId) { chatUserId = crypto.randomUUID(); localStorage.setItem('chat_user_id', chatUserId); }
@@ -7286,9 +7301,14 @@ let chatConvId = null;
 let chatLoading = false;
 
 const TOOL_LABELS = {
-  get_climate_data: '🌤 Climate', get_ndvi_data: '🛰 NDVI',
-  analyze_soil_report: '🧪 Soil', analyze_foliar_report: '🍃 Foliar',
-  calculate_irrigation_plan: '💧 Irrigation', calculate_fertilization_plan: '🧬 Fertilization'
+  get_climate_data:             '🌤 Climate data',
+  get_ndvi_data:                '🛰️ NDVI / Sentinel-2',
+  analyze_soil_report:          '🧪 Soil analysis',
+  analyze_foliar_report:        '🍃 Foliar analysis',
+  calculate_irrigation_plan:    '💧 Irrigation plan',
+  calculate_fertilization_plan: '🌱 Fertilization plan',
+  search_inia_biblioteca:       '📚 INIA library',
+  search_inia_rag:              '🔎 INIA semantic search',
 };
 
 function chatRenderMarkdown(text) {
@@ -7359,8 +7379,72 @@ function chatHideTyping() {
   });
 }
 
+// ── Create a streaming bubble in all chat containers ──────────────
+function chatCreateStreamBubble() {
+  ['chat-welcome', 'chat-full-welcome'].forEach(id => {
+    const w = document.getElementById(id); if (w) w.style.display = 'none';
+  });
+  const nodes = [];
+  chatGetContainers().forEach(container => {
+    const div = document.createElement('div');
+    div.className = 'chat-msg assistant';
+    div.innerHTML = '<div class="chat-msg-avatar">🌿</div>' +
+      '<div class="chat-msg-bubble"><div class="chat-stream-content"></div>' +
+      '<div class="chat-tool-tags" id="chat-stream-tools-' + container.id + '"></div></div>';
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+    nodes.push(div);
+  });
+  return nodes;
+}
+
+function chatUpdateStreamBubble(nodes, html) {
+  nodes.forEach(div => {
+    const el = div.querySelector('.chat-stream-content');
+    if (el) { el.innerHTML = html; }
+    const c = div.closest('.chat-messages, .chat-full-messages, #chat-messages, #chat-full-messages') ||
+              div.parentElement;
+    if (c) c.scrollTop = c.scrollHeight;
+  });
+}
+
+function chatFinalizeStreamBubble(nodes, toolsUsed) {
+  if (!toolsUsed || !toolsUsed.length) return;
+  const html = toolsUsed.map(t => '<span class="chat-tool-tag">' + (TOOL_LABELS[t] || t) + '</span>').join('');
+  chatGetContainers().forEach(c => {
+    const el = document.getElementById('chat-stream-tools-' + c.id);
+    if (el) el.innerHTML = html;
+  });
+}
+
+// ── Show a tool status indicator ───────────────────────────────────
+function chatShowToolStatus(toolName) {
+  chatGetContainers().forEach(container => {
+    let el = document.getElementById('chat-tool-status-' + container.id);
+    if (!el) {
+      el = document.createElement('div');
+      el.className = 'chat-msg assistant';
+      el.id = 'chat-tool-status-' + container.id;
+      el.innerHTML = '<div class="chat-msg-avatar">🌿</div>' +
+        '<div class="chat-msg-bubble chat-tool-status-bubble"><span class="chat-typing-tool"></span></div>';
+      container.appendChild(el);
+    }
+    const lbl = TOOL_LABELS[toolName] || toolName;
+    el.querySelector('.chat-tool-status-bubble').innerHTML =
+      '<span class="chat-tool-dot">●</span> ' + lbl + '...';
+    container.scrollTop = container.scrollHeight;
+  });
+}
+
+function chatHideToolStatus() {
+  chatGetContainers().forEach(c => {
+    const el = document.getElementById('chat-tool-status-' + c.id);
+    if (el) el.remove();
+  });
+}
+
+// ── Main send function with SSE streaming ─────────────────────────
 async function chatSend() {
-  // Read from whichever input has content
   const inputs = chatGetInputs();
   let msg = '';
   inputs.forEach(inp => { if (inp.value.trim()) msg = inp.value.trim(); });
@@ -7369,28 +7453,90 @@ async function chatSend() {
   chatLoading = true;
   chatGetSendBtns().forEach(btn => btn.disabled = true);
 
+  const fullMsg = chatCollectAppContext() + msg;
   chatAddMessage('user', msg);
   chatShowTyping();
 
+  const body = JSON.stringify({
+    conversation_id: chatConvId,
+    message: fullMsg,
+    user_id: chatUserId,
+  });
+
+  // ── Try Railway SSE streaming first ───────────────────────────────
+  let streamedOk = false;
   try {
-    const res = await fetch(CHAT_API + '/api/chat/', {
+    const res = await fetch(CHAT_API_STREAM + '/api/chat/stream', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        conversation_id: chatConvId,
-        message: chatCollectAppContext() + msg,
-        user_id: chatUserId
-      })
+      body,
+      signal: AbortSignal.timeout(5000),   // 5s to get first byte
     });
-    const data = await res.json();
+
+    if (!res.ok || !res.body) throw new Error('stream unavailable');
+
     chatHideTyping();
-    if (data.conversation_id) chatConvId = data.conversation_id;
-    chatAddMessage('assistant', data.message || data.response || 'No response', data.tool_calls_made || []);
-    chatLoadConversations();
+    const streamNodes = chatCreateStreamBubble();
+    let accumulated = '', buf = '', toolsUsed = [];
+    const reader = res.body.getReader();
+    const dec    = new TextDecoder();
+
+    // Re-read with no timeout after we have the connection
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split('\n'); buf = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        let evt; try { evt = JSON.parse(line.slice(6)); } catch { continue; }
+
+        if (evt.type === 'text') {
+          accumulated += evt.content;
+          chatUpdateStreamBubble(streamNodes, chatRenderMarkdown(accumulated));
+        }
+        if (evt.type === 'tool_start') {
+          chatShowToolStatus(evt.tool);
+        }
+        if (evt.type === 'tool_end') {
+          chatHideToolStatus();
+          toolsUsed.push(evt.tool);
+        }
+        if (evt.type === 'done') {
+          if (evt.conversation_id) chatConvId = evt.conversation_id;
+          toolsUsed = evt.tools_used || toolsUsed;
+          chatFinalizeStreamBubble(streamNodes, toolsUsed);
+        }
+      }
+    }
+    streamedOk = true;
+
   } catch (e) {
     chatHideTyping();
-    chatAddMessage('assistant', '⚠️ Error connecting to AgrAgent API. Make sure the server is running on ' + CHAT_API);
+    chatHideToolStatus();
+    // Railway is down or timed out — fall through to Vercel
   }
+
+  // ── Fallback: Vercel non-streaming ────────────────────────────────
+  if (!streamedOk) {
+    if (!document.querySelector('.chat-msg.assistant:last-child')) chatShowTyping();
+    try {
+      const res = await fetch(CHAT_API + '/api/chat/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+      });
+      const data = await res.json();
+      chatHideTyping();
+      if (data.conversation_id) chatConvId = data.conversation_id;
+      chatAddMessage('assistant', data.message || data.response || 'No response', data.tool_calls_made || []);
+    } catch (e2) {
+      chatHideTyping();
+      chatAddMessage('assistant', '⚠️ No se pudo conectar con AgrAgent. Intenta de nuevo.');
+    }
+  }
+
+  chatLoadConversations();
   chatLoading = false;
   chatGetSendBtns().forEach(btn => btn.disabled = false);
   chatGetInputs().forEach(inp => { if (inp.offsetParent !== null) inp.focus(); });
