@@ -523,6 +523,66 @@ section {
   white-space: nowrap;
 }
 
+/* logo strip */
+.source-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.source-logo-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.2s;
+  min-width: 100px;
+}
+
+.source-logo-item:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.source-logo-item img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.source-logo-item span {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* icons in table rows */
+.src-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.src-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  object-fit: contain;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
 .data-badge {
   display: inline-block;
   padding: 3px 10px;
@@ -1137,6 +1197,30 @@ section {
       <div class="section-label" data-i18n="data_label">Data Sources</div>
       <h2 data-i18n="data_title">Powered by open, scientific data</h2>
     </div>
+    <!-- Logo strip -->
+    <div class="source-logos fade-in">
+      <a href="https://earthengine.google.com" target="_blank" rel="noopener" class="source-logo-item" title="Google Earth Engine">
+        <img src="https://www.google.com/s2/favicons?domain=earthengine.google.com&sz=64" alt="Google Earth Engine" loading="lazy">
+        <span>Google Earth Engine</span>
+      </a>
+      <a href="https://open-meteo.com" target="_blank" rel="noopener" class="source-logo-item" title="Open-Meteo">
+        <img src="https://www.google.com/s2/favicons?domain=open-meteo.com&sz=64" alt="Open-Meteo" loading="lazy">
+        <span>Open-Meteo</span>
+      </a>
+      <a href="https://biblioteca.inia.cl" target="_blank" rel="noopener" class="source-logo-item" title="Biblioteca INIA Chile">
+        <img src="https://www.google.com/s2/favicons?domain=inia.cl&sz=64" alt="INIA Chile" loading="lazy">
+        <span>INIA Chile</span>
+      </a>
+      <a href="https://github.com/thsant/wgisd" target="_blank" rel="noopener" class="source-logo-item" title="WGISD - Embrapa">
+        <img src="https://www.google.com/s2/favicons?domain=embrapa.br&sz=64" alt="Embrapa" loading="lazy">
+        <span>Embrapa</span>
+      </a>
+      <a href="https://www.pucv.cl" target="_blank" rel="noopener" class="source-logo-item" title="PUCV">
+        <img src="https://www.google.com/s2/favicons?domain=pucv.cl&sz=64" alt="PUCV" loading="lazy">
+        <span>PUCV</span>
+      </a>
+    </div>
+
     <div class="data-table-wrapper fade-in">
       <table class="data-table">
         <thead>
@@ -1150,35 +1234,35 @@ section {
         </thead>
         <tbody>
           <tr>
-            <td><strong>Sentinel-2 SR Harmonized</strong></td>
+            <td><div class="src-cell"><img src="https://www.google.com/s2/favicons?domain=earthengine.google.com&sz=32" class="src-icon" alt="" loading="lazy"><strong>Sentinel-2 SR Harmonized</strong></div></td>
             <td data-i18n="ds1_type">Satellite imagery (10m)</td>
             <td><span class="data-badge">Google Earth Engine</span></td>
             <td data-i18n="ds1_use">Vegetation indices, RGB composites</td>
             <td class="data-volume">13 índices · 10m · revisita 5 días</td>
           </tr>
           <tr>
-            <td><strong>Open-Meteo Archive API</strong></td>
+            <td><div class="src-cell"><img src="https://www.google.com/s2/favicons?domain=open-meteo.com&sz=32" class="src-icon" alt="" loading="lazy"><strong>Open-Meteo Archive API</strong></div></td>
             <td data-i18n="ds2_type">Historical weather</td>
             <td><span class="data-badge" data-i18n="badge_free">Free</span></td>
             <td data-i18n="ds2_use">Temperature, precipitation, humidity, radiation, ET&#8320;</td>
             <td class="data-volume">7 variables · hasta 80 años históricos</td>
           </tr>
           <tr>
-            <td><strong>WGISD (Embrapa)</strong></td>
+            <td><div class="src-cell"><img src="https://www.google.com/s2/favicons?domain=embrapa.br&sz=32" class="src-icon" alt="" loading="lazy"><strong>WGISD (Embrapa)</strong></div></td>
             <td data-i18n="ds3_type">Crop images (300+)</td>
             <td><span class="data-badge" data-i18n="badge_public">Public dataset</span></td>
             <td data-i18n="ds3_use">Object detection annotations</td>
             <td class="data-volume">300+ imágenes · 5 variedades de uva</td>
           </tr>
           <tr>
-            <td><strong>Biblioteca Digital INIA Chile</strong></td>
+            <td><div class="src-cell"><img src="https://www.google.com/s2/favicons?domain=inia.cl&sz=32" class="src-icon" alt="" loading="lazy"><strong>Biblioteca Digital INIA Chile</strong></div></td>
             <td data-i18n="ds5_type">Agricultural publications (19K+)</td>
             <td><span class="data-badge" data-i18n="badge_openaccess">Open access</span></td>
             <td data-i18n="ds5_use">Agronomic bibliography, RAG semantic search</td>
             <td class="data-volume">19.146 documentos · boletines · revistas</td>
           </tr>
           <tr>
-            <td><strong>RNA-seq (Altimiras et al. 2024)</strong></td>
+            <td><div class="src-cell"><img src="https://www.google.com/s2/favicons?domain=pucv.cl&sz=32" class="src-icon" alt="" loading="lazy"><strong>RNA-seq (Altimiras et al. 2024)</strong></div></td>
             <td data-i18n="ds4_type">Genomic DEG data</td>
             <td><span class="data-badge" data-i18n="badge_published">Published</span></td>
             <td data-i18n="ds4_use">3,603 DEGs across 8 phenological stages</td>
