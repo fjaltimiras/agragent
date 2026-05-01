@@ -1802,7 +1802,7 @@ function editDisplayName() {
       <span class="nav-icon">📋</span> <span data-i18n="nav_plan">Field Plan</span>
     </div>
     <div class="nav-item" data-section="chat">
-      <span class="nav-icon"><img src="logo.png" alt="" style="width:18px;height:18px;border-radius:50%;object-fit:cover;vertical-align:middle;"></span> <span data-i18n="nav_chat">Ask AgrAgent</span>
+      <span class="nav-icon"><img src="logo.png" alt="" style="width:18px;height:18px;border-radius:50%;object-fit:cover;vertical-align:middle;"></span> <span data-i18n="nav_chat">Ask agragent</span>
     </div>
     <div class="nav-item" data-section="references">
       <span class="nav-icon">📚</span> <span data-i18n="nav_references">About</span>
@@ -1843,8 +1843,8 @@ function editDisplayName() {
 
       <!-- Empty state -->
       <div id="dash-empty" class="card" style="text-align:center;padding:50px 20px;">
-        <div style="margin-bottom:12px;"><img src="logo.png" alt="AgrAgent" style="width:56px;height:56px;border-radius:50%;object-fit:cover;"></div>
-        <div style="font-size:1.2rem;font-weight:700;color:var(--text-primary);margin-bottom:12px;" data-i18n="welcome_title">Welcome to AgrAgent</div>
+        <div style="margin-bottom:12px;"><img src="logo.png" alt="agragent" style="width:56px;height:56px;border-radius:50%;object-fit:cover;"></div>
+        <div style="font-size:1.2rem;font-weight:700;color:var(--text-primary);margin-bottom:12px;" data-i18n="welcome_title">Welcome to agragent</div>
         <div style="font-size:0.95rem;color:var(--text-secondary);max-width:460px;margin:0 auto;line-height:1.8;" data-i18n="welcome_text">Mark your field on the map to get started. We'll show you satellite images, weather data, and a harvest forecast for your vineyard.</div>
         <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;max-width:340px;margin-left:auto;margin-right:auto;text-align:left;">
           <div style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:var(--text-secondary);"><span style="font-size:1.2rem;">1️⃣</span> <span data-i18n="step1">Go to</span> <strong style="color:var(--accent);cursor:pointer;" onclick="showSection('maps')" data-i18n="step1_link">Field Map</strong></div>
@@ -3098,7 +3098,7 @@ function editDisplayName() {
           <button id="chat-sidebar-show" class="chat-sidebar-toggle" style="display:none;position:absolute;left:4px;top:8px;z-index:10;font-size:1rem;" onclick="document.getElementById('chat-full-sidebar').classList.remove('collapsed');this.style.display='none'" title="Show conversations">☰</button>
           <div class="chat-messages" id="chat-full-messages">
             <div class="chat-welcome" id="chat-full-welcome">
-              <h2><img src="logo.png" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;">AgrAgent</h2>
+              <h2><img src="logo.png" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;">agragent</h2>
               <p data-i18n="chat_welcome_text">Ask me about climate data, satellite imagery, soil analysis, irrigation planning, or any agronomic question about your fields.</p>
               <div class="chat-welcome-cards" id="chat-full-welcome-cards"></div>
             </div>
@@ -3117,12 +3117,12 @@ function editDisplayName() {
 </div><!-- /#main -->
 
 <!-- ═══════════════ FLOATING AI CHAT WIDGET ═══════════════ -->
-<button id="chat-fab" onclick="chatToggleWidget()" title="AI Assistant"><img src="logo.png" alt="AgrAgent" style="width:32px;height:32px;border-radius:50%;object-fit:cover;"></button>
+<button id="chat-fab" onclick="chatToggleWidget()" title="AI Assistant"><img src="logo.png" alt="agragent" style="width:32px;height:32px;border-radius:50%;object-fit:cover;"></button>
 <div id="chat-widget" class="chat-widget-hidden">
   <div class="chat-widget-header">
     <div class="chat-widget-header-left">
       <img src="logo.png" alt="" style="width:22px;height:22px;border-radius:50%;object-fit:cover;">
-      <strong>AgrAgent</strong>
+      <strong>agragent</strong>
       <span id="chat-widget-context-badge" class="chat-context-badge"></span>
     </div>
     <div class="chat-widget-header-right">
@@ -3136,13 +3136,13 @@ function editDisplayName() {
   </div>
   <div class="chat-messages" id="chat-messages">
     <div class="chat-welcome" id="chat-welcome">
-      <h2><img src="logo.png" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;">AgrAgent</h2>
+      <h2><img src="logo.png" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;">agragent</h2>
       <p data-i18n="chat_welcome_text">Ask me about climate data, satellite imagery, soil analysis, irrigation planning, or any agronomic question about your fields.</p>
       <div class="chat-welcome-cards" id="chat-welcome-cards"></div>
     </div>
   </div>
   <div class="chat-input-area">
-    <textarea id="chat-input" placeholder="Ask AgrAgent..." rows="1"
+    <textarea id="chat-input" placeholder="Ask agragent..." rows="1"
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();chatSend()}"
       oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
     <button class="chat-send-btn" id="chat-send-btn" onclick="chatSend()">➤</button>
@@ -3160,9 +3160,9 @@ const i18n = {
     // Nav
     nav_dashboard: 'Dashboard', nav_maps: 'Satellite Maps', nav_climate: 'Climate Data',
     nav_genomic: 'Genomic Analysis', nav_images: 'Image Analysis', nav_yield: 'Yield Prediction',
-    nav_chat: 'Ask AgrAgent', chat_conversations: 'Conversations', chat_new: '+ New',
+    nav_chat: 'Ask agragent', chat_conversations: 'Conversations', chat_new: '+ New',
     chat_welcome_text: 'Ask me about the weather, your vineyard health, watering, soil, or any question about your field.',
-    chat_placeholder: 'Ask AgrAgent...',
+    chat_placeholder: 'Ask agragent...',
     chat_q1: 'How healthy are my plants right now?',
     chat_q1_label: '🌿 Plant health',
     chat_q2: 'How has the weather been in my area?',
@@ -3175,7 +3175,7 @@ const i18n = {
     // Topbar
     season: 'Season 2025–2026', upload_polygon: '',
     // Dashboard
-    welcome_title: 'Welcome to AgrAgent',
+    welcome_title: 'Welcome to agragent',
     welcome_text: 'Mark your field on the map to get started. We\'ll show you satellite images, weather data, and a harvest forecast for your vineyard.',
     step1: 'Go to', step1_link: 'Field Map', step2: 'Upload a file or draw your field boundaries', step3: 'All data updates automatically',
     search_placeholder: 'Search location... (e.g. Napa Valley, Bordeaux)', search_btn: 'Search',
@@ -3316,9 +3316,9 @@ const i18n = {
   es: {
     nav_dashboard: 'Mi Campo', nav_maps: 'Mapa del Campo', nav_climate: 'Clima',
     nav_genomic: 'Genética del Cultivo', nav_images: 'Análisis de Imágenes', nav_yield: 'Pronóstico de Cosecha',
-    nav_chat: 'Consultar AgrAgent', chat_conversations: 'Conversaciones', chat_new: '+ Nueva',
+    nav_chat: 'Consultar agragent', chat_conversations: 'Conversaciones', chat_new: '+ Nueva',
     chat_welcome_text: 'Pregúntame sobre el clima, las imágenes satelitales, el riego, el suelo o cualquier duda sobre tu viñedo.',
-    chat_placeholder: 'Pregunta a AgrAgent...',
+    chat_placeholder: 'Pregunta a agragent...',
     chat_q1: '¿Cómo está la salud de mis plantas?',
     chat_q1_label: '🌿 Salud del cultivo',
     chat_q2: '¿Cómo ha estado el clima en mi zona?',
@@ -3329,7 +3329,7 @@ const i18n = {
     chat_q4_label: '🧪 Fertilización',
     nav_references: 'Acerca de',
     season: 'Temporada 2025–2026', upload_polygon: '',
-    welcome_title: 'Bienvenido a AgrAgent',
+    welcome_title: 'Bienvenido a agragent',
     welcome_text: 'Marca tu campo en el mapa para comenzar. Te mostraremos imágenes satelitales, datos del clima y un pronóstico de cosecha para tu viñedo.',
     step1: 'Ve a', step1_link: 'Mapa del Campo', step2: 'Sube un archivo o dibuja los límites de tu campo', step3: 'Todos los datos se actualizan automáticamente',
     search_placeholder: 'Buscar localidad... (ej. Casablanca, Maule)', search_btn: 'Buscar',
@@ -3465,9 +3465,9 @@ const i18n = {
   pt: {
     nav_dashboard: 'Meu Campo', nav_maps: 'Mapa do Campo', nav_climate: 'Clima',
     nav_genomic: 'Genética', nav_images: 'Fotos do Vinhedo', nav_yield: 'Previsão de Colheita',
-    nav_chat: 'Perguntar ao AgrAgent', chat_conversations: 'Conversas', chat_new: '+ Nova',
+    nav_chat: 'Perguntar ao agragent', chat_conversations: 'Conversas', chat_new: '+ Nova',
     chat_welcome_text: 'Pergunte sobre o clima, imagens de satélite, irrigação, solo ou qualquer dúvida sobre seu vinhedo.',
-    chat_placeholder: 'Pergunte ao AgrAgent...',
+    chat_placeholder: 'Pergunte ao agragent...',
     chat_q1: 'Como está a saúde das minhas plantas?',
     chat_q1_label: '🌿 Saúde do cultivo',
     chat_q2: 'Como está o clima na minha região?',
@@ -3607,7 +3607,7 @@ const i18n = {
     // Alerts
     alert_no_kml: 'Nenhum arquivo KML encontrado dentro do KMZ.', alert_no_geom: 'Nenhuma geometria válida encontrada no arquivo.',
     alert_file_error: 'Erro ao ler o arquivo: ',
-    gee_help_msg: 'O Google Earth Engine se conecta automaticamente usando a conta do projeto AgrAgent. Não é necessária configuração.',
+    gee_help_msg: 'O Google Earth Engine se conecta automaticamente usando a conta do projeto agragent. Não é necessária configuração.',
     climate_upload_sub: 'Carregue um polígono para ver dados climáticos',
   }
 };
@@ -7278,7 +7278,7 @@ let colorIdx = 0;
 function randomLayerColor() { return LAYER_COLORS[colorIdx++ % LAYER_COLORS.length]; }
 
 // ═══════════════════════════════════════
-// AI CHAT — AgrAgent Integration
+// AI CHAT — agragent Integration
 // ═══════════════════════════════════════
 // API endpoints: Vercel (streaming + 6 tools) primary, Railway fallback if available
 const CHAT_API        = 'https://api.agragent.com';   // Vercel – always up, JSON fallback
@@ -7522,7 +7522,7 @@ async function chatSend() {
       chatAddMessage('assistant', data.message || data.response || 'No response', data.tool_calls_made || []);
     } catch (e2) {
       chatHideTyping();
-      chatAddMessage('assistant', '⚠️ No se pudo conectar con AgrAgent. Intenta de nuevo.');
+      chatAddMessage('assistant', '⚠️ No se pudo conectar con agragent. Intenta de nuevo.');
     }
   }
 
@@ -7631,7 +7631,7 @@ async function chatDeleteConv(convId) {
     if (convId === chatConvId) {
       chatConvId = null;
       chatGetContainers().forEach(c => {
-        c.innerHTML = '<div class="chat-welcome"><h2><img src=\"logo.png\" alt=\"\" style=\"width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;\">AgrAgent</h2>' +
+        c.innerHTML = '<div class="chat-welcome"><h2><img src=\"logo.png\" alt=\"\" style=\"width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;\">agragent</h2>' +
           '<p>' + t('chat_welcome_text') + '</p>' +
           '<div class="chat-welcome-cards" id="chat-welcome-cards"></div></div>';
       });

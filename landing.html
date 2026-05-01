@@ -130,32 +130,127 @@ body {
   padding: 120px 24px 80px;
   position: relative;
   overflow: hidden;
+  --mx: 50%;
+  --my: 40%;
 }
 
 .hero-bg {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(45, 106, 79, 0.15) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 50% at 20% 80%, rgba(82, 183, 136, 0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(34, 197, 94, 0.04) 0%, transparent 60%);
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(45, 106, 79, 0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 20% 80%, rgba(82, 183, 136, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(34, 197, 94, 0.05) 0%, transparent 60%);
   pointer-events: none;
+}
+
+/* Animated breathing orbs */
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  opacity: 0.55;
+  will-change: transform;
+}
+.hero-orb.o1 {
+  width: 540px; height: 540px;
+  background: radial-gradient(circle, rgba(82, 183, 136, 0.55) 0%, transparent 70%);
+  top: -180px; left: 50%;
+  margin-left: -270px;
+  animation: orbFloat1 18s ease-in-out infinite alternate;
+}
+.hero-orb.o2 {
+  width: 460px; height: 460px;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.40) 0%, transparent 70%);
+  bottom: -160px; left: 8%;
+  animation: orbFloat2 24s ease-in-out infinite alternate;
+}
+.hero-orb.o3 {
+  width: 480px; height: 480px;
+  background: radial-gradient(circle, rgba(116, 201, 157, 0.32) 0%, transparent 70%);
+  bottom: -200px; right: 6%;
+  animation: orbFloat3 22s ease-in-out infinite alternate;
+}
+@keyframes orbFloat1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 60px) scale(1.12); }
+}
+@keyframes orbFloat2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(80px, -50px) scale(1.18); }
+}
+@keyframes orbFloat3 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-70px, -60px) scale(0.92); }
+}
+
+/* Mouse-tracking spotlight */
+.hero-spotlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle 460px at var(--mx) var(--my), rgba(82, 183, 136, 0.22), transparent 65%);
+  transition: background 0.18s ease-out;
+  mix-blend-mode: screen;
 }
 
 .hero-grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(30, 58, 46, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(30, 58, 46, 0.08) 1px, transparent 1px);
+    linear-gradient(rgba(82, 183, 136, 0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(82, 183, 136, 0.10) 1px, transparent 1px);
   background-size: 60px 60px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
   pointer-events: none;
+  animation: gridDrift 60s linear infinite;
+}
+@keyframes gridDrift {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 60px 60px, 60px 60px; }
+}
+
+/* Floating particles canvas */
+.hero-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Subtle satellite-style scan line */
+.hero-scan {
+  position: absolute;
+  left: 0; right: 0;
+  top: 0;
+  height: 140px;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(82, 183, 136, 0.06) 45%,
+    rgba(82, 183, 136, 0.14) 50%,
+    rgba(82, 183, 136, 0.06) 55%,
+    transparent 100%);
+  opacity: 0.7;
+  animation: scanSweep 9s ease-in-out infinite;
+}
+@keyframes scanSweep {
+  0%   { transform: translateY(-150px); opacity: 0; }
+  10%  { opacity: 0.7; }
+  90%  { opacity: 0.7; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-orb, .hero-grid, .hero-scan { animation: none !important; }
+  .hero-spotlight { display: none; }
 }
 
 .hero-content {
   position: relative;
   max-width: 840px;
+  z-index: 2;
 }
 
 .hero-badge {
@@ -1119,9 +1214,15 @@ section {
 </nav>
 
 <!-- ═══════ HERO ═══════ -->
-<section class="hero">
+<section class="hero" id="hero">
   <div class="hero-bg"></div>
+  <div class="hero-orb o1"></div>
+  <div class="hero-orb o2"></div>
+  <div class="hero-orb o3"></div>
   <div class="hero-grid"></div>
+  <div class="hero-scan"></div>
+  <canvas class="hero-particles" id="heroParticles"></canvas>
+  <div class="hero-spotlight"></div>
   <div class="hero-content fade-in">
     <div class="hero-badge">
       <span class="dot"></span>
@@ -1319,7 +1420,7 @@ section {
 <section id="use-cases" style="background:var(--bg-alt)">
   <div class="container">
     <div class="section-header fade-in">
-      <div class="section-label" data-i18n="uc_label">Who uses AgrAgent</div>
+      <div class="section-label" data-i18n="uc_label">Who uses agragent</div>
       <h2 data-i18n="uc_title">Built for every agricultural professional</h2>
     </div>
     <div class="uc-grid fade-in">
@@ -1629,7 +1730,7 @@ function showFeat(idx, btn) {
 
         <!-- Panel 4: AI chat -->
         <div class="demo-panel" id="dp-3">
-          <div class="dp-label">🤖 AgrAgent AI — Agronomic Advisor</div>
+          <div class="dp-label">🤖 agragent AI — Agronomic Advisor</div>
           <div class="dp4-chat">
             <div class="dp4-msg user">
               <span class="dp4-avatar">👤</span>
@@ -2058,7 +2159,7 @@ const translations = {
     slide3_sub: "Extra Trees Regressor with 15 satellite + climate features",
     slide4_title: "AI Agronomic Agent",
     slide4_sub: "Claude-powered assistant with real-time field, climate and satellite context",
-    uc_label: "Who uses AgrAgent",
+    uc_label: "Who uses agragent",
     uc_title: "Built for every agricultural professional",
     uc1_title: "Researchers", uc1_desc: "Access genomic DEG data, yield models, RNA-seq datasets, and peer-reviewed bibliographic search across 19,000+ INIA publications.",
     uc2_title: "Agronomists", uc2_desc: "Upload soil or foliar reports for instant recommendations. Calculate irrigation and fertilization plans with real-time field context.",
@@ -2516,15 +2617,15 @@ setLang(currentLang);
 }
 </style>
 
-<button id="ag-widget-btn" title="Habla con AgrAgent" onclick="agToggle()">
-  <img src="logo.png" alt="AgrAgent">
+<button id="ag-widget-btn" title="Habla con agragent" onclick="agToggle()">
+  <img src="logo.png" alt="agragent">
   <span class="ag-badge"></span>
 </button>
 
 <div id="ag-panel">
   <div id="ag-panel-header">
-    <img src="logo.png" alt="AgrAgent">
-    <div><div class="ag-ht">AgrAgent</div></div>
+    <img src="logo.png" alt="agragent">
+    <div><div class="ag-ht">agragent</div></div>
     <button id="ag-close" onclick="agToggle()">✕</button>
   </div>
   <div id="ag-messages"></div>
@@ -2534,7 +2635,7 @@ setLang(currentLang);
       oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,90)+'px'"></textarea>
     <button id="ag-snd" onclick="agSend()">➤</button>
   </div>
-  <div id="ag-foot">Impulsado por <a href="https://agragent.com">AgrAgent</a></div>
+  <div id="ag-foot">Impulsado por <a href="https://agragent.com">agragent</a></div>
 </div>
 
 <script>
@@ -2545,9 +2646,9 @@ setLang(currentLang);
   let widgetLang = localStorage.getItem('agragent-landing-lang') || 'en';
 
   const WELCOME = {
-    en: 'Hi, I\'m **AgrAgent**, your agronomic AI assistant. I can help with soil analysis, irrigation, fertilization, Sentinel-2 NDVI satellite data, and technical bibliography from INIA Chile.\n\nWhat crop or region are you working with?',
-    es: 'Hola, soy **AgrAgent**, tu asistente agrónomo con IA. Puedo ayudarte con análisis de suelo, riego, fertilización, datos satelitales NDVI de Sentinel-2 y bibliografía técnica del INIA Chile.\n\n¿En qué cultivo o zona estás trabajando?',
-    pt: 'Olá, sou **AgrAgent**, seu assistente agrônomo com IA. Posso ajudar com análise de solo, irrigação, fertilização, dados de satélite NDVI do Sentinel-2 e bibliografia técnica do INIA Chile.\n\nEm qual cultura ou região você está trabalhando?',
+    en: 'Hi, I\'m **agragent**, your agronomic AI assistant. I can help with soil analysis, irrigation, fertilization, Sentinel-2 NDVI satellite data, and technical bibliography from INIA Chile.\n\nWhat crop or region are you working with?',
+    es: 'Hola, soy **agragent**, tu asistente agrónomo con IA. Puedo ayudarte con análisis de suelo, riego, fertilización, datos satelitales NDVI de Sentinel-2 y bibliografía técnica del INIA Chile.\n\n¿En qué cultivo o zona estás trabajando?',
+    pt: 'Olá, sou **agragent**, seu assistente agrônomo com IA. Posso ajudar com análise de solo, irrigação, fertilização, dados de satélite NDVI do Sentinel-2 e bibliografia técnica do INIA Chile.\n\nEm qual cultura ou região você está trabalhando?',
   };
 
   const panel = document.getElementById('ag-panel');
@@ -2685,6 +2786,148 @@ setLang(currentLang);
 
   // Init placeholder in current lang
   window.agSetLang(widgetLang);
+})();
+</script>
+
+<!-- ═══════ HERO INTERACTIVE EFFECTS ═══════ -->
+<script>
+(function(){
+  const hero = document.getElementById('hero');
+  if (!hero) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 1. Mouse-tracking spotlight (with parallax on orbs)
+  if (!reduced) {
+    let rafId = null, targetX = 50, targetY = 40, curX = 50, curY = 40;
+    const orbs = hero.querySelectorAll('.hero-orb');
+
+    hero.addEventListener('mousemove', (e) => {
+      const r = hero.getBoundingClientRect();
+      targetX = ((e.clientX - r.left) / r.width) * 100;
+      targetY = ((e.clientY - r.top) / r.height) * 100;
+      if (!rafId) rafId = requestAnimationFrame(tick);
+    });
+    hero.addEventListener('mouseleave', () => {
+      targetX = 50; targetY = 40;
+      if (!rafId) rafId = requestAnimationFrame(tick);
+    });
+
+    function tick(){
+      curX += (targetX - curX) * 0.12;
+      curY += (targetY - curY) * 0.12;
+      hero.style.setProperty('--mx', curX + '%');
+      hero.style.setProperty('--my', curY + '%');
+      // Subtle parallax on orbs
+      const dx = (curX - 50) / 50, dy = (curY - 50) / 50;
+      orbs.forEach((o, i) => {
+        const depth = [14, 22, 18][i] || 16;
+        o.style.translate = `${dx * depth}px ${dy * depth}px`;
+      });
+      if (Math.abs(targetX - curX) > 0.05 || Math.abs(targetY - curY) > 0.05) {
+        rafId = requestAnimationFrame(tick);
+      } else {
+        rafId = null;
+      }
+    }
+  }
+
+  // 2. Floating particles canvas (seeds / pollen)
+  const canvas = document.getElementById('heroParticles');
+  if (!canvas || reduced) return;
+  const ctx = canvas.getContext('2d');
+  let w = 0, h = 0, particles = [], running = true;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  function resize(){
+    const r = hero.getBoundingClientRect();
+    w = r.width; h = r.height;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function spawn(){
+    const count = Math.min(38, Math.max(16, Math.floor(w / 38)));
+    particles = Array.from({length: count}, () => {
+      const len = 7 + Math.random() * 7;            // 7-14px alto de hoja
+      return {
+        x: Math.random() * w,
+        y: Math.random() * h,
+        len,
+        wid: len * (0.45 + Math.random() * 0.15),   // hoja apuntada
+        vx: (Math.random() - 0.5) * 0.20,
+        vy: -(0.10 + Math.random() * 0.28),
+        a: 0.32 + Math.random() * 0.38,
+        rot: Math.random() * Math.PI * 2,
+        spin: (Math.random() - 0.5) * 0.012,        // giro suave
+        ph: Math.random() * Math.PI * 2,
+        // dos verdes del logo: claro y oscuro
+        light: Math.random() < 0.5,
+      };
+    });
+  }
+
+  resize(); spawn();
+  window.addEventListener('resize', () => { resize(); spawn(); });
+
+  // Pause when hero is off-screen
+  const io = new IntersectionObserver((entries) => {
+    running = entries[0].isIntersecting;
+    if (running) loop();
+  }, { threshold: 0 });
+  io.observe(hero);
+
+  // Dibuja una hoja apuntada (vesica piscis) con vena central
+  function drawLeaf(x, y, len, wid, rot, fill, stroke, vein){
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    const hl = len / 2, hw = wid / 2;
+    ctx.beginPath();
+    ctx.moveTo(0, -hl);
+    ctx.bezierCurveTo(hw, -hl * 0.6,  hw, hl * 0.6,  0, hl);
+    ctx.bezierCurveTo(-hw, hl * 0.6, -hw, -hl * 0.6, 0, -hl);
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+    if (stroke) {
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = 0.7;
+      ctx.stroke();
+    }
+    if (vein) {
+      ctx.beginPath();
+      ctx.moveTo(0, -hl * 0.85);
+      ctx.lineTo(0,  hl * 0.85);
+      ctx.strokeStyle = vein;
+      ctx.lineWidth = 0.6;
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function loop(){
+    if (!running) return;
+    ctx.clearRect(0, 0, w, h);
+    for (const p of particles) {
+      p.ph += 0.014;
+      p.rot += p.spin;
+      p.x += p.vx + Math.sin(p.ph) * 0.22;
+      p.y += p.vy;
+      if (p.y < -20) { p.y = h + 20; p.x = Math.random() * w; }
+      if (p.x < -20) p.x = w + 20;
+      if (p.x > w + 20) p.x = -20;
+
+      // dos paletas: hoja clara (borde) y hoja oscura (centro), con alpha
+      const a = p.a.toFixed(2);
+      const fill   = p.light ? `rgba(116, 201, 157, ${a})` : `rgba(45, 106, 79,  ${a})`;
+      const stroke = p.light ? `rgba(167, 243, 208, ${(p.a*0.9).toFixed(2)})` : `rgba(116, 201, 157, ${(p.a*0.9).toFixed(2)})`;
+      const vein   = p.light ? `rgba(45, 106, 79, ${(p.a*0.7).toFixed(2)})`   : `rgba(167, 243, 208, ${(p.a*0.7).toFixed(2)})`;
+      drawLeaf(p.x, p.y, p.len, p.wid, p.rot, fill, stroke, vein);
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
 })();
 </script>
 </body>
