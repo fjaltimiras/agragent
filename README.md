@@ -11,6 +11,7 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 ## Table of Contents
 
 - [Features](#features)
+- [Chat Widget (agragent.com)](#chat-widget-agragentcom)
 - [WhatsApp Demo](#whatsapp-demo)
 - [WhatsApp Production Channel](#whatsapp-production-channel-meta-cloud-api)
 - [INIA Knowledge Base — Two-Layer RAG](#inia-knowledge-base--two-layer-rag)
@@ -199,6 +200,24 @@ All map section panels (Sentinel-2 Controls, Layers & Tools, Vegetation Indices)
 
 ---
 
+## Chat Widget (agragent.com)
+
+A self-contained floating chat widget injected into `landing.html`, connecting visitors of [agragent.com](https://agragent.com) to the AgrAgent Claude agent.
+
+| Feature | Detail |
+|---|---|
+| **Trigger** | Circular button (AgrAgent logo) fixed bottom-right, pulsing green glow |
+| **Panel** | 370×540px slide-up, dark theme matching landing colors |
+| **API** | `api.agragent.com` (Vercel serverless, always available) |
+| **Streaming** | SSE tokens appear progressively; falls back to JSON if unavailable |
+| **Languages** | Welcome message in EN/ES/PT matching the site language switcher (🌐) |
+| **Mobile** | Full-width panel on <480px screens |
+| **Dependencies** | Zero — pure vanilla JS/CSS, self-contained in landing.html |
+
+The widget shares the same conversation persistence (Supabase) using `user_id = "visitor_<random>"` per session.
+
+---
+
 ## WhatsApp Demo
 
 `whatsapp-demo.html` is a standalone prototype that simulates how AgrAgent would work as a WhatsApp conversational agent. It is a single HTML file with no build step, connecting directly to the FastAPI backend.
@@ -241,6 +260,7 @@ Or open `whatsapp-demo.html` directly in the browser — the backend has CORS op
 | **Field location (📍)** | Share field location via 4 methods (see below) |
 | **Config (⚙️)** | Change backend URL at runtime (useful to point to Railway instead of localhost) |
 | **Mobile** | Sidebar as full overlay, hamburger menu, full-screen modals, iOS-safe input font size |
+| **Streaming SSE** | `POST /api/chat/stream` — text tokens appear progressively; perceived latency ~2s vs 13s with blocking JSON |
 
 ### Field Location Panel (📍)
 
