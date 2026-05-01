@@ -685,16 +685,26 @@ section {
 
 /* ───── i18n SWITCHER ───── */
 .lang-switcher {
+  position: relative;
   display: flex;
+  align-items: center;
   gap: 4px;
   background: var(--card-bg);
   border-radius: 8px;
-  padding: 3px;
+  padding: 3px 3px 3px 8px;
   border: 1px solid var(--border);
 }
 
+.lang-icon {
+  font-size: 0.9rem;
+  opacity: 0.55;
+  pointer-events: none;
+  user-select: none;
+  flex-shrink: 0;
+}
+
 .lang-btn {
-  padding: 5px 12px;
+  padding: 5px 10px;
   border: none;
   background: transparent;
   color: var(--text-secondary);
@@ -703,6 +713,7 @@ section {
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
+  letter-spacing: 0.03em;
 }
 
 .lang-btn.active {
@@ -712,6 +723,7 @@ section {
 
 .lang-btn:hover:not(.active) {
   color: var(--text-primary);
+  background: rgba(255,255,255,0.05);
 }
 
 /* ───── SCREENSHOT PREVIEW ───── */
@@ -881,8 +893,9 @@ section {
     <li><a href="https://app.agragent.com" class="nav-cta" data-i18n="nav_launch">Launch App</a></li>
   </ul>
   <div style="display:flex;align-items:center;gap:12px;">
-    <div class="lang-switcher">
-      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <div class="lang-switcher" title="Idioma / Language">
+      <span class="lang-icon">🌐</span>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
       <button class="lang-btn" onclick="setLang('es')">ES</button>
       <button class="lang-btn" onclick="setLang('pt')">PT</button>
     </div>
@@ -1500,6 +1513,8 @@ function setLang(lang) {
       el.innerHTML = translations[lang][key];
     }
   });
+  // Notificar al widget si está abierto para resetear el idioma
+  if (typeof window.agSetLang === 'function') window.agSetLang(lang);
 }
 
 /* ═══════ SCROLL ANIMATIONS ═══════ */
@@ -1646,7 +1661,7 @@ setLang(currentLang);
   </div>
   <div id="ag-messages"></div>
   <div id="ag-input-row">
-    <textarea id="ag-inp" rows="1" placeholder="Consulta sobre tu cultivo, riego, suelo..."
+    <textarea id="ag-inp" rows="1" placeholder="Ask about your crop, irrigation, soil..."
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();agSend();}"
       oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,90)+'px'"></textarea>
     <button id="ag-snd" onclick="agSend()">➤</button>
@@ -1659,11 +1674,28 @@ setLang(currentLang);
   const API = 'https://agragent-api-production.up.railway.app';
   const UID = 'visitor_' + Math.random().toString(36).slice(2,10);
   let convId = null, busy = false, open = false;
+  let widgetLang = localStorage.getItem('agragent-landing-lang') || 'en';
+
+  const WELCOME = {
+    en: 'Hi, I\'m **AgrAgent**, your agronomic AI assistant. I can help with soil analysis, irrigation, fertilization, Sentinel-2 NDVI satellite data, and technical bibliography from INIA Chile.\n\nWhat crop or region are you working with?',
+    es: 'Hola, soy **AgrAgent**, tu asistente agrónomo con IA. Puedo ayudarte con análisis de suelo, riego, fertilización, datos satelitales NDVI de Sentinel-2 y bibliografía técnica del INIA Chile.\n\n¿En qué cultivo o zona estás trabajando?',
+    pt: 'Olá, sou **AgrAgent**, seu assistente agrônomo com IA. Posso ajudar com análise de solo, irrigação, fertilização, dados de satélite NDVI do Sentinel-2 e bibliografia técnica do INIA Chile.\n\nEm qual cultura ou região você está trabalhando?',
+  };
 
   const panel = document.getElementById('ag-panel');
   const msgs  = document.getElementById('ag-messages');
   const inp   = document.getElementById('ag-inp');
   const snd   = document.getElementById('ag-snd');
+
+  // Expose lang hook so setLang() can notify the widget
+  window.agSetLang = function(lang) {
+    widgetLang = lang;
+    inp.placeholder = {
+      en: 'Ask about your crop, irrigation, soil...',
+      es: 'Consulta sobre tu cultivo, riego, suelo...',
+      pt: 'Pergunte sobre sua cultura, irrigação, solo...',
+    }[lang] || inp.placeholder;
+  };
 
   window.agToggle = function() {
     open = !open;
@@ -1673,7 +1705,7 @@ setLang(currentLang);
   };
 
   function agWelcome() {
-    agAdd('b', 'Hola, soy **AgrAgent**, tu asistente agrónomo. Puedo ayudarte con análisis de suelo, riego, fertilización, datos satelitales NDVI y bibliografía técnica del INIA Chile.\n\n¿En qué cultivo o zona estás trabajando?');
+    agAdd('b', WELCOME[widgetLang] || WELCOME.en);
   }
 
   function agAdd(role, text, isStream) {
@@ -1782,6 +1814,9 @@ setLang(currentLang);
 
     busy=false; snd.disabled=false; inp.focus();
   };
+
+  // Init placeholder in current lang
+  window.agSetLang(widgetLang);
 })();
 </script>
 </body>
