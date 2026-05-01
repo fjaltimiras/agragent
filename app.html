@@ -516,15 +516,6 @@
   }
   #vinewatch-map { height: 100%; width: 100%; }
 
-  /* Hide Google Maps "Map data not yet available" overlay injected by GEE JS API */
-  #vinewatch-map .gm-style-nologging,
-  #vinewatch-map .gm-err-container,
-  #vinewatch-map .gm-style .gm-style-nologging,
-  .gm-style-nologging { display: none !important; }
-
-  /* Also hide any GEE-injected attribution that overlaps the map */
-  #vinewatch-map .gm-style-cc { display: none !important; }
-
   /* GEE Connect Panel */
   .gee-panel {
     background: linear-gradient(135deg, #0d2b1d 0%, #0f1f2e 100%);
@@ -3704,13 +3695,13 @@ function setBaseMap(type, btn) {
   if (labelsLayer) { vineMap.removeLayer(labelsLayer); labelsLayer = null; }
 
   if (type === 'satellite') {
-    osmLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri', maxNativeZoom: 19, maxZoom: 22 }).addTo(vineMap);
-    labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', { attribution: '© CARTO', maxNativeZoom: 19, maxZoom: 22, pane: 'overlayPane' }).addTo(vineMap);
+    osmLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri', maxZoom: 19 }).addTo(vineMap);
+    labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', { attribution: '© CARTO', maxZoom: 19, pane: 'overlayPane' }).addTo(vineMap);
   } else if (type === 'streets') {
-    osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxNativeZoom: 19, maxZoom: 22 }).addTo(vineMap);
+    osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 19 }).addTo(vineMap);
   } else if (type === 'hybrid') {
-    osmLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri', maxNativeZoom: 19, maxZoom: 22 }).addTo(vineMap);
-    labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', { attribution: '© CARTO', maxNativeZoom: 19, maxZoom: 22, pane: 'overlayPane' }).addTo(vineMap);
+    osmLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri', maxZoom: 19 }).addTo(vineMap);
+    labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', { attribution: '© CARTO', maxZoom: 19, pane: 'overlayPane' }).addTo(vineMap);
   }
   // Keep GEE and labels on top
   if (geeLayer) geeLayer.bringToFront();
@@ -5176,10 +5167,10 @@ function initMap() {
 
   // Satellite base + labels by default
   osmLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    attribution: '© Esri', maxNativeZoom: 19, maxZoom: 22
+    attribution: '© Esri', maxZoom: 19
   }).addTo(vineMap);
   labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
-    attribution: '© CARTO', maxNativeZoom: 19, maxZoom: 22, pane: 'overlayPane'
+    attribution: '© CARTO', maxZoom: 19, pane: 'overlayPane'
   }).addTo(vineMap);
 
   // Init draw/edit tools
@@ -5383,11 +5374,11 @@ async function autoConnectGEE() {
     if (osmLayer) vineMap.removeLayer(osmLayer);
     satelliteLayer = L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      { attribution: '© Esri', maxNativeZoom: 19, maxZoom: 22 }
+      { attribution: '© Esri', maxZoom: 19 }
     ).addTo(vineMap);
     labelsLayer = L.tileLayer(
       'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',
-      { attribution: '© CARTO', maxNativeZoom: 19, maxZoom: 22, pane: 'overlayPane' }
+      { attribution: '© CARTO', maxZoom: 19, pane: 'overlayPane' }
     ).addTo(vineMap);
     if (vineMap.getZoom() > 16) vineMap.setZoom(16);
 
@@ -6323,26 +6314,13 @@ function stopComparison(resetLayer = true) {
 
 // ─── SHARED HELPERS ──────────────────────────────────
 function buildClipGeom() {
-  if (kmlRawCoords.length === 0) {
-    return ee.Geometry.Rectangle([-73.290, -38.338, -73.285, -38.334]);
+  if (kmlRawCoords.length > 0) {
+    // ee.Geometry.Polygon expects [[[lng,lat],...]] — wrap each ring in an array
+    return kmlRawCoords.length === 1
+      ? ee.Geometry.Polygon([kmlRawCoords[0]])
+      : ee.Geometry.MultiPolygon(kmlRawCoords.map(r => [r]));
   }
-  if (kmlRawCoords.length === 1) {
-    return ee.Geometry.Polygon([kmlRawCoords[0]]);
-  }
-  // Multiple polygons → merge into a single bounding polygon for simplicity
-  // Collect all coordinates and build one polygon from the convex hull-like bbox
-  var allRings = kmlRawCoords;
-  var minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
-  allRings.forEach(function(ring) {
-    ring.forEach(function(pt) {
-      if (pt[0] < minLng) minLng = pt[0];
-      if (pt[0] > maxLng) maxLng = pt[0];
-      if (pt[1] < minLat) minLat = pt[1];
-      if (pt[1] > maxLat) maxLat = pt[1];
-    });
-  });
-  // Return first polygon for clipping, use bbox for filtering
-  return ee.Geometry.MultiPolygon(allRings.map(function(r){ return [r]; }));
+  return ee.Geometry.Rectangle([-73.290, -38.338, -73.285, -38.334]);
 }
 
 function buildImageAndVis(s2base, idx) {
