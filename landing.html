@@ -83,7 +83,7 @@ body {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
   list-style: none;
 }
 
@@ -793,25 +793,49 @@ section {
 
 /* ───── RESPONSIVE ───── */
 @media (max-width: 768px) {
-  .navbar { padding: 0 20px; }
+  .navbar { padding: 0 18px; height: 62px; }
 
   .nav-links {
     display: none;
     position: absolute;
-    top: 72px;
+    top: 62px;
     left: 0;
     right: 0;
-    background: rgba(10, 15, 20, 0.95);
-    backdrop-filter: blur(20px);
+    background: rgba(10, 15, 20, 0.98);
+    backdrop-filter: blur(24px);
     flex-direction: column;
-    padding: 20px;
-    gap: 16px;
+    padding: 16px 18px 20px;
+    gap: 4px;
     border-bottom: 1px solid var(--border);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
   }
 
   .nav-links.open { display: flex; }
 
-  .mobile-toggle { display: block; }
+  .nav-links li { width: 100%; }
+
+  .nav-links a {
+    display: block;
+    padding: 10px 0;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(30,58,46,0.4);
+  }
+
+  .nav-links li:last-child a {
+    border-bottom: none;
+    margin-top: 8px;
+    text-align: center;
+    padding: 11px;
+    border-radius: 8px;
+  }
+
+  .mobile-toggle {
+    display: block;
+    padding: 6px;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .mobile-toggle:hover { background: rgba(82,183,136,0.1); }
 
   .hero-stats {
     gap: 24px;
@@ -853,10 +877,7 @@ section {
   <ul class="nav-links" id="navLinks">
     <li><a href="#features" data-i18n="nav_features">Features</a></li>
     <li><a href="#how-it-works" data-i18n="nav_how">How it works</a></li>
-    <li><a href="#tech" data-i18n="nav_tech">Tech Stack</a></li>
-    <li><a href="#data" data-i18n="nav_data">Data Sources</a></li>
     <li><a href="#publications" data-i18n="nav_publications">Publications</a></li>
-    <li><a href="Altimiras2026.pdf" target="_blank" data-i18n="nav_whitepaper">White Paper</a></li>
     <li><a href="https://app.agragent.com" class="nav-cta" data-i18n="nav_launch">Launch App</a></li>
   </ul>
   <div style="display:flex;align-items:center;gap:12px;">
