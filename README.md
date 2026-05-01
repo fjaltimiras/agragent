@@ -12,6 +12,7 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 
 - [Features](#features)
 - [WhatsApp Demo](#whatsapp-demo)
+- [INIA Knowledge Base — Two-Layer RAG](#inia-knowledge-base--two-layer-rag)
 - [AI Assistant](#ai-assistant)
 - [How It Works](#how-it-works)
 - [Architecture](#architecture)
@@ -261,12 +262,93 @@ The demo connects to the same FastAPI backend as the main app. Required environm
 ANTHROPIC_API_KEY=sk-ant-...
 SUPABASE_URL=https://xxxx.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=eyJ...
+OPENAI_API_KEY=sk-...           # (opcional) — solo para RAG semántico INIA
 ```
 
 Pull from Vercel automatically:
 ```bash
 cd agragent-api
 npx vercel env pull ../agragent-app/backend/.env --environment=production
+```
+
+---
+
+## INIA Knowledge Base — Two-Layer RAG
+
+AgrAgent integrates with the **Biblioteca Digital INIA Chile** (DSpace 7, 19,000+ open-access agricultural documents) via **two complementary tools**:
+
+### Layer 1 — `search_inia_biblioteca` (live, metadata only)
+
+Real-time keyword search against the INIA REST API. Returns titles, authors, year, abstract, and link.
+
+- **Cost:** $0
+- **Storage:** 0 MB
+- **Setup:** none — works out of the box
+- **Use when:** user asks for bibliographic references, documents on a topic, or general literature panorama
+- Implementation: `services/inia.py`
+
+### Layer 2 — `search_inia_rag` (semantic, full-text)
+
+Semantic vector search over indexed text chunks of INIA documents. Returns actual textual passages ranked by cosine similarity to the query embedding.
+
+- **Cost:** ~$0.50 to index 2,500 documents (one-time) + ~$0.0001 per query
+- **Storage:** ~600 MB in Supabase pgvector
+- **Setup:** see below
+- **Use when:** user wants specific passages, doses, recommendations, or "what does INIA say about X?"
+- Implementation: `services/inia_rag.py`, `scripts/index_inia.py`, `scripts/inia_rag_schema.sql`
+
+#### Setup Layer 2 (RAG)
+
+```bash
+# 1. Apply pgvector schema in Supabase SQL Editor:
+#    paste content of backend/scripts/inia_rag_schema.sql
+
+# 2. Add OPENAI_API_KEY to backend/.env
+
+# 3. Install indexer dependencies (if not already)
+cd backend
+pip install openai supabase python-dotenv
+
+# 4. Run the indexer
+#    Test small (50 docs viticultura, ~5 min, ~$0.05)
+python3 scripts/index_inia.py --topic "vid OR uva OR vino" --limit 50
+
+#    Full viticulture corpus (~2500 docs, ~45 min, ~$0.50)
+python3 scripts/index_inia.py --topic "vid OR uva OR vino" --limit 2500
+
+#    Other topics (each independent)
+python3 scripts/index_inia.py --topic riego --limit 1000
+python3 scripts/index_inia.py --topic "fertilizacion OR nutricion" --limit 1000
+```
+
+The indexer is **resumable** — it skips documents already indexed by UUID. Pre-extracted text bundles are downloaded directly from DSpace (no PDF parsing or OCR needed).
+
+#### Architecture diagram
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    AgrAgent (Claude loop)                   │
+│                                                             │
+│  ┌─────────────────────┐    ┌───────────────────────────┐ │
+│  │ search_inia_biblioteca   │ search_inia_rag            │ │
+│  │  (live metadata)    │    │  (semantic RAG)           │ │
+│  └──────────┬──────────┘    └─────────────┬─────────────┘ │
+└─────────────┼──────────────────────────────┼──────────────┘
+              │                              │
+              ▼                              ▼
+   ┌──────────────────────┐    ┌──────────────────────────┐
+   │ INIA REST API        │    │ OpenAI embeddings        │
+   │ (DSpace 7)           │    │ text-embedding-3-small   │
+   │ biblioteca.inia.cl   │    │ (1536 dim)               │
+   └──────────────────────┘    └────────────┬─────────────┘
+                                            │
+                                            ▼
+                               ┌──────────────────────────┐
+                               │ Supabase pgvector        │
+                               │ • inia_documents         │
+                               │ • inia_chunks            │
+                               │ • match_inia_chunks()    │
+                               └──────────────────────────┘
 ```
 
 ---
