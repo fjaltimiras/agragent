@@ -7291,9 +7291,9 @@ function randomLayerColor() { return LAYER_COLORS[colorIdx++ % LAYER_COLORS.leng
 // ═══════════════════════════════════════
 // AI CHAT — AgrAgent Integration
 // ═══════════════════════════════════════
-// API endpoints: Railway (8 tools + SSE streaming) with Vercel fallback
-const CHAT_API        = 'https://api.agragent.com';                           // Vercel – always up, fallback
-const CHAT_API_STREAM = 'https://agragent-api-production.up.railway.app';     // Railway – 8 tools + streaming
+// API endpoints: Vercel (streaming + 6 tools) primary, Railway fallback if available
+const CHAT_API        = 'https://api.agragent.com';   // Vercel – always up, JSON fallback
+const CHAT_API_STREAM = 'https://api.agragent.com';   // Vercel – /api/chat/stream (SSE + 6 tools)
 
 let chatUserId = localStorage.getItem('chat_user_id');
 if (!chatUserId) { chatUserId = crypto.randomUUID(); localStorage.setItem('chat_user_id', chatUserId); }
