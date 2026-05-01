@@ -12,6 +12,7 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 
 - [Features](#features)
 - [Chat Widget (agragent.com)](#chat-widget-agragentcom)
+- [Chat Integration (app.agragent.com)](#chat-integration-appagragentcom)
 - [WhatsApp Demo](#whatsapp-demo)
 - [WhatsApp Production Channel](#whatsapp-production-channel-meta-cloud-api)
 - [INIA Knowledge Base — Two-Layer RAG](#inia-knowledge-base--two-layer-rag)
@@ -215,6 +216,21 @@ A self-contained floating chat widget injected into `landing.html`, connecting v
 | **Dependencies** | Zero — pure vanilla JS/CSS, self-contained in landing.html |
 
 The widget shares the same conversation persistence (Supabase) using `user_id = "visitor_<random>"` per session.
+
+---
+
+## Chat Integration (app.agragent.com)
+
+The existing "Consultar AgrAgent" section in `app.html` has been upgraded to use the new FastAPI agent backend with SSE streaming and all 8 tools.
+
+| Aspect | Detail |
+|---|---|
+| **Primary API** | `agragent-api-production.up.railway.app` (Railway FastAPI — 8 tools, SSE streaming) |
+| **Fallback API** | `api.agragent.com` (Vercel serverless — always available, non-streaming) |
+| **Streaming** | 5-second timeout to connect to Railway, then falls back to Vercel JSON if unavailable |
+| **Tools shown** | Climate, NDVI, Soil, Foliar, Irrigation, Fertilization, INIA library, INIA RAG (badge per tool) |
+| **Views** | Floating widget + full-page section update simultaneously (dual-view architecture) |
+| **Context** | `chatCollectAppContext()` prepends field polygon, climate KPIs, and active satellite index to every message |
 
 ---
 
