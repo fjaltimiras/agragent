@@ -6411,6 +6411,7 @@ function setGEEOpacity(val) {
 
 function setGEEStatus(type, msg) {
   const el = document.getElementById('gee-status');
+  if (!el) return;  // panel was removed from UI — silent no-op
   el.className = 'gee-status ' + type;
   el.textContent = msg;
 }
