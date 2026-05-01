@@ -262,7 +262,7 @@ The demo connects to the same FastAPI backend as the main app. Required environm
 ANTHROPIC_API_KEY=sk-ant-...
 SUPABASE_URL=https://xxxx.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=eyJ...
-OPENAI_API_KEY=sk-...           # (opcional) — solo para RAG semántico INIA
+VOYAGE_API_KEY=pa-...           # (opcional) — solo para RAG semántico INIA, free tier sin tarjeta
 ```
 
 Pull from Vercel automatically:
@@ -291,7 +291,8 @@ Real-time keyword search against the INIA REST API. Returns titles, authors, yea
 
 Semantic vector search over indexed text chunks of INIA documents. Returns actual textual passages ranked by cosine similarity to the query embedding.
 
-- **Cost:** ~$0.50 to index 2,500 documents (one-time) + ~$0.0001 per query
+- **Embeddings:** [Voyage AI](https://www.voyageai.com/) `voyage-multilingual-2` (1024 dim, optimized for Spanish), recommended by Anthropic
+- **Cost:** Free — Voyage offers **200M tokens/month free** (no credit card required). 19,000 INIA docs ≈ 100M tokens once, well within limits.
 - **Storage:** ~600 MB in Supabase pgvector
 - **Setup:** see below
 - **Use when:** user wants specific passages, doses, recommendations, or "what does INIA say about X?"
@@ -303,17 +304,19 @@ Semantic vector search over indexed text chunks of INIA documents. Returns actua
 # 1. Apply pgvector schema in Supabase SQL Editor:
 #    paste content of backend/scripts/inia_rag_schema.sql
 
-# 2. Add OPENAI_API_KEY to backend/.env
+# 2. Sign up free at https://dash.voyageai.com/ (no credit card)
+#    Generate API key, then add to backend/.env:
+echo "VOYAGE_API_KEY=pa-..." >> backend/.env
 
 # 3. Install indexer dependencies (if not already)
 cd backend
-pip install openai supabase python-dotenv
+pip install voyageai supabase python-dotenv
 
 # 4. Run the indexer
-#    Test small (50 docs viticultura, ~5 min, ~$0.05)
+#    Test small (50 docs viticultura, ~5 min)
 python3 scripts/index_inia.py --topic "vid OR uva OR vino" --limit 50
 
-#    Full viticulture corpus (~2500 docs, ~45 min, ~$0.50)
+#    Full viticulture corpus (~2500 docs, ~45 min)
 python3 scripts/index_inia.py --topic "vid OR uva OR vino" --limit 2500
 
 #    Other topics (each independent)
@@ -337,9 +340,9 @@ The indexer is **resumable** — it skips documents already indexed by UUID. Pre
               │                              │
               ▼                              ▼
    ┌──────────────────────┐    ┌──────────────────────────┐
-   │ INIA REST API        │    │ OpenAI embeddings        │
-   │ (DSpace 7)           │    │ text-embedding-3-small   │
-   │ biblioteca.inia.cl   │    │ (1536 dim)               │
+   │ INIA REST API        │    │ Voyage AI embeddings     │
+   │ (DSpace 7)           │    │ voyage-multilingual-2    │
+   │ biblioteca.inia.cl   │    │ (1024 dim, free 200M/mo) │
    └──────────────────────┘    └────────────┬─────────────┘
                                             │
                                             ▼
