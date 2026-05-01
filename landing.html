@@ -583,6 +583,18 @@ section {
   opacity: 0.85;
 }
 
+/* emoji versions */
+.src-emoji {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.src-emoji-sm {
+  font-size: 1.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
 .data-badge {
   display: inline-block;
   padding: 3px 10px;
@@ -1208,16 +1220,16 @@ section {
         <span>Open-Meteo</span>
       </a>
       <a href="https://biblioteca.inia.cl" target="_blank" rel="noopener" class="source-logo-item" title="Biblioteca INIA Chile">
-        <img src="https://www.google.com/s2/favicons?domain=inia.cl&sz=64" alt="INIA Chile" loading="lazy">
+        <img src="https://www.google.com/s2/favicons?domain=smartfieldinia.cl&sz=64" alt="INIA Chile" loading="lazy">
         <span>INIA Chile</span>
       </a>
       <a href="https://github.com/thsant/wgisd" target="_blank" rel="noopener" class="source-logo-item" title="WGISD - Embrapa">
-        <img src="https://www.google.com/s2/favicons?domain=embrapa.br&sz=64" alt="Embrapa" loading="lazy">
+        <span class="src-emoji">🍇</span>
         <span>Embrapa</span>
       </a>
-      <a href="https://www.pucv.cl" target="_blank" rel="noopener" class="source-logo-item" title="PUCV">
-        <img src="https://www.google.com/s2/favicons?domain=pucv.cl&sz=64" alt="PUCV" loading="lazy">
-        <span>PUCV</span>
+      <a href="https://www.ebi.ac.uk" target="_blank" rel="noopener" class="source-logo-item" title="EBI - European Bioinformatics Institute">
+        <img src="https://www.google.com/s2/favicons?domain=ebi.ac.uk&sz=64" alt="EBI" loading="lazy">
+        <span>EBI</span>
       </a>
     </div>
 
@@ -1248,21 +1260,21 @@ section {
             <td class="data-volume">7 variables · hasta 80 años históricos</td>
           </tr>
           <tr>
-            <td><div class="src-cell"><img src="https://www.google.com/s2/favicons?domain=embrapa.br&sz=32" class="src-icon" alt="" loading="lazy"><strong>WGISD (Embrapa)</strong></div></td>
+            <td><div class="src-cell"><span class="src-emoji-sm">🍇</span><strong>WGISD (Embrapa)</strong></div></td>
             <td data-i18n="ds3_type">Crop images (300+)</td>
             <td><span class="data-badge" data-i18n="badge_public">Public dataset</span></td>
             <td data-i18n="ds3_use">Object detection annotations</td>
             <td class="data-volume">300+ imágenes · 5 variedades de uva</td>
           </tr>
           <tr>
-            <td><div class="src-cell"><img src="https://www.google.com/s2/favicons?domain=inia.cl&sz=32" class="src-icon" alt="" loading="lazy"><strong>Biblioteca Digital INIA Chile</strong></div></td>
+            <td><div class="src-cell"><img src="https://www.google.com/s2/favicons?domain=smartfieldinia.cl&sz=32" class="src-icon" alt="" loading="lazy"><strong>Biblioteca Digital INIA Chile</strong></div></td>
             <td data-i18n="ds5_type">Agricultural publications (19K+)</td>
             <td><span class="data-badge" data-i18n="badge_openaccess">Open access</span></td>
             <td data-i18n="ds5_use">Agronomic bibliography, RAG semantic search</td>
             <td class="data-volume">19.146 documentos · boletines · revistas</td>
           </tr>
           <tr>
-            <td><div class="src-cell"><img src="https://www.google.com/s2/favicons?domain=pucv.cl&sz=32" class="src-icon" alt="" loading="lazy"><strong>RNA-seq (Altimiras et al. 2024)</strong></div></td>
+            <td><div class="src-cell"><img src="https://www.google.com/s2/favicons?domain=ebi.ac.uk&sz=32" class="src-icon" alt="" loading="lazy"><strong>RNA-seq (Altimiras et al. 2024)</strong></div></td>
             <td data-i18n="ds4_type">Genomic DEG data</td>
             <td><span class="data-badge" data-i18n="badge_published">Published</span></td>
             <td data-i18n="ds4_use">3,603 DEGs across 8 phenological stages</td>
