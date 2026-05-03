@@ -1,10 +1,10 @@
-# agragent — Computational Crop Monitoring Platform for Viticulture
+# agragent — Precision Agriculture Platform for Any Crop
 
-**agragent** is an open-source precision agriculture platform designed for real-time monitoring of grapevine production systems. It integrates satellite remote sensing, climate analytics, genomic data visualization, computer vision, and an **AI-powered agronomic assistant** into a single web application.
+**agragent** is an open-source precision agriculture platform for any crop type and any location. It integrates satellite remote sensing, climate analytics, genomic data visualization, computer vision, and an **AI-powered agronomic assistant** into a single web application.
 
-The AI Assistant (AgrAgent) is a conversational agent powered by Claude that provides context-aware agronomic recommendations based on the data the user is currently viewing — satellite imagery, climate KPIs, field polygons, and yield predictions.
+The AI agent (powered by Claude) has access to 11 autonomous tools and six scientific data sources: Sentinel-2 / Google Earth Engine, Open-Meteo (80 years of climate), OpenAlex (250M+ research papers), AGRIS FAO (16.5M+ agricultural records), INIA Chile library (19K+ publications with semantic RAG), and FAOSTAT global crop statistics.
 
-Developed as part of a PhD research project in Computer Science at the Pontificia Universidad Católica de Valparaíso (PUCV), Chile, focusing on computational crop monitoring using bioinformatics and machine learning.
+Developed as part of a PhD research project in Computer Science at the Pontificia Universidad Católica de Valparaíso (PUCV), Chile. The genomic module uses a *Vitis vinifera* RNA-seq dataset (Altimiras et al., 2024) as the research component; all other features are crop-agnostic.
 
 ---
 
@@ -225,10 +225,10 @@ The existing "Consultar AgrAgent" section in `app.html` has been upgraded to use
 
 | Aspect | Detail |
 |---|---|
-| **Primary API** | `agragent-api-production.up.railway.app` (Railway FastAPI — 8 tools, SSE streaming) |
-| **Fallback API** | `api.agragent.com` (Vercel serverless — always available, non-streaming) |
+| **Primary API** | `agragent-api-production.up.railway.app` (Railway FastAPI — 11 tools, SSE streaming) |
+| **Fallback API** | `api.agragent.com` (Vercel serverless — 8 tools, always available) |
 | **Streaming** | 5-second timeout to connect to Railway, then falls back to Vercel JSON if unavailable |
-| **Tools shown** | Climate, NDVI, Soil, Foliar, Irrigation, Fertilization, INIA library, INIA RAG (badge per tool) |
+| **Tools shown** | Climate, NDVI, Soil, Foliar, Irrigation, Fertilization, INIA library, INIA RAG, OpenAlex, AGRIS FAO, FAOSTAT (badge per tool) |
 | **Views** | Floating widget + full-page section update simultaneously (dual-view architecture) |
 | **Context** | `chatCollectAppContext()` prepends field polygon, climate KPIs, and active satellite index to every message |
 
@@ -453,16 +453,23 @@ Every message automatically includes the current application state:
 
 ### Agent Tools
 
-The backend agent has 6 tools it can invoke autonomously:
+The FastAPI backend agent (Railway) has 11 tools it can invoke autonomously:
 
 | Tool | Description |
 |---|---|
-| `get_climate_data` | Fetch real-time weather/climate data by coordinates |
-| `get_ndvi_data` | Retrieve satellite NDVI data from Sentinel-2 |
-| `analyze_soil_report` | Parse and interpret uploaded soil analysis |
-| `analyze_foliar_report` | Parse and interpret leaf tissue analysis |
+| `get_climate_data` | Real-time weather and climate data via Open-Meteo |
+| `get_ndvi_data` | Satellite NDVI and vegetation indices via Sentinel-2 / GEE |
+| `analyze_soil_report` | Parse and interpret uploaded soil analysis (PDF/Excel) |
+| `analyze_foliar_report` | Parse and interpret leaf tissue analysis (PDF/Excel) |
 | `calculate_irrigation_plan` | ET₀ × Kc irrigation scheduling |
-| `calculate_fertilization_plan` | NPK requirements based on yield target |
+| `calculate_fertilization_plan` | NPK requirements based on yield target and soil analysis |
+| `search_inia_biblioteca` | Live keyword search in INIA Chile library (19K+ documents) |
+| `search_inia_rag` | Semantic RAG search over indexed INIA document chunks |
+| `search_openalex` | Scientific literature search via OpenAlex (250M+ papers, open access) |
+| `search_agris` | Agricultural records search via AGRIS FAO (16.5M+ records) |
+| `get_faostat_data` | Global crop production statistics via FAOSTAT (FAO) |
+
+The Vercel serverless fallback (`api.agragent.com`) runs 8 of these tools (excludes `get_ndvi_data`, `search_agris`, `get_faostat_data`).
 
 ### Conversation Management
 
@@ -536,11 +543,15 @@ agragent combines a **single-page frontend** (`index.html`) with an optional **F
 
 | Source | Type | Access | Usage |
 |---|---|---|---|
-| [Sentinel-2 SR Harmonized](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED) | Satellite imagery (10m) | Google Earth Engine | Vegetation indices, RGB composites |
-| [Open-Meteo Archive API](https://open-meteo.com/en/docs/historical-weather-api) | Historical weather | Free, no API key | Temperature, precipitation, humidity, solar radiation, ET₀, hourly temps |
+| [Sentinel-2 SR Harmonized](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED) | Satellite imagery (10m) | Google Earth Engine | 13 vegetation indices, RGB composites, temporal comparison |
+| [Open-Meteo Archive API](https://open-meteo.com/en/docs/historical-weather-api) | Historical weather (80 yrs) | Free, no API key | Temperature, precipitation, GDD, chill hours, ET₀, frost, heat waves |
+| [OpenAlex](https://openalex.org/) | Scientific literature (250M+ papers) | Free, no API key | Open-access agronomic and scientific research |
+| [AGRIS](https://agris.fao.org/) (FAO) | Agricultural records (16.5M+) | Free, no API key | Bibliographic search across global agricultural literature |
+| [INIA Chile Library](https://biblioteca.inia.cl/) | Agricultural publications (19K+) | Free, DSpace REST API | Live search + semantic RAG (Voyage AI embeddings, pgvector) |
+| [FAOSTAT](https://www.fao.org/faostat/) (FAO) | Global crop statistics | Free, no API key | National and global yield benchmarks for any crop |
 | [Nominatim](https://nominatim.openstreetmap.org/) | Reverse geocoding | Free, no API key | Location name from polygon centroid |
-| [WGISD](https://github.com/thsant/wgisd) (Embrapa) | Grape cluster images | Public dataset | Object detection annotations |
-| RNA-seq data (Altimiras et al.) | DEG analysis | Published supplementary | Genomic section: 3,603 DEGs across 8 E-L stages |
+| [WGISD](https://github.com/thsant/wgisd) (Embrapa) | Grape cluster images (300+) | Public dataset | Object detection annotations for YOLOv11 |
+| RNA-seq data (Altimiras et al., 2024) | DEG analysis | Published supplementary | Genomic module: 3,603 DEGs across 8 E-L stages of *Vitis vinifera* |
 
 ---
 
@@ -679,10 +690,12 @@ Climate data is fetched from the [Open-Meteo Archive API](https://open-meteo.com
 
 ### Season Definition
 
-The agricultural season follows the Southern Hemisphere viticulture calendar:
+The agricultural season follows the Southern Hemisphere growing calendar:
 - **Full season**: April (year N) through March (year N+1)
 - **Growing season** (GDD accumulation): September through March
 - **Dormancy** (chill hours): April through August
+
+Applies to any crop grown in the Southern Hemisphere. Northern Hemisphere support is on the roadmap.
 
 ---
 
@@ -873,7 +886,7 @@ If you use agragent in your research, please cite:
 ```bibtex
 @software{agragent2026,
   author = {Altimiras, Francisco},
-  title = {agragent: Computational Crop Monitoring Platform for Viticulture},
+  title = {agragent: Precision Agriculture Platform for Any Crop},
   year = {2026},
   url = {https://github.com/fjaltimiras/agragent},
   institution = {Pontificia Universidad Cat\'{o}lica de Valpara\'{i}so}

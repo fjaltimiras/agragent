@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>agragent — Crop Monitoring &amp; Yield Prediction</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.16.0/dist/leaflet-geoman.css"/>
@@ -86,25 +86,85 @@
     color: var(--accent);
     border-left-color: var(--accent);
   }
-  .nav-icon { font-size: 1.05rem; width: 20px; text-align: center; }
+  .nav-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px;
+    flex-shrink: 0;
+    color: currentColor;
+    transition: color 0.2s;
+  }
+  .nav-icon svg { width: 18px; height: 18px; display: block; }
+  .nav-icon img { width: 18px; height: 18px; display: block; border-radius: 50%; object-fit: cover; }
+  .nav-item.active .nav-icon { color: var(--accent); }
 
   .sidebar-footer {
-    padding: 16px 20px;
+    padding: 12px 14px;
     border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
     gap: 10px;
+    background: rgba(0,0,0,0.18);
   }
   .avatar {
-    width: 34px; height: 34px;
-    background: var(--accent-dim);
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--accent-dim) 0%, #1e3a2e 100%);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 0.85rem; font-weight: 700; color: var(--accent);
+    font-size: 0.82rem; font-weight: 700; color: var(--accent-light);
+    flex-shrink: 0;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(82,183,136,0.25);
+    transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  }
+  .avatar:hover {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 3px rgba(82,183,136,0.18);
+    border-color: rgba(82,183,136,0.5);
+  }
+  .avatar > .avatar-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .avatar > .avatar-default { width: 18px; height: 18px; opacity: 0.85; }
+  .avatar > .avatar-camera {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    opacity: 0; transition: opacity 0.18s;
+    pointer-events: none;
+  }
+  .avatar:hover > .avatar-camera { opacity: 1; }
+  .avatar > .avatar-camera svg { display: block; }
+  .user-info { flex: 1; min-width: 0; }
+  .user-info .name {
+    font-size: 0.85rem; font-weight: 600; color: var(--text-primary);
+    cursor: pointer; transition: color 0.18s;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .user-info .name:hover { color: var(--accent); }
+  .user-info .role {
+    font-size: 0.68rem; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .sidebar-logout {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    cursor: pointer; padding: 0;
+    transition: background 0.18s, border-color 0.18s, color 0.18s;
     flex-shrink: 0;
   }
-  .user-info .name { font-size: 0.83rem; font-weight: 600; }
-  .user-info .role { font-size: 0.75rem; color: var(--text-secondary); }
+  .sidebar-logout:hover {
+    background: rgba(239, 68, 68, 0.10);
+    border-color: rgba(239, 68, 68, 0.40);
+    color: var(--red);
+  }
+  .sidebar-logout svg { display: block; }
 
   /* ───── MAIN ───── */
   #main {
@@ -1759,20 +1819,158 @@
     #map-container { height: 45vh; min-height: 250px; }
   }
 
+  /* Sidebar backdrop scrim — appears only when sidebar is open on mobile */
+  #sidebar-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 998;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+  #sidebar-backdrop.show { opacity: 1; pointer-events: auto; }
+  @media (min-width: 641px) {
+    #sidebar-backdrop { display: none !important; }
+  }
+
+  /* Mobile sidebar should be above the backdrop and have a solid bg */
+  @media (max-width: 640px) {
+    #sidebar { z-index: 999; box-shadow: 4px 0 24px rgba(0,0,0,0.35); }
+    /* Tighter sidebar footer for narrow viewports */
+    .sidebar-footer { padding: 10px 12px; gap: 8px; }
+    .avatar { width: 34px; height: 34px; }
+    .sidebar-logout { width: 30px; height: 30px; }
+
+    /* Prevent iOS auto-zoom on focused inputs (font ≥ 16px) */
+    input[type="text"], input[type="email"], input[type="password"],
+    input[type="number"], input[type="search"], input[type="date"],
+    input[type="time"], textarea, select { font-size: 16px !important; }
+
+    /* Touch targets — buttons should be at least 40px tall */
+    .nav-item { padding: 14px 18px; font-size: 0.95rem; }
+
+    /* Topbar density */
+    #topbar > div:first-child { gap: 8px; }
+    .topbar-right { gap: 6px; }
+    #lang-select { font-size: 0.7rem !important; padding: 3px 6px !important; }
+    .hamburger { padding: 8px; }
+    .hamburger .ic { width: 22px; height: 22px; }
+
+    /* Login screen — full width with safer padding */
+    #login-screen > div { padding: 28px 22px !important; width: calc(100vw - 32px) !important; }
+
+    /* Modal poly editor centered, full-width usable */
+    .poly-editor-overlay { padding: 0 !important; }
+  }
+
   /* ───── SCROLLBAR ───── */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--accent-dim); }
+  /* ───── ICON SYSTEM ───── */
+  .ic { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; vertical-align: middle; color: currentColor; }
+  .ic svg { width: 100%; height: 100%; display: block; }
+  .ic-sm { width: 14px; height: 14px; }
+  .ic-md { width: 16px; height: 16px; }
+  .ic-lg { width: 20px; height: 20px; }
+  .ic-xl { width: 28px; height: 28px; }
+  .ic-2x { width: 36px; height: 36px; }
+  /* Color modifiers */
+  .ic-accent { color: var(--accent); }
+  .ic-warn   { color: var(--yellow); }
+  .ic-danger { color: var(--red); }
+  .ic-info   { color: #60a5fa; }
+  /* When embedded in a button/label with text, give a small gap */
+  button > .ic + span, label > .ic + span, .nav-icon + span,
+  .btn > .ic + span, .tb-btn > .ic + span,
+  span > .ic + span { margin-left: 6px; }
 </style>
 </head>
 <body>
+
+<!-- ═══════════════ ICON SPRITE ═══════════════ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 7-8 12-8 12s-8-5-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h4l2 3h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="i-folder-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14 4 20a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2l1.5-5a2 2 0 0 0-2-2.6H6.5A2 2 0 0 0 6 14z"/><path d="M2 9V5a2 2 0 0 1 2-2h4l2 3h6a2 2 0 0 1 2 2v3"/></symbol>
+    <symbol id="i-folders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-5l-2-2z"/><path d="M2 8v9a2 2 0 0 0 2 2h2"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/><path d="m15 5 4 4"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+    <symbol id="i-satellite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 10 6-6 4 4-6 6z"/><path d="m11 5 4 4 5-5-4-4z"/><path d="M5 12 2.5 14.5a1 1 0 0 0 0 1.4L8.1 21.5a1 1 0 0 0 1.4 0L12 19"/><path d="M14 13a4 4 0 0 1-4 4"/><path d="M18 13a8 8 0 0 1-8 8"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+    <symbol id="i-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a4 4 0 0 0 0-8 6 6 0 0 0-11.5 1.5A4 4 0 0 0 6 18z"/></symbol>
+    <symbol id="i-cloud-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M5.22 5.22l1.42 1.42"/><path d="M2 12h2"/><path d="M17.36 6.64l1.42-1.42"/><circle cx="12" cy="11" r="3.5"/><path d="M16 18a4 4 0 1 0-7.95-.6"/><path d="M5 22h14"/></symbol>
+    <symbol id="i-thermometer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4 4 0 1 0 5 0z"/></symbol>
+    <symbol id="i-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/><path d="m20 16-4-4 4-4"/><path d="m4 8 4 4-4 4"/><path d="m16 4-4 4-4-4"/><path d="m8 20 4-4 4 4"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 17c1.7 0 3-1.3 3-3 0-1.4-1-2.7-2.5-3.5C9 9 7 6 7 4c-2 1-3 4-3 7a8 8 0 1 0 16 0c0-2-1-4-3-6 0 1-2 2-3 2-1.5 0-3-1-3-3-1 1-2 3-2 4z"/></symbol>
+    <symbol id="i-droplet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69 5.64 9.05a9 9 0 1 0 12.72 0z"/></symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 6.5-4.5 11-10 11"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></symbol>
+    <symbol id="i-sprout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6c-.3 1.7-.1 3 .9 4 1.2.9 2.6 1.3 4.5 1-.7-2.3-1.8-3.6-3-4.2-1-.5-1.9-.9-2.4-.8z"/></symbol>
+    <symbol id="i-flask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6L4 18a2 2 0 0 0 1.7 3h12.6A2 2 0 0 0 20 18L15 8V2"/><line x1="9" y1="2" x2="15" y2="2"/><line x1="7" y1="14" x2="17" y2="14"/></symbol>
+    <symbol id="i-grape" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 5V2l-5.89 5.89"/><circle cx="16.6" cy="15.89" r="3"/><circle cx="8.11" cy="7.4" r="3"/><circle cx="12.35" cy="11.65" r="3"/><circle cx="13.91" cy="5.85" r="3"/><circle cx="18.15" cy="10.09" r="3"/><circle cx="6.56" cy="13.2" r="3"/><circle cx="10.8" cy="17.44" r="3"/><circle cx="5" cy="19" r="3"/></symbol>
+    <symbol id="i-palette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 22a9.96 9.96 0 0 0 7.07-2.93A10 10 0 1 0 12 22 2 2 0 0 1 14 20a1.5 1.5 0 0 1 1.5-1.5h1.79A2.5 2.5 0 0 0 19.79 16 2.5 2.5 0 0 0 17.5 13.5h-9A2.5 2.5 0 0 1 6 11"/></symbol>
+    <symbol id="i-mountain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2v.3h6v-.3c0-.8.4-1.5 1-2A7 7 0 0 0 12 2z"/></symbol>
+    <symbol id="i-fullscreen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></symbol>
+    <symbol id="i-shrink" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9V5a2 2 0 0 0-2-2H5"/><path d="M3 9h2a2 2 0 0 0 2-2V5"/><path d="M15 9V5a2 2 0 0 1 2-2h2"/><path d="M21 9h-2a2 2 0 0 1-2-2V5"/><path d="M9 15v4a2 2 0 0 1-2 2H5"/><path d="M3 15h2a2 2 0 0 1 2 2v2"/><path d="M15 15v4a2 2 0 0 0 2 2h2"/><path d="M21 15h-2a2 2 0 0 0-2 2v2"/></symbol>
+    <symbol id="i-dna" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 15c6.667-6 13.333 0 20-6"/><path d="M2 9c6.667 6 13.333 0 20 6"/><path d="M9 22c1.8-2 2.5-4 2.8-6"/><path d="M15 2c-1.8 2-2.5 4-2.8 6"/><path d="M17 6h-3"/><path d="M14 13h-1.5"/><path d="M7 11h-1"/><path d="M9 18h-2"/></symbol>
+    <symbol id="i-microscope" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/></symbol>
+    <symbol id="i-pointer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 13.5V8a2 2 0 0 0-4 0v6"/><path d="M14 13.5l-4 0V11"/><path d="M5 13s.5-2 2-2 2 2 2 2v3a6 6 0 0 0 12 0v-7a2 2 0 0 0-4 0v3"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5L8 21"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></symbol>
+    <symbol id="i-ruler" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="i-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+    <symbol id="i-loader" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></symbol>
+    <symbol id="i-bar-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+    <symbol id="i-scissors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></symbol>
+    <symbol id="i-spray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h.01"/><path d="M7 5h.01"/><path d="M11 7h.01"/><path d="M3 7h.01"/><path d="M7 9h.01"/><path d="M3 11h.01"/><rect x="15" y="5" width="4" height="12"/><path d="M9 12h6"/><path d="M13 19a6 6 0 0 0 6-6"/></symbol>
+    <symbol id="i-tractor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h9l1 5"/><path d="M11 9 8 9"/><path d="M16 17H6"/><circle cx="6" cy="17" r="3"/><circle cx="17" cy="17" r="4"/><path d="M14 13a3 3 0 1 0-3-3"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+  </defs>
+</svg>
+
+<script>
+// Icon helper for use inside JS template literals
+function _ic(name, cls) {
+  const c = cls ? ' ' + cls : '';
+  return `<span class="ic ic-md${c}"><svg><use href="#i-${name}"/></svg></span>`;
+}
+</script>
 
 <!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
 <div id="login-screen" style="position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;">
   <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:40px 36px;width:360px;max-width:90vw;text-align:center;">
     <img src="agragent.png" alt="agragent logo" style="height:50px;margin-bottom:12px;">
-    <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:28px;" data-i18n="login_sub">Precision & Digital Agriculture</div>
+
     <div id="login-error" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:8px 12px;font-size:0.8rem;color:var(--red);margin-bottom:16px;"></div>
     <input type="text" id="login-user" placeholder="Username" data-i18n-placeholder="login_user" autocomplete="username"
       style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text-primary);font-size:0.9rem;outline:none;margin-bottom:10px;box-sizing:border-box;"
@@ -1843,11 +2041,31 @@ function updateUserUI(user, role) {
 
   const avatar = document.getElementById('user-avatar');
   if (avatar) {
+    // Remove any previous content state, but preserve the persistent .avatar-camera overlay
+    avatar.querySelectorAll('.avatar-default, .avatar-image, .avatar-initials').forEach(n => n.remove());
+    const camera = avatar.querySelector('.avatar-camera');
+    let visual;
     if (avatarUrl) {
-      avatar.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">`;
+      visual = document.createElement('img');
+      visual.className = 'avatar-image';
+      visual.src = avatarUrl;
+      visual.alt = '';
+    } else if (displayName) {
+      visual = document.createElement('span');
+      visual.className = 'avatar-initials';
+      visual.textContent = displayName.substring(0, 2).toUpperCase();
     } else {
-      avatar.textContent = displayName.substring(0, 2).toUpperCase();
+      visual = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      visual.setAttribute('class', 'avatar-default');
+      visual.setAttribute('viewBox', '0 0 24 24');
+      visual.setAttribute('fill', 'none');
+      visual.setAttribute('stroke', 'currentColor');
+      visual.setAttribute('stroke-width', '2');
+      visual.setAttribute('stroke-linecap', 'round');
+      visual.setAttribute('stroke-linejoin', 'round');
+      visual.innerHTML = '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>';
     }
+    if (camera) avatar.insertBefore(visual, camera); else avatar.appendChild(visual);
   }
   const nameEl = document.getElementById('sidebar-username');
   if (nameEl) nameEl.textContent = displayName;
@@ -1895,20 +2113,29 @@ function editDisplayName() {
   }
 }
 
-// Auto-login if session exists
+// Auto-login if session exists — deferred to DOM ready so sidebar avatar/name elements exist
 (function() {
-  const session = sessionStorage.getItem('agragent-session');
-  if (session) {
-    try {
-      const s = JSON.parse(session);
-      if (Date.now() - s.ts < 86400000) {
-        document.getElementById('login-screen').style.display = 'none';
-        updateUserUI(s.user, s.role);
-        return;
-      }
-    } catch(e) {}
+  function init() {
+    const session = sessionStorage.getItem('agragent-session');
+    if (session) {
+      try {
+        const s = JSON.parse(session);
+        if (Date.now() - s.ts < 86400000) {
+          const ls = document.getElementById('login-screen');
+          if (ls) ls.style.display = 'none';
+          updateUserUI(s.user, s.role);
+          return;
+        }
+      } catch(e) {}
+    }
+    const lu = document.getElementById('login-user');
+    if (lu) lu.focus();
   }
-  document.getElementById('login-user').focus();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
 </script>
 
@@ -1917,41 +2144,57 @@ function editDisplayName() {
   <div class="sidebar-logo"><img src="agragent.png" alt="agragent logo" style="height:36px;"></div>
   <div class="sidebar-nav">
     <div class="nav-item active" data-section="dashboard">
-      <span class="nav-icon">📊</span> <span data-i18n="nav_dashboard">My Field</span>
+      <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></span>
+      <span data-i18n="nav_dashboard">My Field</span>
     </div>
     <div class="nav-item" data-section="maps">
-      <span class="nav-icon">🗺️</span> <span data-i18n="nav_maps">Field Map</span>
+      <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></span>
+      <span data-i18n="nav_maps">Field Map</span>
     </div>
     <div class="nav-item" data-section="climate">
-      <span class="nav-icon">🌡️</span> <span data-i18n="nav_climate">Weather & Climate</span>
+      <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M5.22 5.22l1.42 1.42"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M17.36 6.64l1.42-1.42"/><circle cx="12" cy="11" r="3.5"/><path d="M16 18a4 4 0 1 0-7.95-.6"/><path d="M5 22h14"/></svg></span>
+      <span data-i18n="nav_climate">Weather &amp; Climate</span>
     </div>
     <div class="nav-item" data-section="yield">
-      <span class="nav-icon">🍇</span> <span data-i18n="nav_yield">Harvest Forecast</span>
+      <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6c-.3 1.7-.1 3 .9 4 1.2.9 2.6 1.3 4.5 1-.7-2.3-1.8-3.6-3-4.2-1-.5-1.9-.9-2.4-.8z"/></svg></span>
+      <span data-i18n="nav_yield">Harvest Forecast</span>
     </div>
     <div class="nav-item" data-section="genomic">
-      <span class="nav-icon">🧬</span> <span data-i18n="nav_genomic">Crop Genetics</span>
+      <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 15c6.667-6 13.333 0 20-6"/><path d="M2 9c6.667 6 13.333 0 20 6"/><path d="M9 22c1.8-2 2.5-4 2.8-6"/><path d="M15 2c-1.8 2-2.5 4-2.8 6"/><path d="M17 6h-3"/><path d="M14 13h-1.5"/><path d="M7 11h-1"/><path d="M9 18h-2"/></svg></span>
+      <span data-i18n="nav_genomic">Crop Genetics</span>
     </div>
     <div class="nav-item" data-section="images">
-      <span class="nav-icon">📸</span> <span data-i18n="nav_images">Vineyard Photos</span>
+      <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+      <span data-i18n="nav_images">Vineyard Photos</span>
     </div>
     <div class="nav-item" data-section="plan">
-      <span class="nav-icon">📋</span> <span data-i18n="nav_plan">Field Plan</span>
+      <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg></span>
+      <span data-i18n="nav_plan">Field Plan</span>
     </div>
     <div class="nav-item" data-section="chat">
-      <span class="nav-icon"><img src="logo.png" alt="" style="width:18px;height:18px;border-radius:50%;object-fit:cover;vertical-align:middle;"></span> <span data-i18n="nav_chat">Ask agragent</span>
+      <span class="nav-icon"><img src="logo.png" alt=""></span>
+      <span data-i18n="nav_chat">Ask agragent</span>
     </div>
     <div class="nav-item" data-section="references">
-      <span class="nav-icon">📚</span> <span data-i18n="nav_references">About</span>
+      <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+      <span data-i18n="nav_references">About</span>
     </div>
   </div>
-  <div class="sidebar-footer" style="flex-wrap:wrap;gap:10px;">
-    <div class="avatar" id="user-avatar" style="cursor:pointer;overflow:hidden;position:relative;" onclick="document.getElementById('avatar-upload').click()" title="Click to change photo">—</div>
-    <input type="file" id="avatar-upload" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
-    <div class="user-info" style="flex:1;">
-      <div class="name" id="sidebar-username" style="color:var(--text-primary);cursor:pointer;" onclick="editDisplayName()" title="Click to edit name">—</div>
-      <div class="role" id="sidebar-role">—</div>
+  <div class="sidebar-footer">
+    <div class="avatar" id="user-avatar" onclick="document.getElementById('avatar-upload').click()" title="Click to change photo">
+      <svg class="avatar-default" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="avatar-camera" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+      </span>
     </div>
-    <button onclick="doLogout()" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text-secondary);font-size:0.75rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'" data-i18n="logout">Logout</button>
+    <input type="file" id="avatar-upload" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
+    <div class="user-info">
+      <div class="name" id="sidebar-username" onclick="editDisplayName()" title="Click to edit name"></div>
+      <div class="role" id="sidebar-role"></div>
+    </div>
+    <button class="sidebar-logout" onclick="doLogout()" title="Logout" aria-label="Logout" data-i18n-title="logout">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>
   </div>
 </nav>
 
@@ -1959,7 +2202,7 @@ function editDisplayName() {
 <div id="main">
   <div id="topbar">
     <div style="display:flex;align-items:center;gap:12px;">
-      <button class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</button>
+      <button class="hamburger" id="hamburger" onclick="toggleSidebar()"><span class="ic ic-lg"><svg><use href="#i-menu"/></svg></span></button>
       <div class="page-title" id="page-title">Dashboard</div>
     </div>
     <div class="topbar-right">
@@ -1981,7 +2224,7 @@ function editDisplayName() {
       <div id="dash-empty" class="card" style="text-align:center;padding:50px 20px;">
         <div style="margin-bottom:12px;"><img src="logo.png" alt="agragent" style="width:56px;height:56px;border-radius:50%;object-fit:cover;"></div>
         <div style="font-size:1.2rem;font-weight:700;color:var(--text-primary);margin-bottom:12px;" data-i18n="welcome_title">Welcome to agragent</div>
-        <div style="font-size:0.95rem;color:var(--text-secondary);max-width:460px;margin:0 auto;line-height:1.8;" data-i18n="welcome_text">Mark your field on the map to get started. We'll show you satellite images, weather data, and a harvest forecast for your vineyard.</div>
+
         <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;max-width:340px;margin-left:auto;margin-right:auto;text-align:left;">
           <div style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:var(--text-secondary);"><span style="font-size:1.2rem;">1️⃣</span> <span data-i18n="step1">Go to</span> <strong style="color:var(--accent);cursor:pointer;" onclick="showSection('maps')" data-i18n="step1_link">Field Map</strong></div>
           <div style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:var(--text-secondary);"><span style="font-size:1.2rem;">2️⃣</span> <span data-i18n="step2">Upload a file or draw your field boundaries</span></div>
@@ -2141,64 +2384,64 @@ function editDisplayName() {
 
       <!-- Location Search -->
       <div class="location-search" id="location-search">
-        <span style="font-size:1rem;">📍</span>
+        <span class="ic ic-lg ic-accent"><svg><use href="#i-pin"/></svg></span>
         <input type="text" id="location-input" placeholder="Search location..." data-i18n-placeholder="search_placeholder" autocomplete="off">
-        <button class="location-search-btn" onclick="searchLocation()">🔎 <span data-i18n="search_btn">Search</span></button>
+        <button class="location-search-btn" onclick="searchLocation()"><span class="ic ic-md"><svg><use href="#i-search"/></svg></span><span data-i18n="search_btn">Search</span></button>
         <div class="location-results" id="location-results"></div>
       </div>
 
       <!-- Toolbar: KMZ Upload + Draw Tools -->
       <div class="map-toolbar collapsed" id="map-toolbar">
         <button class="toolbar-toggle" id="toolbar-toggle" onclick="var tb=document.getElementById('map-toolbar');tb.classList.toggle('collapsed');this.querySelector('.tgl-arrow').textContent=tb.classList.contains('collapsed')?'▸':'▾'">
-          🗂 <span data-i18n="toolbar_title">My Fields &amp; Tools</span> <span class="tgl-arrow">▸</span>
+          <span class="ic ic-md"><svg><use href="#i-folders"/></svg></span><span data-i18n="toolbar_title">My Fields &amp; Tools</span> <span class="tgl-arrow">▸</span>
         </button>
         <span class="toolbar-label" data-i18n="layers">Layers</span>
         <button class="tb-btn" onclick="document.getElementById('kmz-file-input').click()">
-          📂 <span data-i18n="upload_kmz">Upload Field File</span>
+          <span class="ic ic-md"><svg><use href="#i-folder-open"/></svg></span><span data-i18n="upload_kmz">Upload Field File</span>
         </button>
         <input type="file" id="kmz-file-input" accept=".kmz,.kml" onchange="handleKMZUpload(event)">
         <div class="tb-divider"></div>
         <span class="toolbar-label" data-i18n="draw">Draw</span>
-        <button class="tb-btn" id="btn-draw-poly" onclick="toggleDraw('Polygon')">✏️ <span data-i18n="polygon_btn">Polygon</span></button>
-        <button class="tb-btn" id="btn-draw-marker" onclick="toggleDraw('Marker')">📍 <span data-i18n="point_btn">Point</span></button>
+        <button class="tb-btn" id="btn-draw-poly" onclick="toggleDraw('Polygon')"><span class="ic ic-md"><svg><use href="#i-edit"/></svg></span><span data-i18n="polygon_btn">Polygon</span></button>
+        <button class="tb-btn" id="btn-draw-marker" onclick="toggleDraw('Marker')"><span class="ic ic-md"><svg><use href="#i-pin"/></svg></span><span data-i18n="point_btn">Point</span></button>
         <div class="tb-divider"></div>
-        <button class="tb-btn" id="btn-edit" onclick="toggleEdit()">🖊 <span data-i18n="edit">Edit</span></button>
-        <button class="tb-btn danger" id="btn-delete" onclick="toggleDelete()">🗑 <span data-i18n="delete">Delete</span></button>
+        <button class="tb-btn" id="btn-edit" onclick="toggleEdit()"><span class="ic ic-md"><svg><use href="#i-edit"/></svg></span><span data-i18n="edit">Edit</span></button>
+        <button class="tb-btn danger" id="btn-delete" onclick="toggleDelete()"><span class="ic ic-md"><svg><use href="#i-trash"/></svg></span><span data-i18n="delete">Delete</span></button>
         <div class="tb-divider"></div>
-        <button class="tb-btn" onclick="exportKML()">⬇️ <span data-i18n="export_kml">Save Field</span></button>
+        <button class="tb-btn" onclick="exportKML()"><span class="ic ic-md"><svg><use href="#i-download"/></svg></span><span data-i18n="export_kml">Save Field</span></button>
         <div class="tb-divider"></div>
         <span class="toolbar-label">Base:</span>
-        <button class="tb-btn active" id="base-satellite" onclick="setBaseMap('satellite',this)">🛰️ <span data-i18n="base_satellite">Satellite</span></button>
-        <button class="tb-btn" id="base-streets" onclick="setBaseMap('streets',this)">🗺️ <span data-i18n="base_streets">Streets</span></button>
-        <button class="tb-btn" id="base-hybrid" onclick="setBaseMap('hybrid',this)">🌐 <span data-i18n="base_hybrid">Hybrid</span></button>
+        <button class="tb-btn active" id="base-satellite" onclick="setBaseMap('satellite',this)"><span class="ic ic-md"><svg><use href="#i-satellite"/></svg></span><span data-i18n="base_satellite">Satellite</span></button>
+        <button class="tb-btn" id="base-streets" onclick="setBaseMap('streets',this)"><span class="ic ic-md"><svg><use href="#i-map"/></svg></span><span data-i18n="base_streets">Streets</span></button>
+        <button class="tb-btn" id="base-hybrid" onclick="setBaseMap('hybrid',this)"><span class="ic ic-md"><svg><use href="#i-globe"/></svg></span><span data-i18n="base_hybrid">Hybrid</span></button>
       </div>
 
       <!-- GEE Layer Controls (shown after connect) -->
       <div class="gee-layer-controls collapsed-ctrl" id="gee-layer-controls">
         <div class="gee-ctrl-toggle-wrap">
           <button class="toolbar-toggle gee-ctrl-toggle" onclick="var c=document.getElementById('gee-layer-controls');c.classList.toggle('collapsed-ctrl');this.querySelector('.tgl-arrow').textContent=c.classList.contains('collapsed-ctrl')?'▸':'▾'">
-            🛰 <span data-i18n="gee_settings">Satellite Settings</span> <span class="tgl-arrow">▸</span>
+            <span class="ic ic-md"><svg><use href="#i-satellite"/></svg></span><span data-i18n="gee_settings">Satellite Settings</span> <span class="tgl-arrow">▸</span>
           </button>
         </div>
         <!-- Row 1: date range, cloud, opacity, mode tabs -->
         <div class="gee-ctrl-row" style="margin-bottom:10px;">
-          <label>📅 <span data-i18n="gee_from">From:</span> <input type="date" id="gee-start" value="2025-11-01"></label>
+          <label><span class="ic ic-md"><svg><use href="#i-calendar"/></svg></span><span data-i18n="gee_from">From:</span> <input type="date" id="gee-start" value="2025-11-01"></label>
           <label><span data-i18n="gee_to">To:</span> <input type="date" id="gee-end" value="2026-03-31"></label>
-          <label>☁️ <span data-i18n="gee_cloud_max">Cloud max:</span> <input type="range" id="gee-cloud" min="0" max="100" value="20" oninput="document.getElementById('gee-cloud-val').textContent=this.value"> <span id="gee-cloud-val">20</span>%</label>
+          <label><span class="ic ic-md"><svg><use href="#i-cloud"/></svg></span><span data-i18n="gee_cloud_max">Cloud max:</span> <input type="range" id="gee-cloud" min="0" max="100" value="20" oninput="document.getElementById('gee-cloud-val').textContent=this.value"> <span id="gee-cloud-val">20</span>%</label>
           <label><span data-i18n="gee_opacity">Opacity:</span> <input type="range" id="gee-opacity" min="10" max="100" value="85" oninput="setGEEOpacity(this.value)"> <span id="gee-opacity-val">85</span>%</label>
           <div style="display:flex;gap:6px;margin-left:auto;">
             <button class="gee-mode-btn active" id="mode-median" onclick="setGEEMode('median',this)">⊕ <span data-i18n="gee_median">Median</span></button>
-            <button class="gee-mode-btn" id="mode-browse" onclick="setGEEMode('browse',this)">🗓 <span data-i18n="gee_captures">Captures</span></button>
+            <button class="gee-mode-btn" id="mode-browse" onclick="setGEEMode('browse',this)"><span class="ic ic-md"><svg><use href="#i-calendar"/></svg></span><span data-i18n="gee_captures">Captures</span></button>
             <button class="gee-mode-btn" id="mode-compare" onclick="setGEEMode('compare',this)">◧ <span data-i18n="gee_compare">Compare</span></button>
           </div>
-          <button class="gee-refresh-btn" onclick="refreshGEELayer()">↻ <span data-i18n="gee_refresh">Refresh</span></button>
+          <button class="gee-refresh-btn" onclick="refreshGEELayer()"><span class="ic ic-md"><svg><use href="#i-refresh"/></svg></span><span data-i18n="gee_refresh">Refresh</span></button>
         </div>
 
         <!-- Scene Browser (shown in 'browse' mode) -->
         <div id="scene-browser" style="display:none;">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
             <span style="font-size:0.78rem;color:var(--text-secondary);font-weight:600;" data-i18n="gee_available_captures">AVAILABLE CAPTURES</span>
-            <button class="gee-refresh-btn" style="padding:4px 10px;font-size:0.75rem;" onclick="fetchSceneList()">🔍 <span data-i18n="gee_search">Search</span></button>
+            <button class="gee-refresh-btn" style="padding:4px 10px;font-size:0.75rem;" onclick="fetchSceneList()"><span class="ic ic-md"><svg><use href="#i-search"/></svg></span><span data-i18n="gee_search">Search</span></button>
             <span id="scene-count" style="font-size:0.75rem;color:var(--accent);"></span>
           </div>
           <div id="scene-list" class="scene-list">
@@ -2215,26 +2458,26 @@ function editDisplayName() {
                 <option value="" data-i18n="compare_select_date">— Select date —</option>
               </select>
               <select id="compare-left-index" class="compare-index-select">
-                <optgroup label="🌿 Vigor">
+                <optgroup label="Vigor">
                   <option value="NDVI">NDVI</option>
                   <option value="EVI">EVI</option>
                   <option value="SAVI">SAVI</option>
                   <option value="MSAVI">MSAVI</option>
                 </optgroup>
-                <optgroup label="🧪 Salud">
+                <optgroup label="Salud">
                   <option value="NDRE">NDRE</option>
                   <option value="GNDVI">GNDVI</option>
                   <option value="TCARI">TCARI</option>
                   <option value="CIRE">CIre</option>
                 </optgroup>
-                <optgroup label="💧 Agua">
+                <optgroup label="Agua">
                   <option value="NDMI">NDMI</option>
                   <option value="NDWI">NDWI</option>
                 </optgroup>
-                <optgroup label="🟫 Suelo">
+                <optgroup label="Suelo">
                   <option value="BSI">BSI</option>
                 </optgroup>
-                <optgroup label="🎨 Visual">
+                <optgroup label="Visual">
                   <option value="RGB">Color Real</option>
                   <option value="FALSE">Falso Color</option>
                 </optgroup>
@@ -2247,39 +2490,39 @@ function editDisplayName() {
                 <option value="" data-i18n="compare_select_date">— Select date —</option>
               </select>
               <select id="compare-right-index" class="compare-index-select">
-                <optgroup label="🌿 Vigor">
+                <optgroup label="Vigor">
                   <option value="NDVI">NDVI</option>
                   <option value="EVI">EVI</option>
                   <option value="SAVI">SAVI</option>
                   <option value="MSAVI">MSAVI</option>
                 </optgroup>
-                <optgroup label="🧪 Salud">
+                <optgroup label="Salud">
                   <option value="NDRE">NDRE</option>
                   <option value="GNDVI">GNDVI</option>
                   <option value="TCARI">TCARI</option>
                   <option value="CIRE">CIre</option>
                 </optgroup>
-                <optgroup label="💧 Agua">
+                <optgroup label="Agua">
                   <option value="NDMI">NDMI</option>
                   <option value="NDWI">NDWI</option>
                 </optgroup>
-                <optgroup label="🟫 Suelo">
+                <optgroup label="Suelo">
                   <option value="BSI">BSI</option>
                 </optgroup>
-                <optgroup label="🎨 Visual">
+                <optgroup label="Visual">
                   <option value="RGB">Color Real</option>
                   <option value="FALSE">Falso Color</option>
                 </optgroup>
               </select>
             </div>
-            <button class="gee-btn" style="margin-left:auto;padding:7px 16px;" onclick="loadComparison()">▶ <span data-i18n="compare_btn">Compare</span></button>
-            <button class="gee-refresh-btn" onclick="stopComparison()">✕ <span data-i18n="compare_exit">Exit</span></button>
+            <button class="gee-btn" style="margin-left:auto;padding:7px 16px;" onclick="loadComparison()"><span class="ic ic-md"><svg><use href="#i-play"/></svg></span><span data-i18n="compare_btn">Compare</span></button>
+            <button class="gee-refresh-btn" onclick="stopComparison()"><span class="ic ic-md"><svg><use href="#i-x"/></svg></span><span data-i18n="compare_exit">Exit</span></button>
           </div>
           <div id="compare-status" style="font-size:0.75rem;color:var(--text-secondary);margin-top:8px;"></div>
         </div>
 
         <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:6px;">
-          💡 <span data-i18n="gee_sentinel_info">Satellite images updated every 5 days · High resolution (10m) · Cloud-free</span>
+          <span class="ic ic-md ic-warn"><svg><use href="#i-bulb"/></svg></span><span data-i18n="gee_sentinel_info">Satellite images updated every 5 days · High resolution (10m) · Cloud-free</span>
         </div>
       </div>
 
@@ -2287,34 +2530,34 @@ function editDisplayName() {
       <div class="map-controls collapsed-ctrl" id="index-controls" style="flex-wrap:wrap;gap:6px 4px;">
         <div class="gee-ctrl-toggle-wrap" style="width:100%;">
           <button class="toolbar-toggle gee-ctrl-toggle" onclick="var c=document.getElementById('index-controls');c.classList.toggle('collapsed-ctrl');this.querySelector('.tgl-arrow').textContent=c.classList.contains('collapsed-ctrl')?'▸':'▾'">
-            🌿 <span data-i18n="idx_title">What to see on the map</span> <span class="tgl-arrow">▸</span>
+            <span class="ic ic-md ic-accent"><svg><use href="#i-leaf"/></svg></span><span data-i18n="idx_title">What to see on the map</span> <span class="tgl-arrow">▸</span>
           </button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">🌿 <span data-i18n="idx_vigor">Plant Vigor</span></span>
+          <span class="index-group-label"><span class="ic ic-md ic-accent"><svg><use href="#i-leaf"/></svg></span><span data-i18n="idx_vigor">Plant Vigor</span></span>
           <button class="index-btn active" onclick="setIndex(this,'NDVI')"><span data-i18n="idx_health">Health</span></button>
           <button class="index-btn" onclick="setIndex(this,'EVI')"><span data-i18n="idx_vigor_plus">Vigor+</span></button>
           <button class="index-btn" onclick="setIndex(this,'SAVI')"><span data-i18n="idx_young">Young Vines</span></button>
           <button class="index-btn" onclick="setIndex(this,'MSAVI')"><span data-i18n="idx_sparse">Sparse</span></button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">🧪 <span data-i18n="idx_crop_health">Crop Health</span></span>
+          <span class="index-group-label"><span class="ic ic-md"><svg><use href="#i-flask"/></svg></span><span data-i18n="idx_crop_health">Crop Health</span></span>
           <button class="index-btn" onclick="setIndex(this,'NDRE')"><span data-i18n="idx_nutrition">Nutrition</span></button>
           <button class="index-btn" onclick="setIndex(this,'GNDVI')"><span data-i18n="idx_early_stress">Early Stress</span></button>
           <button class="index-btn" onclick="setIndex(this,'TCARI')"><span data-i18n="idx_chlorophyll">Chlorophyll</span></button>
           <button class="index-btn" onclick="setIndex(this,'CIRE')"><span data-i18n="idx_nstatus">N-Status</span></button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">💧 <span data-i18n="idx_water">Water</span></span>
+          <span class="index-group-label"><span class="ic ic-md ic-info"><svg><use href="#i-droplet"/></svg></span><span data-i18n="idx_water">Water</span></span>
           <button class="index-btn" onclick="setIndex(this,'NDMI')"><span data-i18n="idx_moisture">Moisture</span></button>
           <button class="index-btn" onclick="setIndex(this,'NDWI')"><span data-i18n="idx_leaf_water">Leaf Water</span></button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">🟫 <span data-i18n="idx_soil">Soil</span></span>
+          <span class="index-group-label"><span class="ic ic-md"><svg><use href="#i-mountain"/></svg></span><span data-i18n="idx_soil">Soil</span></span>
           <button class="index-btn" onclick="setIndex(this,'BSI')"><span data-i18n="idx_bare_soil">Bare Soil</span></button>
         </div>
         <div class="index-group">
-          <span class="index-group-label">🎨 <span data-i18n="idx_photo">Photo</span></span>
+          <span class="index-group-label"><span class="ic ic-md"><svg><use href="#i-palette"/></svg></span><span data-i18n="idx_photo">Photo</span></span>
           <button class="index-btn" onclick="setIndex(this,'RGB')"><span data-i18n="idx_real_color">Real Color</span></button>
           <button class="index-btn" onclick="setIndex(this,'FALSE')"><span data-i18n="idx_infrared">Infrared</span></button>
         </div>
@@ -2325,14 +2568,14 @@ function editDisplayName() {
       </div>
 
       <div id="map-container">
-        <button class="map-fullscreen-btn" id="map-fs-btn" onclick="toggleMapFullscreen()">⛶ <span data-i18n="fullscreen">Fullscreen</span></button>
+        <button class="map-fullscreen-btn" id="map-fs-btn" onclick="toggleMapFullscreen()"><span class="ic ic-md"><svg><use href="#i-fullscreen"/></svg></span><span data-i18n="fullscreen">Fullscreen</span></button>
         <div id="vinewatch-map"></div>
         <div id="map-loading">
           <div class="map-spinner"></div>
           <div class="map-loading-text" id="map-loading-text" data-i18n="gee_loading">Loading GEE imagery...</div>
         </div>
         <div id="map-drop-overlay">
-          <span>🗺️</span>
+          <span><span class="ic ic-md"><svg><use href="#i-map"/></svg></span></span>
           <p data-i18n="map_drop">Drop your KMZ/KML file here</p>
         </div>
       </div>
@@ -2366,7 +2609,7 @@ function editDisplayName() {
       <div class="card mb-20" id="selected-parcel-info" style="display:none;margin-top:14px;"></div>
 
       <div class="map-source-badge" id="map-source-badge">
-        <span data-i18n="map_source">🛰️ Sentinel-2 · OpenStreetMap base · GEE connected</span>
+        <span data-i18n="map_source"><span class="ic ic-sm" style="margin-right:4px;"><svg><use href="#i-satellite"/></svg></span>Sentinel-2 · OpenStreetMap base · GEE connected</span>
       </div>
 
     </section>
@@ -2725,7 +2968,7 @@ function editDisplayName() {
       <!-- Gene Ontology & AlphaFold Panel -->
       <div class="grid-2 mb-20">
         <div class="card">
-          <div class="card-title" data-i18n="go_enrichment_title">🧬 Gene Ontology Enrichment</div>
+          <div class="card-title" data-i18n="go_enrichment_title"><span class="ic ic-md ic-accent"><svg><use href="#i-dna"/></svg></span>Gene Ontology Enrichment</div>
           <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:10px;" data-i18n="go_enrichment_hint">
             Click any <strong style="color:var(--accent)">Gene ID</strong> in the tables above to view its GO annotations and protein structure.
           </div>
@@ -2750,10 +2993,10 @@ function editDisplayName() {
           </div>
         </div>
         <div class="card">
-          <div class="card-title" data-i18n="gene_detail_title">🔬 Gene Detail Viewer</div>
+          <div class="card-title" data-i18n="gene_detail_title"><span class="ic ic-md ic-accent"><svg><use href="#i-microscope"/></svg></span>Gene Detail Viewer</div>
           <div id="gene-detail-panel" style="padding:8px 0;">
             <div style="text-align:center;padding:30px 10px;color:var(--text-secondary);font-size:0.85rem;">
-              <div style="font-size:1.5rem;margin-bottom:8px;">👆</div>
+              <div style="font-size:0;margin-bottom:8px;"><span class="ic ic-xl ic-accent"><svg><use href="#i-pointer"/></svg></span></div>
               <span data-i18n="gene_detail_hint">Click a <strong style="color:var(--accent);">VIT_ gene ID</strong> in any table to see:<br>
               Gene Ontology annotations · UniProt protein info · AlphaFold 3D structure</span>
             </div>
@@ -2796,7 +3039,7 @@ function editDisplayName() {
       <!-- Dataset Banner -->
       <div class="wgisd-banner">
         <div class="wgisd-banner-left">
-          <div class="wgisd-logo">🍇</div>
+          <div class="wgisd-logo"><span class="ic ic-2x ic-accent"><svg><use href="#i-grape"/></svg></span></div>
           <div>
             <div class="wgisd-title">Embrapa Wine Grape Instance Segmentation Dataset (WGISD)</div>
             <div class="wgisd-meta">Thiago T. Santos et al. · Embrapa · CC BY-NC 4.0 · <a href="https://github.com/thsant/wgisd" target="_blank" style="color:var(--accent)">github.com/thsant/wgisd</a></div>
@@ -2853,10 +3096,10 @@ function editDisplayName() {
 
       <!-- Upload your own image -->
       <div class="card mb-20" style="margin-top:8px;">
-        <div class="card-title" data-i18n="img_upload_title">📤 Analyze your own image</div>
+        <div class="card-title" data-i18n="img_upload_title"><span class="ic ic-md ic-accent"><svg><use href="#i-upload"/></svg></span>Analyze your own image</div>
         <div class="upload-zone" style="margin-top:12px;padding:28px 20px;" onclick="document.getElementById('fileInput').click()">
-          <div class="upload-icon" style="font-size:2rem;">🖼️</div>
-          <div class="upload-text" data-i18n="img_upload_text">Drag or click to upload a vineyard image</div>
+          <div class="upload-icon"><span class="ic ic-2x"><svg><use href="#i-image"/></svg></span></div>
+          <div class="upload-text" data-i18n="img_upload_text">Drag or click to upload a field image</div>
           <div class="upload-sub" data-i18n="img_upload_sub">Accepts .jpg · .png · .tiff — Max 50MB</div>
           <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.tiff" style="display:none" onchange="analyzeUploadedImage(event)">
         </div>
@@ -2869,7 +3112,7 @@ function editDisplayName() {
     <div id="img-viewer" style="display:none;">
       <div class="viewer-backdrop" onclick="closeViewer()"></div>
       <div class="viewer-box">
-        <button class="viewer-close" onclick="closeViewer()">✕</button>
+        <button class="viewer-close" onclick="closeViewer()"><span class="ic ic-md"><svg><use href="#i-x"/></svg></span></button>
         <div class="viewer-top">
           <div class="viewer-canvas-wrap">
             <img id="viewer-img" src="" alt="" crossorigin="anonymous">
@@ -2890,9 +3133,9 @@ function editDisplayName() {
             <div class="viewer-info-list" id="viewer-info-list"></div>
             <div class="viewer-divider"></div>
             <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.7;">
-              <div>📦 <span data-i18n="img_annotations">Annotations: YOLO (bounding box)</span></div>
-              <div>📐 <span data-i18n="img_resolution">Resolution: 2048 × 1365 px</span></div>
-              <div>📷 Canon EOS REBEL T3i / Motorola Z2</div>
+              <div><span class="ic ic-md"><svg><use href="#i-package"/></svg></span><span data-i18n="img_annotations">Annotations: YOLO (bounding box)</span></div>
+              <div><span class="ic ic-md"><svg><use href="#i-ruler"/></svg></span><span data-i18n="img_resolution">Resolution: 2048 × 1365 px</span></div>
+              <div><span class="ic ic-md"><svg><use href="#i-camera"/></svg></span>Canon EOS REBEL T3i / Motorola Z2</div>
               <div style="margin-top:8px;"><span data-i18n="img_data_source">Data:</span> <a href="https://github.com/thsant/wgisd" target="_blank" style="color:var(--accent)">Embrapa WGISD</a> · CC BY-NC 4.0</div>
             </div>
             <div class="viewer-divider"></div>
@@ -2921,9 +3164,9 @@ function editDisplayName() {
 
       <!-- Empty state -->
       <div id="yield-empty" style="text-align:center;padding:50px 20px;color:var(--text-secondary);">
-        <div style="font-size:2.5rem;margin-bottom:12px;">🍇</div>
+        <div style="margin-bottom:12px;"><span class="ic ic-2x ic-accent"><svg><use href="#i-grape"/></svg></span></div>
         <div style="font-size:1.1rem;font-weight:600;color:var(--text-primary);margin-bottom:8px;" data-i18n="yield_empty_title">Mark your field to see your harvest forecast</div>
-        <div style="font-size:0.9rem;max-width:420px;margin:0 auto;line-height:1.7;" data-i18n="yield_empty_text">Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection('maps')">Field Map</strong> and draw your vineyard boundaries. We'll calculate estimated yield, total production, and the best harvest date.</div>
+        <div style="font-size:0.9rem;max-width:420px;margin:0 auto;line-height:1.7;" data-i18n="yield_empty_text">Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection('maps')">Field Map</strong> and draw your field boundaries. We'll calculate estimated yield, total production, and the best harvest date.</div>
       </div>
 
       <!-- Dynamic content (shown after prediction) -->
@@ -3008,9 +3251,9 @@ function editDisplayName() {
 
       <!-- Empty state -->
       <div id="plan-empty" style="text-align:center;padding:50px 20px;color:var(--text-secondary);">
-        <div style="font-size:2.5rem;margin-bottom:12px;">📋</div>
+        <div style="margin-bottom:12px;"><span class="ic ic-2x ic-accent"><svg><use href="#i-clipboard"/></svg></span></div>
         <div style="font-size:1.1rem;font-weight:600;color:var(--text-primary);margin-bottom:8px;" data-i18n="plan_empty_title">Mark your field to generate the action plan</div>
-        <div style="font-size:0.9rem;max-width:460px;margin:0 auto;line-height:1.7;" data-i18n="plan_empty_text">Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection('maps')">Field Map</strong> and draw your vineyard boundaries. We'll calculate phenological stage delays and recommend field activities based on your real climate data.</div>
+        <div style="font-size:0.9rem;max-width:460px;margin:0 auto;line-height:1.7;" data-i18n="plan_empty_text">Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection('maps')">Field Map</strong> and draw your field boundaries. We'll calculate phenological stage delays and recommend field activities based on your real climate data.</div>
       </div>
 
       <!-- Dynamic content -->
@@ -3129,11 +3372,11 @@ function editDisplayName() {
             <div style="margin-top:6px;display:flex;gap:10px;flex-wrap:wrap;">
               <a href="https://doi.org/10.3390/agronomy14030613" target="_blank" rel="noopener"
                  style="color:var(--accent);font-size:0.82rem;text-decoration:none;">
-                🔗 doi.org/10.3390/agronomy14030613
+                <span class="ic ic-md"><svg><use href="#i-link"/></svg></span>doi.org/10.3390/agronomy14030613
               </a>
               <a href="https://www.mdpi.com/2073-4395/14/3/613/pdf" target="_blank" rel="noopener"
                  style="color:var(--accent);font-size:0.82rem;text-decoration:none;">
-                📄 Download PDF
+                <span class="ic ic-md"><svg><use href="#i-file"/></svg></span>Download PDF
               </a>
             </div>
           </div>
@@ -3151,11 +3394,11 @@ function editDisplayName() {
             <div style="margin-top:6px;display:flex;gap:10px;flex-wrap:wrap;">
               <a href="https://doi.org/10.1007/978-3-031-80084-9_14" target="_blank" rel="noopener"
                  style="color:var(--accent);font-size:0.82rem;text-decoration:none;">
-                🔗 doi.org/10.1007/978-3-031-80084-9_14
+                <span class="ic ic-md"><svg><use href="#i-link"/></svg></span>doi.org/10.1007/978-3-031-80084-9_14
               </a>
               <a href="https://link.springer.com/chapter/10.1007/978-3-031-80084-9_14" target="_blank" rel="noopener"
                  style="color:var(--accent);font-size:0.82rem;text-decoration:none;">
-                📄 View on Springer
+                <span class="ic ic-md"><svg><use href="#i-file"/></svg></span>View on Springer
               </a>
             </div>
           </div>
@@ -3173,7 +3416,7 @@ function editDisplayName() {
             <div style="margin-top:6px;">
               <a href="Altimiras2026.pdf" target="_blank" rel="noopener"
                  style="color:var(--accent);font-size:0.82rem;text-decoration:none;">
-                📄 Download PDF
+                <span class="ic ic-md"><svg><use href="#i-file"/></svg></span>Download PDF
               </a>
             </div>
           </div>
@@ -3248,7 +3491,7 @@ function editDisplayName() {
             <textarea id="chat-full-input" rows="1"
               onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();chatSend()}"
               oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
-            <button class="chat-send-btn" id="chat-full-send-btn" onclick="chatSend()">➤</button>
+            <button class="chat-send-btn" id="chat-full-send-btn" onclick="chatSend()"><span class="ic ic-md"><svg><use href="#i-send"/></svg></span></button>
           </div>
         </div>
       </div>
@@ -3267,9 +3510,9 @@ function editDisplayName() {
       <span id="chat-widget-context-badge" class="chat-context-badge"></span>
     </div>
     <div class="chat-widget-header-right">
-      <button class="chat-widget-hbtn" onclick="chatToggleConvList()" title="Conversations">☰</button>
+      <button class="chat-widget-hbtn" onclick="chatToggleConvList()" title="Conversations"><span class="ic ic-md"><svg><use href="#i-menu"/></svg></span></button>
       <button class="chat-widget-hbtn" onclick="chatNewConversation()" title="New conversation">+</button>
-      <button class="chat-widget-hbtn" onclick="chatToggleWidget()" title="Close">✕</button>
+      <button class="chat-widget-hbtn" onclick="chatToggleWidget()" title="Close"><span class="ic ic-md"><svg><use href="#i-x"/></svg></span></button>
     </div>
   </div>
   <div id="chat-widget-conv-panel" class="chat-widget-conv-panel" style="display:none;">
@@ -3286,7 +3529,7 @@ function editDisplayName() {
     <textarea id="chat-input" placeholder="Ask agragent..." rows="1"
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();chatSend()}"
       oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
-    <button class="chat-send-btn" id="chat-send-btn" onclick="chatSend()">➤</button>
+    <button class="chat-send-btn" id="chat-send-btn" onclick="chatSend()"><span class="ic ic-md"><svg><use href="#i-send"/></svg></span></button>
   </div>
 </div>
 
@@ -3302,27 +3545,27 @@ const i18n = {
     nav_dashboard: 'Dashboard', nav_maps: 'Satellite Maps', nav_climate: 'Climate Data',
     nav_genomic: 'Genomic Analysis', nav_images: 'Image Analysis', nav_yield: 'Yield Prediction',
     nav_chat: 'Ask agragent', chat_conversations: 'Conversations', chat_new: '+ New',
-    chat_welcome_text: 'Ask me about the weather, your vineyard health, watering, soil, or any question about your field.',
+    chat_welcome_text: 'Ask me about your crop, satellite imagery (NDVI), climate, soil, irrigation, fertilization, or scientific sources (OpenAlex 250M+, AGRIS FAO, INIA Chile). What can I help you with?',
     chat_placeholder: 'Ask agragent...',
     chat_q1: 'How healthy are my plants right now?',
-    chat_q1_label: '🌿 Plant health',
+    chat_q1_label: 'Plant health',
     chat_q2: 'How has the weather been in my area?',
-    chat_q2_label: '🌤️ Weather summary',
-    chat_q3: 'How much should I water my vineyard?',
-    chat_q3_label: '💧 Watering plan',
-    chat_q4: 'What fertilizer does my vineyard need?',
-    chat_q4_label: '🧪 Fertilization',
+    chat_q2_label: 'Weather summary',
+    chat_q3: 'How much should I water my crop?',
+    chat_q3_label: 'Watering plan',
+    chat_q4: 'What fertilizer does my crop need?',
+    chat_q4_label: 'Fertilization',
     nav_references: 'About',
     // Topbar
     season: 'Season 2025–2026', upload_polygon: '',
     // Dashboard
     welcome_title: 'Welcome to agragent',
-    welcome_text: 'Mark your field on the map to get started. We\'ll show you satellite images, weather data, and a harvest forecast for your vineyard.',
+    welcome_text: 'Mark your field on the map to get started. We\'ll show you satellite images, weather data, and a harvest forecast for your crop.',
     step1: 'Go to', step1_link: 'Field Map', step2: 'Upload a file or draw your field boundaries', step3: 'All data updates automatically',
     search_placeholder: 'Search location... (e.g. Napa Valley, Bordeaux)', search_btn: 'Search',
     base_satellite: 'Satellite', base_streets: 'Streets', base_hybrid: 'Hybrid',
     yield_empty_title: 'Mark your field to see your harvest forecast',
-    yield_empty_text: 'Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Field Map</strong> and draw your vineyard boundaries. We\'ll calculate estimated yield, total production, and the best harvest date.',
+    yield_empty_text: 'Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Field Map</strong> and draw your field boundaries. We\'ll calculate estimated yield, total production, and the best harvest date.',
     yield_unit: 'tonnes / hectare', yield_harvest_label: 'Estimated harvest:',
     yield_features_title: 'What matters most for your harvest', yield_sat_title: 'Satellite Readings',
     yield_climate_title: 'Climate Data', yield_model_title: 'Model Comparison',
@@ -3330,12 +3573,12 @@ const i18n = {
     yield_th_model: 'Model', yield_th_pred: 'Prediction (t/ha)', yield_th_best: 'Best',
     img_images: 'Images', img_clusters: 'Clusters', img_berries_ann: 'Annotated berries', img_varieties: 'Varieties',
     img_white: 'White', img_red: 'Red', img_click_hint: 'Click image to see annotations',
-    img_upload_title: '📤 Analyze your own image', img_upload_text: 'Drag or click to upload a vineyard image', img_upload_sub: 'Accepts .jpg · .png · .tiff — Max 50MB',
+    img_upload_title: 'Analyze your own image', img_upload_text: 'Drag or click to upload a field image', img_upload_sub: 'Accepts .jpg · .png · .tiff — Max 50MB',
     img_loading: 'Loading image and annotations...', img_clusters_detected: 'Clusters detected', img_berries_est: 'Berries estimated',
     img_annotations: 'Annotations: YOLO (bounding box)', img_resolution: 'Resolution: 2048 × 1365 px', img_data_source: 'Data:', img_show_bbox: 'Show bounding boxes',
     img_analyzing: 'Analyzing image with YOLOv11...', img_api_offline: 'Detection server offline. Start the API to enable real-time detection.',
     img_berry_method: '<strong style="color:var(--text-primary);">Berry estimation method:</strong> Estimated from bounding box area of each detected cluster. Small clusters (~1% image area) ≈ 20 berries, large clusters (~8%) ≈ 80 berries. Linear interpolation, capped at 80/cluster. This is an approximation — real berry count requires instance segmentation.',
-    editor_title: '✏️ Field Properties', editor_name: 'Name', editor_name_ph: 'e.g. North Parcel',
+    editor_title: 'Field Properties', editor_name: 'Name', editor_name_ph: 'e.g. North Parcel',
     editor_desc: 'Description', editor_desc_ph: 'Notes, variety, observations...',
     editor_stage: 'Growth stage', editor_select: '— Select —',
     stage_bud: 'Bud break', stage_flower: 'Flowering', stage_fruit: 'Fruit set', stage_veraison: 'Veraison',
@@ -3363,7 +3606,7 @@ const i18n = {
     et_chart: 'Monthly Evapotranspiration ET₀ (mm)', gdd_chart: 'Growing Degree Days (GDD) Accumulation',
     gdd_compare_title: 'GDD Comparison Between Dates', gdd_period_a: 'Period A', gdd_period_b: 'Period B', gdd_compare_btn: 'Compare GDD', gdd_difference: 'Difference',
     // Maps
-    maps_title: 'Field Map', maps_sub: 'Satellite images of your vineyard',
+    maps_title: 'Field Map', maps_sub: 'Satellite images of your field',
     gee_connect: 'Connect', gee_help: '? Help', gee_connect_desc: 'Connecting to satellite images...',
     layers: 'My Fields', upload_kmz: 'Upload Field File', draw: 'Draw', polygon: 'Area', line: 'Line', point: 'Point',
     edit: 'Edit', delete: 'Delete', export_kml: 'Save Field', index_label: 'View:',
@@ -3378,7 +3621,7 @@ const i18n = {
     yield_title: 'Harvest Forecast',
     // Plan
     nav_plan: 'Field Plan', plan_title: 'Field Action Plan', plan_sub: 'Phenological tracking and seasonal activity calendar based on climate data',
-    plan_empty_title: 'Mark your field to generate the action plan', plan_empty_text: 'Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Field Map</strong> and draw your vineyard boundaries. We\'ll calculate phenological stage delays and recommend field activities based on your real climate data.',
+    plan_empty_title: 'Mark your field to generate the action plan', plan_empty_text: 'Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Field Map</strong> and draw your field boundaries. We\'ll calculate phenological stage delays and recommend field activities based on your real climate data.',
     plan_pheno_delay: 'Phenological Stage Delay Analysis', plan_pheno_delay_sub: 'Comparing your field\'s real GDD accumulation rate against reference thresholds to estimate delays or advances in each growth stage.',
     plan_th_stage: 'Stage', plan_th_gdd_req: 'GDD Required', plan_th_expected_date: 'Expected Date', plan_th_status: 'Status', plan_th_shift: 'Shift (days)',
     plan_chill_title: 'Chill Hours Assessment', plan_chill_accumulated: 'Accumulated', plan_chill_required: 'Required (variety avg.)', plan_chill_vitis: 'Vitis vinifera typical range', plan_chill_status: 'Status',
@@ -3434,13 +3677,13 @@ const i18n = {
     sample_composition: 'Sample Composition by Variety', samples: 'samples',
     deg_accumulation: 'DEG Accumulation Across Stages',
     top_degs: 'Top Differentially Expressed Genes by Stage',
-    go_enrichment_title: '🧬 Gene Ontology Enrichment',
+    go_enrichment_title: 'Gene Ontology Enrichment',
     go_enrichment_hint: 'Click any <strong style="color:var(--accent)">Gene ID</strong> in the tables above to view its GO annotations and protein structure.',
     go_term_freq: 'GO Term Frequency in DEGs:',
     go_bp: 'Biological Process', go_mf: 'Molecular Function', go_cc: 'Cellular Component',
     go_compute: 'Compute from UniProt',
     go_compute_hint: 'Press <strong style="color:var(--accent);">Compute from UniProt</strong> to fetch real GO annotations for all genes in the DEG tables.',
-    gene_detail_title: '🔬 Gene Detail Viewer',
+    gene_detail_title: 'Gene Detail Viewer',
     gene_detail_hint: 'Click a <strong style="color:var(--accent);">VIT_ gene ID</strong> in any table to see:<br>Gene Ontology annotations · UniProt protein info · AlphaFold 3D structure',
     deg_summary_title: 'Differential Expression Summary — All Comparisons vs. E-L 3 (Baseline)',
     th_comparison: 'Comparison', th_major_stage: 'Major Stage', th_tissue: 'Tissue', th_replicates: 'Replicates',
@@ -3458,25 +3701,25 @@ const i18n = {
     nav_dashboard: 'Mi Campo', nav_maps: 'Mapa del Campo', nav_climate: 'Clima',
     nav_genomic: 'Genética del Cultivo', nav_images: 'Análisis de Imágenes', nav_yield: 'Pronóstico de Cosecha',
     nav_chat: 'Consultar agragent', chat_conversations: 'Conversaciones', chat_new: '+ Nueva',
-    chat_welcome_text: 'Pregúntame sobre el clima, las imágenes satelitales, el riego, el suelo o cualquier duda sobre tu viñedo.',
+    chat_welcome_text: 'Pregúntame sobre tu cultivo, imágenes satelitales (NDVI), clima, suelo, riego, fertilización o fuentes científicas (OpenAlex 250M+, AGRIS FAO, INIA Chile). ¿En qué puedo ayudarte?',
     chat_placeholder: 'Pregunta a agragent...',
     chat_q1: '¿Cómo está la salud de mis plantas?',
-    chat_q1_label: '🌿 Salud del cultivo',
+    chat_q1_label: 'Salud del cultivo',
     chat_q2: '¿Cómo ha estado el clima en mi zona?',
-    chat_q2_label: '🌤️ Resumen del clima',
-    chat_q3: '¿Cuánto debo regar mi viñedo?',
-    chat_q3_label: '💧 Plan de riego',
-    chat_q4: '¿Qué fertilizante necesita mi viñedo?',
-    chat_q4_label: '🧪 Fertilización',
+    chat_q2_label: 'Resumen del clima',
+    chat_q3: '¿Cuánto debo regar mi cultivo?',
+    chat_q3_label: 'Plan de riego',
+    chat_q4: '¿Qué fertilizante necesita mi cultivo?',
+    chat_q4_label: 'Fertilización',
     nav_references: 'Acerca de',
     season: 'Temporada 2025–2026', upload_polygon: '',
     welcome_title: 'Bienvenido a agragent',
-    welcome_text: 'Marca tu campo en el mapa para comenzar. Te mostraremos imágenes satelitales, datos del clima y un pronóstico de cosecha para tu viñedo.',
+    welcome_text: 'Marca tu campo en el mapa para comenzar. Te mostraremos imágenes satelitales, datos del clima y un pronóstico de cosecha para tu cultivo.',
     step1: 'Ve a', step1_link: 'Mapa del Campo', step2: 'Sube un archivo o dibuja los límites de tu campo', step3: 'Todos los datos se actualizan automáticamente',
     search_placeholder: 'Buscar localidad... (ej. Casablanca, Maule)', search_btn: 'Buscar',
     base_satellite: 'Satélite', base_streets: 'Calles', base_hybrid: 'Híbrido',
     yield_empty_title: 'Marca tu campo para ver el pronóstico de cosecha',
-    yield_empty_text: 'Ve a <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa del Campo</strong> y dibuja los límites de tu viñedo. Calcularemos el rendimiento estimado, producción total y la mejor fecha de cosecha.',
+    yield_empty_text: 'Ve a <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa del Campo</strong> y dibuja los límites de tu campo. Calcularemos el rendimiento estimado, producción total y la mejor fecha de cosecha.',
     yield_unit: 'toneladas / hectárea', yield_harvest_label: 'Cosecha estimada:',
     yield_features_title: 'Lo que más influye en tu cosecha', yield_sat_title: 'Lecturas Satelitales',
     yield_climate_title: 'Datos Climáticos', yield_model_title: 'Comparación de Modelos',
@@ -3484,12 +3727,12 @@ const i18n = {
     yield_th_model: 'Modelo', yield_th_pred: 'Predicción (t/ha)', yield_th_best: 'Mejor',
     img_images: 'Imágenes', img_clusters: 'Racimos', img_berries_ann: 'Bayas anotadas', img_varieties: 'Variedades',
     img_white: 'Blanca', img_red: 'Tinta', img_click_hint: 'Clic en imagen para ver anotaciones',
-    img_upload_title: '📤 Analizar imagen propia', img_upload_text: 'Arrastra o haz clic para subir imagen de viñedo', img_upload_sub: 'Acepta .jpg · .png · .tiff — Máx 50MB',
+    img_upload_title: 'Analizar imagen propia', img_upload_text: 'Arrastra o haz clic para subir imagen de campo', img_upload_sub: 'Acepta .jpg · .png · .tiff — Máx 50MB',
     img_loading: 'Cargando imagen y anotaciones...', img_clusters_detected: 'Racimos detectados', img_berries_est: 'Bayas estimadas',
     img_annotations: 'Anotaciones: YOLO (bounding box)', img_resolution: 'Resolución: 2048 × 1365 px', img_data_source: 'Datos:', img_show_bbox: 'Mostrar bounding boxes',
     img_analyzing: 'Analizando imagen con YOLOv11...', img_api_offline: 'Servidor de detección offline. Inicia la API para habilitar detección en tiempo real.',
     img_berry_method: '<strong style="color:var(--text-primary);">Método de estimación de bayas:</strong> Estimado a partir del área del bounding box de cada racimo detectado. Racimos pequeños (~1% del área) ≈ 20 bayas, racimos grandes (~8%) ≈ 80 bayas. Interpolación lineal, máximo 80/racimo. Es una aproximación — el conteo real requiere segmentación de instancias.',
-    editor_title: '✏️ Propiedades del Campo', editor_name: 'Nombre', editor_name_ph: 'ej: Parcela Norte',
+    editor_title: 'Propiedades del Campo', editor_name: 'Nombre', editor_name_ph: 'ej: Parcela Norte',
     editor_desc: 'Descripción', editor_desc_ph: 'Notas, variedad, observaciones...',
     editor_stage: 'Etapa de crecimiento', editor_select: '— Seleccionar —',
     stage_bud: 'Brotación', stage_flower: 'Floración', stage_fruit: 'Cuaja', stage_veraison: 'Envero',
@@ -3515,7 +3758,7 @@ const i18n = {
     humidity_chart: 'Humedad Mensual (%)', solar_chart: 'Radiación Solar Mensual',
     et_chart: 'Pérdida de Agua Mensual (mm)', gdd_chart: 'Acumulación de Calor para Maduración',
     gdd_compare_title: 'Comparación de Grados Día entre Fechas', gdd_period_a: 'Período A', gdd_period_b: 'Período B', gdd_compare_btn: 'Comparar GDD', gdd_difference: 'Diferencia',
-    maps_title: 'Mapa del Campo', maps_sub: 'Imágenes satelitales de tu viñedo',
+    maps_title: 'Mapa del Campo', maps_sub: 'Imágenes satelitales de tu campo',
     gee_connect: 'Conectar', gee_help: '? Ayuda', gee_connect_desc: 'Conectando a las imágenes satelitales...',
     layers: 'Mis Campos', upload_kmz: 'Subir Archivo', draw: 'Dibujar', polygon: 'Área', line: 'Línea', point: 'Punto',
     edit: 'Editar', delete: 'Borrar', export_kml: 'Guardar Campo', index_label: 'Ver:',
@@ -3527,7 +3770,7 @@ const i18n = {
     yield_title: 'Pronóstico de Cosecha',
     // Plan
     nav_plan: 'Plan de Campo', plan_title: 'Plan de Acción del Campo', plan_sub: 'Seguimiento fenológico y calendario de actividades basado en datos climáticos',
-    plan_empty_title: 'Marca tu campo para generar el plan de acción', plan_empty_text: 'Ve al <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa del Campo</strong> y dibuja los límites de tu viñedo. Calcularemos los desfases fenológicos y recomendaremos actividades según tu clima real.',
+    plan_empty_title: 'Marca tu campo para generar el plan de acción', plan_empty_text: 'Ve al <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa del Campo</strong> y dibuja los límites de tu campo. Calcularemos los desfases fenológicos y recomendaremos actividades según tu clima real.',
     plan_pheno_delay: 'Análisis de Desfase Fenológico', plan_pheno_delay_sub: 'Comparando la acumulación real de GDD de tu campo con los umbrales de referencia para estimar retrasos o adelantos en cada etapa de crecimiento.',
     plan_th_stage: 'Etapa', plan_th_gdd_req: 'GDD Requeridos', plan_th_expected_date: 'Fecha Esperada', plan_th_status: 'Estado', plan_th_shift: 'Desfase (días)',
     plan_chill_title: 'Evaluación de Horas Frío', plan_chill_accumulated: 'Acumuladas', plan_chill_required: 'Requeridas (promedio varietal)', plan_chill_vitis: 'Rango típico de Vitis vinifera', plan_chill_status: 'Estado',
@@ -3583,13 +3826,13 @@ const i18n = {
     sample_composition: 'Variedades analizadas', samples: 'muestras',
     deg_accumulation: 'Acumulación de genes activos',
     top_degs: 'Genes más importantes por etapa',
-    go_enrichment_title: '🧬 Enriquecimiento de Ontología Génica',
+    go_enrichment_title: 'Enriquecimiento de Ontología Génica',
     go_enrichment_hint: 'Haz clic en cualquier <strong style="color:var(--accent)">ID de Gen</strong> en las tablas para ver sus anotaciones GO y estructura proteica.',
     go_term_freq: 'Frecuencia de términos GO en genes activos:',
     go_bp: 'Proceso Biológico', go_mf: 'Función Molecular', go_cc: 'Componente Celular',
     go_compute: 'Calcular desde UniProt',
     go_compute_hint: 'Presiona <strong style="color:var(--accent);">Calcular desde UniProt</strong> para obtener anotaciones GO reales de todos los genes en las tablas.',
-    gene_detail_title: '🔬 Detalle del Gen',
+    gene_detail_title: 'Detalle del Gen',
     gene_detail_hint: 'Haz clic en un <strong style="color:var(--accent);">ID VIT_</strong> en cualquier tabla para ver:<br>Anotaciones de Ontología Génica · Info proteica UniProt · Estructura 3D AlphaFold',
     deg_summary_title: 'Resumen de Expresión Diferencial — Todas las comparaciones vs. E-L 3 (Línea base)',
     th_comparison: 'Comparación', th_major_stage: 'Etapa Principal', th_tissue: 'Tejido', th_replicates: 'Réplicas',
@@ -3605,27 +3848,27 @@ const i18n = {
   },
   pt: {
     nav_dashboard: 'Meu Campo', nav_maps: 'Mapa do Campo', nav_climate: 'Clima',
-    nav_genomic: 'Genética', nav_images: 'Fotos do Vinhedo', nav_yield: 'Previsão de Colheita',
+    nav_genomic: 'Genética', nav_images: 'Fotos do Campo', nav_yield: 'Previsão de Colheita',
     nav_chat: 'Perguntar ao agragent', chat_conversations: 'Conversas', chat_new: '+ Nova',
-    chat_welcome_text: 'Pergunte sobre o clima, imagens de satélite, irrigação, solo ou qualquer dúvida sobre seu vinhedo.',
+    chat_welcome_text: 'Pergunte sobre sua cultura, imagens de satélite (NDVI), clima, solo, irrigação, fertilização ou fontes científicas (OpenAlex 250M+, AGRIS FAO, INIA Chile). Como posso ajudar?',
     chat_placeholder: 'Pergunte ao agragent...',
     chat_q1: 'Como está a saúde das minhas plantas?',
-    chat_q1_label: '🌿 Saúde do cultivo',
+    chat_q1_label: 'Saúde do cultivo',
     chat_q2: 'Como está o clima na minha região?',
-    chat_q2_label: '🌤️ Resumo do clima',
-    chat_q3: 'Calcule um plano de irrigação para meu vinhedo',
-    chat_q3_label: '💧 Plano de irrigação',
+    chat_q2_label: 'Resumo do clima',
+    chat_q3: 'Calcule um plano de irrigação para minha cultura',
+    chat_q3_label: 'Plano de irrigação',
     chat_q4: 'Analise as condições do solo e recomende fertilização',
-    chat_q4_label: '🧪 Solo e fertilização',
+    chat_q4_label: 'Solo e fertilização',
     nav_references: 'Referências',
     season: 'Safra 2025–2026', upload_polygon: 'Carregue um polígono para começar',
     welcome_title: 'Bem-vindo ao agragent',
-    welcome_text: 'Marque seu campo no mapa para começar. Mostraremos imagens de satélite, dados do clima e uma previsão de colheita para seu vinhedo.',
+    welcome_text: 'Marque seu campo no mapa para começar. Mostraremos imagens de satélite, dados do clima e uma previsão de colheita para sua cultura.',
     step1: 'Vá para', step1_link: 'Mapa do Campo', step2: 'Carregue um arquivo ou desenhe os limites do seu campo', step3: 'Todos os dados se atualizam automaticamente',
     search_placeholder: 'Buscar localidade... (ex. Douro, Alentejo)', search_btn: 'Buscar',
     base_satellite: 'Satélite', base_streets: 'Ruas', base_hybrid: 'Híbrido',
     yield_empty_title: 'Marque seu campo para ver a previsão de colheita',
-    yield_empty_text: 'Vá para <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa do Campo</strong> e desenhe os limites do seu vinhedo. Calcularemos o rendimento estimado, produção total e a melhor data de colheita.',
+    yield_empty_text: 'Vá para <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa do Campo</strong> e desenhe os limites do seu campo. Calcularemos o rendimento estimado, produção total e a melhor data de colheita.',
     yield_unit: 'toneladas / hectare', yield_harvest_label: 'Colheita estimada:',
     yield_features_title: 'O que mais influencia sua colheita', yield_sat_title: 'Leituras de Satélite',
     yield_climate_title: 'Dados Climáticos', yield_model_title: 'Comparação de Modelos',
@@ -3633,12 +3876,12 @@ const i18n = {
     yield_th_model: 'Modelo', yield_th_pred: 'Previsão (t/ha)', yield_th_best: 'Melhor',
     img_images: 'Imagens', img_clusters: 'Cachos', img_berries_ann: 'Bagas anotadas', img_varieties: 'Variedades',
     img_white: 'Branca', img_red: 'Tinta', img_click_hint: 'Clique na imagem para ver anotações',
-    img_upload_title: '📤 Analisar imagem própria', img_upload_text: 'Arraste ou clique para carregar imagem do vinhedo', img_upload_sub: 'Aceita .jpg · .png · .tiff — Máx 50MB',
+    img_upload_title: 'Analisar imagem própria', img_upload_text: 'Arraste ou clique para carregar imagem do campo', img_upload_sub: 'Aceita .jpg · .png · .tiff — Máx 50MB',
     img_loading: 'Carregando imagem e anotações...', img_clusters_detected: 'Cachos detectados', img_berries_est: 'Bagas estimadas',
     img_annotations: 'Anotações: YOLO (bounding box)', img_resolution: 'Resolução: 2048 × 1365 px', img_data_source: 'Dados:', img_show_bbox: 'Mostrar bounding boxes',
     img_analyzing: 'Analisando imagem com YOLOv11...', img_api_offline: 'Servidor de detecção offline. Inicie a API para habilitar detecção em tempo real.',
     img_berry_method: '<strong style="color:var(--text-primary);">Método de estimativa de bagas:</strong> Estimado a partir da área do bounding box de cada cacho detectado. Cachos pequenos (~1% da área) ≈ 20 bagas, cachos grandes (~8%) ≈ 80 bagas. Interpolação linear, máximo 80/cacho. É uma aproximação — contagem real requer segmentação de instâncias.',
-    editor_title: '✏️ Propriedades do Campo', editor_name: 'Nome', editor_name_ph: 'ex: Parcela Norte',
+    editor_title: 'Propriedades do Campo', editor_name: 'Nome', editor_name_ph: 'ex: Parcela Norte',
     editor_desc: 'Descrição', editor_desc_ph: 'Notas, variedade, observações...',
     editor_stage: 'Etapa de crescimento', editor_select: '— Selecionar —',
     stage_bud: 'Brotação', stage_flower: 'Floração', stage_fruit: 'Frutificação', stage_veraison: 'Veraison',
@@ -3676,7 +3919,7 @@ const i18n = {
     yield_title: 'Previsão de Rendimento',
     // Plan
     nav_plan: 'Plano de Campo', plan_title: 'Plano de Ação do Campo', plan_sub: 'Acompanhamento fenológico e calendário de atividades baseado em dados climáticos',
-    plan_empty_title: 'Marque seu campo para gerar o plano de ação', plan_empty_text: 'Vá ao <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa do Campo</strong> e desenhe os limites do vinhedo. Calcularemos os desvios fenológicos e recomendaremos atividades com base no clima real.',
+    plan_empty_title: 'Marque seu campo para gerar o plano de ação', plan_empty_text: 'Vá ao <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa do Campo</strong> e desenhe os limites do campo. Calcularemos os desvios fenológicos e recomendaremos atividades com base no clima real.',
     plan_pheno_delay: 'Análise de Desvio Fenológico', plan_pheno_delay_sub: 'Comparando a acumulação real de GDD do campo com os limiares de referência para estimar atrasos ou avanços em cada estágio de crescimento.',
     plan_th_stage: 'Estágio', plan_th_gdd_req: 'GDD Necessários', plan_th_expected_date: 'Data Esperada', plan_th_status: 'Estado', plan_th_shift: 'Desvio (dias)',
     plan_chill_title: 'Avaliação de Horas de Frio', plan_chill_accumulated: 'Acumuladas', plan_chill_required: 'Necessárias (média varietal)', plan_chill_vitis: 'Faixa típica de Vitis vinifera', plan_chill_status: 'Estado',
@@ -3731,13 +3974,13 @@ const i18n = {
     sample_composition: 'Composição de Amostras por Variedade', samples: 'amostras',
     deg_accumulation: 'Acumulação de DEGs por Estágio',
     top_degs: 'Genes Diferencialmente Expressos Top por Estágio',
-    go_enrichment_title: '🧬 Enriquecimento de Ontologia Gênica',
+    go_enrichment_title: 'Enriquecimento de Ontologia Gênica',
     go_enrichment_hint: 'Clique em qualquer <strong style="color:var(--accent)">ID do Gene</strong> nas tabelas para ver suas anotações GO e estrutura proteica.',
     go_term_freq: 'Frequência de termos GO nos DEGs:',
     go_bp: 'Processo Biológico', go_mf: 'Função Molecular', go_cc: 'Componente Celular',
     go_compute: 'Calcular via UniProt',
     go_compute_hint: 'Pressione <strong style="color:var(--accent);">Calcular via UniProt</strong> para buscar anotações GO reais de todos os genes nas tabelas.',
-    gene_detail_title: '🔬 Detalhe do Gene',
+    gene_detail_title: 'Detalhe do Gene',
     gene_detail_hint: 'Clique em um <strong style="color:var(--accent);">ID VIT_</strong> em qualquer tabela para ver:<br>Anotações de Ontologia Gênica · Info proteica UniProt · Estrutura 3D AlphaFold',
     deg_summary_title: 'Resumo de Expressão Diferencial — Todas comparações vs. E-L 3 (Base)',
     th_comparison: 'Comparação', th_major_stage: 'Estágio Principal', th_tissue: 'Tecido', th_replicates: 'Réplicas',
@@ -3823,8 +4066,29 @@ navItems.forEach(item => {
 });
 
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
+  const sidebar = document.getElementById('sidebar');
+  const open = sidebar.classList.toggle('open');
+  let bd = document.getElementById('sidebar-backdrop');
+  if (!bd) {
+    bd = document.createElement('div');
+    bd.id = 'sidebar-backdrop';
+    bd.addEventListener('click', () => toggleSidebar());
+    document.body.appendChild(bd);
+  }
+  bd.classList.toggle('show', open);
+  // Lock body scroll while open on mobile
+  document.body.style.overflow = (open && window.innerWidth <= 640) ? 'hidden' : '';
 }
+// Close on resize past mobile breakpoint
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 640) {
+    const sb = document.getElementById('sidebar');
+    if (sb) sb.classList.remove('open');
+    const bd = document.getElementById('sidebar-backdrop');
+    if (bd) bd.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+});
 
 function setBaseMap(type, btn) {
   if (!vineMap) return;
@@ -3853,7 +4117,7 @@ function toggleMapFullscreen() {
   const container = document.getElementById('map-container');
   const btn = document.getElementById('map-fs-btn');
   const isFs = container.classList.toggle('fullscreen');
-  btn.textContent = isFs ? '✕ Exit' : '⛶ Fullscreen';
+  btn.innerHTML = isFs ? '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-shrink\"/></svg>Exit' : '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-fullscreen\"/></svg>Fullscreen';
   // Hide/show sidebar and topbar in fullscreen
   document.getElementById('sidebar').style.display = isFs ? 'none' : '';
   document.getElementById('topbar').style.display = isFs ? 'none' : '';
@@ -4417,13 +4681,13 @@ async function loadClimateData() {
     // --- Update alert ---
     const alertEl = document.getElementById('climateAlert');
     const alerts = [];
-    if (heatWaves > 0) alerts.push(`🌡 ${heatWaves} heat wave(s) detected (≥3 days >35°C). ${heatDays} total heat stress days.`);
-    if (frostDays > 0) alerts.push(`❄ ${frostDays} frost day(s). Last frost: ${lastFrostStr} ${lastFrostYear}.`);
-    if (dryMonths >= 4) alerts.push(`☀ ${dryMonths} dry months (<30mm) — monitor irrigation needs.`);
-    if (totalGDD < 1200) alerts.push(`⚠ Low GDD (${totalGDD}) — cooler season than average.`);
-    if (chillHours < 400) alerts.push(`⚠ Low chill hours (${chillHours}) — may affect bud break.`);
-    if (totalET > 1000) alerts.push(`💧 High evapotranspiration (${totalET}mm) — increased water demand.`);
-    alertEl.innerHTML = alerts.length > 0 ? alerts.join('<br>') : '✅ No significant climate alerts for this season.';
+    if (heatWaves > 0) alerts.push(`<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-thermometer\"/></svg>${heatWaves} heat wave(s) detected (≥3 days >35°C). ${heatDays} total heat stress days.`);
+    if (frostDays > 0) alerts.push(`<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-snowflake\"/></svg>${frostDays} frost day(s). Last frost: ${lastFrostStr} ${lastFrostYear}.`);
+    if (dryMonths >= 4) alerts.push(`<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-sun\"/></svg>${dryMonths} dry months (<30mm) — monitor irrigation needs.`);
+    if (totalGDD < 1200) alerts.push(`<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-alert\"/></svg>Low GDD (${totalGDD}) — cooler season than average.`);
+    if (chillHours < 400) alerts.push(`<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-alert\"/></svg>Low chill hours (${chillHours}) — may affect bud break.`);
+    if (totalET > 1000) alerts.push(`<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-droplet\"/></svg>High evapotranspiration (${totalET}mm) — increased water demand.`);
+    alertEl.innerHTML = alerts.length > 0 ? alerts.join('<br>') : '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-check-circle\"/></svg>No significant climate alerts for this season.';
 
     // --- Update charts ---
     chartInstances.temp.data.datasets[0].data = avgMax;
@@ -4520,11 +4784,11 @@ async function loadClimateData() {
     if (dashAlerts) {
       if (alerts.length > 0) {
         dashAlerts.innerHTML = alerts.map(a => {
-          const color = a.includes('🌡') || a.includes('⚠') ? 'red' : a.includes('❄') ? 'yellow' : 'yellow';
+          const color = a.includes('i-thermometer') || a.includes('i-alert') ? 'red' : a.includes('i-snowflake') ? 'yellow' : 'yellow';
           return `<div class="alert-item"><div class="alert-dot ${color}"></div><div class="alert-text"><div class="sub">${a}</div></div></div>`;
         }).join('');
       } else {
-        dashAlerts.innerHTML = '<div style="font-size:0.85rem;color:var(--accent);">✅ No alerts — conditions look good.</div>';
+        dashAlerts.innerHTML = '<div style="font-size:0.85rem;color:var(--accent);"><svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-check-circle\"/></svg>No alerts — conditions look good.</div>';
       }
     }
 
@@ -4558,7 +4822,7 @@ async function loadClimateData() {
   } catch (err) {
     console.error('Climate data error:', err);
     document.getElementById('climateAlert').innerHTML =
-      '⚠ Could not load climate data: ' + err.message + '. Showing empty charts.';
+      '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-alert\"/></svg>Could not load climate data: ' + err.message + '. Showing empty charts.';
   }
 }
 
@@ -4736,7 +5000,7 @@ async function loadHistoricalData() {
   const lat = sumLat / n, lng = sumLng / n;
 
   const histAlert = document.getElementById('histAlert');
-  if (histAlert) { histAlert.style.display = 'block'; histAlert.innerHTML = '⏳ Loading historical data (2015–2026)... This may take a few seconds.'; }
+  if (histAlert) { histAlert.style.display = 'block'; histAlert.innerHTML = '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-loader\"/></svg>Loading historical data (2015–2026)... This may take a few seconds.'; }
 
   // Seasons: Apr 2015 → Mar 2026 (11 seasons)
   const seasons = [];
@@ -4901,7 +5165,7 @@ async function loadHistoricalData() {
     if (histAlert) {
       const currentGDD = seasonData[seasonData.length - 1].gdd;
       const trend = currentGDD > avgGDD ? 'above' : 'below';
-      histAlert.innerHTML = `📊 11 seasons analyzed (2015–2026). Current season GDD: <strong>${currentGDD}</strong> (${trend} avg of ${avgGDD}). Avg precipitation: <strong>${avgPrec} mm/season</strong>.`;
+      histAlert.innerHTML = `<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-bar-chart\"/></svg>11 seasons analyzed (2015–2026). Current season GDD: <strong>${currentGDD}</strong> (${trend} avg of ${avgGDD}). Avg precipitation: <strong>${avgPrec} mm/season</strong>.`;
     }
 
     histDataLoaded = true;
@@ -4909,7 +5173,7 @@ async function loadHistoricalData() {
 
   } catch (err) {
     console.error('Historical data error:', err);
-    if (histAlert) histAlert.innerHTML = '⚠ Error loading historical data: ' + err.message;
+    if (histAlert) histAlert.innerHTML = '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-alert\"/></svg>Error loading historical data: ' + err.message;
   }
 }
 
@@ -5089,9 +5353,9 @@ function renderGeneDetail(panel, geneId, data) {
   if (data.go.length > 0) {
     html += `<div style="margin-bottom:10px;">
       <div style="font-size:0.78rem;font-weight:600;color:var(--text-primary);margin-bottom:6px;">Gene Ontology (${data.go.length} terms)</div>
-      ${goSection('Biological Process', '🧬', 'go-bp', goByAspect.BP)}
-      ${goSection('Molecular Function', '⚡', 'go-mf', goByAspect.MF)}
-      ${goSection('Cellular Component', '🏠', 'go-cc', goByAspect.CC)}
+      ${goSection('Biological Process', '<svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-dna\"/></svg>', 'go-bp', goByAspect.BP)}
+      ${goSection('Molecular Function', '<svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-zap\"/></svg>', 'go-mf', goByAspect.MF)}
+      ${goSection('Cellular Component', '<svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-home\"/></svg>', 'go-cc', goByAspect.CC)}
     </div>`;
   } else {
     html += `<div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:10px;">No GO annotations found for this gene.</div>`;
@@ -5101,23 +5365,23 @@ function renderGeneDetail(panel, geneId, data) {
   if (data.alphafold) {
     const viewerId = 'af-viewer-' + Date.now();
     html += `<div style="border-top:1px solid var(--border);padding-top:10px;">
-      <div style="font-size:0.78rem;font-weight:600;color:var(--text-primary);margin-bottom:6px;">🔬 AlphaFold Predicted Structure</div>
+      <div style="font-size:0.78rem;font-weight:600;color:var(--text-primary);margin-bottom:6px;display:flex;align-items:center;gap:6px;"><span class="ic ic-md ic-accent"><svg><use href="#i-microscope"/></svg></span>AlphaFold Predicted Structure</div>
       <div id="${viewerId}" style="width:100%;height:300px;border-radius:8px;border:1px solid var(--border);background:#1a1a2e;position:relative;"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
         <a href="${data.alphafold.url}" target="_blank" rel="noopener"
            style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;color:var(--accent);font-size:0.72rem;text-decoration:none;transition:border-color 0.2s;"
            onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-          🌐 AlphaFold Entry
+          <svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-globe\"/></svg>AlphaFold Entry
         </a>
         ${data.alphafold.pdbUrl ? `<a href="${data.alphafold.pdbUrl}" target="_blank" rel="noopener"
            style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;color:#60a5fa;font-size:0.72rem;text-decoration:none;transition:border-color 0.2s;"
            onmouseover="this.style.borderColor='#60a5fa'" onmouseout="this.style.borderColor='var(--border)'">
-          📥 PDB
+          <svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-download\"/></svg>PDB
         </a>` : ''}
         ${data.alphafold.cifUrl ? `<a href="${data.alphafold.cifUrl}" target="_blank" rel="noopener"
            style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;color:#a78bfa;font-size:0.72rem;text-decoration:none;transition:border-color 0.2s;"
            onmouseover="this.style.borderColor='#a78bfa'" onmouseout="this.style.borderColor='var(--border)'">
-          📥 CIF
+          <svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-download\"/></svg>CIF
         </a>` : ''}
       </div>
       ${data.alphafold.confidence ? `<div style="font-size:0.68rem;color:var(--text-secondary);margin-top:6px;">pLDDT confidence: <span style="color:var(--accent);font-weight:600;">${data.alphafold.confidence.toFixed(1)}</span> · Color: <span style="color:#0053d6;">■</span> Very high &gt;90 <span style="color:#65cbf3;">■</span> High 70–90 <span style="color:#ffdb13;">■</span> Low 50–70 <span style="color:#ff7d45;">■</span> Very low &lt;50</div>` : ''}
@@ -5455,11 +5719,11 @@ function updateLegend(idx) {
 
 function loadEEScript(callback) {
   if (window.ee) { callback(); return; }
-  setGEEStatus('loading', '⏳ Cargando librería Earth Engine...');
+  setGEEStatus('loading', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-loader\"/></svg>Cargando librería Earth Engine...');
   const s = document.createElement('script');
   s.src = 'https://unpkg.com/@google/earthengine@0.1.395/build/ee_api_js_npm.js';
   s.onload = callback;
-  s.onerror = () => setGEEStatus('error', '❌ No se pudo cargar la librería GEE. Verifica tu conexión.');
+  s.onerror = () => setGEEStatus('error', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-x\"/></svg>No se pudo cargar la librería GEE. Verifica tu conexión.');
   document.head.appendChild(s);
 }
 
@@ -5468,7 +5732,7 @@ let _geeTokenExpiry = 0;
 async function autoConnectGEE() {
   if (geeConnected) return;
 
-  setGEEStatus('loading', '⏳ Conectando a Google Earth Engine...');
+  setGEEStatus('loading', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-loader\"/></svg>Conectando a Google Earth Engine...');
   const subEl = document.getElementById('gee-auto-sub');
   if (subEl) subEl.textContent = 'Conectando automáticamente a Sentinel-2...';
 
@@ -5508,7 +5772,7 @@ async function autoConnectGEE() {
     console.log('EE initialized via service account. Project:', projectId);
 
     geeConnected = true;
-    setGEEStatus('success', '✅ Conectado a Google Earth Engine');
+    setGEEStatus('success', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-check-circle\"/></svg>Conectado a Google Earth Engine');
     if (subEl) subEl.textContent = 'Sentinel-2 SR Harmonized · 10m resolución';
 
     // Switch to satellite basemap
@@ -5529,7 +5793,7 @@ async function autoConnectGEE() {
 
   } catch (err) {
     console.error('GEE auto-connect error:', err);
-    setGEEStatus('error', '❌ ' + err.message);
+    setGEEStatus('error', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-x\"/></svg>' + err.message);
     if (subEl) subEl.textContent = 'Error al conectar — reintentando en 10s...';
     setTimeout(autoConnectGEE, 10000);
   }
@@ -5543,7 +5807,7 @@ function loadGEELayer(idx) {
   currentGEEIndex = idx;
 
   if (kmlRawCoords.length === 0) {
-    setGEEStatus('error', '⚠ ' + t('no_polygon_gee'));
+    setGEEStatus('error', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-alert\"/></svg>' + t('no_polygon_gee'));
     return;
   }
 
@@ -5608,7 +5872,7 @@ function loadGEELayer(idx) {
         url += (url.includes('?') ? '&' : '?') + 'token=' + result.token;
       }
       console.log('GEE tile URL:', url);
-      if (!url) { setMapLoading(false); setGEEStatus('error', '❌ No se obtuvo URL de tiles'); return; }
+      if (!url) { setMapLoading(false); setGEEStatus('error', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-x\"/></svg>No se obtuvo URL de tiles'); return; }
 
       geeLayer = L.tileLayer(url, {
         attribution: '© Google Earth Engine · Sentinel-2 SR',
@@ -5623,7 +5887,7 @@ function loadGEELayer(idx) {
 
     setMapLoading(false);
     const badge = document.getElementById('map-source-badge');
-    badge.innerHTML = `🌍 <strong>Google Earth Engine</strong> · Sentinel-2 SR · <strong>${idx}</strong> · ${startDate} → ${endDate} · ☁️ &lt;${cloudPct}%`;
+    badge.innerHTML = `<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-globe\"/></svg><strong>Google Earth Engine</strong> · Sentinel-2 SR · <strong>${idx}</strong> · ${startDate} → ${endDate} · <svg viewBox=\"0 0 24 24\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:3px;\"><use href=\"#i-cloud\"/></svg>&lt;${cloudPct}%`;
 
     const noteEl = document.getElementById('gee-layer-note');
     noteEl.textContent = `Última carga: ${new Date().toLocaleTimeString('es-CL')}`;
@@ -5636,12 +5900,12 @@ function loadGEELayer(idx) {
   // Timeout: if GEE doesn't respond in 30s, show error
   const geeTimeout = setTimeout(() => {
     setMapLoading(false);
-    setGEEStatus('error', '❌ Timeout: GEE no respondió en 30s. Intenta con menos nubes o un período más corto.');
+    setGEEStatus('error', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-x\"/></svg>Timeout: GEE no respondió en 30s. Intenta con menos nubes o un período más corto.');
   }, 30000);
 
   try {
     console.log('GEE: requesting mapId for', idx, startDate, '→', endDate, 'cloud<', cloudPct);
-    setGEEStatus('loading', '⏳ Solicitando tiles a GEE... (puede tardar 10-20s)');
+    setGEEStatus('loading', '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><use href="#i-loader"/></svg>Solicitando tiles a GEE... (puede tardar 10-20s)');
 
     // image.getMapId returns synchronously with {mapid, token, urlFormat, formatTileUrl}
     const result = image.getMapId(visParams);
@@ -5651,7 +5915,7 @@ function loadGEELayer(idx) {
   } catch (e) {
     clearTimeout(geeTimeout);
     setMapLoading(false);
-    setGEEStatus('error', '❌ ' + e.message);
+    setGEEStatus('error', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-x\"/></svg>' + e.message);
     console.error('GEE exception:', e);
   }
 }
@@ -5731,27 +5995,27 @@ function updatePhenologicalStage(gdd) {
 
 // Activities per phenological stage (keyed by E-L number)
 const FIELD_ACTIVITIES = {
-  3:  [{ activity: 'Bud inspection & frost protection setup', icon: '🛡️', category: 'protection' },
-       { activity: 'Apply dormant oil spray', icon: '💧', category: 'phytosanitary' }],
-  5:  [{ activity: 'Shoot thinning — remove weak shoots', icon: '✂️', category: 'canopy' },
-       { activity: 'First foliar fertilization (N)', icon: '🧪', category: 'nutrition' }],
-  15: [{ activity: 'Canopy management — leaf removal (basal)', icon: '🍃', category: 'canopy' },
-       { activity: 'Pest monitoring — grape moth', icon: '🔍', category: 'phytosanitary' }],
-  17: [{ activity: 'Avoid irrigation stress during flowering', icon: '💧', category: 'irrigation' },
-       { activity: 'Botrytis preventive spray', icon: '🧴', category: 'phytosanitary' }],
-  27: [{ activity: 'Berry thinning (cluster adjustment)', icon: '✂️', category: 'canopy' },
-       { activity: 'Soil analysis & mid-season fertilization', icon: '🧪', category: 'nutrition' }],
-  31: [{ activity: 'Irrigation scheduling — deficit irrigation phase', icon: '💧', category: 'irrigation' },
-       { activity: 'Second pest monitoring pass', icon: '🔍', category: 'phytosanitary' }],
-  35: [{ activity: 'Reduce irrigation — promote sugar concentration', icon: '💧', category: 'irrigation' },
-       { activity: 'Bird netting installation', icon: '🛡️', category: 'protection' },
-       { activity: 'Monitor Brix, pH, titratable acidity', icon: '📊', category: 'monitoring' }],
-  36: [{ activity: 'Leaf pulling (sun exposure for ripening)', icon: '🍃', category: 'canopy' },
-       { activity: 'Foliar K application for berry quality', icon: '🧪', category: 'nutrition' }],
-  38: [{ activity: 'Harvest readiness sampling (Brix ≥ 22–24°)', icon: '🍇', category: 'monitoring' },
-       { activity: 'Coordinate harvest logistics & crew', icon: '🚜', category: 'harvest' }],
-  41: [{ activity: 'Post-harvest irrigation (recharge)', icon: '💧', category: 'irrigation' },
-       { activity: 'Fall fertilization (P, K)', icon: '🧪', category: 'nutrition' }]
+  3:  [{ activity: 'Bud inspection & frost protection setup', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-shield\"/></svg>', category: 'protection' },
+       { activity: 'Apply dormant oil spray', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-droplet\"/></svg>', category: 'phytosanitary' }],
+  5:  [{ activity: 'Shoot thinning — remove weak shoots', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-scissors\"/></svg>', category: 'canopy' },
+       { activity: 'First foliar fertilization (N)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-flask\"/></svg>', category: 'nutrition' }],
+  15: [{ activity: 'Canopy management — leaf removal (basal)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-leaf\"/></svg>', category: 'canopy' },
+       { activity: 'Pest monitoring — grape moth', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-search\"/></svg>', category: 'phytosanitary' }],
+  17: [{ activity: 'Avoid irrigation stress during flowering', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-droplet\"/></svg>', category: 'irrigation' },
+       { activity: 'Botrytis preventive spray', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-spray\"/></svg>', category: 'phytosanitary' }],
+  27: [{ activity: 'Berry thinning (cluster adjustment)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-scissors\"/></svg>', category: 'canopy' },
+       { activity: 'Soil analysis & mid-season fertilization', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-flask\"/></svg>', category: 'nutrition' }],
+  31: [{ activity: 'Irrigation scheduling — deficit irrigation phase', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-droplet\"/></svg>', category: 'irrigation' },
+       { activity: 'Second pest monitoring pass', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-search\"/></svg>', category: 'phytosanitary' }],
+  35: [{ activity: 'Reduce irrigation — promote sugar concentration', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-droplet\"/></svg>', category: 'irrigation' },
+       { activity: 'Bird netting installation', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-shield\"/></svg>', category: 'protection' },
+       { activity: 'Monitor Brix, pH, titratable acidity', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-bar-chart\"/></svg>', category: 'monitoring' }],
+  36: [{ activity: 'Leaf pulling (sun exposure for ripening)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-leaf\"/></svg>', category: 'canopy' },
+       { activity: 'Foliar K application for berry quality', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-flask\"/></svg>', category: 'nutrition' }],
+  38: [{ activity: 'Harvest readiness sampling (Brix ≥ 22–24°)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-grape\"/></svg>', category: 'monitoring' },
+       { activity: 'Coordinate harvest logistics & crew', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-tractor\"/></svg>', category: 'harvest' }],
+  41: [{ activity: 'Post-harvest irrigation (recharge)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-droplet\"/></svg>', category: 'irrigation' },
+       { activity: 'Fall fertilization (P, K)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-flask\"/></svg>', category: 'nutrition' }]
 };
 
 const ACTIVITY_COLORS = {
@@ -5886,7 +6150,7 @@ function updateFieldPlan() {
         <strong style="font-size:0.85rem;color:var(--text-primary);">${stage.name}</strong>
         <span style="font-size:0.72rem;color:var(--text-secondary);">E-L ${stage.el} · ~${dateStr} · ${stage.gdd} GDD</span>
         ${isCurrent ? '<span style="font-size:0.68rem;background:var(--accent);color:#fff;padding:2px 8px;border-radius:10px;margin-left:auto;">CURRENT</span>' : ''}
-        ${reached && !isCurrent ? '<span style="font-size:0.68rem;color:#52b788;margin-left:auto;">✓</span>' : ''}
+        ${reached && !isCurrent ? '<span style="color:#52b788;margin-left:auto;"><svg viewBox=\"0 0 24 24\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;color:#52b788;\"><use href=\"#i-check\"/></svg></span>' : ''}
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;">
         ${activities.map(a => {
@@ -5906,42 +6170,42 @@ function updateFieldPlan() {
   // GDD-based alerts
   const avgRef = 7.5;
   if (dailyGDDRate < avgRef * 0.75) {
-    alerts.push({ icon: '🥶', color: '#60a5fa', text: lang === 'es' ? `Acumulación de GDD lenta (${dailyGDDRate.toFixed(1)}/día vs ${avgRef} referencia). Temporada fría — las etapas fenológicas llegarán tarde. Considerar manejos para acelerar maduración.`
+    alerts.push({ icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-snowflake\"/></svg>', color: '#60a5fa', text: lang === 'es' ? `Acumulación de GDD lenta (${dailyGDDRate.toFixed(1)}/día vs ${avgRef} referencia). Temporada fría — las etapas fenológicas llegarán tarde. Considerar manejos para acelerar maduración.`
       : lang === 'pt' ? `Acumulação de GDD lenta (${dailyGDDRate.toFixed(1)}/dia vs ${avgRef} ref). Safra fria — estágios fenológicos atrasados.`
       : `Slow GDD accumulation (${dailyGDDRate.toFixed(1)}/day vs ${avgRef} reference). Cool season — phenological stages will arrive late. Consider canopy management to accelerate ripening.` });
   } else if (dailyGDDRate > avgRef * 1.25) {
-    alerts.push({ icon: '🔥', color: '#ef4444', text: lang === 'es' ? `Acumulación de GDD rápida (${dailyGDDRate.toFixed(1)}/día vs ${avgRef} referencia). Temporada calurosa — maduración acelerada. Monitorear estrés hídrico y proteger racimos del sol.`
+    alerts.push({ icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-flame\"/></svg>', color: '#ef4444', text: lang === 'es' ? `Acumulación de GDD rápida (${dailyGDDRate.toFixed(1)}/día vs ${avgRef} referencia). Temporada calurosa — maduración acelerada. Monitorear estrés hídrico y proteger racimos del sol.`
       : lang === 'pt' ? `Acumulação de GDD rápida (${dailyGDDRate.toFixed(1)}/dia vs ${avgRef} ref). Safra quente — maturação acelerada. Monitorar estresse hídrico.`
       : `Fast GDD accumulation (${dailyGDDRate.toFixed(1)}/day vs ${avgRef} reference). Warm season — accelerated ripening. Monitor water stress and protect clusters from sunburn.` });
   }
 
   if (C.frostDays > 0) {
-    alerts.push({ icon: '❄️', color: '#93c5fd', text: lang === 'es' ? `${C.frostDays} días de helada registrados. Instalar protección antihelada en parcelas vulnerables.`
+    alerts.push({ icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-snowflake\"/></svg>', color: '#93c5fd', text: lang === 'es' ? `${C.frostDays} días de helada registrados. Instalar protección antihelada en parcelas vulnerables.`
       : lang === 'pt' ? `${C.frostDays} dias de geada registrados. Instalar proteção contra geada.`
       : `${C.frostDays} frost days recorded. Install frost protection in vulnerable plots.` });
   }
 
   if (C.heatWaves > 0) {
-    alerts.push({ icon: '🌡️', color: '#fca5a5', text: lang === 'es' ? `${C.heatWaves} ola(s) de calor detectada(s). Aumentar frecuencia de riego y considerar mallas de sombra.`
+    alerts.push({ icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-thermometer\"/></svg>', color: '#fca5a5', text: lang === 'es' ? `${C.heatWaves} ola(s) de calor detectada(s). Aumentar frecuencia de riego y considerar mallas de sombra.`
       : lang === 'pt' ? `${C.heatWaves} onda(s) de calor detectada(s). Aumentar frequência de irrigação.`
       : `${C.heatWaves} heat wave(s) detected. Increase irrigation frequency and consider shade nets.` });
   }
 
   if (chillHours < 400) {
-    alerts.push({ icon: '⚠️', color: '#fbbf24', text: lang === 'es' ? `Horas frío insuficientes (${chillHours} de 400–600 requeridas). Brotación puede ser desuniforme. Evaluar aplicación de cianamida de hidrógeno.`
+    alerts.push({ icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-alert\"/></svg>', color: '#fbbf24', text: lang === 'es' ? `Horas frío insuficientes (${chillHours} de 400–600 requeridas). Brotación puede ser desuniforme. Evaluar aplicación de cianamida de hidrógeno.`
       : lang === 'pt' ? `Horas de frio insuficientes (${chillHours} de 400–600). Brotação pode ser irregular. Avaliar cianamida de hidrogênio.`
       : `Insufficient chill hours (${chillHours} of 400–600 required). Bud break may be uneven. Evaluate hydrogen cyanamide application.` });
   }
 
   const totalPrecip = C.totalPrecip || 0;
   if (totalPrecip < 300) {
-    alerts.push({ icon: '🏜️', color: '#f59e0b', text: lang === 'es' ? `Precipitación baja (${totalPrecip}mm). Planificar riego suplementario durante envero y maduración.`
+    alerts.push({ icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-mountain\"/></svg>', color: '#f59e0b', text: lang === 'es' ? `Precipitación baja (${totalPrecip}mm). Planificar riego suplementario durante envero y maduración.`
       : lang === 'pt' ? `Precipitação baixa (${totalPrecip}mm). Planejar irrigação suplementar.`
       : `Low precipitation (${totalPrecip}mm). Plan supplementary irrigation during veraison and ripening.` });
   }
 
   if (alerts.length === 0) {
-    alerts.push({ icon: '✅', color: '#52b788', text: lang === 'es' ? 'Condiciones climáticas normales. No se detectan anomalías significativas.'
+    alerts.push({ icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-check-circle\"/></svg>', color: '#52b788', text: lang === 'es' ? 'Condiciones climáticas normales. No se detectan anomalías significativas.'
       : lang === 'pt' ? 'Condições climáticas normais. Sem anomalias significativas.'
       : 'Normal climate conditions. No significant anomalies detected.' });
   }
@@ -6217,7 +6481,7 @@ function updateYieldSection(p) {
         <td${greenStyle}>${bold(m.r2.toFixed(3))}</td>
         <td${greenStyle}>${bold(m.mape.toFixed(1))}</td>
         <td>${m.rmse.toFixed(2)}</td>
-        <td>${isBest ? '<span class="model-best">★</span>' : ''}</td>
+        <td>${isBest ? '<span class="model-best"><svg viewBox=\"0 0 24 24\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;color:#f59e0b;\"><use href=\"#i-star\"/></svg></span>' : ''}</td>
       </tr>`;
     }).join('');
   }
@@ -6295,7 +6559,7 @@ function fetchSceneList() {
   const listEl    = document.getElementById('scene-list');
   const countEl   = document.getElementById('scene-count');
 
-  listEl.innerHTML = '<span style="font-size:0.78rem;color:var(--yellow);">⏳ Buscando capturas...</span>';
+  listEl.innerHTML = '<span style="font-size:0.78rem;color:var(--yellow);"><svg viewBox=\"0 0 24 24\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-loader\"/></svg>Buscando capturas...</span>';
   countEl.textContent = '';
 
   const geom = buildClipGeom();
@@ -6309,7 +6573,7 @@ function fetchSceneList() {
   const clouds = col.aggregate_array('CLOUDY_PIXEL_PERCENTAGE');
 
   ee.List([dates, clouds]).evaluate((result, err) => {
-    if (err) { listEl.innerHTML = `<span style="color:var(--red)">❌ ${err}</span>`; return; }
+    if (err) { listEl.innerHTML = `<span style="color:var(--red)"><svg viewBox=\"0 0 24 24\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-x\"/></svg>${err}</span>`; return; }
     const [ts, cl] = result;
     if (!ts || ts.length === 0) {
       listEl.innerHTML = '<span style="font-size:0.78rem;color:var(--text-secondary);">Sin capturas para este período y nubosidad.</span>';
@@ -6330,7 +6594,7 @@ function fetchSceneList() {
     listEl.innerHTML = availableScenes.map((s, i) =>
       `<div class="scene-chip" id="chip-${i}" onclick="loadSceneByDate('${s.date}', ${i})">
         <span class="chip-date">${s.date}</span>
-        <span class="chip-cloud">☁ ${s.cloud}%</span>
+        <span class="chip-cloud"><svg viewBox=\"0 0 24 24\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:3px;\"><use href=\"#i-cloud\"/></svg>${s.cloud}%</span>
       </div>`
     ).join('');
   });
@@ -6380,8 +6644,8 @@ function loadSceneByDate(dateStr, chipIdx) {
     geeLayer.addTo(vineMap);
     setMapLoading(false);
     document.getElementById('map-source-badge').innerHTML =
-      `🌍 <strong>GEE</strong> · Sentinel-2 SR · <strong>${currentGEEIndex}</strong> · 📅 ${dateStr}`;
-  } catch(e) { setMapLoading(false); setGEEStatus('error', '❌ ' + e.message); }
+      `<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-globe\"/></svg><strong>GEE</strong> · Sentinel-2 SR · <strong>${currentGEEIndex}</strong> · <svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-calendar\"/></svg>${dateStr}`;
+  } catch(e) { setMapLoading(false); setGEEStatus('error', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-x\"/></svg>' + e.message); }
 }
 
 // ─── COMPARE MODE ────────────────────────────────────
@@ -6391,11 +6655,11 @@ async function loadComparison() {
   const dateR  = document.getElementById('compare-right-date').value;
   const idxL   = document.getElementById('compare-left-index').value;
   const idxR   = document.getElementById('compare-right-index').value;
-  if (!dateL || !dateR) { document.getElementById('compare-status').textContent = '⚠ Selecciona ambas fechas.'; return; }
+  if (!dateL || !dateR) { document.getElementById('compare-status').innerHTML = '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-alert\"/></svg>Selecciona ambas fechas.'; return; }
 
   stopComparison(false);
   setMapLoading(true, 'Cargando comparación...');
-  document.getElementById('compare-status').textContent = '⏳ Cargando ambas fechas...';
+  document.getElementById('compare-status').innerHTML = '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-loader\"/></svg>Cargando ambas fechas...';
 
   const geom  = buildClipGeom();
   const makeImg = (date, idx) => {
@@ -6442,7 +6706,7 @@ async function loadComparison() {
       `◧ <strong>${dateL}</strong> · ${idxL} &nbsp;VS&nbsp; <strong>${dateR}</strong> · ${idxR} ◨`;
   } catch(e) {
     setMapLoading(false);
-    document.getElementById('compare-status').innerHTML = `<span style="color:var(--red)">❌ ${e.message || e}</span>`;
+    document.getElementById('compare-status').innerHTML = `<span style="color:var(--red)"><svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-x\"/></svg>${e.message || e}</span>`;
   }
 }
 
@@ -6646,12 +6910,12 @@ function renderWGISDGrid(code) {
   const grid = document.getElementById('wgisd-grid');
   grid.innerHTML = v.ids.map(id => `
     <div class="wgisd-thumb" onclick="openImageViewer('${id}','${code}')" title="${id}">
-      <div class="wgisd-thumb-loading" id="thumb-loader-${id}">🍇</div>
+      <div class="wgisd-thumb-loading" id="thumb-loader-${id}"><svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-grape\"/></svg></div>
       <img src="${WGISD_BASE}${id}.jpg"
            alt="${id}"
            loading="lazy"
            onload="document.getElementById('thumb-loader-${id}').style.display='none'"
-           onerror="this.parentElement.querySelector('.wgisd-thumb-loading').textContent='⚠️'">
+           onerror="this.parentElement.querySelector('.wgisd-thumb-loading').innerHTML='&lt;svg viewBox=&quot;0 0 24 24&quot; width=&quot;20&quot; height=&quot;20&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;use href=&quot;#i-alert&quot;/&gt;&lt;/svg&gt;'">
       <div class="wgisd-thumb-bbox-badge" id="badge-${id}">bbox</div>
       <div class="wgisd-thumb-info">
         <span class="wgisd-thumb-id">${id}</span>
@@ -6690,7 +6954,7 @@ async function openImageViewer(id, code) {
     });
   };
   img.onerror = () => {
-    document.getElementById('viewer-loading').innerHTML = '<span style="color:var(--red)">⚠️ No se pudo cargar la imagen</span>';
+    document.getElementById('viewer-loading').innerHTML = '<span style="color:var(--red)"><svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-alert\"/></svg>No se pudo cargar la imagen</span>';
   };
 }
 
@@ -6908,7 +7172,7 @@ async function analyzeUploadedImage(event) {
           <span class="badge badge-accent">YOLOv11 · WGISD</span>
           <span class="badge" style="background:rgba(96,165,250,0.15);color:#60a5fa;">${modelName}</span>
         </div>
-        ${!apiResult ? `<div style="font-size:0.75rem;color:var(--yellow);margin-top:10px;">⚠ ${t('img_api_offline')}</div>` : ''}
+        ${!apiResult ? `<div style="font-size:0.75rem;color:var(--yellow);margin-top:10px;"><svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-alert\"/></svg>${t('img_api_offline')}</div>` : ''}
         ${hasDetections ? `<div style="margin-top:10px;"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;color:var(--text-secondary);">
           <input type="checkbox" checked onchange="toggleUploadBBoxes('${uniqueId}', this.checked, ${JSON.stringify(boxes).replace(/"/g,'&quot;')})">
           ${t('img_show_bbox')}</label></div>` : ''}
@@ -7059,7 +7323,7 @@ function addLayerToMap(layer, name, color, description = '', stage = '') {
         ${a.stage ? `<div><span style="color:var(--text-secondary)">Etapa:</span> <strong>${a.stage}</strong></div>` : ''}
         ${area ? `<div><span style="color:var(--text-secondary)">Área:</span> <strong>${area} ha</strong></div>` : ''}
         ${a.description ? `<div style="margin-top:6px;color:var(--text-secondary);font-style:italic;">${a.description}</div>` : ''}
-        <div style="margin-top:8px;"><button onclick="openEditor(window._editLayer)" style="background:var(--accent);border:none;border-radius:5px;padding:5px 10px;font-size:0.75rem;cursor:pointer;color:#0a1218;font-weight:600;">✏️ Editar</button></div>
+        <div style="margin-top:8px;"><button onclick="openEditor(window._editLayer)" style="background:var(--accent);border:none;border-radius:5px;padding:5px 10px;font-size:0.75rem;cursor:pointer;color:#0a1218;font-weight:600;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;"><use href="#i-edit"/></svg>Editar</button></div>
       </div>`;
     window._editLayer = layer;
   });
@@ -7078,7 +7342,7 @@ function buildPopup(a, layer) {
       ${area ? `<b>Área:</b> ${area} ha<br>` : ''}
       ${a.description ? `<i style="color:#7fa892">${a.description}</i>` : ''}
     </div>
-    <button onclick="openEditor(window._editLayer)" style="margin-top:8px;background:#52b788;border:none;border-radius:5px;padding:4px 10px;font-size:0.75rem;cursor:pointer;color:#0a1218;font-weight:600;">✏️ Editar propiedades</button>
+    <button onclick="openEditor(window._editLayer)" style="margin-top:8px;background:#52b788;border:none;border-radius:5px;padding:4px 10px;font-size:0.75rem;cursor:pointer;color:#0a1218;font-weight:600;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;"><use href="#i-edit"/></svg>Editar propiedades</button>
   </div>`;
 }
 
@@ -7116,9 +7380,9 @@ function renderLayerList() {
       <span class="layer-name">${l.name}</span>
       ${area ? `<span class="layer-area">${area} ha</span>` : ''}
       <div class="layer-actions">
-        <button class="layer-act-btn" onclick="zoomToLayer(${i})" title="Zoom">🎯</button>
-        <button class="layer-act-btn" onclick="openEditorByIndex(${i})" title="Editar">✏️</button>
-        <button class="layer-act-btn del" onclick="deleteLayer(${i})" title="Eliminar">🗑</button>
+        <button class="layer-act-btn" onclick="zoomToLayer(${i})" title="Zoom"><span class="ic ic-sm"><svg><use href="#i-target"/></svg></span></button>
+        <button class="layer-act-btn" onclick="openEditorByIndex(${i})" title="Editar"><span class="ic ic-sm"><svg><use href="#i-edit"/></svg></span></button>
+        <button class="layer-act-btn del" onclick="deleteLayer(${i})" title="Eliminar"><span class="ic ic-sm"><svg><use href="#i-trash"/></svg></span></button>
       </div>
     </div>`;
   }).join('');
@@ -7431,15 +7695,15 @@ let chatConvId = null;
 let chatLoading = false;
 
 const TOOL_LABELS = {
-  get_climate_data:             '🌤 Climate data',
-  get_ndvi_data:                '🛰️ NDVI / Sentinel-2',
-  analyze_soil_report:          '🧪 Soil analysis',
-  analyze_foliar_report:        '🍃 Foliar analysis',
-  calculate_irrigation_plan:    '💧 Irrigation plan',
-  calculate_fertilization_plan: '🌱 Fertilization plan',
-  search_openalex:              '🌍 OpenAlex global literature',
-  search_inia_biblioteca:       '📚 INIA Chile library',
-  search_inia_rag:              '🔎 INIA Chile semantic search',
+  get_climate_data:             'Climate data',
+  get_ndvi_data:                'NDVI / Sentinel-2',
+  analyze_soil_report:          'Soil analysis',
+  analyze_foliar_report:        'Foliar analysis',
+  calculate_irrigation_plan:    'Irrigation plan',
+  calculate_fertilization_plan: 'Fertilization plan',
+  search_openalex:              'OpenAlex global literature',
+  search_inia_biblioteca:       'INIA Chile library',
+  search_inia_rag:              'INIA Chile semantic search',
 };
 
 function chatRenderMarkdown(text) {
@@ -7489,7 +7753,9 @@ function chatAddMessage(role, content, toolCalls) {
     const w = document.getElementById(id);
     if (w) w.style.display = 'none';
   });
-  const avatar = role === 'assistant' ? '🌿' : '👤';
+  const avatar = role === 'assistant'
+      ? '<svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><use href=\"#i-leaf\"/></svg>'
+      : '<svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><use href=\"#i-user\"/></svg>';
   let toolHtml = '';
   if (toolCalls && toolCalls.length) {
     toolHtml = '<div class="chat-tool-tags">' +
@@ -7511,7 +7777,7 @@ function chatShowTyping() {
     const div = document.createElement('div');
     div.className = 'chat-msg assistant';
     div.id = 'chat-typing-' + container.id;
-    div.innerHTML = '<div class="chat-msg-avatar">🌿</div>' +
+    div.innerHTML = '<div class="chat-msg-avatar"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-leaf"/></svg></div>' +
       '<div class="chat-msg-bubble"><div class="chat-typing"><span></span><span></span><span></span></div></div>';
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
@@ -7534,7 +7800,7 @@ function chatCreateStreamBubble() {
   chatGetContainers().forEach(container => {
     const div = document.createElement('div');
     div.className = 'chat-msg assistant';
-    div.innerHTML = '<div class="chat-msg-avatar">🌿</div>' +
+    div.innerHTML = '<div class="chat-msg-avatar"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-leaf"/></svg></div>' +
       '<div class="chat-msg-bubble"><div class="chat-stream-content"></div>' +
       '<div class="chat-tool-tags" id="chat-stream-tools-' + container.id + '"></div></div>';
     container.appendChild(div);
@@ -7571,7 +7837,7 @@ function chatShowToolStatus(toolName) {
       el = document.createElement('div');
       el.className = 'chat-msg assistant';
       el.id = 'chat-tool-status-' + container.id;
-      el.innerHTML = '<div class="chat-msg-avatar">🌿</div>' +
+      el.innerHTML = '<div class="chat-msg-avatar"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-leaf"/></svg></div>' +
         '<div class="chat-msg-bubble chat-tool-status-bubble"><span class="chat-typing-tool"></span></div>';
       container.appendChild(el);
     }
@@ -7678,7 +7944,7 @@ async function chatSend() {
       chatAddMessage('assistant', data.message || data.response || 'No response', data.tool_calls_made || []);
     } catch (e2) {
       chatHideTyping();
-      chatAddMessage('assistant', '⚠️ No se pudo conectar con agragent. Intenta de nuevo.');
+      chatAddMessage('assistant', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-alert\"/></svg>No se pudo conectar con agragent. Intenta de nuevo.');
     }
   }
 
@@ -7706,7 +7972,7 @@ async function chatNewConversation() {
     chatAddMessage('assistant', data.welcome_message);
     chatLoadConversations();
   } catch (e) {
-    chatAddMessage('assistant', '⚠️ Could not create conversation. Check API connection.');
+    chatAddMessage('assistant', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-alert\"/></svg>Could not create conversation. Check API connection.');
   }
 }
 
@@ -7766,7 +8032,7 @@ function chatOpenFolderModal(folderId) {
   chatEditingFolderId = folderId || null;
   const folder = folderId ? chatFolders.find(f => f.id === folderId) : null;
   chatSelectedColor = folder ? folder.color : FOLDER_COLORS[0];
-  document.getElementById('chat-folder-title').textContent = folderId ? '✏️ Editar carpeta' : '📁 Nueva carpeta';
+  document.getElementById('chat-folder-title').innerHTML = folderId ? '<svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:6px;color:var(--accent);\"><use href=\"#i-edit\"/></svg>Editar carpeta' : '<svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:6px;color:var(--accent);\"><use href=\"#i-folder\"/></svg>Nueva carpeta';
   document.getElementById('chat-folder-name').value = folder ? folder.name : '';
 
   const cp = document.getElementById('chat-color-picker');
@@ -7833,10 +8099,10 @@ function chatTogglePicker(convId, btn) {
   const cur = chatAssignments[convId];
   let html = chatFolders.map(f => `
     <div class="chat-folder-picker-item" onclick="event.stopPropagation();chatAssignFolder('${convId}','${f.id}')">
-      <span class="chat-folder-dot" style="background:${f.color}"></span>${escapeHtml(f.name)} ${cur === f.id ? '✓' : ''}
+      <span class="chat-folder-dot" style="background:${f.color}"></span>${escapeHtml(f.name)} ${cur === f.id ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;color:var(--accent);"><use href="#i-check"/></svg>' : ''}
     </div>`).join('');
   if (!chatFolders.length) html = '<div class="chat-folder-picker-item" style="color:var(--text-muted)">Sin carpetas. Crea una primero.</div>';
-  if (cur) html += `<div class="chat-folder-picker-item remove" onclick="event.stopPropagation();chatAssignFolder('${convId}',null)">✕ Quitar</div>`;
+  if (cur) html += `<div class="chat-folder-picker-item remove" onclick="event.stopPropagation();chatAssignFolder('${convId}',null)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><use href="#i-x"/></svg>Quitar</div>`;
   html += `<div class="chat-folder-picker-item remove" onclick="event.stopPropagation();chatClosePickerIfOpen();chatOpenFolderModal()">+ Nueva carpeta</div>`;
   picker.innerHTML = html;
   picker.addEventListener('click', e => e.stopPropagation());
@@ -7881,9 +8147,9 @@ function chatRenderConvList() {
         '<span class="conv-title">' + escapeHtml(c.title || 'New conversation') + '</span>' +
         badge +
         '<span class="conv-actions">' +
-        '<button class="conv-btn conv-folder" onclick="event.stopPropagation();chatTogglePicker(\'' + c.id + '\',this)" title="Carpeta">📁</button>' +
-        '<button class="conv-btn conv-edit" onclick="event.stopPropagation();chatRenameConv(this,\'' + c.id + '\')" title="Rename">✏️</button>' +
-        '<button class="conv-btn conv-delete" onclick="event.stopPropagation();chatDeleteConv(\'' + c.id + '\')" title="Delete">✕</button>' +
+        '<button class="conv-btn conv-folder" onclick="event.stopPropagation();chatTogglePicker(\'' + c.id + '\',this)" title="Carpeta"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-folder"/></svg></button>' +
+        '<button class="conv-btn conv-edit" onclick="event.stopPropagation();chatRenameConv(this,\'' + c.id + '\')" title="Rename"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-edit"/></svg></button>' +
+        '<button class="conv-btn conv-delete" onclick="event.stopPropagation();chatDeleteConv(\'' + c.id + '\')" title="Delete"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-x"/></svg></button>' +
         '</span>';
       div.addEventListener('click', () => chatLoadMessages(c.id));
       list.appendChild(div);
@@ -7913,7 +8179,7 @@ async function chatLoadMessages(convId) {
     });
     chatLoadConversations();
   } catch (e) {
-    chatAddMessage('assistant', '⚠️ Could not load conversation.');
+    chatAddMessage('assistant', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-alert\"/></svg>Could not load conversation.');
   }
 }
 
@@ -7991,7 +8257,7 @@ function chatToggleConvList() {
 const SECTION_CONTEXT = {
   dashboard: { label: 'My Field', ctx: 'The user is viewing the Dashboard overview with all KPIs, satellite indices, yield prediction summary, water balance, risk assessment, and alerts. You have access to ALL computed data below — use it to give specific, data-driven advice.' },
   maps: { label: 'Field Map', ctx: 'The user is viewing the satellite map with Sentinel-2 imagery. Indices available: Plant Health (NDVI), Vigor+ (EVI), Young Vines (SAVI), Sparse (MSAVI), Nutrition (NDRE), Early Stress (GNDVI), Chlorophyll (TCARI), N-Status (CIre), Moisture (NDMI), Leaf Water (NDWI), Bare Soil (BSI). Use the satellite index values below to assess crop condition.' },
-  climate: { label: 'Weather', ctx: 'The user is viewing detailed climate data. You have access to all computed KPIs below (GDD, chill hours, frost, heat waves, precipitation, ET0, etc.). Use these to give specific agronomic recommendations for their vineyard.' },
+  climate: { label: 'Weather', ctx: 'The user is viewing detailed climate data. You have access to all computed KPIs below (GDD, chill hours, frost, heat waves, precipitation, ET0, etc.). Use these to give specific agronomic recommendations for their field or crop.' },
   genomic: { label: 'Genetics', ctx: 'The user is viewing genomic analysis: 3,603 DEGs from RNA-seq of Vitis vinifera across 8 phenological stages (E-L 3 to E-L 41). Data from Altimiras et al. 2024, Agronomy.' },
   images: { label: 'Photos', ctx: 'The user is viewing grape cluster image analysis using YOLOv11 trained on WGISD (Embrapa). 5 varieties: Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc, Syrah. They can upload their own vineyard images for real-time detection.' },
   yield: { label: 'Harvest', ctx: 'The user is viewing the harvest forecast. The prediction uses PyCaret Extra Trees Regressor (R²=0.972) with 15 features from climate + satellite data. Use ALL the computed data below to explain the prediction and give harvest recommendations.' },
@@ -8184,7 +8450,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
 <!-- Polygon / Layer Editor Modal -->
 <div id="poly-editor">
   <div class="poly-editor-box">
-    <h3 data-i18n="editor_title">✏️ Field Properties</h3>
+    <h3 data-i18n="editor_title"><span class="ic ic-md ic-accent"><svg><use href="#i-edit"/></svg></span>Field Properties</h3>
     <div class="form-field">
       <label data-i18n="editor_name">Name</label>
       <input type="text" id="editor-name" placeholder="e.g. North Parcel" data-i18n-placeholder="editor_name_ph">
@@ -8221,7 +8487,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     </div>
     <div class="editor-actions">
       <button class="btn-cancel" onclick="closeEditor()" data-i18n="editor_cancel">Cancel</button>
-      <button class="btn-save" onclick="saveEditor()">💾 <span data-i18n="editor_save">Save</span></button>
+      <button class="btn-save" onclick="saveEditor()"><span class="ic ic-md"><svg><use href="#i-save"/></svg></span><span data-i18n="editor_save">Save</span></button>
     </div>
   </div>
 </div>
@@ -8229,14 +8495,14 @@ document.querySelectorAll('.nav-item').forEach(item => {
 <!-- ── Folder modal (chat) ────────────────────────────────── -->
 <div id="chat-folder-overlay" class="hidden">
   <div class="chat-folder-modal">
-    <h3 id="chat-folder-title">📁 Nueva carpeta</h3>
+    <h3 id="chat-folder-title"><span class="ic ic-md ic-accent"><svg><use href="#i-folder"/></svg></span>Nueva carpeta</h3>
     <label>Nombre</label>
     <input type="text" id="chat-folder-name" placeholder="Ej: Maíz Aconcagua, Cerezo 2026"
            onkeydown="if(event.key==='Enter') chatSaveFolderModal()">
     <label style="margin-top:12px">Color</label>
     <div class="chat-color-picker" id="chat-color-picker"></div>
     <div class="chat-folder-actions">
-      <button id="chat-folder-delete-btn" class="btn-delete" style="display:none" onclick="chatDeleteFolder()">🗑️ Eliminar</button>
+      <button id="chat-folder-delete-btn" class="btn-delete" style="display:none" onclick="chatDeleteFolder()"><span class="ic ic-md"><svg><use href="#i-trash"/></svg></span>Eliminar</button>
       <button class="btn-cancel" onclick="chatCloseFolderModal()">Cancelar</button>
       <button class="btn-save"   onclick="chatSaveFolderModal()">Guardar</button>
     </div>
