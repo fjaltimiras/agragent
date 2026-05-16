@@ -1886,6 +1886,49 @@
   button > .ic + span, label > .ic + span, .nav-icon + span,
   .btn > .ic + span, .tb-btn > .ic + span,
   span > .ic + span { margin-left: 6px; }
+
+  /* === Saved Fields Panel === */
+  .saved-fields-panel { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); margin-top: 14px; overflow: hidden; }
+  .sf-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); cursor: pointer; user-select: none; transition: background 0.15s; }
+  .sf-header:hover { background: rgba(82,183,136,0.05); }
+  .sf-header .sf-title { display: flex; align-items: center; gap: 8px; }
+  .sf-body { border-top: 1px solid var(--border); }
+  /* Saved field CARD GRID */
+  #sf-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 10px; }
+  .sf-item { display: flex; flex-direction: column; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s; }
+  .sf-item:hover { border-color: var(--accent-dim); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+  .sf-thumb { width: 100%; aspect-ratio: 4/3; background: #0a1218; overflow: hidden; position: relative; }
+  .sf-thumb svg { width: 100%; height: 100%; display: block; }
+  .sf-info { padding: 8px 9px 6px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .sf-item-name { font-size: 0.8rem; font-weight: 700; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.3; }
+  .sf-item-sub { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; min-height: 18px; }
+  .sf-item-meta { font-size: 0.68rem; color: var(--text-secondary); white-space: nowrap; }
+  .sf-crop-badge { font-size: 0.62rem; padding: 1px 6px; border-radius: 999px; border: 1px solid; font-weight: 700; white-space: nowrap; }
+  .sf-loc { font-size: 0.67rem; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sf-item-actions { display: flex; gap: 5px; padding: 0 9px 8px; margin-top: auto; }
+  .sf-item-actions .sf-act-btn { flex: 1; text-align: center; justify-content: center; }
+  .sf-act-btn { background: none; border: 1px solid var(--border); border-radius: 5px; padding: 4px 7px; font-size: 0.72rem; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .sf-act-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .sf-act-btn.del { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
+  .sf-act-btn.del:hover { border-color: var(--red); color: var(--red); }
+  .sf-act-btn { background: none; border: 1px solid var(--border); border-radius: 4px; padding: 3px 7px; font-size: 0.72rem; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .sf-act-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .sf-act-btn.del:hover { border-color: var(--red); color: var(--red); }
+  .sf-empty { padding: 16px; font-size: 0.8rem; color: var(--text-secondary); text-align: center; line-height: 1.6; }
+  .sf-footer { padding: 10px 16px; border-top: 1px solid var(--border); }
+  .sf-save-btn { width: 100%; background: none; border: 1px dashed var(--accent); border-radius: var(--radius); padding: 8px; font-size: 0.8rem; color: var(--accent); cursor: pointer; transition: background 0.15s; }
+  .sf-save-btn:hover { background: rgba(82,183,136,0.08); }
+  .sf-save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .sf-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9000; display: flex; align-items: center; justify-content: center; }
+  .sf-modal-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; width: 320px; max-width: 90vw; }
+  .sf-modal-box h4 { margin: 0 0 14px; font-size: 1rem; color: var(--text-primary); }
+  .sf-modal-input { width: 100%; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-size: 0.9rem; color: var(--text-primary); box-sizing: border-box; margin-bottom: 14px; }
+  .sf-modal-input:focus { outline: none; border-color: var(--accent); }
+  .sf-modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+  .sf-modal-btns button { border: 1px solid var(--border); background: none; border-radius: 6px; padding: 7px 16px; font-size: 0.85rem; cursor: pointer; color: var(--text-primary); transition: all 0.15s; }
+  .sf-btn-confirm { background: var(--accent) !important; color: #0a1218 !important; border-color: var(--accent) !important; font-weight: 600; }
+  .sf-btn-confirm:hover { opacity: 0.88; }
+  .sf-btn-cancel:hover { border-color: var(--text-secondary) !important; }
 </style>
 </head>
 <body>
@@ -1989,7 +2032,7 @@ function _ic(name, cls) {
 // ═══════════════════════════════════════
 const DEFAULT_USERS = [
   { user: 'admin', pass: 'agragent2026', role: 'Admin' },
-  { user: 'demo', pass: 'demo', role: 'Viewer' }
+  { user: 'demo', pass: 'demo123', role: 'Viewer' }
 ];
 
 function getUsers() {
@@ -2373,6 +2416,40 @@ function editDisplayName() {
 
       </div>
 
+      <!-- Saved Fields Panel -->
+      <div class="saved-fields-panel" id="saved-fields-panel" style="margin-top:20px;">
+        <div class="sf-header" onclick="toggleSavedFieldsPanel()">
+          <span class="sf-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            <span data-i18n="saved_fields_title">Mis Campos Guardados</span>
+          </span>
+          <span id="sf-toggle-arrow">▸</span>
+        </div>
+        <div class="sf-body" id="sf-body" style="display:none;">
+          <div id="sf-list">
+            <div class="sf-empty" data-i18n="saved_fields_empty">Aún no tienes campos guardados. Dibuja o sube un polígono y guárdalo.</div>
+          </div>
+          <div class="sf-footer">
+            <button class="sf-save-btn" id="sf-save-btn" onclick="openSaveFieldModal()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:5px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span data-i18n="save_current_field">Guardar campo actual</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Save Field Name Modal -->
+      <div id="sf-modal" class="sf-modal-overlay" style="display:none;" onclick="if(event.target===this)closeSaveFieldModal()">
+        <div class="sf-modal-box">
+          <h4 data-i18n="save_field_title">Guardar campo</h4>
+          <input type="text" id="sf-name-input" class="sf-modal-input" data-i18n-placeholder="save_field_ph" placeholder="ej: Parcela Norte" maxlength="60">
+          <div class="sf-modal-btns">
+            <button class="sf-btn-cancel" onclick="closeSaveFieldModal()" data-i18n="editor_cancel">Cancelar</button>
+            <button class="sf-btn-confirm" onclick="confirmSaveField()" data-i18n="editor_save">Guardar</button>
+          </div>
+        </div>
+      </div>
+
     </section>
 
     <!-- ═══════════════ SECTION 2: MAPS ═══════════════ -->
@@ -2423,10 +2500,15 @@ function editDisplayName() {
             <span class="ic ic-md"><svg><use href="#i-satellite"/></svg></span><span data-i18n="gee_settings">Satellite Settings</span> <span class="tgl-arrow">▸</span>
           </button>
         </div>
+        <!-- Season quick-select -->
+        <div class="gee-ctrl-row" style="margin-bottom:8px;flex-wrap:wrap;gap:4px;align-items:center;">
+          <span style="font-size:0.75rem;color:var(--text-secondary);white-space:nowrap;font-weight:600;" data-i18n="gee_season">Temporada:</span>
+          <div id="season-btns" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+        </div>
         <!-- Row 1: date range, cloud, opacity, mode tabs -->
         <div class="gee-ctrl-row" style="margin-bottom:10px;">
-          <label><span class="ic ic-md"><svg><use href="#i-calendar"/></svg></span><span data-i18n="gee_from">From:</span> <input type="date" id="gee-start" value="2025-11-01"></label>
-          <label><span data-i18n="gee_to">To:</span> <input type="date" id="gee-end" value="2026-03-31"></label>
+          <label><span class="ic ic-md"><svg><use href="#i-calendar"/></svg></span><span data-i18n="gee_from">From:</span> <input type="date" id="gee-start"></label>
+          <label><span data-i18n="gee_to">To:</span> <input type="date" id="gee-end"></label>
           <label><span class="ic ic-md"><svg><use href="#i-cloud"/></svg></span><span data-i18n="gee_cloud_max">Cloud max:</span> <input type="range" id="gee-cloud" min="0" max="100" value="20" oninput="document.getElementById('gee-cloud-val').textContent=this.value"> <span id="gee-cloud-val">20</span>%</label>
           <label><span data-i18n="gee_opacity">Opacity:</span> <input type="range" id="gee-opacity" min="10" max="100" value="85" oninput="setGEEOpacity(this.value)"> <span id="gee-opacity-val">85</span>%</label>
           <div style="display:flex;gap:6px;margin-left:auto;">
@@ -2481,6 +2563,10 @@ function editDisplayName() {
                   <option value="RGB">Color Real</option>
                   <option value="FALSE">Falso Color</option>
                 </optgroup>
+                <optgroup label="IA · AlphaEarth">
+                  <option value="ALPHAEARTH">AlphaEarth PCA</option>
+                  <option value="ALPHAEARTH_CLASS">Cobertura</option>
+                </optgroup>
               </select>
             </div>
             <div class="compare-vs">VS</div>
@@ -2512,6 +2598,10 @@ function editDisplayName() {
                 <optgroup label="Visual">
                   <option value="RGB">Color Real</option>
                   <option value="FALSE">Falso Color</option>
+                </optgroup>
+                <optgroup label="IA · AlphaEarth">
+                  <option value="ALPHAEARTH">AlphaEarth PCA</option>
+                  <option value="ALPHAEARTH_CLASS">Cobertura</option>
                 </optgroup>
               </select>
             </div>
@@ -2560,6 +2650,35 @@ function editDisplayName() {
           <span class="index-group-label"><span class="ic ic-md"><svg><use href="#i-palette"/></svg></span><span data-i18n="idx_photo">Photo</span></span>
           <button class="index-btn" onclick="setIndex(this,'RGB')"><span data-i18n="idx_real_color">Real Color</span></button>
           <button class="index-btn" onclick="setIndex(this,'FALSE')"><span data-i18n="idx_infrared">Infrared</span></button>
+        </div>
+        <div class="index-group">
+          <span class="index-group-label"><span class="ic ic-md ic-accent"><svg><use href="#i-satellite"/></svg></span><span data-i18n="idx_ai">IA · AlphaEarth</span></span>
+          <button class="index-btn" onclick="setIndex(this,'ALPHAEARTH')"><span data-i18n="idx_ae_pca">PCA Color</span></button>
+          <button class="index-btn" onclick="setIndex(this,'ALPHAEARTH_CLASS')"><span data-i18n="idx_ae_class">Cobertura</span></button>
+        </div>
+        <!-- Index info card: populated dynamically by setIndex() -->
+        <div id="index-info-card" style="display:none;width:100%;margin-top:6px;border:1px solid var(--border);border-radius:10px;font-size:0.78rem;overflow:hidden;">
+          <!-- Header -->
+          <div style="padding:8px 12px 6px;border-bottom:1px solid var(--border);">
+            <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;">
+              <strong id="iic-title" style="color:var(--accent);font-size:0.86rem;"></strong>
+            </div>
+            <div id="iic-formula" style="color:var(--text-secondary);font-size:0.7rem;font-family:monospace;"></div>
+          </div>
+          <!-- Description -->
+          <div id="iic-desc" style="padding:7px 12px 6px;color:var(--text-primary);line-height:1.55;border-bottom:1px solid var(--border);"></div>
+          <!-- Color scale -->
+          <div id="iic-scale" style="padding:7px 12px 6px;border-bottom:1px solid var(--border);">
+            <div style="font-size:0.68rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Escala de valores</div>
+            <div id="iic-gradient" style="height:8px;border-radius:4px;margin-bottom:4px;"></div>
+            <div id="iic-labels" style="display:flex;justify-content:space-between;font-size:0.65rem;color:var(--text-secondary);"></div>
+          </div>
+          <!-- Agronomic tips -->
+          <div style="padding:7px 12px 8px;display:flex;flex-direction:column;gap:4px;">
+            <div id="iic-good" style="display:flex;gap:6px;align-items:flex-start;font-size:0.75rem;"></div>
+            <div id="iic-alert" style="display:flex;gap:6px;align-items:flex-start;font-size:0.75rem;"></div>
+            <div id="iic-when" style="display:flex;gap:6px;align-items:flex-start;font-size:0.75rem;margin-top:1px;"></div>
+          </div>
         </div>
         <div class="gee-connected-badge" id="gee-badge">
           <span class="gee-dot"></span> GEE Activo
@@ -3172,6 +3291,50 @@ function editDisplayName() {
       <!-- Dynamic content (shown after prediction) -->
       <div id="yield-content" style="display:none;">
 
+        <!-- Crop selector -->
+        <div style="text-align:center;margin-bottom:20px;">
+          <label style="font-size:0.82rem;color:var(--text-secondary);margin-right:8px;" data-i18n="yield_crop_label">Tipo de cultivo</label>
+          <select id="crop-selector" style="background:var(--surface-2);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:0.88rem;cursor:pointer;outline:none;" onchange="agCrop=this.value;runYieldPrediction()">
+            <optgroup label="Viñas">
+              <option value="uva_vinif" data-i18n="crop_uva_vinif">Uva Vinífera</option>
+              <option value="uva_mesa"  data-i18n="crop_uva_mesa">Uva de Mesa</option>
+            </optgroup>
+            <optgroup label="Carozos">
+              <option value="cereza"   data-i18n="crop_cereza">Cereza</option>
+              <option value="durazno"  data-i18n="crop_durazno">Durazno / Nectarín</option>
+              <option value="ciruela"  data-i18n="crop_ciruela">Ciruela</option>
+              <option value="damasco"  data-i18n="crop_damasco">Damasco</option>
+            </optgroup>
+            <optgroup label="Berries">
+              <option value="arandano" data-i18n="crop_arandano">Arándano</option>
+              <option value="frutilla" data-i18n="crop_frutilla">Frutilla / Fresa</option>
+            </optgroup>
+            <optgroup label="Pomáceas">
+              <option value="manzana"  data-i18n="crop_manzana">Manzana</option>
+              <option value="pera"     data-i18n="crop_pera">Pera</option>
+              <option value="kiwi"     data-i18n="crop_kiwi">Kiwi</option>
+            </optgroup>
+            <optgroup label="Frutos secos">
+              <option value="nogal"    data-i18n="crop_nogal">Nogal</option>
+              <option value="almendro" data-i18n="crop_almendro">Almendro</option>
+              <option value="pistacho" data-i18n="crop_pistacho">Pistacho</option>
+              <option value="avellano" data-i18n="crop_avellano">Avellano</option>
+            </optgroup>
+            <optgroup label="Subtropicales / Cítricos">
+              <option value="palto"      data-i18n="crop_palto">Palto / Aguacate</option>
+              <option value="naranja"    data-i18n="crop_naranja">Naranja</option>
+              <option value="mandarina"  data-i18n="crop_mandarina">Mandarina</option>
+            </optgroup>
+            <optgroup label="Cultivos anuales">
+              <option value="tomate"  data-i18n="crop_tomate">Tomate</option>
+              <option value="maiz"    data-i18n="crop_maiz">Maíz</option>
+              <option value="papa"    data-i18n="crop_papa">Papa / Patata</option>
+              <option value="trigo"   data-i18n="crop_trigo">Trigo</option>
+              <option value="quinua"  data-i18n="crop_quinua">Quinua</option>
+            </optgroup>
+          </select>
+        </div>
+
         <!-- Hero -->
         <div class="yield-hero">
           <div class="label" id="yield-location-label">Predicted Yield</div>
@@ -3189,6 +3352,7 @@ function editDisplayName() {
           <div style="margin-top:10px;padding:10px 16px;background:rgba(74,222,128,0.08);border:1px solid var(--accent-dim);border-radius:8px;display:inline-block;">
             <span style="font-size:0.85rem;color:var(--text-secondary);" data-i18n="yield_harvest_label">Estimated harvest:</span>
             <strong style="color:var(--accent);font-size:0.95rem;margin-left:6px;" id="yield-harvest-date">—</strong>
+            <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:3px;" id="yield-harvest-crop"></div>
           </div>
           <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:12px;">
             <span class="badge badge-accent">PyCaret · Extra Trees</span>
@@ -3542,7 +3706,7 @@ let currentLang = localStorage.getItem('agragent-lang') || 'en';
 const i18n = {
   en: {
     // Nav
-    nav_dashboard: 'Dashboard', nav_maps: 'Satellite Maps', nav_climate: 'Climate Data',
+    nav_dashboard: 'My Fields', nav_maps: 'Satellite Maps', nav_climate: 'Climate Data',
     nav_genomic: 'Genomic Analysis', nav_images: 'Image Analysis', nav_yield: 'Yield Prediction',
     nav_chat: 'Ask agragent', chat_conversations: 'Conversations', chat_new: '+ New',
     chat_welcome_text: 'Ask me about your crop, satellite imagery (NDVI), climate, soil, irrigation, fertilization, or scientific sources (OpenAlex 250M+, AGRIS FAO, INIA Chile). What can I help you with?',
@@ -3562,11 +3726,18 @@ const i18n = {
     welcome_title: 'Welcome to agragent',
     welcome_text: 'Mark your field on the map to get started. We\'ll show you satellite images, weather data, and a harvest forecast for your crop.',
     step1: 'Go to', step1_link: 'Field Map', step2: 'Upload a file or draw your field boundaries', step3: 'All data updates automatically',
-    search_placeholder: 'Search location... (e.g. Napa Valley, Bordeaux)', search_btn: 'Search',
+    search_placeholder: 'Search location... (e.g. Central Valley, Patagonia, Tuscany)', search_btn: 'Search',
     base_satellite: 'Satellite', base_streets: 'Streets', base_hybrid: 'Hybrid',
     yield_empty_title: 'Mark your field to see your harvest forecast',
     yield_empty_text: 'Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Field Map</strong> and draw your field boundaries. We\'ll calculate estimated yield, total production, and the best harvest date.',
-    yield_unit: 'tonnes / hectare', yield_harvest_label: 'Estimated harvest:',
+    yield_unit: 'tonnes / hectare', yield_harvest_label: 'Estimated harvest:', yield_no_data: 'Awaiting climate data',
+    yield_crop_label: 'Crop type', yield_ci_days: 'days',
+    crop_uva_vinif: 'Wine Grape', crop_uva_mesa: 'Table Grape', crop_cereza: 'Cherry', crop_arandano: 'Blueberry',
+    crop_frutilla: 'Strawberry', crop_damasco: 'Apricot', crop_durazno: 'Peach / Nectarine', crop_ciruela: 'Plum',
+    crop_manzana: 'Apple', crop_pera: 'Pear', crop_kiwi: 'Kiwi', crop_palto: 'Avocado',
+    crop_naranja: 'Orange', crop_mandarina: 'Mandarin', crop_tomate: 'Tomato', crop_maiz: 'Corn',
+    crop_papa: 'Potato', crop_trigo: 'Wheat', crop_quinua: 'Quinoa',
+    crop_nogal: 'Walnut', crop_almendro: 'Almond', crop_pistacho: 'Pistachio', crop_avellano: 'Hazelnut',
     yield_features_title: 'What matters most for your harvest', yield_sat_title: 'Satellite Readings',
     yield_climate_title: 'Climate Data', yield_model_title: 'Model Comparison',
     yield_th_index: 'Reading', yield_th_value: 'Value', yield_th_variable: 'Variable', yield_th_value2: 'Value',
@@ -3581,17 +3752,33 @@ const i18n = {
     editor_title: 'Field Properties', editor_name: 'Name', editor_name_ph: 'e.g. North Parcel',
     editor_desc: 'Description', editor_desc_ph: 'Notes, variety, observations...',
     editor_stage: 'Growth stage', editor_select: '— Select —',
-    stage_bud: 'Bud break', stage_flower: 'Flowering', stage_fruit: 'Fruit set', stage_veraison: 'Veraison',
+    stage_bud: 'Bud break', stage_flower: 'Flowering', stage_fruit: 'Fruit set', stage_veraison: 'Color change / Ripening onset',
     stage_ripen: 'Ripening', stage_harvest: 'Harvest', stage_post: 'Post-harvest',
     editor_color: 'Color', editor_cancel: 'Cancel', editor_save: 'Save',
     alert_no_layers: 'No fields to save. Add a field first.',
     dash_sat_title: 'Satellite Indices', dash_yield_title: 'Harvest Forecast',
     toolbar_title: 'My Fields &amp; Tools', gee_settings: 'Satellite Settings',
     idx_title: 'What to see on the map', idx_vigor: 'Plant Vigor', idx_health: 'Health', idx_vigor_plus: 'Vigor+',
-    idx_young: 'Young Vines', idx_sparse: 'Sparse', idx_crop_health: 'Crop Health', idx_nutrition: 'Nutrition',
+    idx_young: 'Young Plants', idx_sparse: 'Sparse', idx_crop_health: 'Crop Health', idx_nutrition: 'Nutrition',
     idx_early_stress: 'Early Stress', idx_chlorophyll: 'Chlorophyll', idx_nstatus: 'N-Status',
     idx_water: 'Water', idx_moisture: 'Moisture', idx_leaf_water: 'Leaf Water',
     idx_soil: 'Soil', idx_bare_soil: 'Bare Soil', idx_photo: 'Photo', idx_real_color: 'Real Color', idx_infrared: 'Infrared',
+    idx_ai: 'AI · AlphaEarth', idx_ae_pca: 'PCA Color', idx_ae_class: 'Land Cover', ae_loading: 'Loading AlphaEarth embeddings...',
+    desc_NDVI: 'Overall crop vigor. High values = dense, active vegetation. Detects water stress, disease, or poor development. The primary index for seasonal monitoring.',
+    desc_EVI: 'Like NDVI but less saturated in dense canopies (vineyards, orchards). Includes atmospheric correction for improved accuracy.',
+    desc_SAVI: 'NDVI adjusted for bare-soil reflectance. Essential for young plants or crops with incomplete ground cover.',
+    desc_MSAVI: 'Improved SAVI with automatic soil adjustment. Best for early-season monitoring or sparse canopy conditions.',
+    desc_NDRE: 'Detects nitrogen deficiency before visible symptoms appear. High sensitivity to early nutritional stress. Key index for precision fertilization.',
+    desc_GNDVI: 'Chlorophyll content — higher sensitivity than NDVI. Ideal for monitoring leaf health and nutrient status throughout the season.',
+    desc_TCARI: 'Chlorophyll absorption stress indicator. High values signal chlorosis, pest damage, or fungal disease on leaves.',
+    desc_CIRE: 'Leaf chlorophyll index — correlates with available plant nitrogen. Useful for calibrating and timing foliar fertilization.',
+    desc_NDMI: 'Vegetation water content. Detects water stress before visual symptoms appear. Use to guide irrigation scheduling.',
+    desc_NDWI: 'Identifies water bodies and waterlogged zones. Detects flooding, drainage problems, and areas with excess soil moisture.',
+    desc_BSI: 'Bare soil and erosion mapping. Estimates ground cover and identifies unvegetated zones. Useful for cover-crop management.',
+    desc_RGB: 'True-color view — like a natural photograph. No spectral analysis. Provides a visual reference of overall field conditions.',
+    desc_FALSE: 'Vegetation in red tones — deeper red = higher photosynthetic activity. Sharp contrast between active and stressed/inactive zones.',
+    desc_ALPHAEARTH: 'Google DeepMind AI embedding visualization. Colors represent unique spectral-temporal patterns detected by the model across 64 dimensions.',
+    desc_ALPHAEARTH_CLASS: 'Automatic land cover classification using AI. Distinguishes vegetation (green), bare soil (brown), water (blue), and built-up areas (gray).',
     location: 'Location', field_area: 'Field Area', season_gdd: 'Heat Units', season_precip: 'Total Rainfall',
     climate_summary: 'Climate Summary', active_alerts: 'Alerts', monthly_temp_overview: 'Monthly Temperature',
     loaded_polygons: 'Your Fields', no_polygons: 'No fields added yet.', no_alerts: 'No alerts — looking good!',
@@ -3616,7 +3803,7 @@ const i18n = {
     // Genomic
     genomic_title: 'Crop Genetics', genomic_sub: 'Gene activity across grape growth stages',
     // Images
-    images_title: 'Vineyard Photos',
+    images_title: 'Field Images',
     // Yield
     yield_title: 'Harvest Forecast',
     // Plan
@@ -3624,7 +3811,7 @@ const i18n = {
     plan_empty_title: 'Mark your field to generate the action plan', plan_empty_text: 'Go to <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Field Map</strong> and draw your field boundaries. We\'ll calculate phenological stage delays and recommend field activities based on your real climate data.',
     plan_pheno_delay: 'Phenological Stage Delay Analysis', plan_pheno_delay_sub: 'Comparing your field\'s real GDD accumulation rate against reference thresholds to estimate delays or advances in each growth stage.',
     plan_th_stage: 'Stage', plan_th_gdd_req: 'GDD Required', plan_th_expected_date: 'Expected Date', plan_th_status: 'Status', plan_th_shift: 'Shift (days)',
-    plan_chill_title: 'Chill Hours Assessment', plan_chill_accumulated: 'Accumulated', plan_chill_required: 'Required (variety avg.)', plan_chill_vitis: 'Vitis vinifera typical range', plan_chill_status: 'Status',
+    plan_chill_title: 'Chill Hours Assessment', plan_chill_accumulated: 'Accumulated', plan_chill_required: 'Required (crop avg.)', plan_chill_vitis: 'Reference crop range', plan_chill_status: 'Status',
     plan_activities_title: 'Seasonal Activity Calendar', plan_activities_sub: 'Recommended field operations aligned with phenological stages and current climate conditions.',
     plan_alerts_title: 'Climate Alerts & Recommendations',
     plan_on_track: 'On track', plan_delayed: 'Delayed', plan_advanced: 'Advanced', plan_reached: 'Reached', plan_pending: 'Pending',
@@ -3639,7 +3826,7 @@ const i18n = {
     base_label: 'Base:', fullscreen: 'Fullscreen',
     // GEE controls
     gee_from: 'From:', gee_to: 'To:', gee_cloud_max: 'Cloud max:', gee_opacity: 'Opacity:',
-    gee_median: 'Median', gee_captures: 'Captures', gee_compare: 'Compare', gee_refresh: 'Refresh',
+    gee_season: 'Season:', gee_sharpen: 'Sharpen', gee_median: 'Median', gee_captures: 'Captures', gee_compare: 'Compare', gee_refresh: 'Refresh',
     gee_available_captures: 'AVAILABLE CAPTURES', gee_search: 'Search',
     gee_search_msg: 'Click "Search" to list captures for the period.',
     gee_loading: 'Loading satellite images...', gee_sentinel_info: 'Satellite images updated every 5 days · High resolution · Cloud-free',
@@ -3696,9 +3883,13 @@ const i18n = {
     alert_file_error: 'Could not read this file: ',
     gee_help_msg: 'Satellite images connect automatically. No setup needed — just mark your field!',
     climate_upload_sub: 'Mark your field to see weather data',
+    saved_fields_title: 'My Saved Fields', saved_fields_empty: 'No saved fields yet. Draw or upload a polygon and save it.',
+    save_current_field: 'Save current field', save_field_title: 'Save field', save_field_ph: 'e.g. North Parcel',
+    confirm_delete_field: 'Delete this saved field?', confirm_replace_layers: 'Replace the current map layers with this field?',
+    load_field_btn: 'Load',
   },
   es: {
-    nav_dashboard: 'Mi Campo', nav_maps: 'Mapa del Campo', nav_climate: 'Clima',
+    nav_dashboard: 'Mis Campos', nav_maps: 'Mapa del Campo', nav_climate: 'Clima',
     nav_genomic: 'Genética del Cultivo', nav_images: 'Análisis de Imágenes', nav_yield: 'Pronóstico de Cosecha',
     nav_chat: 'Consultar agragent', chat_conversations: 'Conversaciones', chat_new: '+ Nueva',
     chat_welcome_text: 'Pregúntame sobre tu cultivo, imágenes satelitales (NDVI), clima, suelo, riego, fertilización o fuentes científicas (OpenAlex 250M+, AGRIS FAO, INIA Chile). ¿En qué puedo ayudarte?',
@@ -3720,7 +3911,14 @@ const i18n = {
     base_satellite: 'Satélite', base_streets: 'Calles', base_hybrid: 'Híbrido',
     yield_empty_title: 'Marca tu campo para ver el pronóstico de cosecha',
     yield_empty_text: 'Ve a <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa del Campo</strong> y dibuja los límites de tu campo. Calcularemos el rendimiento estimado, producción total y la mejor fecha de cosecha.',
-    yield_unit: 'toneladas / hectárea', yield_harvest_label: 'Cosecha estimada:',
+    yield_unit: 'toneladas / hectárea', yield_harvest_label: 'Cosecha estimada:', yield_no_data: 'Sin datos climáticos',
+    yield_crop_label: 'Tipo de cultivo', yield_ci_days: 'días',
+    crop_uva_vinif: 'Uva Vinífera', crop_uva_mesa: 'Uva de Mesa', crop_cereza: 'Cereza', crop_arandano: 'Arándano',
+    crop_frutilla: 'Frutilla / Fresa', crop_damasco: 'Damasco', crop_durazno: 'Durazno / Nectarín', crop_ciruela: 'Ciruela',
+    crop_manzana: 'Manzana', crop_pera: 'Pera', crop_kiwi: 'Kiwi', crop_palto: 'Palto / Aguacate',
+    crop_naranja: 'Naranja', crop_mandarina: 'Mandarina', crop_tomate: 'Tomate', crop_maiz: 'Maíz',
+    crop_papa: 'Papa / Patata', crop_trigo: 'Trigo', crop_quinua: 'Quinua',
+    crop_nogal: 'Nogal', crop_almendro: 'Almendro', crop_pistacho: 'Pistacho', crop_avellano: 'Avellano',
     yield_features_title: 'Lo que más influye en tu cosecha', yield_sat_title: 'Lecturas Satelitales',
     yield_climate_title: 'Datos Climáticos', yield_model_title: 'Comparación de Modelos',
     yield_th_index: 'Lectura', yield_th_value: 'Valor', yield_th_variable: 'Variable', yield_th_value2: 'Valor',
@@ -3735,22 +3933,38 @@ const i18n = {
     editor_title: 'Propiedades del Campo', editor_name: 'Nombre', editor_name_ph: 'ej: Parcela Norte',
     editor_desc: 'Descripción', editor_desc_ph: 'Notas, variedad, observaciones...',
     editor_stage: 'Etapa de crecimiento', editor_select: '— Seleccionar —',
-    stage_bud: 'Brotación', stage_flower: 'Floración', stage_fruit: 'Cuaja', stage_veraison: 'Envero',
+    stage_bud: 'Brotación', stage_flower: 'Floración', stage_fruit: 'Cuaja', stage_veraison: 'Cambio de color / Inicio de madurez',
     stage_ripen: 'Madurez', stage_harvest: 'Cosecha', stage_post: 'Post-cosecha',
     editor_color: 'Color', editor_cancel: 'Cancelar', editor_save: 'Guardar',
     alert_no_layers: 'No hay campos para guardar. Agrega un campo primero.',
     dash_sat_title: 'Índices Satelitales', dash_yield_title: 'Pronóstico de Cosecha',
     toolbar_title: 'Mis Campos y Herramientas', gee_settings: 'Ajustes Satelitales',
     idx_title: 'Qué ver en el mapa', idx_vigor: 'Vigor', idx_health: 'Salud', idx_vigor_plus: 'Vigor+',
-    idx_young: 'Viñas Jóvenes', idx_sparse: 'Disperso', idx_crop_health: 'Salud del Cultivo', idx_nutrition: 'Nutrición',
+    idx_young: 'Plantas Jóvenes', idx_sparse: 'Disperso', idx_crop_health: 'Salud del Cultivo', idx_nutrition: 'Nutrición',
     idx_early_stress: 'Estrés Temprano', idx_chlorophyll: 'Clorofila', idx_nstatus: 'Nitrógeno',
     idx_water: 'Agua', idx_moisture: 'Humedad', idx_leaf_water: 'Agua Foliar',
     idx_soil: 'Suelo', idx_bare_soil: 'Suelo Expuesto', idx_photo: 'Foto', idx_real_color: 'Color Real', idx_infrared: 'Infrarrojo',
+    idx_ai: 'IA · AlphaEarth', idx_ae_pca: 'PCA Color', idx_ae_class: 'Cobertura', ae_loading: 'Cargando embeddings AlphaEarth...',
+    desc_NDVI: 'Vigor general del cultivo. Valores altos = vegetación densa y activa. Detecta estrés hídrico, enfermedades o bajo desarrollo. Índice principal para monitoreo estacional.',
+    desc_EVI: 'Similar al NDVI pero menos saturado en dosel denso (viñedos, frutales). Incluye corrección atmosférica para mayor precisión.',
+    desc_SAVI: 'NDVI ajustado por reflectancia del suelo desnudo. Fundamental para plantas jóvenes o cultivos con baja cobertura del suelo.',
+    desc_MSAVI: 'SAVI mejorado con ajuste automático de suelo. Ideal para inicio de temporada o condiciones de dosel disperso.',
+    desc_NDRE: 'Detecta deficiencia de nitrógeno antes de que sea visible. Alta sensibilidad al estrés nutricional temprano. Clave para fertilización de precisión.',
+    desc_GNDVI: 'Contenido de clorofila con mayor sensibilidad que el NDVI. Ideal para monitorear salud foliar y estado nutricional a lo largo de la temporada.',
+    desc_TCARI: 'Indicador de absorción de clorofila bajo estrés. Valores altos señalan clorosis, daño por plagas o enfermedades foliares.',
+    desc_CIRE: 'Índice de clorofila foliar — correlaciona con nitrógeno disponible en planta. Útil para calibrar y programar fertilizaciones foliares.',
+    desc_NDMI: 'Contenido de agua en la vegetación. Detecta estrés hídrico antes de que aparezcan síntomas visuales. Guía la programación del riego.',
+    desc_NDWI: 'Identifica cuerpos de agua y zonas anegadas. Detecta inundaciones, problemas de drenaje y exceso de humedad en el suelo.',
+    desc_BSI: 'Mapeo de suelo expuesto y erosión. Estima cobertura del suelo e identifica zonas sin vegetación. Útil para manejo de coberturas.',
+    desc_RGB: 'Vista en color real — como una fotografía natural. Sin análisis espectral. Referencia visual del estado general del campo.',
+    desc_FALSE: 'Vegetación en tonos rojos — rojo más intenso = mayor actividad fotosintética. Contraste visual entre zonas activas y estresadas o inactivas.',
+    desc_ALPHAEARTH: 'Visualización de embeddings de IA de Google DeepMind. Los colores representan patrones espectrales-temporales únicos detectados por el modelo en 64 dimensiones.',
+    desc_ALPHAEARTH_CLASS: 'Clasificación automática de cobertura del suelo con IA. Distingue vegetación (verde), suelo expuesto (café), agua (azul) y zonas construidas (gris).',
     location: 'Ubicación', field_area: 'Superficie', season_gdd: 'Calor Acumulado', season_precip: 'Lluvia Total',
     climate_summary: 'Resumen del Clima', active_alerts: 'Alertas', monthly_temp_overview: 'Temperatura Mensual',
     loaded_polygons: 'Tus Campos', no_polygons: 'Aún no has agregado campos.', no_alerts: 'Sin alertas — todo bien.',
     climate_title: 'Clima', climate_upload_msg: 'Marca tu campo en el mapa para ver el clima de tu zona.',
-    annual_gdd: 'Calor Acumulado', gdd_sub: 'Calor necesario para madurar la uva', chill_hours: 'Horas de Frío', chill_sub: 'Frío necesario para la brotación',
+    annual_gdd: 'Calor Acumulado', gdd_sub: 'Calor acumulado para el desarrollo del cultivo', chill_hours: 'Horas de Frío', chill_sub: 'Frío necesario para la brotación',
     frost_days: 'Días de Helada', frost_sub: 'Días bajo cero', heat_waves: 'Olas de Calor', heat_wave_sub: '3+ días muy calurosos seguidos',
     dry_months: 'Meses Secos', dry_sub: 'Meses con poca lluvia', avg_humidity: 'Humedad', total_solar: 'Luz Solar',
     total_et: 'Pérdida de Agua', et_sub: 'Agua evaporada del suelo y plantas',
@@ -3766,14 +3980,14 @@ const i18n = {
     median: 'Promedio', captures: 'Capturas', compare: 'Comparar', refresh: 'Actualizar',
     no_polygon_gee: 'Primero marca tu campo en el mapa subiendo un archivo o dibujando los límites.',
     genomic_title: 'Genética del Cultivo', genomic_sub: 'Actividad genética durante el crecimiento de la uva',
-    images_title: 'Fotos del Viñedo',
+    images_title: 'Imágenes del Campo',
     yield_title: 'Pronóstico de Cosecha',
     // Plan
     nav_plan: 'Plan de Campo', plan_title: 'Plan de Acción del Campo', plan_sub: 'Seguimiento fenológico y calendario de actividades basado en datos climáticos',
     plan_empty_title: 'Marca tu campo para generar el plan de acción', plan_empty_text: 'Ve al <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa del Campo</strong> y dibuja los límites de tu campo. Calcularemos los desfases fenológicos y recomendaremos actividades según tu clima real.',
     plan_pheno_delay: 'Análisis de Desfase Fenológico', plan_pheno_delay_sub: 'Comparando la acumulación real de GDD de tu campo con los umbrales de referencia para estimar retrasos o adelantos en cada etapa de crecimiento.',
     plan_th_stage: 'Etapa', plan_th_gdd_req: 'GDD Requeridos', plan_th_expected_date: 'Fecha Esperada', plan_th_status: 'Estado', plan_th_shift: 'Desfase (días)',
-    plan_chill_title: 'Evaluación de Horas Frío', plan_chill_accumulated: 'Acumuladas', plan_chill_required: 'Requeridas (promedio varietal)', plan_chill_vitis: 'Rango típico de Vitis vinifera', plan_chill_status: 'Estado',
+    plan_chill_title: 'Evaluación de Horas Frío', plan_chill_accumulated: 'Acumuladas', plan_chill_required: 'Requeridas (promedio del cultivo)', plan_chill_vitis: 'Rango de referencia del cultivo', plan_chill_status: 'Estado',
     plan_activities_title: 'Calendario de Actividades de Temporada', plan_activities_sub: 'Operaciones de campo recomendadas alineadas con las etapas fenológicas y las condiciones climáticas actuales.',
     plan_alerts_title: 'Alertas Climáticas y Recomendaciones',
     plan_on_track: 'A tiempo', plan_delayed: 'Retrasado', plan_advanced: 'Adelantado', plan_reached: 'Alcanzado', plan_pending: 'Pendiente',
@@ -3788,7 +4002,7 @@ const i18n = {
     base_label: 'Base:', fullscreen: 'Pantalla completa',
     // GEE controls
     gee_from: 'Desde:', gee_to: 'Hasta:', gee_cloud_max: 'Nubes máx:', gee_opacity: 'Opacidad:',
-    gee_median: 'Promedio', gee_captures: 'Capturas', gee_compare: 'Comparar', gee_refresh: 'Actualizar',
+    gee_season: 'Temporada:', gee_sharpen: 'Nitidez', gee_median: 'Promedio', gee_captures: 'Capturas', gee_compare: 'Comparar', gee_refresh: 'Actualizar',
     gee_available_captures: 'IMÁGENES DISPONIBLES', gee_search: 'Buscar',
     gee_search_msg: 'Presiona "Buscar" para ver las imágenes disponibles.',
     gee_loading: 'Cargando imágenes satelitales...', gee_sentinel_info: 'Imágenes satelitales cada 5 días · Alta resolución · Sin nubes',
@@ -3845,9 +4059,13 @@ const i18n = {
     alert_file_error: 'No se pudo leer este archivo: ',
     gee_help_msg: 'Las imágenes satelitales se conectan automáticamente. No necesitas configurar nada — solo marca tu campo.',
     climate_upload_sub: 'Marca tu campo para ver el clima',
+    saved_fields_title: 'Mis Campos Guardados', saved_fields_empty: 'Aún no tienes campos guardados. Dibuja o sube un polígono y guárdalo.',
+    save_current_field: 'Guardar campo actual', save_field_title: 'Guardar campo', save_field_ph: 'ej: Parcela Norte',
+    confirm_delete_field: '¿Eliminar este campo guardado?', confirm_replace_layers: '¿Reemplazar los polígonos actuales con este campo?',
+    load_field_btn: 'Cargar',
   },
   pt: {
-    nav_dashboard: 'Meu Campo', nav_maps: 'Mapa do Campo', nav_climate: 'Clima',
+    nav_dashboard: 'Meus Campos', nav_maps: 'Mapa do Campo', nav_climate: 'Clima',
     nav_genomic: 'Genética', nav_images: 'Fotos do Campo', nav_yield: 'Previsão de Colheita',
     nav_chat: 'Perguntar ao agragent', chat_conversations: 'Conversas', chat_new: '+ Nova',
     chat_welcome_text: 'Pergunte sobre sua cultura, imagens de satélite (NDVI), clima, solo, irrigação, fertilização ou fontes científicas (OpenAlex 250M+, AGRIS FAO, INIA Chile). Como posso ajudar?',
@@ -3869,7 +4087,14 @@ const i18n = {
     base_satellite: 'Satélite', base_streets: 'Ruas', base_hybrid: 'Híbrido',
     yield_empty_title: 'Marque seu campo para ver a previsão de colheita',
     yield_empty_text: 'Vá para <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa do Campo</strong> e desenhe os limites do seu campo. Calcularemos o rendimento estimado, produção total e a melhor data de colheita.',
-    yield_unit: 'toneladas / hectare', yield_harvest_label: 'Colheita estimada:',
+    yield_unit: 'toneladas / hectare', yield_harvest_label: 'Colheita estimada:', yield_no_data: 'Aguardando dados do clima',
+    yield_crop_label: 'Tipo de cultura', yield_ci_days: 'dias',
+    crop_uva_vinif: 'Uva Vinífera', crop_uva_mesa: 'Uva de Mesa', crop_cereza: 'Cereja', crop_arandano: 'Mirtilo',
+    crop_frutilla: 'Morango', crop_damasco: 'Damasco', crop_durazno: 'Pêssego / Nectarina', crop_ciruela: 'Ameixa',
+    crop_manzana: 'Maçã', crop_pera: 'Pera', crop_kiwi: 'Kiwi', crop_palto: 'Abacate',
+    crop_naranja: 'Laranja', crop_mandarina: 'Tangerina', crop_tomate: 'Tomate', crop_maiz: 'Milho',
+    crop_papa: 'Batata', crop_trigo: 'Trigo', crop_quinua: 'Quinoa',
+    crop_nogal: 'Nogueira', crop_almendro: 'Amendoeira', crop_pistacho: 'Pistácio', crop_avellano: 'Aveleira',
     yield_features_title: 'O que mais influencia sua colheita', yield_sat_title: 'Leituras de Satélite',
     yield_climate_title: 'Dados Climáticos', yield_model_title: 'Comparação de Modelos',
     yield_th_index: 'Leitura', yield_th_value: 'Valor', yield_th_variable: 'Variável', yield_th_value2: 'Valor',
@@ -3884,17 +4109,33 @@ const i18n = {
     editor_title: 'Propriedades do Campo', editor_name: 'Nome', editor_name_ph: 'ex: Parcela Norte',
     editor_desc: 'Descrição', editor_desc_ph: 'Notas, variedade, observações...',
     editor_stage: 'Etapa de crescimento', editor_select: '— Selecionar —',
-    stage_bud: 'Brotação', stage_flower: 'Floração', stage_fruit: 'Frutificação', stage_veraison: 'Veraison',
+    stage_bud: 'Brotação', stage_flower: 'Floração', stage_fruit: 'Frutificação', stage_veraison: 'Mudança de cor / Início de maturação',
     stage_ripen: 'Maturação', stage_harvest: 'Colheita', stage_post: 'Pós-colheita',
     editor_color: 'Cor', editor_cancel: 'Cancelar', editor_save: 'Salvar',
     alert_no_layers: 'Nenhum campo para salvar. Adicione um campo primeiro.',
     dash_sat_title: 'Índices de Satélite', dash_yield_title: 'Previsão de Colheita',
     toolbar_title: 'Meus Campos e Ferramentas', gee_settings: 'Configurações de Satélite',
     idx_title: 'O que ver no mapa', idx_vigor: 'Vigor', idx_health: 'Saúde', idx_vigor_plus: 'Vigor+',
-    idx_young: 'Vinhas Jovens', idx_sparse: 'Disperso', idx_crop_health: 'Saúde do Cultivo', idx_nutrition: 'Nutrição',
+    idx_young: 'Plantas Jovens', idx_sparse: 'Disperso', idx_crop_health: 'Saúde do Cultivo', idx_nutrition: 'Nutrição',
     idx_early_stress: 'Estresse Precoce', idx_chlorophyll: 'Clorofila', idx_nstatus: 'Nitrogênio',
     idx_water: 'Água', idx_moisture: 'Umidade', idx_leaf_water: 'Água Foliar',
     idx_soil: 'Solo', idx_bare_soil: 'Solo Exposto', idx_photo: 'Foto', idx_real_color: 'Cor Real', idx_infrared: 'Infravermelho',
+    idx_ai: 'IA · AlphaEarth', idx_ae_pca: 'PCA Cor', idx_ae_class: 'Cobertura', ae_loading: 'Carregando embeddings AlphaEarth...',
+    desc_NDVI: 'Vigor geral da cultura. Valores altos = vegetação densa e ativa. Detecta estresse hídrico, doenças ou baixo desenvolvimento. Índice principal para monitoramento sazonal.',
+    desc_EVI: 'Semelhante ao NDVI, mas menos saturado em dosséis densos (vinhedos, pomares). Inclui correção atmosférica para maior precisão.',
+    desc_SAVI: 'NDVI ajustado pela reflectância do solo exposto. Essencial para plantas jovens ou cultivos com cobertura parcial do solo.',
+    desc_MSAVI: 'SAVI melhorado com ajuste automático de solo. Ideal para início de temporada ou condições de dossel esparso.',
+    desc_NDRE: 'Detecta deficiência de nitrogênio antes de ser visível. Alta sensibilidade ao estresse nutricional precoce. Chave para fertilização de precisão.',
+    desc_GNDVI: 'Teor de clorofila com maior sensibilidade que o NDVI. Ideal para monitorar saúde foliar e estado nutricional ao longo da temporada.',
+    desc_TCARI: 'Indicador de absorção de clorofila sob estresse. Valores altos indicam clorose, danos por pragas ou doenças foliares.',
+    desc_CIRE: 'Índice de clorofila foliar — correlaciona com nitrogênio disponível na planta. Útil para calibrar e programar fertilizações foliares.',
+    desc_NDMI: 'Teor de água na vegetação. Detecta estresse hídrico antes dos sintomas visuais aparecerem. Orienta o manejo de irrigação.',
+    desc_NDWI: 'Identifica corpos d\'água e zonas alagadas. Detecta inundações, problemas de drenagem e excesso de umidade no solo.',
+    desc_BSI: 'Mapeamento de solo exposto e erosão. Estima cobertura do solo e identifica zonas sem vegetação. Útil para manejo de coberturas.',
+    desc_RGB: 'Vista em cor natural — como uma fotografia. Sem análise espectral. Referência visual das condições gerais do campo.',
+    desc_FALSE: 'Vegetação em tons vermelhos — vermelho mais intenso = maior atividade fotossintética. Contraste visual entre zonas ativas e estressadas.',
+    desc_ALPHAEARTH: 'Visualização de embeddings de IA do Google DeepMind. As cores representam padrões espectrais-temporais únicos detectados pelo modelo em 64 dimensões.',
+    desc_ALPHAEARTH_CLASS: 'Classificação automática de cobertura do solo com IA. Distingue vegetação (verde), solo exposto (marrom), água (azul) e áreas construídas (cinza).',
     location: 'Localização', field_area: 'Área do Campo', season_gdd: 'GDD da Safra', season_precip: 'Precip. da Safra',
     climate_summary: 'Resumo Climático', active_alerts: 'Alertas Ativos', monthly_temp_overview: 'Temperatura Mensal',
     loaded_polygons: 'Polígonos Carregados', no_polygons: 'Nenhum polígono carregado.', no_alerts: 'Sem alertas.',
@@ -3922,7 +4163,7 @@ const i18n = {
     plan_empty_title: 'Marque seu campo para gerar o plano de ação', plan_empty_text: 'Vá ao <strong style="color:var(--accent);cursor:pointer;" onclick="showSection(\'maps\')">Mapa do Campo</strong> e desenhe os limites do campo. Calcularemos os desvios fenológicos e recomendaremos atividades com base no clima real.',
     plan_pheno_delay: 'Análise de Desvio Fenológico', plan_pheno_delay_sub: 'Comparando a acumulação real de GDD do campo com os limiares de referência para estimar atrasos ou avanços em cada estágio de crescimento.',
     plan_th_stage: 'Estágio', plan_th_gdd_req: 'GDD Necessários', plan_th_expected_date: 'Data Esperada', plan_th_status: 'Estado', plan_th_shift: 'Desvio (dias)',
-    plan_chill_title: 'Avaliação de Horas de Frio', plan_chill_accumulated: 'Acumuladas', plan_chill_required: 'Necessárias (média varietal)', plan_chill_vitis: 'Faixa típica de Vitis vinifera', plan_chill_status: 'Estado',
+    plan_chill_title: 'Avaliação de Horas de Frio', plan_chill_accumulated: 'Acumuladas', plan_chill_required: 'Necessárias (média do cultivo)', plan_chill_vitis: 'Faixa de referência do cultivo', plan_chill_status: 'Estado',
     plan_activities_title: 'Calendário de Atividades da Safra', plan_activities_sub: 'Operações de campo recomendadas alinhadas com os estágios fenológicos e condições climáticas atuais.',
     plan_alerts_title: 'Alertas Climáticos e Recomendações',
     plan_on_track: 'No prazo', plan_delayed: 'Atrasado', plan_advanced: 'Adiantado', plan_reached: 'Alcançado', plan_pending: 'Pendente',
@@ -3936,7 +4177,7 @@ const i18n = {
     base_label: 'Base:', fullscreen: 'Tela cheia',
     // GEE controls
     gee_from: 'De:', gee_to: 'Até:', gee_cloud_max: 'Nuvem máx:', gee_opacity: 'Opacidade:',
-    gee_median: 'Mediana', gee_captures: 'Capturas', gee_compare: 'Comparar', gee_refresh: 'Atualizar',
+    gee_season: 'Temporada:', gee_sharpen: 'Nitidez', gee_median: 'Mediana', gee_captures: 'Capturas', gee_compare: 'Comparar', gee_refresh: 'Atualizar',
     gee_available_captures: 'CAPTURAS DISPONÍVEIS', gee_search: 'Buscar',
     gee_search_msg: 'Clique em "Buscar" para listar as capturas do período.',
     gee_loading: 'Carregando imagens GEE...', gee_sentinel_info: 'Sentinel-2 SR Harmonized · 10m resolução · Cloud masking automático (QA60) · Apenas área do polígono',
@@ -3993,6 +4234,10 @@ const i18n = {
     alert_file_error: 'Erro ao ler o arquivo: ',
     gee_help_msg: 'O Google Earth Engine se conecta automaticamente usando a conta do projeto agragent. Não é necessária configuração.',
     climate_upload_sub: 'Carregue um polígono para ver dados climáticos',
+    saved_fields_title: 'Meus Campos Salvos', saved_fields_empty: 'Nenhum campo salvo ainda. Desenhe ou carregue um polígono e salve.',
+    save_current_field: 'Salvar campo atual', save_field_title: 'Salvar campo', save_field_ph: 'ex: Parcela Norte',
+    confirm_delete_field: 'Excluir este campo salvo?', confirm_replace_layers: 'Substituir as camadas atuais por este campo?',
+    load_field_btn: 'Carregar',
   }
 };
 
@@ -4061,6 +4306,10 @@ navItems.forEach(item => {
         if (vineMap) { vineMap.invalidateSize(); setTimeout(() => vineMap.invalidateSize(), 300); }
         if (!geeConnected) autoConnectGEE();
       }
+    }
+    // Refresh saved fields list when navigating to dashboard
+    if (target === 'dashboard') {
+      setTimeout(() => { if (document.getElementById('sf-body')?.style.display !== 'none') listSavedFields(); }, 150);
     }
   });
 });
@@ -4389,6 +4638,7 @@ let climateDataLoaded = false;
 let agClimate = {};   // {totalGDD, chillHours, frostDays, heatWaves, totalPrecip, totalET, meanMax, meanMin, meanHumidity, totalSolar}
 let agIndices = {};   // {NDVI, NDRE, MSAVI, TCARI, EVI, NDMI}
 let agAreaHa = 0;     // polygon area in hectares
+let agCrop = 'uva_vinif'; // selected crop key for harvest date model
 
 // Reverse geocode coordinates to get location name
 async function updateLocationName(lat, lng) {
@@ -4816,8 +5066,8 @@ async function loadClimateData() {
     // Update field action plan
     updateFieldPlan();
 
-    // Trigger yield prediction if satellite indices are ready
-    if (geeConnected) computeSatelliteIndices();
+    // Always populate agIndices (uses GEE if connected, otherwise defaults)
+    computeSatelliteIndices();
 
   } catch (err) {
     console.error('Climate data error:', err);
@@ -4983,7 +5233,7 @@ async function compareGDD() {
   } finally {
     btn.disabled = false;
     const lang = localStorage.getItem('agragent_lang') || 'en';
-    btn.textContent = (translations[lang] && translations[lang].gdd_compare_btn) || 'Compare GDD';
+    btn.textContent = (i18n[lang] && i18n[lang].gdd_compare_btn) || 'Compare GDD';
   }
 }
 
@@ -5678,6 +5928,50 @@ function setIndex(btn, idx) {
   currentGEEIndex = idx;
   updateLegend(idx);
   if (geeConnected) loadGEELayer(idx);
+
+  // Update info card
+  const card = document.getElementById('index-info-card');
+  const desc = t('desc_' + idx);
+  if (card && desc && desc !== 'desc_' + idx) {
+    const meta = INDEX_META[idx] || {};
+    const tips = INDEX_TIPS[idx] || {};
+
+    // Header
+    document.getElementById('iic-title').textContent = (meta.title || idx).split(' — ')[0];
+    document.getElementById('iic-formula').textContent = meta.formula || '';
+
+    // Description
+    document.getElementById('iic-desc').textContent = desc;
+
+    // Color scale gradient + labels
+    if (meta.gradient) {
+      document.getElementById('iic-gradient').style.background = meta.gradient;
+      const labelsEl = document.getElementById('iic-labels');
+      labelsEl.innerHTML = (meta.labels || []).map(l => `<span>${l}</span>`).join('');
+    }
+    document.getElementById('iic-scale').style.display = meta.gradient ? 'block' : 'none';
+
+    // Agronomic tips
+    const good  = document.getElementById('iic-good');
+    const alert = document.getElementById('iic-alert');
+    const when  = document.getElementById('iic-when');
+    if (tips.good) {
+      good.innerHTML = `<span style="color:#4ade80;font-size:1em;flex-shrink:0;">✓</span><span style="color:var(--text-primary);">${tips.good}</span>`;
+      good.style.display = 'flex';
+    } else { good.style.display = 'none'; }
+    if (tips.alert) {
+      alert.innerHTML = `<span style="color:#fb923c;font-size:1em;flex-shrink:0;">⚠</span><span style="color:var(--text-primary);">${tips.alert}</span>`;
+      alert.style.display = 'flex';
+    } else { alert.style.display = 'none'; }
+    if (tips.when) {
+      when.innerHTML = `<span style="color:var(--text-secondary);font-size:1em;flex-shrink:0;">📅</span><span style="color:var(--text-secondary);">${tips.when}</span>`;
+      when.style.display = 'flex';
+    } else { when.style.display = 'none'; }
+
+    card.style.display = 'block';
+  } else if (card) {
+    card.style.display = 'none';
+  }
 }
 
 // ═══════════════════════════════════════
@@ -5705,7 +5999,29 @@ const INDEX_META = {
   BSI:   { title: 'BSI — Bare Soil Index', formula: '((SWIR+RED)−(NIR+BLUE))/((SWIR+RED)+(NIR+BLUE)) · B11,B4,B8,B2', gradient: 'linear-gradient(to right,#1a9850,#a6d96a,#fee08b,#c8a46e,#8B4513)', labels: ['-0.4 (Veg.)','−0.1','0.0','0.2','0.4 (Suelo)'] },
   // ── Visual ──
   RGB:   { title: 'Color Real — RGB', formula: 'B4 (Red), B3 (Green), B2 (Blue)', gradient: 'linear-gradient(to right,#1a5ca8,#2e8b57,#8B4513,#c8a46e,#f5f5f5)', labels: ['Agua','Vegetación','Suelo','Seco','Nubes'] },
-  FALSE: { title: 'Falso Color — NIR composit', formula: 'B8 (NIR), B4 (Red), B3 (Green) · veg.=rojo', gradient: 'linear-gradient(to right,#1a1a2e,#0d4a1a,#2e8b57,#c0392b,#8b0000)', labels: ['No veg.','Baja','Media','Alta','Muy alta'] }
+  FALSE: { title: 'Falso Color — NIR composit', formula: 'B8 (NIR), B4 (Red), B3 (Green) · veg.=rojo', gradient: 'linear-gradient(to right,#1a1a2e,#0d4a1a,#2e8b57,#c0392b,#8b0000)', labels: ['No veg.','Baja','Media','Alta','Muy alta'] },
+  // ── IA · AlphaEarth ──
+  ALPHAEARTH:       { title: 'AlphaEarth — PCA Falso Color', formula: 'Google DeepMind · 64-dim embeddings · Componentes 0-1-2 → RGB · Anual 2017-2025', gradient: 'linear-gradient(to right,#0d0221,#1a0a4e,#2e1a8c,#4a6fa5,#68c9b0,#f5f5f5)', labels: ['Patrón A','','Centro','','Patrón B'] },
+  ALPHAEARTH_CLASS: { title: 'AlphaEarth — Cobertura del Suelo', formula: 'K-means 4 clases · vegetación · suelo · agua · urbano/otro', gradient: 'linear-gradient(to right,#1a9850,#c8a46e,#4575b4,#888888)', labels: ['Vegetación','Suelo','Agua','Urbano/Otro'] }
+};
+
+// Agronomic interpretation per index — what values mean and when to act
+const INDEX_TIPS = {
+  NDVI:  { good:'> 0.6 — vigor activo, cultivo en buen estado', alert:'< 0.3 — revisar riego, nutrición o presencia de plagas', when:'Todo el año · índice base de monitoreo estacional' },
+  EVI:   { good:'> 0.5 — dosel denso y activo', alert:'< 0.2 — posible estrés hídrico o baja densidad foliar', when:'Mejor en cultivos densos: viñedos y frutales' },
+  SAVI:  { good:'> 0.4 — buen desarrollo vegetativo', alert:'< 0.15 — cobertura baja, evaluar densidad de siembra', when:'Inicio de temporada · plantas jóvenes o recién transplantadas' },
+  MSAVI: { good:'> 0.4 — vegetación establecida', alert:'< 0.1 — suelo dominante, cobertura muy baja', when:'Inicio de temporada · parcelas con claros o baja emergencia' },
+  NDRE:  { good:'> 0.3 — estado nutricional N adecuado', alert:'< 0.15 — probable deficiencia de nitrógeno', when:'Pre-floración y cuaje · calibrar plan de fertilización' },
+  GNDVI: { good:'> 0.5 — clorofila alta, hoja sana', alert:'< 0.25 — clorosis o estrés nutricional activo', when:'Mitad de temporada · monitoreo de salud foliar' },
+  TCARI: { good:'< 0.15 — cultivo sano, alta clorofila', alert:'> 0.30 — clorosis, daño por plagas o hongos foliares', when:'Floración y desarrollo de fruto · detección temprana de patógenos' },
+  CIRE:  { good:'> 1.5 — contenido de N foliar adecuado', alert:'< 0.8 — aplicar fertilización nitrogenada foliar', when:'Pre-floración · calibrar dosis de nitrógeno' },
+  NDMI:  { good:'> 0.2 — contenido hídrico adecuado', alert:'< −0.1 — estrés hídrico activo, adelantar turno de riego', when:'Veranos secos · programar frecuencia de riego' },
+  NDWI:  { good:'< 0 — sin agua libre superficial', alert:'> 0.1 — zona con exceso de agua o anegamiento', when:'Post-lluvia intensa · detectar zonas de drenaje deficiente' },
+  BSI:   { good:'< −0.1 — buena cobertura vegetal del suelo', alert:'> 0.2 — suelo expuesto, erosión o falla en cultivo', when:'Pre-siembra y post-cosecha · evaluación de cobertura residual' },
+  RGB:   { good:'Verde intenso y uniforme = vegetación activa', alert:'Tonos amarillos o cafés = senescencia o estrés visible', when:'Referencia visual general · inspección rápida del campo' },
+  FALSE: { good:'Rojo intenso = alta actividad fotosintética', alert:'Gris/negro = sin vegetación o estrés severo', when:'Comparación rápida de vigor entre parcelas o temporadas' },
+  ALPHAEARTH:       { good:'Colores contrastados = zonas espectralmente distintas', alert:'Zona uniforme = terreno homogéneo o falta de contraste', when:'Identificar patrones espaciales invisibles en índices simples' },
+  ALPHAEARTH_CLASS: { good:'Verde = vegetación activa · Azul = cuerpos de agua', alert:'Gris = superficies construidas · Café = suelo expuesto', when:'Clasificación automática de cobertura del suelo con IA' },
 };
 
 function updateLegend(idx) {
@@ -5721,7 +6037,7 @@ function loadEEScript(callback) {
   if (window.ee) { callback(); return; }
   setGEEStatus('loading', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-loader\"/></svg>Cargando librería Earth Engine...');
   const s = document.createElement('script');
-  s.src = 'https://unpkg.com/@google/earthengine@0.1.395/build/ee_api_js_npm.js';
+  s.src = 'https://unpkg.com/@google/earthengine@0.1.400/build/ee_api_js_npm.js';
   s.onload = callback;
   s.onerror = () => setGEEStatus('error', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-x\"/></svg>No se pudo cargar la librería GEE. Verifica tu conexión.');
   document.head.appendChild(s);
@@ -5810,6 +6126,9 @@ function loadGEELayer(idx) {
     setGEEStatus('error', '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:4px;\"><use href=\"#i-alert\"/></svg>' + t('no_polygon_gee'));
     return;
   }
+
+  // AlphaEarth uses a different annual dataset — delegate to its own loader
+  if (idx.startsWith('ALPHAEARTH')) { loadAlphaEarthLayer(idx); return; }
 
   const startDate = document.getElementById('gee-start').value;
   const endDate   = document.getElementById('gee-end').value;
@@ -5920,6 +6239,122 @@ function loadGEELayer(idx) {
   }
 }
 
+// ═══════════════════════════════════════
+// ALPHAEARTH INTEGRATION
+// Dataset: GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL · 64-dim · 10m · 2017-2025
+// ═══════════════════════════════════════
+
+function buildAlphaEarthImage(embedding, idx, clipGeom) {
+  const pad = i => `A${String(i).padStart(2, '0')}`;
+  const bands20 = Array.from({ length: 20 }, (_, i) => pad(i));
+  let image, visParams;
+
+  if (idx === 'ALPHAEARTH_CLASS') {
+    const feat = embedding.select(bands20);
+    const sample = feat.sample({ scale: 20, numPixels: 300, seed: 42 });
+    const clusterer = ee.Clusterer.wekaKMeans(4).train(sample);
+    image = feat.cluster(clusterer);
+    visParams = { min: 0, max: 3, palette: ['1a9850', 'c8a46e', '4575b4', '888888'] };
+    return { image, visParams };
+  }
+
+  // ALPHAEARTH: PCA false color with per-band percentile stretch
+  const b0 = pad(0), b32 = pad(32), b63 = pad(63);
+  const img3 = embedding.select([b0, b32, b63]);
+
+  // Compute 2–98 percentile per band so actual data fills the full color range
+  let mn = [-1.5, -1.5, -1.5], mx = [1.5, 1.5, 1.5];
+  try {
+    const stats = img3.reduceRegion({
+      reducer: ee.Reducer.percentile([2, 98]),
+      geometry: clipGeom,
+      scale: 30,
+      maxPixels: 1e5,
+      bestEffort: true
+    }).getInfo();
+    if (stats) {
+      mn = [stats[`${b0}_p2`]  ?? -1.5, stats[`${b32}_p2`]  ?? -1.5, stats[`${b63}_p2`]  ?? -1.5];
+      mx = [stats[`${b0}_p98`] ??  1.5, stats[`${b32}_p98`] ??  1.5, stats[`${b63}_p98`] ??  1.5];
+    }
+  } catch(e) {
+    console.warn('AlphaEarth: could not compute stats, using default range', e.message);
+  }
+
+  image = img3;
+  visParams = { bands: [b0, b32, b63], min: mn, max: mx };
+  return { image, visParams };
+}
+
+function loadAlphaEarthLayer(idx) {
+  if (!geeConnected || !window.ee) { alert('GEE no conectado. Dibuja un polígono primero.'); return; }
+  if (kmlRawCoords.length === 0) { alert(t('no_polygon_gee')); return; }
+
+  // AlphaEarth dataset covers 2017–2024; cap to latest available year
+  const endYear = parseInt((document.getElementById('gee-end').value || '').substring(0, 4)) || 2024;
+  const year = Math.min(endYear, 2024);
+  const clipGeom = buildClipGeom();
+  const loadingMsg = `${t('ae_loading')} (${year})`;
+
+  setMapLoading(true, loadingMsg);
+  console.log('AlphaEarth: loading', idx, 'year', year);
+
+  const geeTimeout = setTimeout(() => {
+    setMapLoading(false);
+    console.error('AlphaEarth timeout after 60s');
+    alert(`AlphaEarth timeout (60s). El dataset puede no estar disponible en el proyecto GEE actual.`);
+  }, 60000);
+
+  try {
+    // Use filterDate (more reliable than calendarRange for this dataset)
+    const embedding = ee.ImageCollection('GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL')
+      .filterDate(`${year}-01-01`, `${year}-12-31`)
+      .filterBounds(clipGeom)
+      .first()
+      .clip(clipGeom);
+
+    console.log('AlphaEarth: collection filtered, building image...');
+    const { image, visParams } = buildAlphaEarthImage(embedding, idx, clipGeom);
+
+    console.log('AlphaEarth: calling getMapId...');
+    const result = image.getMapId(visParams);
+    clearTimeout(geeTimeout);
+    console.log('AlphaEarth: getMapId ok, keys:', Object.keys(result));
+
+    if (geeLayer) vineMap.removeLayer(geeLayer);
+    const opacity = (parseInt(document.getElementById('gee-opacity').value) || 85) / 100;
+
+    if (result.formatTileUrl) {
+      geeLayer = L.gridLayer({ attribution: '© Google DeepMind · AlphaEarth', opacity, maxZoom: 20, tileSize: 256 });
+      geeLayer.createTile = function(coords) {
+        const tile = document.createElement('img');
+        tile.width = tile.height = 256;
+        tile.style.width = tile.style.height = '256px';
+        tile.crossOrigin = 'anonymous';
+        tile.src = result.formatTileUrl(coords.x, coords.y, coords.z);
+        return tile;
+      };
+      geeLayer.addTo(vineMap);
+    } else {
+      let url = result.urlFormat || ('https://earthengine.googleapis.com/v1/projects/agragent-491300/maps/' + result.mapid + '/tiles/{z}/{x}/{y}');
+      if (result.token && !url.includes('token=')) url += (url.includes('?') ? '&' : '?') + 'token=' + result.token;
+      geeLayer = L.tileLayer(url, { attribution: '© Google DeepMind · AlphaEarth', opacity, maxZoom: 20, tileSize: 256 }).addTo(vineMap);
+    }
+
+    bringLabelsToTop();
+    setMapLoading(false);
+    const badge = document.getElementById('map-source-badge');
+    badge.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><use href="#i-globe"/></svg><strong>Google DeepMind</strong> · AlphaEarth · <strong>${idx}</strong> · ${year}`;
+    document.getElementById('gee-layer-note').textContent = `AlphaEarth ${year} · ${new Date().toLocaleTimeString('es-CL')}`;
+    document.getElementById('gee-layer-note').style.display = 'inline';
+  } catch(e) {
+    clearTimeout(geeTimeout);
+    setMapLoading(false);
+    console.error('AlphaEarth error:', e);
+    alert(`Error AlphaEarth: ${e.message}`);
+  }
+}
+
+
 function refreshGEELayer() {
   if (geeMode === 'compare') loadComparison();
   else loadGEELayer(currentGEEIndex);
@@ -5935,9 +6370,9 @@ const PHENO_STAGES = [
   { el: 5,  name: 'Shoot growth',     gdd: 50,   color: '#4ade80' },
   { el: 15, name: 'Inflorescence',    gdd: 200,  color: '#22c55e' },
   { el: 17, name: 'Flowering',        gdd: 350,  color: '#fbbf24' },
-  { el: 27, name: 'Berry set',        gdd: 500,  color: '#f59e0b' },
-  { el: 31, name: 'Berry growth',     gdd: 750,  color: '#fb923c' },
-  { el: 35, name: 'Veraison',         gdd: 1100, color: '#f87171' },
+  { el: 27, name: 'Fruit set',         gdd: 500,  color: '#f59e0b' },
+  { el: 31, name: 'Fruit development', gdd: 750,  color: '#fb923c' },
+  { el: 35, name: 'Color change',      gdd: 1100, color: '#f87171' },
   { el: 36, name: 'Ripening',         gdd: 1300, color: '#c084fc' },
   { el: 38, name: 'Harvest ready',    gdd: 1500, color: '#a78bfa' },
   { el: 41, name: 'Senescence',       gdd: 1800, color: '#94a3b8' },
@@ -6000,10 +6435,10 @@ const FIELD_ACTIVITIES = {
   5:  [{ activity: 'Shoot thinning — remove weak shoots', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-scissors\"/></svg>', category: 'canopy' },
        { activity: 'First foliar fertilization (N)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-flask\"/></svg>', category: 'nutrition' }],
   15: [{ activity: 'Canopy management — leaf removal (basal)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-leaf\"/></svg>', category: 'canopy' },
-       { activity: 'Pest monitoring — grape moth', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-search\"/></svg>', category: 'phytosanitary' }],
+       { activity: 'Pest &amp; disease monitoring', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-search\"/></svg>', category: 'phytosanitary' }],
   17: [{ activity: 'Avoid irrigation stress during flowering', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-droplet\"/></svg>', category: 'irrigation' },
        { activity: 'Botrytis preventive spray', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-spray\"/></svg>', category: 'phytosanitary' }],
-  27: [{ activity: 'Berry thinning (cluster adjustment)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-scissors\"/></svg>', category: 'canopy' },
+  27: [{ activity: 'Fruit thinning (load adjustment)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-scissors\"/></svg>', category: 'canopy' },
        { activity: 'Soil analysis & mid-season fertilization', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-flask\"/></svg>', category: 'nutrition' }],
   31: [{ activity: 'Irrigation scheduling — deficit irrigation phase', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-droplet\"/></svg>', category: 'irrigation' },
        { activity: 'Second pest monitoring pass', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-search\"/></svg>', category: 'phytosanitary' }],
@@ -6011,8 +6446,8 @@ const FIELD_ACTIVITIES = {
        { activity: 'Bird netting installation', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-shield\"/></svg>', category: 'protection' },
        { activity: 'Monitor Brix, pH, titratable acidity', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-bar-chart\"/></svg>', category: 'monitoring' }],
   36: [{ activity: 'Leaf pulling (sun exposure for ripening)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-leaf\"/></svg>', category: 'canopy' },
-       { activity: 'Foliar K application for berry quality', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-flask\"/></svg>', category: 'nutrition' }],
-  38: [{ activity: 'Harvest readiness sampling (Brix ≥ 22–24°)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-grape\"/></svg>', category: 'monitoring' },
+       { activity: 'Foliar K application for fruit quality', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-flask\"/></svg>', category: 'nutrition' }],
+  38: [{ activity: 'Harvest readiness sampling (Brix / maturity index)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-leaf\"/></svg>', category: 'monitoring' },
        { activity: 'Coordinate harvest logistics & crew', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-tractor\"/></svg>', category: 'harvest' }],
   41: [{ activity: 'Post-harvest irrigation (recharge)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-droplet\"/></svg>', category: 'irrigation' },
        { activity: 'Fall fertilization (P, K)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-flask\"/></svg>', category: 'nutrition' }]
@@ -6039,8 +6474,8 @@ function updateFieldPlan() {
   document.getElementById('plan-empty').style.display = 'none';
   document.getElementById('plan-content').style.display = '';
 
-  const lang = localStorage.getItem('agragent_lang') || 'en';
-  const t = translations[lang] || translations.en;
+  const lang = localStorage.getItem('agragent-lang') || localStorage.getItem('agragent_lang') || 'en';
+  const tl = i18n[lang] || i18n.en;
   const totalGDD = C.totalGDD;
   const chillHours = C.chillHours || 0;
 
@@ -6070,16 +6505,16 @@ function updateFieldPlan() {
 
     let status, statusColor;
     if (reached) {
-      status = t.plan_reached || 'Reached';
+      status = tl.plan_reached || 'Reached';
       statusColor = '#52b788';
     } else if (shiftDays !== null && shiftDays > 5) {
-      status = t.plan_delayed || 'Delayed';
+      status = tl.plan_delayed || 'Delayed';
       statusColor = '#ef4444';
     } else if (shiftDays !== null && shiftDays < -5) {
-      status = t.plan_advanced || 'Advanced';
+      status = tl.plan_advanced || 'Advanced';
       statusColor = '#60a5fa';
     } else {
-      status = t.plan_on_track || 'On track';
+      status = tl.plan_on_track || 'On track';
       statusColor = '#52b788';
     }
 
@@ -6106,19 +6541,19 @@ function updateFieldPlan() {
   const chillSub = document.getElementById('plan-chill-status-sub');
 
   if (chillHours >= 400) {
-    chillStatus.textContent = t.plan_chill_ok || 'Sufficient';
+    chillStatus.textContent = tl.plan_chill_ok || 'Sufficient';
     chillStatus.style.color = '#52b788';
     chillCard.style.background = 'rgba(82,183,136,0.1)';
     chillCard.style.border = '1px solid rgba(82,183,136,0.3)';
     chillSub.textContent = lang === 'es' ? 'Brotación uniforme esperada' : lang === 'pt' ? 'Brotação uniforme esperada' : 'Uniform bud break expected';
   } else if (chillHours >= 250) {
-    chillStatus.textContent = t.plan_chill_partial || 'Marginal';
+    chillStatus.textContent = tl.plan_chill_partial || 'Marginal';
     chillStatus.style.color = '#f59e0b';
     chillCard.style.background = 'rgba(245,158,11,0.1)';
     chillCard.style.border = '1px solid rgba(245,158,11,0.3)';
     chillSub.textContent = lang === 'es' ? 'Posible brotación irregular' : lang === 'pt' ? 'Possível brotação irregular' : 'Possible uneven bud break';
   } else {
-    chillStatus.textContent = t.plan_chill_low || 'Insufficient';
+    chillStatus.textContent = tl.plan_chill_low || 'Insufficient';
     chillStatus.style.color = '#ef4444';
     chillCard.style.background = 'rgba(239,68,68,0.1)';
     chillCard.style.border = '1px solid rgba(239,68,68,0.3)';
@@ -6290,6 +6725,80 @@ function computeSatelliteIndices() {
 }
 
 // ═══════════════════════════════════════
+// HARVEST DATE ML MODEL — phenological weighted features
+// Weights derived from: Campoy et al. (2011), Parker et al. (2011),
+// Molitor et al. (2014), Ruiz et al. (2007), FAO crop calendars.
+// Architecture: normalized feature weighted sum → phenological score → harvest DOY.
+// start:[y,m,d] = season start (Southern Hemisphere); days:[min,max] = days after start.
+// ═══════════════════════════════════════
+const HARVEST_MODELS = {
+  // Viñas
+  uva_vinif:  { label:{es:'Uva Vinífera',    en:'Wine Grape',       pt:'Uva Vinífera'   }, start:[2025,8,1], days:[148,228], w:{gdd:.42,chill:.17,tmax:.13,ndvi:.09,ndre:.07,prec:.05,et0:.03,hum:.02,sol:.02} },
+  uva_mesa:   { label:{es:'Uva de Mesa',     en:'Table Grape',      pt:'Uva de Mesa'    }, start:[2025,8,1], days:[ 91,182], w:{gdd:.44,chill:.15,tmax:.14,ndvi:.10,ndre:.06,prec:.05,et0:.04,hum:.02} },
+  // Carozos
+  cereza:     { label:{es:'Cereza',           en:'Cherry',           pt:'Cereja'         }, start:[2025,8,1], days:[ 60,155], w:{gdd:.38,chill:.28,tmax:.12,ndvi:.08,ndre:.05,prec:.04,hum:.03,et0:.02} },
+  durazno:    { label:{es:'Durazno/Nectarín', en:'Peach/Nectarine',  pt:'Pêssego'        }, start:[2025,8,1], days:[ 91,175], w:{gdd:.38,chill:.27,tmax:.13,ndvi:.08,ndre:.05,prec:.04,hum:.03,et0:.02} },
+  ciruela:    { label:{es:'Ciruela',          en:'Plum',             pt:'Ameixa'         }, start:[2025,8,1], days:[105,182], w:{gdd:.39,chill:.25,tmax:.13,ndvi:.08,ndre:.05,prec:.05,hum:.03,et0:.02} },
+  damasco:    { label:{es:'Damasco',          en:'Apricot',          pt:'Damasco'        }, start:[2025,8,1], days:[ 55,130], w:{gdd:.41,chill:.22,tmax:.14,ndvi:.09,ndre:.05,prec:.04,hum:.03,et0:.02} },
+  // Berries
+  arandano:   { label:{es:'Arándano',         en:'Blueberry',        pt:'Mirtilo'        }, start:[2025,8,1], days:[ 76,153], w:{gdd:.40,chill:.22,tmax:.13,ndvi:.09,ndre:.06,prec:.05,hum:.03,et0:.02} },
+  frutilla:   { label:{es:'Frutilla/Fresa',   en:'Strawberry',       pt:'Morango'        }, start:[2025,8,1], days:[ 45,120], w:{gdd:.46,chill:.10,tmax:.18,ndvi:.10,ndre:.06,prec:.05,hum:.03,et0:.02} },
+  // Pomáceas
+  manzana:    { label:{es:'Manzana',          en:'Apple',            pt:'Maçã'           }, start:[2025,8,1], days:[151,240], w:{gdd:.39,chill:.25,tmax:.13,ndvi:.09,ndre:.06,prec:.04,hum:.02,et0:.02} },
+  pera:       { label:{es:'Pera',             en:'Pear',             pt:'Pera'           }, start:[2025,8,1], days:[120,212], w:{gdd:.40,chill:.24,tmax:.13,ndvi:.09,ndre:.05,prec:.04,hum:.03,et0:.02} },
+  kiwi:       { label:{es:'Kiwi',             en:'Kiwi',             pt:'Kiwi'           }, start:[2025,8,1], days:[210,285], w:{gdd:.43,chill:.20,tmax:.14,ndvi:.09,ndre:.05,prec:.04,hum:.03,et0:.02} },
+  // Subtropicales / Cítricos
+  palto:      { label:{es:'Palto/Aguacate',   en:'Avocado',          pt:'Abacate'        }, start:[2025,8,1], days:[270,365], w:{gdd:.35,chill:.05,tmax:.20,ndvi:.12,ndre:.08,prec:.10,hum:.07,et0:.03} },
+  naranja:    { label:{es:'Naranja',          en:'Orange',           pt:'Laranja'        }, start:[2025,8,1], days:[270,360], w:{gdd:.38,chill:.05,tmax:.20,ndvi:.11,ndre:.08,prec:.10,hum:.06,et0:.02} },
+  mandarina:  { label:{es:'Mandarina',        en:'Mandarin',         pt:'Tangerina'      }, start:[2025,8,1], days:[240,310], w:{gdd:.38,chill:.05,tmax:.20,ndvi:.11,ndre:.08,prec:.10,hum:.06,et0:.02} },
+  // Frutos secos
+  nogal:      { label:{es:'Nogal',            en:'Walnut',           pt:'Nogueira'       }, start:[2025,8,1], days:[180,240], w:{gdd:.38,chill:.28,tmax:.12,ndvi:.08,ndre:.05,prec:.04,hum:.03,et0:.02} },
+  almendro:   { label:{es:'Almendro',         en:'Almond',           pt:'Amendoeira'     }, start:[2025,8,1], days:[120,170], w:{gdd:.40,chill:.22,tmax:.15,ndvi:.09,ndre:.05,prec:.04,hum:.03,et0:.02} },
+  pistacho:   { label:{es:'Pistacho',         en:'Pistachio',        pt:'Pistácio'       }, start:[2025,8,1], days:[150,210], w:{gdd:.37,chill:.30,tmax:.13,ndvi:.08,ndre:.05,prec:.04,hum:.01,et0:.02} },
+  avellano:   { label:{es:'Avellano',         en:'Hazelnut',         pt:'Aveleira'       }, start:[2025,8,1], days:[120,165], w:{gdd:.39,chill:.24,tmax:.14,ndvi:.09,ndre:.05,prec:.04,hum:.03,et0:.02} },
+  // Anuales
+  tomate:     { label:{es:'Tomate',           en:'Tomato',           pt:'Tomate'         }, start:[2025,8,1], days:[ 90,165], w:{gdd:.45,chill:.00,tmax:.20,ndvi:.12,ndre:.08,prec:.08,hum:.04,et0:.03} },
+  maiz:       { label:{es:'Maíz',             en:'Corn',             pt:'Milho'          }, start:[2025,8,1], days:[180,245], w:{gdd:.52,chill:.00,tmax:.18,ndvi:.12,ndre:.07,prec:.06,hum:.03,et0:.02} },
+  papa:       { label:{es:'Papa/Patata',      en:'Potato',           pt:'Batata'         }, start:[2025,8,1], days:[ 75,150], w:{gdd:.44,chill:.00,tmax:.16,ndvi:.14,ndre:.09,prec:.10,hum:.04,et0:.03} },
+  trigo:      { label:{es:'Trigo',            en:'Wheat',            pt:'Trigo'          }, start:[2025,8,1], days:[ 60, 95], w:{gdd:.48,chill:.12,tmax:.16,ndvi:.10,ndre:.06,prec:.05,hum:.03} },
+  quinua:     { label:{es:'Quinua',           en:'Quinoa',           pt:'Quinoa'         }, start:[2025,8,1], days:[178,210], w:{gdd:.46,chill:.00,tmax:.18,ndvi:.12,ndre:.08,prec:.10,hum:.03,et0:.03} },
+};
+
+function computeHarvestDate(C, S, cropKey) {
+  const m = HARVEST_MODELS[cropKey] || HARVEST_MODELS.uva_vinif;
+  const n = (v, lo, hi) => Math.max(0, Math.min(1, (v - lo) / (hi - lo)));
+  const nf = {
+    gdd:   n(C.totalGDD,     600, 2400),
+    chill: n(C.chillHours,   100, 1500),
+    tmax:  n(C.meanMax,       15,   42),
+    ndvi:  n(S.NDVI,         0.1, 0.85),
+    ndre:  n(S.NDRE,        0.05, 0.55),
+    prec:  n(C.totalPrecip,  100,  900),
+    et0:   n(C.totalET,      400, 1400),
+    hum:   n(C.meanHumidity,  30,   85),
+    sol:   n(C.totalSolar,  2000, 7000),
+  };
+  const dataOK = C.totalGDD > 50;
+  let score;
+  if (!dataOK) {
+    score = 0.5;
+  } else {
+    score = 0;
+    for (const k in m.w) score += (nf[k] || 0) * m.w[k];
+    if (C.frostDays > 10) score *= 0.96;
+    if (C.heatWaves >= 3) score *= 0.97;
+    if (C.totalPrecip < 100) score *= 0.95;
+    score = Math.max(0, Math.min(1, score));
+  }
+  const [dMin, dMax] = m.days;
+  const days = Math.round(dMax - score * (dMax - dMin));
+  const [sy, sm, sd] = m.start;
+  const harvestDate = new Date(new Date(sy, sm, sd).getTime() + days * 86400000);
+  const ciDays = Math.round((1 - score) * 14 + (dataOK ? 5 : 14));
+  return { harvestDate, ciDays, score };
+}
+
+// ═══════════════════════════════════════
 // YIELD PREDICTION MODEL (Extra Trees Regressor approximation)
 // ═══════════════════════════════════════
 // Based on: Altimiras et al. (2025) "A Computational Framework for Crop Yield
@@ -6351,26 +6860,13 @@ function runYieldPrediction() {
   const ciBase = 0.6 + (1 - score) * 0.8;
   const ci = +ciBase.toFixed(1);
 
-  // ── Harvest date prediction (GDD-based phenological model) ──
-  // Vitis vinifera harvest typically at ~1600-2000 GDD (base 10°C) from Sep 1
-  const harvestGDD = 1700 + (S.NDVI > 0.6 ? 150 : 0) - (C.heatWaves > 0 ? 80 : 0);
-  let harvestDate = null;
-  if (C.totalGDD >= harvestGDD * 0.7) {
-    // Estimate days from Sep 1 to reach harvestGDD
-    const avgDailyGDD = C.totalGDD > 0 ? C.totalGDD / 210 : 5; // ~7 months growing
-    const daysToHarvest = Math.round(harvestGDD / avgDailyGDD);
-    const sep1 = new Date(2025, 8, 1); // Sep 1, 2025
-    harvestDate = new Date(sep1.getTime() + daysToHarvest * 86400000);
-    // Clamp to reasonable range (Jan 15 - Apr 30)
-    const minDate = new Date(2026, 0, 15);
-    const maxDate = new Date(2026, 3, 30);
-    if (harvestDate < minDate) harvestDate = minDate;
-    if (harvestDate > maxDate) harvestDate = maxDate;
-  }
-
-  const harvestStr = harvestDate
-    ? harvestDate.toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' })
-    : 'Insufficient data';
+  // ── Harvest date (ML phenological model per crop) ──
+  const { harvestDate, ciDays } = computeHarvestDate(C, S, agCrop);
+  const localeMap = { en: 'en-US', es: 'es-CL', pt: 'pt-BR' };
+  const harvestStr = harvestDate.toLocaleDateString(
+    localeMap[currentLang] || 'es-CL',
+    { day: 'numeric', month: 'long', year: 'numeric' }
+  );
 
   // ── Feature importance: effective contribution (weight × normalized value) ──
   const contributions = {};
@@ -6411,7 +6907,7 @@ function runYieldPrediction() {
   console.log('🍇 Yield prediction:', { yieldPerHa, totalYield, ci, harvestStr, score, features, modelResults });
 
   // ── Update UI ──
-  updateYieldSection({ yieldPerHa, totalYield, ci, harvestStr, featureImportance, features, score, modelResults });
+  updateYieldSection({ yieldPerHa, totalYield, ci, harvestStr, harvestCiDays: ciDays, featureImportance, features, score, modelResults });
 }
 
 function updateYieldSection(p) {
@@ -6423,6 +6919,10 @@ function updateYieldSection(p) {
   if (el('yield-total-area')) el('yield-total-area').textContent = agAreaHa.toFixed(1) + ' ha';
   if (el('yield-ci')) el('yield-ci').textContent = `± ${p.ci} t/ha (${(p.yieldPerHa - p.ci).toFixed(1)} – ${(p.yieldPerHa + p.ci).toFixed(1)})`;
   if (el('yield-harvest-date')) el('yield-harvest-date').textContent = p.harvestStr;
+  if (el('yield-harvest-crop')) {
+    const hm = HARVEST_MODELS[agCrop] || HARVEST_MODELS.uva_vinif;
+    el('yield-harvest-crop').textContent = `${hm.label[currentLang] || hm.label.es} · Fenología ML · ±${p.harvestCiDays || '?'} ${t('yield_ci_days')}`;
+  }
 
   // Feature importance bars
   const fiEl = el('yield-feature-importance');
@@ -6728,6 +7228,8 @@ function buildClipGeom() {
   return ee.Geometry.Rectangle([-73.290, -38.338, -73.285, -38.334]);
 }
 
+
+
 function buildImageAndVis(s2base, idx) {
   let image, visParams;
   switch (idx) {
@@ -6851,21 +7353,21 @@ const WGISD = {
     name: 'Chardonnay', type: 'Blanca', color: '#fcd34d',
     images: 65, clusters: 840, masked: 308,
     source: 'Canon EOS REBEL T3i · 2048×1365px',
-    note: 'Uva blanca, racimos compactos, cosechada en 2018',
+    note: 'Variedad blanca, racimos compactos, cosechada en 2018',
     ids: ['CDY_2015','CDY_2016','CDY_2017','CDY_2018','CDY_2019','CDY_2020','CDY_2021','CDY_2022']
   },
   CFR: {
     name: 'Cabernet Franc', type: 'Tinta', color: '#f87171',
     images: 65, clusters: 1069, masked: 513,
     source: 'Canon EOS REBEL T3i · 2048×1365px',
-    note: 'Uva tinta, mayor densidad de racimos por imagen',
+    note: 'Variedad tinta, mayor densidad de racimos por imagen',
     ids: ['CFR_1620','CFR_1621','CFR_1622','CFR_1623','CFR_1624','CFR_1625','CFR_1626','CFR_1627']
   },
   CSV: {
     name: 'Cabernet Sauvignon', type: 'Tinta', color: '#c084fc',
     images: 57, clusters: 643, masked: 306,
     source: 'Canon EOS REBEL T3i · 2048×1365px',
-    note: 'Uva tinta, variedad más plantada en Chile',
+    note: 'Variedad tinta, más plantada en Chile',
     ids: ['CSV_1865','CSV_1866','CSV_1867','CSV_1868','CSV_1869','CSV_1870','CSV_1871','CSV_1872']
   },
   SVB: {
@@ -7303,8 +7805,8 @@ async function loadKMZFile(file) {
   }
 }
 
-function addLayerToMap(layer, name, color, description = '', stage = '') {
-  layer._agra = { name, color, description, stage };
+function addLayerToMap(layer, name, color, description = '', stage = '', crop_type = '') {
+  layer._agra = { name, color, description, stage, crop_type };
   // Ensure Geoman can edit/remove this layer
   if (layer.pm) layer.pm.setOptions({ allowRemoval: true, allowEditing: true });
   if (!vineMap.hasLayer(layer)) layer.addTo(vineMap);
@@ -7549,10 +8051,11 @@ function stopDelete() {
 function openEditor(layer, isNew = false) {
   if (!layer) return;
   editingLayer = layer;
-  const a = layer._agra || { name: '', description: '', stage: '', color: '#52b788' };
+  const a = layer._agra || { name: '', description: '', stage: '', crop_type: '', color: '#52b788' };
   document.getElementById('editor-name').value = a.name || '';
   document.getElementById('editor-desc').value = a.description || '';
   document.getElementById('editor-stage').value = a.stage || '';
+  document.getElementById('editor-crop-type').value = a.crop_type || '';
   selectedColor = a.color || '#52b788';
   document.querySelectorAll('.color-opt').forEach(el => {
     el.classList.toggle('selected', el.dataset.color === selectedColor);
@@ -7575,8 +8078,17 @@ function saveEditor() {
   const name = document.getElementById('editor-name').value.trim() || 'Capa sin nombre';
   const description = document.getElementById('editor-desc').value.trim();
   const stage = document.getElementById('editor-stage').value;
+  const crop_type = document.getElementById('editor-crop-type').value;
 
-  editingLayer._agra = { name, description, stage, color: selectedColor };
+  editingLayer._agra = { name, description, stage, crop_type, color: selectedColor };
+
+  // Sync harvest date model selector
+  if (crop_type) {
+    agCrop = crop_type;
+    const sel = document.getElementById('crop-selector');
+    if (sel) sel.value = crop_type;
+    runYieldPrediction();
+  }
   if (editingLayer.setStyle) {
     editingLayer.setStyle({ color: selectedColor, fillColor: selectedColor, fillOpacity: 0.3, weight: 2.5 });
   }
@@ -7702,8 +8214,8 @@ const TOOL_LABELS = {
   calculate_irrigation_plan:    'Irrigation plan',
   calculate_fertilization_plan: 'Fertilization plan',
   search_openalex:              'OpenAlex global literature',
-  search_inia_biblioteca:       'INIA Chile library',
-  search_inia_rag:              'INIA Chile semantic search',
+  search_inia_biblioteca:       'Scientific literature',
+  search_inia_rag:              'Scientific literature',
 };
 
 function chatRenderMarkdown(text) {
@@ -8256,10 +8768,10 @@ function chatToggleConvList() {
 
 const SECTION_CONTEXT = {
   dashboard: { label: 'My Field', ctx: 'The user is viewing the Dashboard overview with all KPIs, satellite indices, yield prediction summary, water balance, risk assessment, and alerts. You have access to ALL computed data below — use it to give specific, data-driven advice.' },
-  maps: { label: 'Field Map', ctx: 'The user is viewing the satellite map with Sentinel-2 imagery. Indices available: Plant Health (NDVI), Vigor+ (EVI), Young Vines (SAVI), Sparse (MSAVI), Nutrition (NDRE), Early Stress (GNDVI), Chlorophyll (TCARI), N-Status (CIre), Moisture (NDMI), Leaf Water (NDWI), Bare Soil (BSI). Use the satellite index values below to assess crop condition.' },
+  maps: { label: 'Field Map', ctx: 'The user is viewing the satellite map with Sentinel-2 imagery. Indices available: Plant Health (NDVI), Vigor+ (EVI), Young Plants (SAVI), Sparse (MSAVI), Nutrition (NDRE), Early Stress (GNDVI), Chlorophyll (TCARI), N-Status (CIre), Moisture (NDMI), Leaf Water (NDWI), Bare Soil (BSI). Use the satellite index values below to assess crop condition.' },
   climate: { label: 'Weather', ctx: 'The user is viewing detailed climate data. You have access to all computed KPIs below (GDD, chill hours, frost, heat waves, precipitation, ET0, etc.). Use these to give specific agronomic recommendations for their field or crop.' },
   genomic: { label: 'Genetics', ctx: 'The user is viewing genomic analysis: 3,603 DEGs from RNA-seq of Vitis vinifera across 8 phenological stages (E-L 3 to E-L 41). Data from Altimiras et al. 2024, Agronomy.' },
-  images: { label: 'Photos', ctx: 'The user is viewing grape cluster image analysis using YOLOv11 trained on WGISD (Embrapa). 5 varieties: Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc, Syrah. They can upload their own vineyard images for real-time detection.' },
+  images: { label: 'Photos', ctx: 'The user is viewing the image analysis module. Demo dataset: WGISD (Embrapa) grape cluster images with YOLOv11 detection (5 varieties). They can upload their own field images for real-time detection of any crop.' },
   yield: { label: 'Harvest', ctx: 'The user is viewing the harvest forecast. The prediction uses PyCaret Extra Trees Regressor (R²=0.972) with 15 features from climate + satellite data. Use ALL the computed data below to explain the prediction and give harvest recommendations.' },
   references: { label: 'About', ctx: 'The user is viewing the About section with author info and publications.' }
 };
@@ -8399,10 +8911,10 @@ function chatCollectAppContext() {
     parts.push('Berries estimated: ' + vmBerries);
   }
 
-  // ═══ CURRENT VARIETY (Image Analysis section) ═══
-  if (typeof currentVariety !== 'undefined') {
+  // ═══ CURRENT VARIETY (only relevant in images/genomic sections) ═══
+  if (typeof currentVariety !== 'undefined' && ['images', 'genomic'].includes(section)) {
     const varietyNames = { CDY: 'Chardonnay (white)', CFR: 'Cabernet Franc (red)', CSV: 'Cabernet Sauvignon (red)', SVB: 'Sauvignon Blanc (white)', SYH: 'Syrah (red)' };
-    parts.push('Currently viewing grape variety: ' + (varietyNames[currentVariety] || currentVariety));
+    parts.push('Demo variety in image viewer: ' + (varietyNames[currentVariety] || currentVariety) + ' (from WGISD research dataset)');
   }
 
   if (parts.length === 0) return '';
@@ -8446,6 +8958,376 @@ document.querySelectorAll('.nav-item').forEach(item => {
     setTimeout(chatUpdateContextBadge, 50);
   });
 });
+
+// ═══════════════════════════════════════
+// SAVED FIELDS (Supabase persistence)
+// ═══════════════════════════════════════
+let _savedFields = [];
+
+function buildFieldGeoJSON() {
+  const features = userLayers.map(l => {
+    const layer = l.layer;
+    let geometry = null;
+    if (layer instanceof L.Polygon && layer.getLatLngs) {
+      const latlngs = layer.getLatLngs()[0];
+      const flat = Array.isArray(latlngs[0]) ? latlngs[0] : latlngs;
+      const ring = flat.map(ll => [ll.lng, ll.lat]);
+      if (ring.length > 0) ring.push(ring[0]);
+      geometry = { type: 'Polygon', coordinates: [ring] };
+    } else if ((layer instanceof L.Polyline) && !(layer instanceof L.Polygon) && layer.getLatLngs) {
+      const latlngs = layer.getLatLngs();
+      geometry = { type: 'LineString', coordinates: latlngs.map(ll => [ll.lng, ll.lat]) };
+    } else if (layer instanceof L.CircleMarker && layer.getLatLng) {
+      const ll = layer.getLatLng();
+      geometry = { type: 'Point', coordinates: [ll.lng, ll.lat] };
+    }
+    if (!geometry) return null;
+    return { type: 'Feature', geometry, properties: { ...(layer._agra || {}), color: l.color, name: l.name } };
+  }).filter(Boolean);
+  return { type: 'FeatureCollection', features };
+}
+
+function loadFieldFromGeoJSON(geojson) {
+  // Clear current layers in reverse order
+  for (let i = userLayers.length - 1; i >= 0; i--) {
+    vineMap.removeLayer(userLayers[i].layer);
+  }
+  userLayers.length = 0;
+  kmlRawCoords = [];
+
+  (geojson.features || []).forEach(feature => {
+    if (!feature.geometry) return;
+    const a = feature.properties || {};
+    const color = a.color || '#52b788';
+    const geomType = feature.geometry.type;
+    let layer;
+    if (geomType === 'Polygon') {
+      const ring = feature.geometry.coordinates[0];
+      kmlRawCoords.push([...ring]);
+      const coords = ring.map(([lng, lat]) => [lat, lng]);
+      layer = L.polygon(coords, { color, fillColor: color, fillOpacity: 0.15, weight: 2, dashArray: '6,4' });
+    } else if (geomType === 'LineString') {
+      const coords = feature.geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+      layer = L.polyline(coords, { color, weight: 3 });
+    } else if (geomType === 'Point') {
+      const [lng, lat] = feature.geometry.coordinates;
+      layer = L.circleMarker([lat, lng], { radius: 8, color, fillColor: color, fillOpacity: 0.8, weight: 2 });
+    } else return;
+    addLayerToMap(layer, a.name || 'Campo', color, a.description || '', a.stage || '', a.crop_type || '');
+  });
+
+  if (userLayers.length > 0) {
+    try { vineMap.fitBounds(L.featureGroup(userLayers.map(l => l.layer)).getBounds(), { padding: [30, 30] }); } catch(e) {}
+    onPolygonAdded();
+    if (geeConnected) loadGEELayer(currentGEEIndex);
+  }
+  renderLayerList();
+}
+
+function toggleSavedFieldsPanel() {
+  const body = document.getElementById('sf-body');
+  const arrow = document.getElementById('sf-toggle-arrow');
+  const open = body.style.display === 'none';
+  body.style.display = open ? 'block' : 'none';
+  arrow.textContent = open ? '▾' : '▸';
+  if (open) listSavedFields();
+}
+
+async function listSavedFields() {
+  const listEl = document.getElementById('sf-list');
+  if (!listEl) return;
+  try {
+    const res = await fetch(CHAT_API + '/api/fields?user_id=' + encodeURIComponent(chatUserId));
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    _savedFields = data.fields || [];
+    renderSavedFields(_savedFields);
+  } catch(e) {
+    listEl.innerHTML = '<div class="sf-empty" style="color:var(--red);">Error al cargar campos.</div>';
+  }
+}
+
+// ── Saved field card helpers ──────────────────────────────────────────────────
+
+function _sfPolygonCoords(geometry) {
+  for (const f of (geometry?.features || [])) {
+    if (f.geometry?.type === 'Polygon') return f.geometry.coordinates[0];
+    if (f.geometry?.type === 'MultiPolygon') return f.geometry.coordinates[0][0];
+  }
+  return null;
+}
+
+function buildFieldThumb(geometry, color) {
+  const coords = _sfPolygonCoords(geometry);
+  const c = color || '#52b788';
+  const W = 120, H = 90, PAD = 10;
+
+  // Map-style grid lines
+  const grid = [];
+  for (let i = 1; i < 4; i++) {
+    const x = (W / 4) * i, y = (H / 3) * i;
+    grid.push(`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>`);
+    grid.push(`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>`);
+  }
+
+  if (!coords || coords.length < 3) {
+    return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="${W}" height="${H}" fill="#0d1821"/>
+      ${grid.join('')}
+      <rect x="20" y="15" width="80" height="60" rx="5" fill="${c}" fill-opacity="0.2" stroke="${c}" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="${W/2}" y="${H/2+4}" text-anchor="middle" fill="${c}" fill-opacity="0.6" font-size="11" font-family="system-ui">Sin geometría</text>
+    </svg>`;
+  }
+
+  const lngs = coords.map(p => p[0]), lats = coords.map(p => p[1]);
+  const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
+  const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+  const dLng = maxLng - minLng || 0.0001, dLat = maxLat - minLat || 0.0001;
+  const scale = Math.min((W - 2*PAD) / dLng, (H - 2*PAD) / dLat);
+  const ox = (W - dLng * scale) / 2, oy = (H - dLat * scale) / 2;
+  const pts = coords.map(p =>
+    `${(ox + (p[0]-minLng)*scale).toFixed(1)},${(H - oy - (p[1]-minLat)*scale).toFixed(1)}`
+  ).join(' ');
+
+  // Compute area centroid for dot
+  const cx = (ox + ((maxLng+minLng)/2 - minLng)*scale).toFixed(1);
+  const cy = (H - oy - ((maxLat+minLat)/2 - minLat)*scale).toFixed(1);
+
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="rg-${c.slice(1)}" cx="50%" cy="50%" r="60%">
+        <stop offset="0%" stop-color="${c}" stop-opacity="0.12"/>
+        <stop offset="100%" stop-color="#0d1821" stop-opacity="1"/>
+      </radialGradient>
+    </defs>
+    <rect width="${W}" height="${H}" fill="#0d1821"/>
+    <rect width="${W}" height="${H}" fill="url(#rg-${c.slice(1)})"/>
+    ${grid.join('')}
+    <polygon points="${pts}" fill="${c}" fill-opacity="0.25" stroke="${c}" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="${cx}" cy="${cy}" r="3" fill="${c}" opacity="0.8"/>
+  </svg>`;
+}
+
+async function loadFieldLocation(fieldId, geometry) {
+  const el = document.getElementById('sf-loc-' + fieldId);
+  if (!el) return;
+  const coords = _sfPolygonCoords(geometry);
+  if (!coords) return;
+  const n = coords.length;
+  const lat = coords.reduce((s,p) => s+p[1], 0) / n;
+  const lng = coords.reduce((s,p) => s+p[0], 0) / n;
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10&accept-language=es`);
+    if (!r.ok) return;
+    const d = await r.json();
+    const a = d.address || {};
+    const place = [a.city||a.town||a.village||a.municipality||'', a.state||a.region||'']
+      .filter(Boolean).join(', ');
+    if (place) el.textContent = '📍 ' + place;
+  } catch(_) {}
+}
+
+function renderSavedFields(fields) {
+  const listEl = document.getElementById('sf-list');
+  if (!listEl) return;
+  if (!fields.length) {
+    listEl.innerHTML = '<div class="sf-empty">' + t('saved_fields_empty') + '</div>';
+    return;
+  }
+  const DEL_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`;
+
+  listEl.innerHTML = fields.map(f => {
+    const color   = f.color || '#52b788';
+    const areaStr = f.area_ha ? parseFloat(f.area_ha).toFixed(1) + ' ha' : '';
+    const dateStr = new Date(f.created_at).toLocaleDateString();
+    const thumb   = buildFieldThumb(f.geometry, color);
+
+    // Crop type badge
+    const hm = f.crop_type && typeof HARVEST_MODELS !== 'undefined' && HARVEST_MODELS[f.crop_type];
+    const cropLabel = hm ? (hm.label[currentLang] || hm.label.es) : '';
+    const cropBadge = cropLabel
+      ? `<span class="sf-crop-badge" style="background:${color}22;border-color:${color}55;color:${color}">${cropLabel}</span>`
+      : '';
+
+    return `<div class="sf-item">
+      <div class="sf-thumb">${thumb}</div>
+      <div class="sf-info">
+        <span class="sf-item-name" title="${f.name.replace(/"/g,'&quot;')}">${f.name}</span>
+        <div class="sf-item-sub">
+          ${cropBadge}
+          ${areaStr ? `<span class="sf-item-meta">${areaStr}</span>` : ''}
+        </div>
+        <span class="sf-loc" id="sf-loc-${f.id}"></span>
+        <span class="sf-item-meta">${dateStr}</span>
+      </div>
+      <div class="sf-item-actions">
+        <button class="sf-act-btn" onclick="loadSavedField('${f.id}')">${t('load_field_btn')}</button>
+        <button class="sf-act-btn del" title="${t('confirm_delete_field')}" onclick="deleteSavedField('${f.id}')">${DEL_SVG}</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Load locations asynchronously (rate-limit: 1 per 300ms)
+  fields.forEach((f, i) => {
+    if (f.geometry) setTimeout(() => loadFieldLocation(f.id, f.geometry), i * 300);
+  });
+}
+
+function openSaveFieldModal() {
+  if (userLayers.length === 0) { alert(t('alert_no_layers')); return; }
+  const inp = document.getElementById('sf-name-input');
+  inp.value = '';
+  inp.placeholder = t('save_field_ph');
+  document.getElementById('sf-modal').style.display = 'flex';
+  setTimeout(() => inp.focus(), 50);
+}
+
+function closeSaveFieldModal() {
+  document.getElementById('sf-modal').style.display = 'none';
+}
+
+async function confirmSaveField() {
+  const name = document.getElementById('sf-name-input').value.trim();
+  if (!name) { document.getElementById('sf-name-input').focus(); return; }
+  const geojson = buildFieldGeoJSON();
+  const confirmBtn = document.querySelector('#sf-modal .sf-btn-confirm');
+  confirmBtn.disabled = true;
+  const origText = confirmBtn.textContent;
+  confirmBtn.textContent = '...';
+  try {
+    const res = await fetch(CHAT_API + '/api/fields', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_id: chatUserId,
+        name,
+        color: userLayers[0]?.color || '#52b788',
+        description: userLayers[0]?.layer?._agra?.description || '',
+        stage: userLayers[0]?.layer?._agra?.stage || '',
+        crop_type: userLayers[0]?.layer?._agra?.crop_type || agCrop || '',
+        geometry: geojson,
+        area_ha: agAreaHa > 0 ? agAreaHa : null
+      })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    _savedFields.unshift(data.field);
+    closeSaveFieldModal();
+    renderSavedFields(_savedFields);
+    // Open panel if collapsed
+    if (document.getElementById('sf-body').style.display === 'none') toggleSavedFieldsPanel();
+  } catch(e) {
+    alert('No se pudo guardar el campo. Intenta de nuevo.');
+  } finally {
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = origText;
+  }
+}
+
+async function deleteSavedField(id) {
+  if (!confirm(t('confirm_delete_field'))) return;
+  try {
+    await fetch(CHAT_API + '/api/fields/' + id, { method: 'DELETE' });
+    _savedFields = _savedFields.filter(f => f.id !== id);
+    renderSavedFields(_savedFields);
+  } catch(e) {
+    alert('No se pudo eliminar el campo.');
+  }
+}
+
+function loadSavedField(id) {
+  const field = _savedFields.find(f => f.id === id);
+  if (!field || !field.geometry) return;
+  if (userLayers.length > 0 && !confirm(t('confirm_replace_layers'))) return;
+
+  // Navigate to maps section, initialize if needed, then load
+  const mapsNavItem = document.querySelector('.nav-item[data-section="maps"]');
+  if (mapsNavItem) mapsNavItem.click();
+
+  if (!mapInitialized) {
+    initMap();
+    updateLegend('NDVI');
+    mapInitialized = true;
+    autoConnectGEE();
+  }
+  // Sync crop type before loading geometry
+  if (field.crop_type) {
+    agCrop = field.crop_type;
+    const sel = document.getElementById('crop-selector');
+    if (sel) sel.value = field.crop_type;
+  }
+  // Small delay to let Leaflet finish rendering before adding layers
+  setTimeout(() => {
+    loadFieldFromGeoJSON(field.geometry);
+    if (vineMap) setTimeout(() => vineMap.invalidateSize(), 200);
+  }, 150);
+}
+
+// ═══════════════════════════════════════
+// SEASON SELECTOR — Hemisferio Sur (Nov–Abr)
+// Sentinel-2 SR Harmonized disponible desde 2017
+// ═══════════════════════════════════════
+function initSeasonSelector() {
+  const pad = n => String(n).padStart(2, '0');
+  const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const today = new Date();
+  const month = today.getMonth(); // 0-indexed
+
+  // Southern Hemisphere season: Nov–Apr
+  // If Oct-Dec we're in the start of a new season; Jan-Sep still in last year's season
+  const currentSeasonStart = month >= 10 ? today.getFullYear() : today.getFullYear() - 1;
+
+  const container = document.getElementById('season-btns');
+  if (!container) return;
+
+  for (let yr = currentSeasonStart; yr >= 2017; yr--) {
+    const btn = document.createElement('button');
+    btn.className = 'gee-mode-btn' + (yr === currentSeasonStart ? ' active' : '');
+    btn.dataset.season = yr;
+    btn.title = `Nov ${yr} – Abr ${yr + 1}`;
+    btn.textContent = `${yr}-${String(yr + 1).slice(2)}`;
+    btn.addEventListener('click', () => setSeasonRange(yr));
+    container.appendChild(btn);
+  }
+
+  // Set date inputs to current season
+  setSeasonRange(currentSeasonStart, false);
+}
+
+function setSeasonRange(startYear, reload = true) {
+  const pad = n => String(n).padStart(2, '0');
+  const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const today = new Date();
+  const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+
+  const seasonEnd = new Date(startYear + 1, 3, 30); // Apr 30 of end year
+  const endDate = seasonEnd >= today ? fmt(yesterday) : fmt(seasonEnd);
+
+  const startEl = document.getElementById('gee-start');
+  const endEl   = document.getElementById('gee-end');
+  if (startEl) startEl.value = `${startYear}-11-01`;
+  if (endEl)   endEl.value   = endDate;
+
+  // Highlight active button
+  document.querySelectorAll('#season-btns .gee-mode-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.season) === startYear);
+  });
+
+  if (reload && geeConnected && kmlRawCoords.length > 0) loadGEELayer(currentGEEIndex);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('sf-name-input');
+  if (inp) {
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') confirmSaveField();
+      if (e.key === 'Escape') closeSaveFieldModal();
+    });
+  }
+
+  // Initialize season selector and set default date range
+  initSeasonSelector();
+});
 </script>
 <!-- Polygon / Layer Editor Modal -->
 <div id="poly-editor">
@@ -8460,13 +9342,26 @@ document.querySelectorAll('.nav-item').forEach(item => {
       <textarea id="editor-desc" placeholder="Notes, variety, observations..." data-i18n-placeholder="editor_desc_ph"></textarea>
     </div>
     <div class="form-field">
+      <label data-i18n="yield_crop_label">Crop type</label>
+      <select id="editor-crop-type">
+        <option value="" data-i18n="editor_select">— Select —</option>
+        <optgroup label="Viñas"><option value="uva_vinif" data-i18n="crop_uva_vinif">Uva Vinífera</option><option value="uva_mesa" data-i18n="crop_uva_mesa">Uva de Mesa</option></optgroup>
+        <optgroup label="Carozos"><option value="cereza" data-i18n="crop_cereza">Cereza</option><option value="durazno" data-i18n="crop_durazno">Durazno / Nectarín</option><option value="ciruela" data-i18n="crop_ciruela">Ciruela</option><option value="damasco" data-i18n="crop_damasco">Damasco</option></optgroup>
+        <optgroup label="Berries"><option value="arandano" data-i18n="crop_arandano">Arándano</option><option value="frutilla" data-i18n="crop_frutilla">Frutilla / Fresa</option></optgroup>
+        <optgroup label="Pomáceas"><option value="manzana" data-i18n="crop_manzana">Manzana</option><option value="pera" data-i18n="crop_pera">Pera</option><option value="kiwi" data-i18n="crop_kiwi">Kiwi</option></optgroup>
+        <optgroup label="Frutos secos"><option value="nogal" data-i18n="crop_nogal">Nogal</option><option value="almendro" data-i18n="crop_almendro">Almendro</option><option value="pistacho" data-i18n="crop_pistacho">Pistacho</option><option value="avellano" data-i18n="crop_avellano">Avellano</option></optgroup>
+        <optgroup label="Subtropicales / Cítricos"><option value="palto" data-i18n="crop_palto">Palto / Aguacate</option><option value="naranja" data-i18n="crop_naranja">Naranja</option><option value="mandarina" data-i18n="crop_mandarina">Mandarina</option></optgroup>
+        <optgroup label="Anuales"><option value="tomate" data-i18n="crop_tomate">Tomate</option><option value="maiz" data-i18n="crop_maiz">Maíz</option><option value="papa" data-i18n="crop_papa">Papa / Patata</option><option value="trigo" data-i18n="crop_trigo">Trigo</option><option value="quinua" data-i18n="crop_quinua">Quinua</option></optgroup>
+      </select>
+    </div>
+    <div class="form-field">
       <label data-i18n="editor_stage">Growth stage</label>
       <select id="editor-stage">
         <option value="" data-i18n="editor_select">— Select —</option>
         <option value="Bud break" data-i18n="stage_bud">Bud break</option>
         <option value="Flowering" data-i18n="stage_flower">Flowering</option>
         <option value="Fruit set" data-i18n="stage_fruit">Fruit set</option>
-        <option value="Veraison" data-i18n="stage_veraison">Veraison</option>
+        <option value="Veraison" data-i18n="stage_veraison">Color change / Ripening onset</option>
         <option value="Ripening" data-i18n="stage_ripen">Ripening</option>
         <option value="Harvest" data-i18n="stage_harvest">Harvest</option>
         <option value="Post-harvest" data-i18n="stage_post">Post-harvest</option>

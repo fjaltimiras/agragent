@@ -1,0 +1,13 @@
+yolo/
+backend/
+*.onnx
+agragent-491300-6a886bcdc29b.json
+*.json
+*.pdf
+*.pyc
+__pycache__/
+.DS_Store
+README.md
+LICENSE
+manuscript/
+meetings/

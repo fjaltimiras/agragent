@@ -8,12 +8,18 @@
       "destination": "/Altimiras2026.pdf"
     },
     {
+      "source": "/aes-poc",
+      "has": [{ "type": "host", "value": "agragent.com" }],
+      "destination": "/aes-poc.html"
+    },
+    {
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "app.agragent.com" }],
       "destination": "/app.html"
     },
     {
       "source": "/(.*)",
+      "has": [{ "type": "host", "value": "agragent.com" }],
       "destination": "/landing.html"
     }
   ]
