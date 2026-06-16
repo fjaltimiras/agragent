@@ -3,7 +3,7 @@ backend/
 *.onnx
 agragent-491300-6a886bcdc29b.json
 *.json
-*.pdf
+!data/**/*.json
 *.pyc
 __pycache__/
 .DS_Store
