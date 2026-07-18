@@ -815,7 +815,7 @@ agragent/
 ├── logo.png                # AgrAgent logo
 ├── poligono.kml            # Example field boundaries
 ├── README.md               # This file
-├── LICENSE                 # MIT License
+├── LICENSE                 # GNU AGPL v3.0
 └── .gitignore
 ```
 
@@ -919,7 +919,7 @@ If you use agragent in your research, please cite:
 
 ## License
 
-This project is released under the [MIT License](LICENSE).
+This project is released under the [GNU Affero General Public License v3.0 (AGPL-3.0)](LICENSE). The AGPL's network-use clause requires anyone who runs a modified version as a network service to make their source changes available under the same license.
 
 ---
 
