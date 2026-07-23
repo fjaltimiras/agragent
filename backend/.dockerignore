@@ -1,0 +1,10 @@
+__pycache__
+*.pyc
+.env
+.git
+.gitignore
+*.md
+frontend/
+gee-credentials.json
+runs/
+*.onnx
