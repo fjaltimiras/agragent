@@ -4,10 +4,6 @@
   "framework": null,
   "rewrites": [
     {
-      "source": "/Altimiras2026.pdf",
-      "destination": "/Altimiras2026.pdf"
-    },
-    {
       "source": "/inia",
       "has": [{ "type": "host", "value": "agragent.com" }],
       "destination": "/inia.html"
