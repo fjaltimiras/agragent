@@ -4,7 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
-from app.routers import chat, conversations, uploads, detect, whatsapp, aes
+from app.routers import chat, conversations, uploads, detect
 
 logging.basicConfig(
     level=logging.INFO,
@@ -42,10 +42,6 @@ app.include_router(chat.router, prefix="/api/chat", tags=["Chat"])
 app.include_router(conversations.router, prefix="/api/conversations", tags=["Conversations"])
 app.include_router(uploads.router, prefix="/api/upload", tags=["Uploads"])
 app.include_router(detect.router, prefix="/api/detect", tags=["Detection"])
-app.include_router(aes.router, prefix="/api/detect", tags=["AES Detection"])
-app.include_router(aes.progress_router, prefix="/api/analyze", tags=["AES Progress"])
-app.include_router(aes.images_router, prefix="/api/aes", tags=["AES Images"])
-app.include_router(whatsapp.router, prefix="/api/whatsapp", tags=["WhatsApp"])
 
 
 @app.get("/", tags=["Root"])

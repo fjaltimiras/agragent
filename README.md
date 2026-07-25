@@ -13,8 +13,6 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 - [Features](#features)
 - [Chat Widget (agragent.com)](#chat-widget-agragentcom)
 - [Chat Integration (app.agragent.com)](#chat-integration-appagragentcom)
-- [WhatsApp Demo](#whatsapp-demo)
-- [WhatsApp Production Channel](#whatsapp-production-channel-meta-cloud-api)
 - [INIA Knowledge Base — Two-Layer RAG](#inia-knowledge-base--two-layer-rag)
 - [AI Assistant](#ai-assistant)
 - [How It Works](#how-it-works)
@@ -235,116 +233,6 @@ The existing "Consultar AgrAgent" section in `app.html` has been upgraded to use
 | **Tools shown** | Climate, NDVI, Soil, Foliar, Irrigation, Fertilization, INIA library, INIA RAG, OpenAlex, AGRIS FAO, FAOSTAT (badge per tool) |
 | **Views** | Floating widget + full-page section update simultaneously (dual-view architecture) |
 | **Context** | `chatCollectAppContext()` prepends field polygon, climate KPIs, and active satellite index to every message |
-
----
-
-## WhatsApp Demo
-
-`whatsapp-demo.html` is a standalone prototype that simulates how AgrAgent would work as a WhatsApp conversational agent. It is a single HTML file with no build step, connecting directly to the FastAPI backend.
-
-### Purpose
-
-- Test the full agentic loop (open-weight LLM + **7 tools**) in a messaging-style UI before integrating with a real WhatsApp Business API
-- Demo agronomic conversations with soil/foliar report uploads, field location sharing, INIA bibliography search, and tool call visualization
-- Works on desktop and mobile browsers
-
-### Running the demo
-
-```bash
-# 1. Start the FastAPI backend
-cd backend
-python3 -m uvicorn app.main:app --reload --port 8000
-
-# 2. Serve the frontend (from agragent-app/)
-cd ..
-python3 -m http.server 8080
-
-# 3. Open in browser
-open http://localhost:8080/whatsapp-demo.html
-```
-
-Or open `whatsapp-demo.html` directly in the browser — the backend has CORS open for `*`, so `file://` also works.
-
-### Features
-
-| Feature | Description |
-|---|---|
-| **WhatsApp Web UI** | Dark theme, message bubbles, typing indicator, timestamps — fully responsive (mobile + desktop) |
-| **Conversation list** | Collapsible sidebar with search and history loaded from Supabase |
-| **Projects / folders** | Organize conversations into color-coded folders stored in localStorage; right-click to edit/delete |
-| **Rename & delete** | Hover a conversation → inline rename (Enter to save, Esc to cancel) or delete — no page reload |
-| **Markdown rendering** | Tables, lists, bold, code blocks in assistant responses |
-| **Tool badges** | Each response shows which tools the agent used (🌤️ Climate · 🛰️ NDVI · 🧪 Soil · 💧 Irrigation · 🌱 Fertilization · 📚 INIA) |
-| **INIA library search** | The agent can query 19K+ open-access agricultural documents from Biblioteca Digital INIA Chile in real time |
-| **File upload (📎)** | Attach PDF or Excel soil/foliar reports — parsed by backend and sent to the agent automatically |
-| **Field location (📍)** | Share field location via 4 methods (see below) |
-| **Config (⚙️)** | Change backend URL at runtime (useful to point to Railway instead of localhost) |
-| **Mobile** | Sidebar as full overlay, hamburger menu, full-screen modals, iOS-safe input font size |
-| **Streaming SSE** | `POST /api/chat/stream` — text tokens appear progressively; perceived latency ~2s vs 13s with blocking JSON |
-
-### Field Location Panel (📍)
-
-Clicking the 📍 button opens a panel with four ways to specify the field:
-
-| Tab | How it works |
-|---|---|
-| **🔍 Buscar** | Type a place name → Nominatim geocoding → pin on map |
-| **🛰️ GPS** | Enter latitude/longitude manually + optional area in ha |
-| **🗂️ KML/KMZ** | Drag and drop or select a KML/KMZ file → polygons parsed in-browser, area and centroid computed |
-| **✏️ Dibujar** | Draw the polygon directly on the map using Leaflet-Geoman tools (free polygon, rectangle, edit, delete) → area and centroid calculated automatically |
-
-On confirm, a structured message is sent to the agent with the centroid coordinates and polygon vertices so the agent can use them in `get_climate_data`, `get_ndvi_data`, and irrigation/fertilization tools.
-
-### Backend requirements
-
-The demo connects to the same FastAPI backend as the main app. Required environment variables in `backend/.env`:
-
-```env
-ANTHROPIC_API_KEY=sk-ant-...
-SUPABASE_URL=https://xxxx.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=eyJ...
-VOYAGE_API_KEY=pa-...           # (opcional) — solo para RAG semántico INIA, free tier sin tarjeta
-```
-
-Pull from Vercel automatically:
-```bash
-cd agragent-api
-npx vercel env pull ../agragent-app/backend/.env --environment=production
-```
-
----
-
-## WhatsApp Production Channel (Meta Cloud API)
-
-Beyond the demo HTML, AgrAgent connects to **real WhatsApp** via Meta's free Cloud API. Code lives in `backend/app/routers/whatsapp.py`, `backend/app/services/meta_whatsapp.py`, and `backend/app/services/wa_formatter.py`.
-
-### What's supported
-
-| Mensaje del usuario | Comportamiento del agente |
-|---|---|
-| Texto | Conversación normal con las 8 tools |
-| 📍 Location | Inyecta coordenadas como contexto |
-| 📂 PDF/Excel | Parsea informe de suelo o foliar |
-| 📂 KML/KMZ | Extrae polígono → centroide y área |
-| 🖼️ Imagen | Acuse de recibo (YOLOv11 = roadmap) |
-| 🎤 Voice note | Acuse de recibo (Whisper = roadmap) |
-| 🔘 Botón interactivo | Reply text se procesa como mensaje normal |
-
-### Setup
-
-Ver guía completa en [`backend/WHATSAPP_SETUP.md`](backend/WHATSAPP_SETUP.md).
-
-Pasos resumidos:
-1. Crear app en developers.facebook.com con producto WhatsApp
-2. Obtener `META_WHATSAPP_TOKEN`, `META_WHATSAPP_PHONE_ID`, definir `META_WHATSAPP_VERIFY_TOKEN`
-3. Exponer backend con HTTPS público (ngrok local o Railway producción)
-4. Configurar webhook URL en Meta: `https://TU_URL/api/whatsapp/webhook`
-5. Suscribir al campo `messages`
-6. Probar enviando un mensaje al número de prueba de Meta
-
-### Persistencia
-
-Cada usuario WhatsApp = un `user_id = "whatsapp:<phone>"` en la misma tabla `conversations` que el demo. Una sola conversation por número (el agente recuerda todo el historial).
 
 ---
 
@@ -816,7 +704,6 @@ Frontend dependencies are loaded via CDN — no build step required.
 ```
 agragent/
 ├── app.html                # Main SPA — all HTML, CSS, and JS
-├── whatsapp-demo.html      # WhatsApp prototype for AgrAgent chatbot testing
 ├── landing.html            # Landing page
 ├── logo.png                # AgrAgent logo
 ├── poligono.kml            # Example field boundaries

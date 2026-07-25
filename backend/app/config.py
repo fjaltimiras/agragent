@@ -10,9 +10,6 @@ class Settings(BaseSettings):
     CEREBRAS_API_KEY: str = ""       # primary LLM: gpt-oss-120b (cloud.cerebras.ai)
     OPENAI_API_KEY: str = ""        # embeddings RAG (text-embedding-3-small)
     VOYAGE_API_KEY: str = ""        # embeddings RAG (voyage-multilingual-2, free tier)
-    META_WHATSAPP_TOKEN: str = ""           # Bearer token de Meta Business
-    META_WHATSAPP_PHONE_ID: str = ""        # Phone Number ID de WhatsApp Business
-    META_WHATSAPP_VERIFY_TOKEN: str = ""    # token arbitrario para verificación inicial
     SUPABASE_URL: str = ""
     SUPABASE_KEY: str = ""          # nombre que usa Vercel
     SUPABASE_ANON_KEY: str = ""
