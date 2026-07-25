@@ -749,7 +749,7 @@ agro-agent/
 
 **Francisco Altimiras**
 - ORCID: [0000-0003-1992-8338](https://orcid.org/0000-0003-1992-8338)
-- PhD Candidate in Computer Science, Pontificia Universidad Catolica de Valparaiso (PUCV), Chile
+- Pontificia Universidad Catolica de Valparaiso (PUCV), Chile
 - Research focus: Computational crop monitoring using bioinformatics and machine learning
 
 ---
@@ -845,4 +845,4 @@ Contributions are welcome. Please open an issue first to discuss proposed change
 
 ---
 
-*Developed by [Francisco Altimiras](https://orcid.org/0000-0003-1992-8338) — PhD Candidate, Computer Science, PUCV, Chile (2026)*
+*Developed by [Francisco Altimiras](https://orcid.org/0000-0003-1992-8338)*
