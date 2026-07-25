@@ -1702,9 +1702,6 @@ section + section::before {
     <p data-i18n="hero_desc">Integrate satellite remote sensing, climate analytics, crop data, computer vision, and AI-powered agronomic recommendations in a single platform for any crop, anywhere.</p>
     <div class="hero-buttons">
       <a href="https://app.agragent.com" class="btn btn-primary" data-i18n="hero_cta_launch">Launch Platform</a>
-      <a href="Altimiras2026.pdf" target="_blank" class="btn btn-secondary" data-i18n="hero_cta_paper">
-        White Paper
-      </a>
     </div>
     <div class="hero-stats fade-in">
       <div class="hero-stat">
@@ -1862,8 +1859,8 @@ section + section::before {
           <div class="apb-slide-info">
             <div class="apb-slide-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
             <div class="apb-slide-title" data-i18n="slide3_title">Yield Prediction</div>
-            <div class="apb-slide-metric">R² = 0.972 · MAPE = 3.8%</div>
-            <div class="apb-slide-sub" data-i18n="slide3_sub">Predicción automática con Extra Trees, 15 variables satelitales y climáticas, comparación multi-modelo.</div>
+            <div class="apb-slide-metric">15 indicadores · escala-dependiente</div>
+            <div class="apb-slide-sub" data-i18n="slide3_sub">Estimación heurística a partir de 15 variables satelitales y climáticas, con panel de validación sobre datos públicos reales.</div>
           </div>
           <div class="apb-slide-canvas">
             <!-- Yield prediction card -->
@@ -1884,8 +1881,8 @@ section + section::before {
                   <div class="ymi-val">15 mar 2026</div>
                 </div>
                 <div class="yield-meta-item">
-                  <div class="ymi-label">Modelo</div>
-                  <div class="ymi-val">Extra Trees</div>
+                  <div class="ymi-label">Método</div>
+                  <div class="ymi-val">Heurístico</div>
                 </div>
               </div>
             </div>
@@ -2277,13 +2274,13 @@ section + section::before {
         </div>
 
         <div class="feat-panel" id="fp-4">
-          <div class="feat-badge" data-i18n="f5_metric">R² = 0.972 · MAPE = 3.8% · 15 weighted features</div>
-          <h3 data-i18n="f5_headline">Predict your harvest with 97% accuracy</h3>
-          <p class="feat-sub" data-i18n="f5_sub">PyCaret Extra Trees Regressor combining 15 satellite + climate features, updated automatically when you load a new polygon.</p>
+          <div class="feat-badge" data-i18n="f5_metric">15 weighted indicators · validated on public data</div>
+          <h3 data-i18n="f5_headline">Estimate your harvest, and know what it is worth</h3>
+          <p class="feat-sub" data-i18n="f5_sub">A heuristic estimate combining 15 satellite + climate indicators with expert-assigned weights, updated automatically when you load a new polygon. It is not a trained model.</p>
           <ul class="feat-bullets">
-            <li data-i18n="f5_b1">Predicted yield (t/ha), total production, and estimated harvest date from GDD-based phenological model</li>
-            <li data-i18n="f5_b2">Dynamic feature importance: see which variables (NDVI, ET₀, GDD…) drive your prediction</li>
-            <li data-i18n="f5_b3">Multi-model comparison: Extra Trees, CatBoost, Random Forest, XGBoost, SVR, side by side</li>
+            <li data-i18n="f5_b1">Estimated yield (t/ha), total production, and estimated harvest date from GDD-based phenological model</li>
+            <li data-i18n="f5_b2">Per-indicator contributions: see which variables (NDVI, ET₀, GDD…) drive the estimate</li>
+            <li data-i18n="f5_b3">Validation on real public datasets: predictability is scale-dependent, and the platform tells you so</li>
           </ul>
           <a href="https://app.agragent.com" class="feat-cta" data-i18n="feat_cta">Open platform →</a>
         </div>
@@ -2421,10 +2418,10 @@ function showFeat(idx, btn) {
             <div class="dp2-item" style="--d:1.3s">
               <span class="dp2-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 15c6.667-6 13.333 0 20-6"/><path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"/><path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993"/><path d="m17 6-2.5-2.5"/><path d="m14 8-1-1"/><path d="m7 18 2.5 2.5"/><path d="m3.5 14.5.5.5"/><path d="m10 16 1 1"/><path d="M2 9c6.667 6 13.333 0 20 6"/></svg></span>
               <div class="dp2-body">
-                <div class="dp2-name">Yield Model (Extra Trees)</div>
+                <div class="dp2-name">Yield estimate (heuristic)</div>
                 <div class="dp2-bar"><div class="dp2-fill" style="--w:100%;--delay:1.5s"></div></div>
               </div>
-              <span class="dp2-val" style="--sd:2.4s">R²=0.972</span>
+              <span class="dp2-val" style="--sd:2.4s">15 vars</span>
             </div>
           </div>
         </div>
@@ -2872,7 +2869,7 @@ function showFeat(idx, btn) {
 
     <div class="pub-stats fade-in">
       <div class="pub-stat-item">
-        <span class="pub-stat-num">3</span>
+        <span class="pub-stat-num">2</span>
         <span class="pub-stat-label" data-i18n="pub_stat1">Publications</span>
       </div>
       <div class="pub-stat-item">
@@ -2926,24 +2923,6 @@ function showFeat(idx, btn) {
             <a href="https://link.springer.com/chapter/10.1007/978-3-031-80084-9_14" target="_blank" rel="noopener" class="pub-link-btn">
               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
               Springer
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="pub-entry">
-        <div class="pub-dot">2026</div>
-        <div class="pub-card">
-          <div class="pub-card-top">
-            <h3>agragent: A Multimodal AI Platform for Integrated Computational Crop Monitoring</h3>
-            <span class="pub-journal-badge">White Paper · 2026</span>
-          </div>
-          <p class="authors"><span class="pub-highlight">Francisco Altimiras</span>, Leonardo Pav&eacute;z, Alireza Pourreza, H&eacute;ctor Allende-Cid</p>
-          <p class="journal">NIDS, Universidad de Las Am&eacute;ricas &middot; PUCV &middot; UC Davis &middot; Fraunhofer IAIS &middot; Lamarr Institute</p>
-          <div class="pub-links">
-            <a href="https://agragent.com/Altimiras2026.pdf" target="_blank" rel="noopener" class="pub-link-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-              Download PDF
             </a>
           </div>
         </div>
@@ -3004,7 +2983,6 @@ function showFeat(idx, btn) {
     <p data-i18n="cta_desc">agragent works with any crop and any location worldwide. No installation required.</p>
     <div class="hero-buttons">
       <a href="https://app.agragent.com" class="btn btn-primary" data-i18n="cta_launch">Launch Platform</a>
-      <a href="Altimiras2026.pdf" target="_blank" class="btn btn-secondary" data-i18n="cta_paper">White Paper</a>
     </div>
   </div>
 </section>
@@ -3018,7 +2996,6 @@ function showFeat(idx, btn) {
       </div>
     </div>
     <div class="footer-links">
-      <a href="Altimiras2026.pdf" target="_blank" data-i18n="footer_paper">White Paper</a>
       <a href="https://app.agragent.com" data-i18n="footer_app">Application</a>
       <a href="https://orcid.org/0000-0003-1992-8338" target="_blank">ORCID</a>
     </div>
@@ -3044,7 +3021,7 @@ const translations = {
     slide2_title: "Climate Analytics",
     slide2_sub: "Real-time climate data for any location, 80 years of historical records",
     slide3_title: "Yield Prediction",
-    slide3_sub: "Extra Trees Regressor with 15 satellite + climate features",
+    slide3_sub: "Heuristic estimate from 15 satellite + climate indicators, with a real-data validation panel",
     slide4_title: "AI Agronomic Agent",
     slide4_sub: "Claude-powered assistant with real-time field, climate and satellite context",
     uc_label: "Who uses agragent",
@@ -3076,7 +3053,7 @@ const translations = {
     f2_title: "Climate Analytics", f2_metric: "8 KPIs · 80 years historical data · worldwide", f2_headline: "Make decisions with climate on your side", f2_sub: "Real-time data from Open-Meteo for any location on Earth. No API key, no limits.", f2_b1: "GDD, chill hours, frost days, heat waves, water balance, solar radiation, and ET₀ (FAO Penman-Monteith)", f2_b2: "Automatic phenological alerts calibrated to your crop and season calendar", f2_b3: "Multi-period GDD comparison to benchmark current season against historical averages",
     f3_title: "Genomic Analysis", f3_metric: "3,603 DEGs · 8 phenological stages · 68 RNA-seq samples", f3_headline: "Genomics meets the vineyard", f3_sub: "Real RNA-seq DEG data from Altimiras et al. (2024), published science directly in your browser.", f3_b1: "Interactive DEG tables with logFC and FDR values across 8 E-L growth stages of Vitis vinifera", f3_b2: "Gene Ontology enrichment, UniProt annotations, and AlphaFold 3D protein structures on demand", f3_b3: "RNA-seq pipeline visualization from raw reads to differential expression",
     f4_title: "Computer Vision", f4_metric: "300+ annotated images · 5 grape varieties · YOLOv11", f4_headline: "Identify and count clusters from the field", f4_sub: "State-of-the-art vision trained on WGISD (Embrapa). Upload your own image and get results in seconds.", f4_b1: "YOLOv11 trained on Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc, and Syrah", f4_b2: "Real-time cloud inference: send a field photo, get annotated bounding boxes and cluster count", f4_b3: "WGISD dataset browser with color-coded bounding boxes and berry-count estimates",
-    f5_title: "Yield Prediction", f5_metric: "R² = 0.972 · MAPE = 3.8% · 15 weighted features", f5_headline: "Predict your harvest with 97% accuracy", f5_sub: "PyCaret Extra Trees Regressor with 15 satellite + climate features, auto-updates when you load a new polygon.", f5_b1: "Predicted yield (t/ha), total production, and estimated harvest date from GDD-based phenological model", f5_b2: "Dynamic feature importance: see which variables (NDVI, ET₀, GDD…) drive your prediction", f5_b3: "Multi-model comparison: Extra Trees, CatBoost, Random Forest, XGBoost, SVR, side by side",
+    f5_title: "Yield Prediction", f5_metric: "15 weighted indicators · validated on public data", f5_headline: "Estimate your harvest, and know what it is worth", f5_sub: "A heuristic estimate from 15 satellite + climate indicators with expert-assigned weights, auto-updates when you load a new polygon. It is not a trained model.", f5_b1: "Estimated yield (t/ha), total production, and estimated harvest date from GDD-based phenological model", f5_b2: "Per-indicator contributions: see which variables (NDVI, ET₀, GDD…) drive the estimate", f5_b3: "Validation on real public datasets: predictability is scale-dependent, and the platform tells you so",
     f6_title: "AI Assistant", f6_metric: "11 autonomous tools · INIA RAG · 266M+ publications", f6_headline: "Your expert agronomist, available 24/7", f6_sub: "Claude-powered agent with access to INIA Chile, OpenAlex (250M+ papers), AGRIS (FAO, 16.5M records), and FAOSTAT global statistics.", f6_b1: "Soil and foliar report analysis, irrigation scheduling, and N-P-K fertilization plans from uploaded PDFs", f6_b2: "Semantic RAG in INIA Chile + OpenAlex + AGRIS (FAO): evidence-based recommendations from 266M+ scientific sources", f6_b3: "FAOSTAT benchmarks: compare your field yield against national and global averages for any crop",
     feat_cta: "Open platform →",
     how_label: "How it works",
@@ -3158,7 +3135,7 @@ const translations = {
     slide2_title: "Anal\u00edtica Clim\u00e1tica",
     slide2_sub: "Datos clim\u00e1ticos en tiempo real para cualquier ubicaci\u00f3n \u2014 80 a\u00f1os de registros hist\u00f3ricos",
     slide3_title: "Predicci\u00f3n de Rendimiento",
-    slide3_sub: "Extra Trees Regressor con 15 variables satelitales y clim\u00e1ticas",
+    slide3_sub: "Estimaci\u00f3n heur\u00edstica a partir de 15 indicadores satelitales y clim\u00e1ticos, con panel de validaci\u00f3n",
     slide4_title: "Agente Agron\u00f3mico IA",
     slide4_sub: "Asistente Claude con contexto de campo, clima e \u00edndices satelitales en tiempo real",
     uc_label: "\u00bfPara qui\u00e9n es?",
@@ -3191,7 +3168,7 @@ const translations = {
     f2_title: "Anal\u00edtica Clim\u00e1tica", f2_metric: "8 KPIs \u00b7 80 a\u00f1os de datos \u00b7 cobertura mundial", f2_headline: "Toma decisiones con el clima a tu favor", f2_sub: "Datos en tiempo real de Open-Meteo para cualquier punto del planeta \u2014 sin clave de API, sin l\u00edmites.", f2_b1: "GDD, horas fr\u00edo, heladas, olas de calor, balance h\u00eddrico, radiaci\u00f3n solar y ET\u2080 (FAO Penman-Monteith)", f2_b2: "Alertas fenol\u00f3gicas autom\u00e1ticas calibradas a tu cultivo y calendario del hemisferio sur", f2_b3: "Comparaci\u00f3n de per\u00edodos GDD para comparar la temporada actual con promedios hist\u00f3ricos",
     f3_title: "An\u00e1lisis Gen\u00f3mico", f3_metric: "3.603 DEGs \u00b7 8 etapas fenol\u00f3gicas \u00b7 68 muestras RNA-seq", f3_headline: "Gen\u00f3mica al servicio del vi\u00f1edo", f3_sub: "Datos RNA-seq reales de Altimiras et al. (2024) \u2014 ciencia publicada directamente en tu navegador.", f3_b1: "Tablas interactivas de DEGs con logFC y FDR en 8 etapas E-L de Vitis vinifera", f3_b2: "Enriquecimiento GO, anotaciones UniProt y estructuras 3D AlphaFold bajo demanda", f3_b3: "Visualizaci\u00f3n del pipeline RNA-seq desde lecturas crudas hasta expresi\u00f3n diferencial",
     f4_title: "Visi\u00f3n Computacional", f4_metric: "300+ im\u00e1genes anotadas \u00b7 5 variedades \u00b7 YOLOv11", f4_headline: "Identifica y cuenta racimos desde el campo", f4_sub: "Visi\u00f3n de vanguardia entrenada en WGISD (Embrapa) \u2014 sube tu propia foto y obt\u00e9n resultados en segundos.", f4_b1: "YOLOv11 entrenado en Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc y Syrah", f4_b2: "Inferencia en la nube en tiempo real \u2014 env\u00eda una foto de campo, obt\u00e9n bounding boxes y conteo", f4_b3: "Visor del dataset WGISD con cajas de detecci\u00f3n codificadas por color y estimaci\u00f3n de bayas",
-    f5_title: "Predicci\u00f3n de Rendimiento", f5_metric: "R\u00b2 = 0.972 \u00b7 MAPE = 3.8% \u00b7 15 variables ponderadas", f5_headline: "Anticipa tu cosecha con 97% de precisi\u00f3n", f5_sub: "Extra Trees Regressor con 15 variables satelitales y clim\u00e1ticas \u2014 se actualiza autom\u00e1ticamente con cada pol\u00edgono.", f5_b1: "Rendimiento predicho (t/ha), producci\u00f3n total y fecha estimada de cosecha por modelo fenol\u00f3gico GDD", f5_b2: "Importancia din\u00e1mica de variables: NDVI, ET\u2080, GDD y cu\u00e1l explica m\u00e1s tu predicci\u00f3n", f5_b3: "Comparaci\u00f3n multim\u00f3delo: Extra Trees, CatBoost, Random Forest, XGBoost, SVR \u2014 en paralelo",
+    f5_title: "Predicci\u00f3n de Rendimiento", f5_metric: "15 indicadores ponderados \u00b7 validado con datos p\u00fablicos", f5_headline: "Estima tu cosecha, y sabe cu\u00e1nto vale esa estimaci\u00f3n", f5_sub: "Estimaci\u00f3n heur\u00edstica a partir de 15 indicadores satelitales y clim\u00e1ticos con pesos asignados por experto; se actualiza autom\u00e1ticamente con cada pol\u00edgono. No es un modelo entrenado.", f5_b1: "Rendimiento estimado (t/ha), producci\u00f3n total y fecha estimada de cosecha por modelo fenol\u00f3gico GDD", f5_b2: "Contribuci\u00f3n por indicador: NDVI, ET\u2080, GDD y cu\u00e1l pesa m\u00e1s en la estimaci\u00f3n", f5_b3: "Validaci\u00f3n con datos p\u00fablicos reales: la predictibilidad depende de la escala, y la plataforma lo indica",
     f6_title: "Asistente IA", f6_metric: "11 herramientas aut\u00f3nomas \u00b7 RAG INIA \u00b7 266M+ publicaciones", f6_headline: "Tu agr\u00f3nomo experto disponible 24/7", f6_sub: "Agente Claude con acceso a INIA Chile, OpenAlex (250M+ papers), AGRIS FAO (16.5M registros) y estad\u00edsticas globales FAOSTAT.", f6_b1: "An\u00e1lisis de suelo y foliar, planificaci\u00f3n de riego y fertilizaci\u00f3n N-P-K desde PDFs adjuntos", f6_b2: "RAG sem\u00e1ntico en INIA Chile + OpenAlex + AGRIS FAO: recomendaciones con respaldo de 266M+ fuentes cient\u00edficas", f6_b3: "Benchmarks FAOSTAT: compara el rendimiento de tu campo con promedios nacionales y globales para cualquier cultivo",
     feat_cta: "Abrir plataforma \u2192",
     how_label: "C\u00f3mo funciona",
@@ -3273,7 +3250,7 @@ const translations = {
     slide2_title: "Analítica Climática",
     slide2_sub: "Dados climáticos em tempo real para qualquer localização, 80 anos de registros históricos",
     slide3_title: "Previsão de Rendimento",
-    slide3_sub: "Extra Trees Regressor com 15 variáveis de satélite e clima",
+    slide3_sub: "Estimativa heurística a partir de 15 indicadores de satélite e clima, com painel de validação",
     slide4_title: "Agente Agronômico IA",
     slide4_sub: "Assistente Claude com contexto de campo, clima e índices de satélite em tempo real",
     uc_label: "Para quem é?",
@@ -3305,7 +3282,7 @@ const translations = {
     f2_title: "Anal\u00edtica Clim\u00e1tica", f2_metric: "8 KPIs \u00b7 80 anos de dados \u00b7 cobertura mundial", f2_headline: "Tome decis\u00f5es com o clima ao seu favor", f2_sub: "Dados em tempo real da Open-Meteo para qualquer ponto do planeta \u2014 sem chave de API, sem limites.", f2_b1: "GDD, horas de frio, geadas, ondas de calor, balan\u00e7o h\u00eddrico, radia\u00e7\u00e3o solar e ET\u2080 (FAO Penman-Monteith)", f2_b2: "Alertas fenol\u00f3gicas autom\u00e1ticas calibradas para sua cultura e calend\u00e1rio do hemisf\u00e9rio sul", f2_b3: "Compara\u00e7\u00e3o de per\u00edodos GDD para comparar a temporada atual com m\u00e9dias hist\u00f3ricas",
     f3_title: "An\u00e1lise Gen\u00f4mica", f3_metric: "3.603 DEGs \u00b7 8 est\u00e1gios fenol\u00f3gicos \u00b7 68 amostras RNA-seq", f3_headline: "Gen\u00f4mica a servi\u00e7o do vinhedo", f3_sub: "Dados RNA-seq reais de Altimiras et al. (2024) \u2014 ci\u00eancia publicada diretamente no seu navegador.", f3_b1: "Tabelas interativas de DEGs com logFC e FDR em 8 est\u00e1gios E-L de Vitis vinifera", f3_b2: "Enriquecimento GO, anota\u00e7\u00f5es UniProt e estruturas 3D AlphaFold sob demanda", f3_b3: "Visualiza\u00e7\u00e3o do pipeline RNA-seq desde leituras brutas at\u00e9 express\u00e3o diferencial",
     f4_title: "Vis\u00e3o Computacional", f4_metric: "300+ imagens anotadas \u00b7 5 variedades \u00b7 YOLOv11", f4_headline: "Identifique e conte cachos do campo", f4_sub: "Vis\u00e3o de ponta treinada no WGISD (Embrapa) \u2014 envie sua pr\u00f3pria foto e obtenha resultados em segundos.", f4_b1: "YOLOv11 treinado em Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc e Syrah", f4_b2: "Infer\u00eancia em nuvem em tempo real \u2014 envie uma foto do campo, obtenha bounding boxes e contagem", f4_b3: "Visualizador do dataset WGISD com caixas de detec\u00e7\u00e3o e estimativas de bagas",
-    f5_title: "Previs\u00e3o de Rendimento", f5_metric: "R\u00b2 = 0.972 \u00b7 MAPE = 3.8% \u00b7 15 vari\u00e1veis ponderadas", f5_headline: "Antecipe sua colheita com 97% de precis\u00e3o", f5_sub: "Extra Trees Regressor com 15 vari\u00e1veis de sat\u00e9lite e clima \u2014 atualiza automaticamente com cada pol\u00edgono.", f5_b1: "Rendimento previsto (t/ha), produ\u00e7\u00e3o total e data estimada de colheita por modelo fenol\u00f3gico GDD", f5_b2: "Import\u00e2ncia din\u00e2mica de vari\u00e1veis: NDVI, ET\u2080, GDD e qual explica mais sua previs\u00e3o", f5_b3: "Compara\u00e7\u00e3o multi-modelos: Extra Trees, CatBoost, Random Forest, XGBoost, SVR \u2014 lado a lado",
+    f5_title: "Previs\u00e3o de Rendimento", f5_metric: "15 indicadores ponderados \u00b7 validado com dados p\u00fablicos", f5_headline: "Estime sua colheita, e saiba quanto vale essa estimativa", f5_sub: "Estimativa heur\u00edstica a partir de 15 indicadores de sat\u00e9lite e clima com pesos atribu\u00eddos por especialista; atualiza automaticamente a cada pol\u00edgono. N\u00e3o \u00e9 um modelo treinado.", f5_b1: "Rendimento estimado (t/ha), produ\u00e7\u00e3o total e data estimada de colheita por modelo fenol\u00f3gico GDD", f5_b2: "Contribui\u00e7\u00e3o por indicador: NDVI, ET\u2080, GDD e qual pesa mais na estimativa", f5_b3: "Valida\u00e7\u00e3o com dados p\u00fablicos reais: a previsibilidade depende da escala, e a plataforma indica isso",
     f6_title: "Assistente IA", f6_metric: "11 ferramentas aut\u00f4nomas \u00b7 RAG INIA \u00b7 266M+ publica\u00e7\u00f5es", f6_headline: "Seu agr\u00f4nomo especialista dispon\u00edvel 24/7", f6_sub: "Agente Claude com acesso ao INIA Chile, OpenAlex (250M+ papers), AGRIS FAO (16.5M registros) e estat\u00edsticas globais FAOSTAT.", f6_b1: "An\u00e1lise de solo e foliar, planejamento de irriga\u00e7\u00e3o e fertiliza\u00e7\u00e3o N-P-K a partir de PDFs enviados", f6_b2: "RAG sem\u00e2ntico no INIA Chile + OpenAlex + AGRIS FAO: recomenda\u00e7\u00f5es com base em 266M+ fontes cient\u00edficas", f6_b3: "Benchmarks FAOSTAT: compare o rendimento do seu campo com m\u00e9dias nacionais e globais para qualquer cultura",
     feat_cta: "Abrir plataforma \u2192",
     how_label: "Como funciona",

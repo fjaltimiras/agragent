@@ -8,9 +8,9 @@
       "destination": "/Altimiras2026.pdf"
     },
     {
-      "source": "/aes-poc",
+      "source": "/inia",
       "has": [{ "type": "host", "value": "agragent.com" }],
-      "destination": "/aes-poc.html"
+      "destination": "/inia.html"
     },
     {
       "source": "/(.*)",
