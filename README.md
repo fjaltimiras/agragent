@@ -606,8 +606,10 @@ open http://localhost:8000
 
 | User | Password | Role | GEE Credentials |
 |------|----------|------|-----------------|
-| `admin` | `agragent2026` | Admin | Full access |
-| `demo` | `demo` | Viewer | Demo access |
+| `demo` | `demo33` | Viewer | Demo access |
+
+Authentication is client-side only and the role label carries no server-side
+authorization. Deployments that need real access control must add it.
 
 ### Google Earth Engine
 
