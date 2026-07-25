@@ -3480,8 +3480,8 @@ function editDisplayName() {
               <tr>
                 <td><strong data-i18n="yield_scale_vine">Within field / vine</strong></td>
                 <td><span data-i18n="yield_ds_vineyard">Vineyard (Oger 2023)</span></td>
-                <td style="color:var(--red);"><strong>&asymp; 0</strong></td>
-                <td style="font-size:0.78rem;color:var(--text-secondary);" data-i18n="yield_val_vineyard">from imagery and soil alone; 0.38 adding inflorescence counts</td>
+                <td style="color:var(--red);"><strong>-0.12</strong></td>
+                <td style="font-size:0.78rem;color:var(--text-secondary);" data-i18n="yield_val_vineyard">from imagery and soil alone (MAPE 53%, worse than predicting the mean); 0.38 adding inflorescence counts</td>
               </tr>
             </tbody>
           </table>
@@ -3936,7 +3936,7 @@ const i18n = {
     yield_ds_grapes: 'grapes', yield_ds_maize: 'maize', yield_ds_vineyard: 'Vineyard (Oger 2023)',
     yield_val_faostat: '1-year-ahead, temporal hold-out (n=822)',
     yield_val_cropnet: 'random CV; below zero when holding out whole years',
-    yield_val_vineyard: 'from imagery and soil alone; 0.38 adding inflorescence counts',
+    yield_val_vineyard: 'from imagery and soil alone (MAPE 53%, worse than predicting the mean); 0.38 adding inflorescence counts',
     yield_validation_note: 'The practical consequence: satellite and weather data alone do not resolve within-field yield variation. At that scale, ground observations such as inflorescence counts carry the signal.',
     img_images: 'Images', img_clusters: 'Clusters', img_berries_ann: 'Berries (estimated)', img_varieties: 'Varieties',
     img_model_title: 'Detector performance',
@@ -4241,7 +4241,7 @@ const i18n = {
     yield_ds_grapes: 'uvas', yield_ds_maize: 'maíz', yield_ds_vineyard: 'Viñedo (Oger 2023)',
     yield_val_faostat: 'un año adelante, validación temporal (n=822)',
     yield_val_cropnet: 'validación cruzada aleatoria; bajo cero al excluir años completos',
-    yield_val_vineyard: 'solo con imágenes y suelo; 0,38 al sumar conteo de inflorescencias',
+    yield_val_vineyard: 'solo con imágenes y suelo (MAPE 53%, peor que predecir la media); 0,38 al sumar conteo de inflorescencias',
     yield_validation_note: 'La consecuencia práctica: los datos satelitales y meteorológicos por sí solos no resuelven la variabilidad de rendimiento dentro del predio. A esa escala, la señal está en observaciones de terreno como el conteo de inflorescencias.',
     yield_th_index: 'Lectura', yield_th_value: 'Valor', yield_th_variable: 'Variable', yield_th_value2: 'Valor',
     yield_th_best: 'Mejor',
@@ -4544,7 +4544,7 @@ const i18n = {
     yield_ds_grapes: 'uvas', yield_ds_maize: 'milho', yield_ds_vineyard: 'Vinhedo (Oger 2023)',
     yield_val_faostat: 'um ano à frente, validação temporal (n=822)',
     yield_val_cropnet: 'validação cruzada aleatória; abaixo de zero ao excluir anos inteiros',
-    yield_val_vineyard: 'apenas com imagens e solo; 0,38 somando contagem de inflorescências',
+    yield_val_vineyard: 'apenas com imagens e solo (MAPE 53%, pior que prever a média); 0,38 somando contagem de inflorescências',
     yield_validation_note: 'A consequência prática: dados de satélite e meteorológicos por si só não resolvem a variabilidade de rendimento dentro do talhão. Nessa escala, o sinal está em observações de campo como a contagem de inflorescências.',
     yield_th_index: 'Leitura', yield_th_value: 'Valor', yield_th_variable: 'Variável', yield_th_value2: 'Valor',
     yield_th_best: 'Melhor',
@@ -9683,7 +9683,7 @@ const SECTION_CONTEXT = {
   climate: { label: 'Weather', ctx: 'The user is viewing detailed climate data. You have access to all computed KPIs below (GDD, chill hours, frost, heat waves, precipitation, ET0, etc.). Use these to give specific agronomic recommendations for their field or crop.' },
   genomic: { label: 'Genetics', ctx: 'The user is viewing genomic analysis: 3,603 DEGs from RNA-seq of Vitis vinifera across 8 phenological stages (E-L 3 to E-L 41). Data from Altimiras et al. 2024, Agronomy.' },
   images: { label: 'Photos', ctx: 'The user is viewing the image analysis module. Demo dataset: WGISD (Embrapa) grape cluster images with YOLO26 detection (5 varieties). On the official WGISD test split the fine-tuned YOLO26m reaches mAP50 0.880, mAP50-95 0.581, precision 0.866, recall 0.805. The detector has a single class (grape cluster): it does not predict variety, so never attribute a variety to a detection. They can upload their own field images for real-time detection.' },
-  yield: { label: 'Harvest', ctx: 'The user is viewing the harvest forecast. The estimate is a heuristic weighted sum of 15 climate and satellite indicators with expert-assigned weights: it is NOT a trained model and the range shown is not a calibrated confidence interval. Never quote an R² or accuracy figure for this estimate. If asked how reliable it is, explain that measured predictive performance depends on scale (country-level R² about 0.92, county-level about 0.41, within-field close to zero from imagery alone) and that within-field yield needs ground observations. Use the computed data below to explain which indicators drive the estimate and to give harvest guidance.' },
+  yield: { label: 'Harvest', ctx: 'The user is viewing the harvest forecast. The estimate is a heuristic weighted sum of 15 climate and satellite indicators with expert-assigned weights: it is NOT a trained model and the range shown is not a calibrated confidence interval. Never quote an R² or accuracy figure for this estimate. If asked how reliable it is, explain that measured predictive performance depends on scale (country-level R² about 0.92, county-level about 0.41, within-field R² of -0.12, i.e. worse than predicting the mean, from imagery alone) and that within-field yield needs ground observations. Use the computed data below to explain which indicators drive the estimate and to give harvest guidance.' },
   references: { label: 'About', ctx: 'The user is viewing the About section with author info and publications.' }
 };
 
