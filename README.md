@@ -1,848 +1,117 @@
-# agragent — Precision Agriculture Platform for Any Crop
+# agragent
 
-**agragent** is an open-source precision agriculture platform for any crop type and any location. It integrates satellite remote sensing, climate analytics, genomic data visualization, computer vision, and an **AI-powered agronomic assistant** into a single web application.
+An agentic multimodal platform for crop monitoring and decision support. It combines Sentinel-2 imagery,
+climate reanalysis, genomic data visualisation and computer vision behind a conversational agent that
+selects its own tools.
 
-The AI agent (powered by open-weight large language models served through OpenAI-compatible inference endpoints) has access to 11 autonomous tools and six scientific data sources: Sentinel-2 / Google Earth Engine, Open-Meteo (80 years of climate), OpenAlex (250M+ research papers), AGRIS FAO (16.5M+ agricultural records), INIA Chile library (19K+ publications with semantic RAG), and FAOSTAT global crop statistics.
+Built entirely on free public data of moderate spatial resolution. It is an operational research prototype:
+its outputs are interpretive guidance, not agronomic prescriptions, and it is designed as the entry tier of a
+stepwise monitoring strategy, establishing a baseline and showing which questions its data cannot settle.
 
-Developed as part of a PhD research project in Computer Science at the Pontificia Universidad Católica de Valparaíso (PUCV), Chile. The genomic module uses a *Vitis vinifera* RNA-seq dataset (Altimiras et al., 2024) as the research component; all other features are crop-agnostic.
-
----
-
-## Table of Contents
-
-- [Features](#features)
-- [Chat Widget (agragent.com)](#chat-widget-agragentcom)
-- [Chat Integration (app.agragent.com)](#chat-integration-appagragentcom)
-- [INIA Knowledge Base — Two-Layer RAG](#inia-knowledge-base--two-layer-rag)
-- [AI Assistant](#ai-assistant)
-- [How It Works](#how-it-works)
-- [Architecture](#architecture)
-- [Data Sources](#data-sources)
-- [Getting Started](#getting-started)
-- [KML/KMZ Support](#kmlkmz-support)
-- [Google Earth Engine Integration](#google-earth-engine-integration)
-- [Climate Data Pipeline](#climate-data-pipeline)
-- [GDD Comparison Between Dates](#gdd-comparison-between-dates)
-- [Field Action Plan](#field-action-plan)
-- [Genomic Analysis](#genomic-analysis)
-- [Image Analysis — WGISD Dataset](#image-analysis--wgisd-dataset)
-- [Vegetation Indices](#vegetation-indices)
-- [Technology Stack](#technology-stack)
-- [Project Structure](#project-structure)
-- [Author](#author)
-- [Associated Publications](#associated-publications)
-- [Citation](#citation)
-- [License](#license)
+**Live platform:** [app.agragent.com](https://app.agragent.com) (demo account `demo` / `demo33`)
 
 ---
 
-## Features
+## Modules
 
-| Module | Description |
+| Module | What it does |
 |---|---|
-| **Login** | Client-side username/password session authentication with a role label. The role is descriptive only: there is **no server-side authorization** enforcement |
-| **Dashboard** | Dynamic agronomic overview: 8 KPIs, water balance, risk assessment, alerts, charts, **satellite indices**, and **yield prediction summary** — all derived from the user's polygon |
-| **Satellite Maps** | Sentinel-2 imagery via Google Earth Engine (auto-connected via service account) with 13 spectral indices grouped by category, scene browsing, split-screen temporal comparison, **location search** (Nominatim geocoding), and collapsible panels |
-| **Climate Data** | Real-time climate analytics from Open-Meteo — temperature, precipitation, humidity, solar radiation, ET₀, GDD, chill hours, frost, heat waves (8 KPIs + 6 charts), **GDD comparison between custom date ranges** |
-| **Genomic Analysis** | Real RNA-seq DEG data from Altimiras et al. (2024) — 3,603 DEGs across 8 phenological stages of *Vitis vinifera* |
-| **Image Analysis** | Integration with the WGISD dataset (Embrapa) — 300+ grape cluster images with YOLO bounding box annotations |
-| **Yield Estimation** | Heuristic yield estimate — a weighted sum of climate and satellite indicators with expert-assigned weights, **not a trained model** — plus yield/ha, total yield, harvest date, satellite indices, and a validation panel reporting measured accuracy on three public datasets |
-| **Field Action Plan** | Phenological delay analysis (GDD-based), chill hours assessment, seasonal activity calendar with stage-specific field operations, and climate alerts with agronomic recommendations |
-| **AI Assistant** | Context-aware conversational agent (open-weight LLM) with access to climate, satellite, soil, irrigation, and fertilization tools |
-| **References** | Author info, ORCID, associated publications with DOIs, dataset citations |
-| **Multi-language** | English, Spanish, and Portuguese — language persisted in localStorage |
+| Satellite | Sentinel-2 via Google Earth Engine, 13 spectral indices, scene browsing, temporal comparison |
+| Climate | Open-Meteo reanalysis: GDD, chill hours, frost, heat waves, ET₀, water balance, risk profile |
+| Genomics | RNA-seq differential expression across *Vitis vinifera* phenological stages |
+| Vision | YOLO26m fine-tuned on WGISD for grape cluster detection |
+| Yield | Heuristic weighted estimate, with a panel reporting measured accuracy on three public datasets |
+| Assistant | Conversational agent with 11 autonomous tools over six scientific data sources |
 
-### Authentication
+The agent runs **open-weight LLMs** (`gpt-oss-120b`, `gemma-4-31b`, `zai-glm-4.7`) through OpenAI-compatible
+endpoints, so the inference layer is self-hostable and not tied to a proprietary vendor.
 
-- Login screen with username/password
-- Default user: `demo` / `demo33` (viewer)
-- Sessions stored in sessionStorage (24h expiry)
-- User list stored in localStorage (can be extended)
-- Logout button in sidebar
+## Repository layout
 
-### Dynamic Dashboard
+```
+app.html          single-page frontend (satellite, climate, genomics, vision, yield, assistant)
+landing.html      public landing page
+backend/          FastAPI orchestration service: agent loop, tool schemas, system prompts
+  app/agent/      the agentic loop and the eleven tool definitions
+  app/services/   domain services (climate, satellite, INIA RAG, AGRIS, FAOSTAT, OpenAlex)
+  eval/           evaluation harnesses, benchmark and results
+yolo/             YOLO26 training script for the WGISD dataset
+```
 
-The dashboard starts empty and automatically populates when the user uploads a KML/KMZ file or draws a polygon:
+## Running it locally
 
-- **Location**: reverse-geocoded name from polygon centroid (via OpenStreetMap Nominatim)
-- **Field area**: computed from polygon coordinates (shoelace formula)
-- **8 KPI cards**: location, area, GDD, precipitation, chill hours, frost days, heat waves, ET₀
-- **Water balance**: visual comparison of precipitation vs evapotranspiration with deficit/surplus indicator
-- **Agronomic risk assessment**: color-coded progress bars for chill accumulation, GDD, water balance, frost risk, heat stress
-- **Active alerts**: generated from actual climate data (frost, heat waves, drought, low GDD, low chill, high ET₀)
-- **Temperature chart**: monthly min/max from Open-Meteo
-- **Precipitation vs ET₀ chart**: monthly comparison for irrigation planning
-- **Satellite indices**: real-time NDVI, NDRE, MSAVI, TCARI, EVI, NDMI from Sentinel-2 (color-coded)
-- **Yield prediction summary**: yield/ha, total yield, harvest date, and model info
-- **Polygon table**: list of all loaded polygons with centroids
-
-### Multi-language Support
-
-- Language selector (EN/ES/PT) in the top bar
-- All navigation, section headers, KPI labels, chart titles, buttons, and messages are translated
-- Language preference saved in localStorage and restored on reload
-
-### Satellite Analysis
-
-- **Median Composite**: cloud-free composite from all Sentinel-2 scenes in a date range
-- **Scene Browser**: browse individual acquisitions with cloud cover percentage
-- **Date Comparison**: split-screen slider comparing two acquisition dates
-- **Vegetation Indices** (13 total, grouped by category):
-  - **Vigor**: NDVI, EVI, SAVI, MSAVI
-  - **Health**: NDRE, GNDVI, TCARI, CIre (Chlorophyll Index Red Edge)
-  - **Water**: NDMI (Moisture), NDWI (Water)
-  - **Soil**: BSI (Bare Soil Index)
-  - **Visual**: True Color RGB, False Color (NIR-R-G)
-- **Cloud Masking**: automatic QA60-based cloud and cirrus removal
-- **Polygon Clipping**: imagery rendered only within field boundaries
-
-### Climate Analytics (8 KPIs + 6 Charts)
-
-| KPI | Description |
-|---|---|
-| **GDD** | Growing Degree Days (base 10°C), accumulated Sep–Mar |
-| **Chill Hours** | Hours between 0–7.2°C during dormancy (Apr–Sep) |
-| **Frost Days** | Days with Tmin ≤ 0°C, with last frost date |
-| **Heat Waves** | Events of ≥3 consecutive days above 35°C |
-| **Dry Months** | Months with <30mm precipitation |
-| **Humidity** | Average relative humidity (%) |
-| **Solar Radiation** | Total shortwave radiation (MJ/m²) |
-| **ET₀** | FAO Penman-Monteith reference evapotranspiration (mm) |
-
-Charts: monthly temperature (min/max), precipitation, relative humidity, solar radiation, evapotranspiration, GDD accumulation.
-
-All climate data is fetched dynamically from the [Open-Meteo Archive API](https://open-meteo.com/) based on the polygon centroid — **any location worldwide**.
-
-### GDD Comparison Between Dates
-
-- Select two custom date ranges (Period A and Period B) to compare GDD accumulation
-- Fetches data from Open-Meteo in a single optimized request
-- Displays 3 KPI cards: total GDD for each period and the absolute/percentage difference
-- Overlay line chart showing daily accumulated GDD for both periods aligned by day number
-- Interactive tooltips with GDD values per day
-- Useful for comparing current vs. previous season, or any two arbitrary periods
-
-### Field Action Plan
-
-A dedicated section for phenological tracking and seasonal planning:
-
-- **Phenological Delay Analysis**: table comparing real GDD accumulation rate against reference thresholds (Coombe 1995, Modified E-L scale) to estimate delays or advances for each of the 10 growth stages (E-L 3 through E-L 41). Shows expected date, status (Reached / On track / Delayed / Advanced), and shift in days.
-- **Chill Hours Assessment**: real accumulated chill hours (0–7.2°C, Apr–Sep) vs. the 400–600h typical requirement for *Vitis vinifera*, with status indicator (Sufficient / Marginal / Insufficient) and bud break uniformity recommendation.
-- **Seasonal Activity Calendar**: visual timeline of recommended field operations per phenological stage — includes protection, canopy management, nutrition, irrigation, phytosanitary, monitoring, and harvest activities. Current stage highlighted, completed stages dimmed.
-- **Climate Alerts & Recommendations**: automatic alerts based on real field data:
-  - Slow/fast GDD accumulation (cool vs. warm season)
-  - Frost days with protection recommendations
-  - Heat waves with irrigation and shade recommendations
-  - Insufficient chill hours with cyanamide suggestion
-  - Low precipitation with supplementary irrigation planning
-
-### Location Search
-
-- **Search bar** in the Satellite Maps section for quick navigation to any location worldwide
-- Autocomplete with debounced requests (350ms) to the Nominatim geocoding API
-- Results display location name and administrative details
-- Selecting a result triggers a smooth `flyTo` animation with a temporary marker and popup
-- Supports Enter key to search and Escape to dismiss results
-
-### Field Management
-
-- Upload KML/KMZ files to define field boundaries
-- Draw, edit, and delete polygons directly on the map (Leaflet-Geoman)
-- Export polygons as KML
-- Multi-polygon support
-- Location auto-detection via reverse geocoding
-- **Reactive updates**: deleting or editing a polygon recalculates all sections (dashboard, climate, satellite indices, yield prediction); removing all polygons resets the app to empty state
-
-### Yield Prediction
-
-When a polygon is loaded, the system automatically computes yield predictions using climate and satellite data:
-
-- **Satellite indices extraction**: mean NDVI, NDRE, MSAVI, TCARI, EVI, NDMI computed via GEE `reduceRegion` over the polygon area
-- **Yield estimate**: a heuristic weighted sum of 15 climate and satellite indicators with expert-assigned
-  weights. It is **not a trained model**: no regressor runs in the browser, and no accuracy figure is
-  claimed for this estimate.
-  - Climate: precipitation, GDD, max temperature, chill hours, humidity, ET₀, solar radiation, frost days, heat waves
-  - Satellite: NDVI, NDRE, MSAVI, TCARI, EVI, NDMI
-- **Indicator contributions**: contribution = weight × normalized value, recalculated per estimate
-- **Outputs**:
-  - Yield per hectare (t/ha) with an indicative range (**not** a confidence interval)
-  - Total yield based on polygon area
-  - Estimated harvest date (GDD-based phenological model)
-- **Validation panel**: reports measured accuracy on three real public datasets — FAOSTAT grapes
-  (R²=0.92, one-year-ahead), CropNet maize counties (R²=0.41, random CV) and a within-field vineyard
-  (R²=-0.12, MAPE 53%, operationally unusable). Predictability is scale-dependent.
-- **Dashboard integration**: satellite indices and yield summary cards update automatically
-
-### Collapsible UI Panels
-
-All map section panels (Sentinel-2 Controls, Layers & Tools, Vegetation Indices) are collapsible on both desktop and mobile for a cleaner interface.
-
-### Genomic Analysis — Gene Ontology & AlphaFold
-
-- **Clickable gene IDs**: Click any VIT_ gene in DEG tables to fetch data from UniProt and AlphaFold
-- **Gene Ontology annotations**: Biological Process, Molecular Function, Cellular Component — fetched in real-time from UniProt REST API
-- **AlphaFold integration**: Direct links to 3D protein structures, PDB and CIF downloads
-- **GO Enrichment**: "Compute from UniProt" button fetches GO terms for all 25 DEGs and shows frequency-ranked bar chart by aspect (BP/MF/CC)
-
-### Image Analysis — YOLOv11 + WGISD
-
-- **WGISD dataset**: 300 images, 5 grape varieties (Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc, Syrah)
-- **Bounding box visualization**: Color-coded by cluster size, numbered labels, accurate canvas overlay
-- **Berry estimation**: Based on bbox area — small clusters ≈ 20 berries, large ≈ 80
-- **Upload your own image**: Sends to backend API (`POST /api/detect/`) for real-time YOLOv11 inference
-- **Backend**: FastAPI + YOLOv11n deployed on Railway (`agragent-api-production.up.railway.app`)
-- **Training script**: `yolo/train_wgisd.py` — downloads WGISD, trains YOLOv11n, exports ONNX
-
-### Farmer-Friendly UX
-
-- **Plain language**: Technical terms replaced with farmer-friendly labels (NDVI → "Plant Health", GDD → "Heat Units", ET₀ → "Water Loss")
-- **Larger touch targets**: Min 40-44px buttons on mobile
-- **Step-by-step onboarding**: 1-2-3 guide in welcome screen
-- **Full i18n**: English, Spanish, Portuguese — ~200 translation keys covering all UI elements
-- **Collapsible conversations**: Chat sidebar can be minimized
-
----
-
-## Chat Widget (agragent.com)
-
-A self-contained floating chat widget injected into `landing.html`, connecting visitors of [agragent.com](https://agragent.com) to the AgrAgent assistant.
-
-| Feature | Detail |
-|---|---|
-| **Trigger** | Circular button (AgrAgent logo) fixed bottom-right, pulsing green glow |
-| **Panel** | 370×540px slide-up, dark theme matching landing colors |
-| **API** | `api.agragent.com` (Vercel serverless, always available) |
-| **Streaming** | SSE tokens appear progressively; falls back to JSON if unavailable |
-| **Languages** | Welcome message in EN/ES/PT matching the site language switcher (🌐) |
-| **Mobile** | Full-width panel on <480px screens |
-| **Dependencies** | Zero — pure vanilla JS/CSS, self-contained in landing.html |
-
-The widget shares the same conversation persistence (Supabase) using `user_id = "visitor_<random>"` per session.
-
----
-
-## Chat Integration (app.agragent.com)
-
-The existing "Consultar AgrAgent" section in `app.html` has been upgraded to use the new FastAPI agent backend with SSE streaming and all 8 tools.
-
-| Aspect | Detail |
-|---|---|
-| **Primary API** | `agragent-api-production.up.railway.app` (Railway FastAPI — 11 tools, SSE streaming) |
-| **Fallback API** | `api.agragent.com` (Vercel serverless — 8 tools, always available) |
-| **Streaming** | 5-second timeout to connect to Railway, then falls back to Vercel JSON if unavailable |
-| **Tools shown** | Climate, NDVI, Soil, Foliar, Irrigation, Fertilization, INIA library, INIA RAG, OpenAlex, AGRIS FAO, FAOSTAT (badge per tool) |
-| **Views** | Floating widget + full-page section update simultaneously (dual-view architecture) |
-| **Context** | `chatCollectAppContext()` prepends field polygon, climate KPIs, and active satellite index to every message |
-
----
-
-## INIA Knowledge Base — Two-Layer RAG
-
-AgrAgent integrates with the **Biblioteca Digital INIA Chile** (DSpace 7, 19,000+ open-access agricultural documents) via **two complementary tools**:
-
-### Layer 1 — `search_inia_biblioteca` (live, metadata only)
-
-Real-time keyword search against the INIA REST API. Returns titles, authors, year, abstract, and link.
-
-- **Cost:** $0
-- **Storage:** 0 MB
-- **Setup:** none — works out of the box
-- **Use when:** user asks for bibliographic references, documents on a topic, or general literature panorama
-- Implementation: `services/inia.py`
-
-### Layer 2 — `search_inia_rag` (semantic, full-text)
-
-Semantic vector search over indexed text chunks of INIA documents. Returns actual textual passages ranked by cosine similarity to the query embedding.
-
-- **Embeddings:** [Voyage AI](https://www.voyageai.com/) `voyage-multilingual-2` (1024 dim, optimized for Spanish)
-- **Cost:** Free — Voyage offers **200M tokens/month free** (no credit card required). 19,000 INIA docs ≈ 100M tokens once, well within limits.
-- **Storage:** ~600 MB in Supabase pgvector
-- **Setup:** see below
-- **Use when:** user wants specific passages, doses, recommendations, or "what does INIA say about X?"
-- Implementation: `services/inia_rag.py`, `scripts/index_inia.py`, `scripts/inia_rag_schema.sql`
-
-#### Setup Layer 2 (RAG)
+The frontend is self-contained and needs only a static server (not `file://`, because of CORS):
 
 ```bash
-# 1. Apply pgvector schema in Supabase SQL Editor:
-#    paste content of backend/scripts/inia_rag_schema.sql
-
-# 2. Sign up free at https://dash.voyageai.com/ (no credit card)
-#    Generate API key, then add to backend/.env:
-echo "VOYAGE_API_KEY=pa-..." >> backend/.env
-
-# 3. Install indexer dependencies (if not already)
-cd backend
-pip install voyageai supabase python-dotenv
-
-# 4. Run the indexer
-#    Test small (50 docs viticultura, ~5 min)
-python3 scripts/index_inia.py --topic "vid OR uva OR vino" --limit 50
-
-#    Full viticulture corpus (~2500 docs, ~45 min)
-python3 scripts/index_inia.py --topic "vid OR uva OR vino" --limit 2500
-
-#    Other topics (each independent)
-python3 scripts/index_inia.py --topic riego --limit 1000
-python3 scripts/index_inia.py --topic "fertilizacion OR nutricion" --limit 1000
-```
-
-The indexer is **resumable** — it skips documents already indexed by UUID. Pre-extracted text bundles are downloaded directly from DSpace (no PDF parsing or OCR needed).
-
-#### Architecture diagram
-
-```
-┌────────────────────────────────────────────────────────────┐
-│                    AgrAgent (agentic loop)                  │
-│                                                             │
-│  ┌─────────────────────┐    ┌───────────────────────────┐ │
-│  │ search_inia_biblioteca   │ search_inia_rag            │ │
-│  │  (live metadata)    │    │  (semantic RAG)           │ │
-│  └──────────┬──────────┘    └─────────────┬─────────────┘ │
-└─────────────┼──────────────────────────────┼──────────────┘
-              │                              │
-              ▼                              ▼
-   ┌──────────────────────┐    ┌──────────────────────────┐
-   │ INIA REST API        │    │ Voyage AI embeddings     │
-   │ (DSpace 7)           │    │ voyage-multilingual-2    │
-   │ biblioteca.inia.cl   │    │ (1024 dim, free 200M/mo) │
-   └──────────────────────┘    └────────────┬─────────────┘
-                                            │
-                                            ▼
-                               ┌──────────────────────────┐
-                               │ Supabase pgvector        │
-                               │ • inia_documents         │
-                               │ • inia_chunks            │
-                               │ • match_inia_chunks()    │
-                               └──────────────────────────┘
-```
-
----
-
-## AI Assistant
-
-agragent includes an integrated AI agronomic assistant powered by open-weight large language models (`gpt-oss-120b`, `gemma-4-31b`, `zai-glm-4.7`) served through OpenAI-compatible inference endpoints via a FastAPI backend. The inference layer is self-hostable and not tied to a single proprietary vendor.
-
-### Availability
-
-- **Floating widget**: accessible from any screen via the bottom-right AgrAgent logo button
-- **Full-page section**: dedicated "AI Assistant" section in the sidebar with full conversation management
-
-Both views are synchronized — conversations, messages, and state are shared.
-
-### Context-Aware Responses
-
-Every message automatically includes the current application state:
-
-| Context | Data Sent |
-|---|---|
-| **Field** | Location name, area, polygon coordinates, centroid |
-| **Climate** | GDD, chill hours, frost days, heat waves, humidity, ET₀, solar radiation, water balance |
-| **Alerts** | Active agronomic alerts (frost, drought, heat stress, low GDD) |
-| **Satellite** | GEE connection status, active vegetation index, available Sentinel-2 scenes |
-| **Yield** | Predicted yield value |
-| **Section** | Which module the user is currently viewing |
-
-### Agent Tools
-
-The FastAPI backend agent (Railway) has 11 tools it can invoke autonomously:
-
-| Tool | Description |
-|---|---|
-| `get_climate_data` | Real-time weather and climate data via Open-Meteo |
-| `get_ndvi_data` | Satellite NDVI and vegetation indices via Sentinel-2 / GEE |
-| `analyze_soil_report` | Parse and interpret uploaded soil analysis (PDF/Excel) |
-| `analyze_foliar_report` | Parse and interpret leaf tissue analysis (PDF/Excel) |
-| `calculate_irrigation_plan` | ET₀ × Kc irrigation scheduling |
-| `calculate_fertilization_plan` | NPK requirements based on yield target and soil analysis |
-| `search_inia_biblioteca` | Live keyword search in INIA Chile library (19K+ documents) |
-| `search_inia_rag` | Semantic RAG search over indexed INIA document chunks |
-| `search_openalex` | Scientific literature search via OpenAlex (250M+ papers, open access) |
-| `search_agris` | Agricultural records search via AGRIS FAO (16.5M+ records) |
-| `get_faostat_data` | Global crop production statistics via FAOSTAT (FAO) |
-
-The Vercel serverless fallback (`api.agragent.com`) runs 8 of these tools (excludes `get_ndvi_data`, `search_agris`, `get_faostat_data`).
-
-### Conversation Management
-
-- Create, rename (✏️), and delete conversations
-- Conversation history persisted in Supabase
-- Quick-start cards translated to EN/ES/PT
-- Markdown rendering with tool-use badges
-
-### Backend
-
-The AI backend is a FastAPI service (`backend/`, released in this repository under AGPL-3.0) that calls open-weight models through OpenAI-compatible endpoints (Cerebras, with Groq as an automatic fallback) with an agentic loop (max 10 iterations per message).
-
----
-
-## How It Works
-
-1. **Login** with your credentials (demo account: `demo` / `demo33`)
-2. **Navigate to Satellite Maps** and upload a KML/KMZ file or draw a polygon
-3. The app automatically:
-   - Detects the location name via reverse geocoding
-   - Fetches climate data from Open-Meteo for that location
-   - Computes agronomic indicators (GDD, chill hours, water balance, risk assessment)
-   - Updates the Dashboard, Climate, and all sections with real data
-4. **Connect to Google Earth Engine** (credentials auto-filled for admin) to view Sentinel-2 satellite imagery clipped to your polygon
-5. **Compare dates** using the split-screen slider in Compare mode
-6. **Change language** (EN/ES/PT) from the selector in the top bar
-7. Explore genomic data, grape images, and yield predictions
-
----
-
-## Architecture
-
-agragent combines a **single-page frontend** (`index.html`) with an optional **FastAPI backend** for AI assistant capabilities:
-
-- **Frontend**: self-contained SPA with all HTML, CSS, and JS — runs standalone for monitoring features
-- **Backend** (`backend/`): FastAPI service providing conversational AI via open-weight models on OpenAI-compatible endpoints, with tool-calling and conversation persistence in Supabase. Released in this repository under AGPL-3.0
-- **Deployment**: frontend on Vercel (`agragent.com`), backend deployable independently
-
-```
-┌──────────────────────────────────────────────────────────┐
-│                        Browser                            │
-│                                                           │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────────┐ │
-│  │ Leaflet  │  │ Chart.js │  │ Earth     │  │   AI    │ │
-│  │ Map +    │  │10 Charts │  │ Engine JS │  │  Chat   │ │
-│  │ Geoman   │  │ + i18n   │  │ (OAuth)   │  │ Widget  │ │
-│  └────┬─────┘  └────┬─────┘  └────┬──────┘  └────┬────┘ │
-│       └──────────────┼─────────────┘              │      │
-│                      │                            │      │
-│              index.html (SPA)                     │      │
-└──────────────────────┬────────────────────────────┼──────┘
-                       │                            │
-       ┌───────────────┼───────────────┐     ┌──────┴──────┐
-       │               │               │     │  FastAPI     │
-  Open-Meteo      Google Earth    Nominatim  │  Backend     │
-  Archive API     Engine API      Geocoding  │  (agro-agent)│
-  (climate)       (Sentinel-2)    (location) │      │       │
-       │                                     │  ┌───┴────┐  │
-   WGISD/GitHub                              │  │ Agent  │  │
-   (grape images)                            │  │  API   │  │
-                                             │  └───┬────┘  │
-                                             │  ┌───┴────┐  │
-                                             │  │Supabase│  │
-                                             │  └────────┘  │
-                                             └──────────────┘
-```
-
----
-
-## Data Sources
-
-| Source | Type | Access | Usage |
-|---|---|---|---|
-| [Sentinel-2 SR Harmonized](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED) | Satellite imagery (10m) | Google Earth Engine | 13 vegetation indices, RGB composites, temporal comparison |
-| [Open-Meteo Archive API](https://open-meteo.com/en/docs/historical-weather-api) | Historical weather (80 yrs) | Free, no API key | Temperature, precipitation, GDD, chill hours, ET₀, frost, heat waves |
-| [OpenAlex](https://openalex.org/) | Scientific literature (250M+ papers) | Free, no API key | Open-access agronomic and scientific research |
-| [AGRIS](https://agris.fao.org/) (FAO) | Agricultural records (16.5M+) | Free, no API key | Bibliographic search across global agricultural literature |
-| [INIA Chile Library](https://biblioteca.inia.cl/) | Agricultural publications (19K+) | Free, DSpace REST API | Live search + semantic RAG (Voyage AI embeddings, pgvector) |
-| [FAOSTAT](https://www.fao.org/faostat/) (FAO) | Global crop statistics | Free, no API key | National and global yield benchmarks for any crop |
-| [Nominatim](https://nominatim.openstreetmap.org/) | Reverse geocoding | Free, no API key | Location name from polygon centroid |
-| [WGISD](https://github.com/thsant/wgisd) (Embrapa) | Grape cluster images (300+) | Public dataset | Object detection annotations for YOLOv11 |
-| RNA-seq data (Altimiras et al., 2024) | DEG analysis | Published supplementary | Genomic module: 3,603 DEGs across 8 E-L stages of *Vitis vinifera* |
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- A modern web browser (Chrome, Firefox, Edge)
-- Python 3.x (for local HTTP server) or any static file server
-
-### Live Demo
-
-The platform is deployed at **[app.agragent.com](https://app.agragent.com)**
-
-### Quick Start (Local)
-
-```bash
-# Clone the repository
 git clone https://github.com/fjaltimiras/agragent.git
 cd agragent
-
-# Start a local HTTP server
-python3 -m http.server 8080
-
-# Open in browser
-open http://localhost:8080
+python3 -m http.server 8080     # then open http://localhost:8080/app.html
 ```
 
-> **Note**: A local HTTP server is required (not `file://`) because the app makes API calls that require proper CORS handling.
-
-### With AI Assistant (Backend)
+The assistant additionally needs the backend:
 
 ```bash
-# Clone and set up the backend
-cd agro-agent
-cp .env.example .env
-# Edit .env with your ANTHROPIC_API_KEY and SUPABASE credentials
+cd backend
+cp .env.example .env            # fill in CEREBRAS_API_KEY / GROQ_API_KEY and Supabase credentials
 pip install -r requirements.txt
-
-# Run the backend (serves frontend + API)
 uvicorn app.main:app --reload --port 8000
-
-# Open in browser
-open http://localhost:8000
 ```
 
-### Default Login Credentials
+Authentication is client-side only and the role label carries no server-side enforcement. Deployments that
+need real access control must add it.
 
-| User | Password | Role | GEE Credentials |
-|------|----------|------|-----------------|
-| `demo` | `demo33` | Viewer | Demo access |
+## Evaluation and reproducibility
 
-Authentication is client-side only and the role label carries no server-side
-authorization. Deployments that need real access control must add it.
+Everything below lives in `backend/eval/` and can be re-run.
 
-### Google Earth Engine
+| Evaluation | Result |
+|---|---|
+| Tool selection, 63 queries, 3 open-weight models | 69.8% / 73.0% / 73.0% query accuracy; 100% abstention on out-of-scope |
+| Non-agentic ablations (single-call, router, no-tools) | Accuracy statistically indistinguishable; the loop buys coverage on compound queries, not better per-tool choice |
+| Calculator arithmetic (FAO-56 irrigation, N balance) | 12/12 |
+| Cluster detection, YOLO26m on the official WGISD split | mAP50 0.880, mAP50-95 0.581 |
+| Yield, three public datasets | FAOSTAT grapes R²=0.92; CropNet maize counties R²=0.41; within-field vineyard R²=-0.12 (MAPE 53%, operationally unusable), 0.38 adding inflorescence counts |
 
-Satellite imagery is **auto-connected** via a GEE service account — no user login required. The backend API (`/api/gee-token`) generates access tokens using the service account credentials stored in Vercel environment variables.
+The arithmetic check needs no API key and no network:
 
-For self-hosting, configure these environment variables in your API deployment:
-- `GEE_CLIENT_EMAIL` — service account email
-- `GEE_PRIVATE_KEY_B64` — base64-encoded private key
-- `GEE_PROJECT_ID` — Google Cloud project ID
-
----
-
-## KML/KMZ Support
-
-agragent supports loading field boundaries from standard KML and KMZ files:
-
-- **KML**: parsed using the DOMParser API and [@mapbox/togeojson](https://github.com/mapbox/togeojson)
-- **KMZ**: unzipped in-browser using [JSZip](https://stuk.github.io/jszip/), then KML extracted and parsed
-- Polygon coordinates are stored for GEE geometry clipping (`ee.Geometry.Polygon` / `ee.Geometry.MultiPolygon`)
-- Altitude values are automatically stripped (GEE requires 2D coordinates)
-- Supports multi-polygon KML files (multiple `<Placemark>` elements)
-- Uploading a KML/KMZ automatically triggers: reverse geocoding, climate data loading, GEE tile refresh
-
----
-
-## Google Earth Engine Integration
-
-The app connects to GEE via the [Earth Engine JavaScript API](https://developers.google.com/earth-engine/guides/npm_install) (v0.1.395) using OAuth 2.0 browser authentication.
-
-### Image Processing Pipeline
-
-```
-COPERNICUS/S2_SR_HARMONIZED
-  → filterDate(startDate, endDate)
-  → filterBounds(polygonGeometry)
-  → filter(CLOUDY_PIXEL_PERCENTAGE < threshold)
-  → map(QA60 cloud mask)
-  → median()
-  → clip(polygonGeometry)
-  → compute vegetation index
-  → getMapId(visParams)
-  → L.gridLayer with formatTileUrl()
+```bash
+cd backend && python3 eval/verify_arithmetic.py
 ```
 
-### Cloud Masking
+Predictability is scale-dependent: the platform reports this rather than quoting a single accuracy figure.
+The yield estimate is a weighted heuristic, **not** a trained model, and no accuracy figure is claimed for it.
 
-Uses the Sentinel-2 QA60 band to mask clouds (bit 10) and cirrus (bit 11):
+An expert-panel rating instrument for recommendation quality is released in `backend/eval/expert_panel/`.
+It has **not** been executed: tool selection is not the same thing as advice quality.
 
-```javascript
-const qa = img.select('QA60');
-const mask = qa.bitwiseAnd(1 << 10).eq(0)
-  .and(qa.bitwiseAnd(1 << 11).eq(0));
-return img.updateMask(mask);
-```
+## Data sources
 
----
+Sentinel-2 via [Google Earth Engine](https://earthengine.google.com) · [Open-Meteo](https://open-meteo.com) ·
+[OpenAlex](https://openalex.org) · [AGRIS FAO](https://agris.fao.org) · Biblioteca Digital INIA Chile ·
+[FAOSTAT](https://www.fao.org/faostat) · [WGISD](https://github.com/thsant/wgisd) (Embrapa)
 
-## Climate Data Pipeline
+## License
 
-Climate data is fetched from the [Open-Meteo Archive API](https://open-meteo.com/en/docs/historical-weather-api) — a free, open-source weather API that requires no authentication.
-
-### Variables Fetched
-
-| Variable | Frequency | API Parameter |
-|---|---|---|
-| Max temperature | Daily | `temperature_2m_max` |
-| Min temperature | Daily | `temperature_2m_min` |
-| Precipitation | Daily | `precipitation_sum` |
-| Relative humidity | Daily | `relative_humidity_2m_mean` |
-| Solar radiation | Daily | `shortwave_radiation_sum` |
-| Evapotranspiration | Daily | `et0_fao_evapotranspiration` |
-| Temperature | Hourly | `temperature_2m` (for chill hours) |
-
-### Processing Pipeline
-
-1. **Centroid extraction**: compute polygon centroid from all loaded coordinates
-2. **API request**: fetch daily + hourly data for the growing season (April year N → March year N+1)
-3. **Monthly aggregation**: averages (temperature, humidity) and sums (precipitation, solar, ET₀)
-4. **GDD computation**: `GDD = max(0, (Tmax + Tmin)/2 - 10)`, accumulated September–March
-5. **Chill hours**: count hourly temperatures between 0–7.2°C during dormancy (April–September)
-6. **Frost detection**: days with Tmin ≤ 0°C, with last frost date
-7. **Heat wave detection**: sequences of ≥3 consecutive days with Tmax > 35°C
-8. **Alert generation**: automatic alerts based on thresholds (low GDD, frost, heat waves, drought, high ET₀)
-
-### Season Definition
-
-The agricultural season follows the Southern Hemisphere growing calendar:
-- **Full season**: April (year N) through March (year N+1)
-- **Growing season** (GDD accumulation): September through March
-- **Dormancy** (chill hours): April through August
-
-Applies to any crop grown in the Southern Hemisphere. Northern Hemisphere support is on the roadmap.
-
----
-
-## Genomic Analysis
-
-The Genomic Analysis section displays real RNA-seq differential expression data from:
-
-> Altimiras, F. et al. *Transcriptome Data Analysis Applied to Grapevine Growth Stage Identification.* Agronomy, 14(3), 613, 2024.
-
-### Data Summary
-
-- **68 RNA-seq samples** from *Vitis vinifera* (1,336M reads, 87 GB)
-- **8 phenological stages** compared against E-L 3 baseline (Modified E-L scale)
-- **3,603 unique DEGs** identified (FDR < 0.05, edgeR)
-- **5 grape varieties**: Muscat Blanc a Petits Grains, Corvina, Cabernet Sauvignon, Sangiovese, *V. vinifera* sylvestris
-
-### Visualizations
-
-- RNA-seq processing pipeline (Raw Reads → FastQC → Trimmomatic → Salmon → tximeta → edgeR → DEGs → ML Classification)
-- DEG bar chart: up/down-regulated genes per developmental stage
-- DEG accumulation curve across stages
-- Sample composition by variety
-- Tabbed DEG tables with real logFC and FDR values for each stage comparison
-- Full summary table with counts per comparison
-
----
-
-## Image Analysis — WGISD Dataset
-
-The Image Analysis module integrates the **Wine Grape Instance Segmentation Dataset** (WGISD) from Embrapa:
-
-- **300+ images** of grape clusters in field conditions
-- **5 varieties**: Chardonnay (CDY), Cabernet Franc (CFR), Cabernet Sauvignon (CSV), Sauvignon Blanc (SVB), Syrah (SYH)
-- **YOLO-format bounding boxes** fetched live from the [WGISD GitHub repository](https://github.com/thsant/wgisd)
-- Annotations rendered as canvas overlays with variety-specific color coding
-
-### Reference
-
-> Santos, T.T.; de Souza, L.L.; dos Santos, A.A.; Avila, S. *Grape detection, segmentation, and tracking using deep neural networks and three-dimensional association.* Computers and Electronics in Agriculture, 2020.
-
----
-
-## Vegetation Indices
-
-| Index | Formula | Application |
-|---|---|---|
-**Vigor**
-| Index | Formula | Application |
-|---|---|---|
-| **NDVI** | (NIR − RED) / (NIR + RED) | General vegetation vigor |
-| **EVI** | 2.5×(NIR−RED)/(NIR+6×RED−7.5×BLUE+1) | Enhanced VI, no saturation at high biomass |
-| **SAVI** | 1.5×(NIR−RED)/(NIR+RED+0.5) | Soil-adjusted, ideal for young crops |
-| **MSAVI** | (2×NIR+1 − √((2×NIR+1)²−8(NIR−RED))) / 2 | Modified soil-adjusted VI |
-
-**Health**
-| Index | Formula | Application |
-|---|---|---|
-| **NDRE** | (NIR − RedEdge) / (NIR + RedEdge) | Chlorophyll content, nitrogen status |
-| **GNDVI** | (NIR − GREEN) / (NIR + GREEN) | Green NDVI, early stress detection |
-| **TCARI** | 3×[(B5−B4) − 0.2×(B5−B3)×(B5/B4)] | Chlorophyll absorption |
-| **CIre** | (NIR / RedEdge) − 1 | Chlorophyll Index, correlates with N |
-
-**Water**
-| Index | Formula | Application |
-|---|---|---|
-| **NDMI** | (NIR − SWIR) / (NIR + SWIR) | Moisture/water stress |
-| **NDWI** | (GREEN − NIR) / (GREEN + NIR) | Water content in leaves |
-
-**Soil**
-| Index | Formula | Application |
-|---|---|---|
-| **BSI** | ((SWIR+RED)−(NIR+BLUE))/((SWIR+RED)+(NIR+BLUE)) | Bare soil detection |
-
-**Visual**: True Color (B4-B3-B2 RGB), False Color (B8-B4-B3 NIR-R-G)
-
-Sentinel-2 bands used: B2 (Blue, 490nm), B3 (Green, 560nm), B4 (Red, 665nm), B5 (Red Edge, 705nm), B8 (NIR, 842nm), B11 (SWIR, 1610nm).
-
----
-
-## Technology Stack
-
-**Frontend**
-
-| Component | Library | Version | Purpose |
-|---|---|---|---|
-| Maps | [Leaflet](https://leafletjs.com/) | 1.9.4 | Interactive map rendering |
-| Map editing | [Leaflet-Geoman](https://geoman.io/) | 2.16.0 | Draw, edit, delete polygons |
-| Map comparison | [Leaflet Side-by-Side](https://github.com/digidem/leaflet-side-by-side) | 2.2.0 | Split-screen date comparison |
-| Charts | [Chart.js](https://www.chartjs.org/) | 4.4.0 | Climate, genomic, and yield charts |
-| Satellite | [Google Earth Engine JS API](https://developers.google.com/earth-engine/) | 0.1.395 | Sentinel-2 imagery processing |
-| KMZ parsing | [JSZip](https://stuk.github.io/jszip/) | 3.10.1 | Unzip KMZ files in browser |
-| KML parsing | [@mapbox/togeojson](https://github.com/mapbox/togeojson) | 0.16.0 | KML to GeoJSON conversion |
-| Geocoding | [Nominatim](https://nominatim.openstreetmap.org/) | — | Reverse geocoding (OpenStreetMap) |
-
-Frontend dependencies are loaded via CDN — no build step required.
-
-**Backend (AI Assistant)**
-
-| Component | Library | Version | Purpose |
-|---|---|---|---|
-| API framework | [FastAPI](https://fastapi.tiangolo.com/) | 0.115.0 | REST API for chat and conversations |
-| AI model | Open-weight LLMs via OpenAI-compatible endpoints (`gpt-oss-120b`, `gemma-4-31b`, `zai-glm-4.7`) | -- | Conversational agent with tool use |
-| Database | [Supabase](https://supabase.com/) | 2.10.0 | Conversation and message persistence |
-| Earth Engine | [earthengine-api](https://pypi.org/project/earthengine-api/) | 1.6.15 | Server-side satellite data |
-| PDF parsing | [pdfplumber](https://github.com/jsvine/pdfplumber) | 0.11.4 | Soil/foliar report extraction |
-| Excel parsing | [openpyxl](https://openpyxl.readthedocs.io/) | 3.1.5 | Spreadsheet analysis uploads |
-
----
-
-## Project Structure
-
-```
-agragent/
-├── app.html                # Main SPA — all HTML, CSS, and JS
-├── landing.html            # Landing page
-├── logo.png                # AgrAgent logo
-├── poligono.kml            # Example field boundaries
-├── README.md               # This file
-├── LICENSE                 # AGPL-3.0
-└── .gitignore
-```
-
-The AI backend (`agro-agent/`) is maintained separately:
-
-```
-agro-agent/
-├── app/
-│   ├── main.py             # FastAPI entry point (serves frontend + API)
-│   ├── config.py           # Environment configuration
-│   ├── database.py         # Supabase client
-│   ├── agent/
-│   │   ├── claude.py       # AgroAgent - agentic loop (open-weight LLM)
-│   │   ├── tools.py        # 6 agronomic tools
-│   │   └── system_prompt.py
-│   ├── routers/
-│   │   ├── chat.py         # POST /api/chat, POST /api/chat/new
-│   │   ├── conversations.py # CRUD conversations + messages
-│   │   └── uploads.py      # File upload and parsing
-│   ├── services/
-│   │   ├── satellite.py    # GEE server-side queries
-│   │   ├── climate.py      # Climate data service
-│   │   ├── sentinel.py     # Sentinel-2 processing
-│   │   └── document.py     # PDF/Excel parsing
-│   └── models/
-│       └── schemas.py      # Pydantic schemas
-├── frontend/
-│   └── index.html          # Original standalone chat UI
-├── supabase/
-│   └── schema.sql          # Database schema
-├── requirements.txt
-└── .env.example
-```
-
----
-
-## Author
-
-**Francisco Altimiras**
-- ORCID: [0000-0003-1992-8338](https://orcid.org/0000-0003-1992-8338)
-- Pontificia Universidad Catolica de Valparaiso (PUCV), Chile
-- Research focus: Computational crop monitoring using bioinformatics and machine learning
-
----
-
-## Associated Publications
-
-This platform is part of an ongoing research project. The following peer-reviewed publications provide the scientific foundation:
-
-1. **Altimiras, F. et al.** *Transcriptome Data Analysis Applied to Grapevine Growth Stage Identification.* Agronomy, 14(3), 613, 2024.
-   - DOI: [10.3390/agronomy14030613](https://www.mdpi.com/2073-4395/14/3/613)
-   - Source of genomic data: RNA-seq pipeline, DEGs, phenological stage comparisons (Tables S1–S5)
-
-2. **Altimiras, F. et al.** *A Computational Framework for Crop Yield Estimation and Phenological Monitoring.* In: Progress in Artificial Intelligence, EPIA 2024. Lecture Notes in Computer Science, vol. 15400. Springer, 2025.
-   - DOI: [10.1007/978-3-031-80084-9_14](https://link.springer.com/chapter/10.1007/978-3-031-80084-9_14)
-
-### Datasets
-
-- **WGISD** — Wine Grape Instance Segmentation Dataset (Embrapa): [github.com/thsant/wgisd](https://github.com/thsant/wgisd)
-  > Santos, T.T.; de Souza, L.L.; dos Santos, A.A.; Avila, S. *Grape detection, segmentation, and tracking using deep neural networks and three-dimensional association.* Computers and Electronics in Agriculture, 2020.
-
----
+[GNU Affero General Public License v3.0](LICENSE). The network-use clause is deliberate: anyone running a
+modified version as a network service must publish their changes. Both the frontend and the backend
+orchestration layer are covered.
 
 ## Citation
-
-If you use agragent in your research, please cite:
 
 ```bibtex
 @software{agragent2026,
   author = {Altimiras, Francisco},
-  title = {agragent: Precision Agriculture Platform for Any Crop},
+  title = {agragent: An Agentic Multimodal Architecture for Crop Monitoring and Decision Support},
   year = {2026},
   url = {https://github.com/fjaltimiras/agragent},
   institution = {Pontificia Universidad Cat\'{o}lica de Valpara\'{i}so}
 }
-
-@article{altimiras2024bioinformatics,
-  author = {Altimiras, Francisco and others},
-  title = {Bioinformatics and Machine Learning for Grapevine Phenological Stage Classification},
-  journal = {Agronomy},
-  volume = {14},
-  number = {3},
-  pages = {613},
-  year = {2024},
-  doi = {10.3390/agronomy14030613}
-}
-
-@inproceedings{altimiras2025precision,
-  author = {Altimiras, Francisco and others},
-  title = {A Computational Framework for Crop Yield Estimation and Phenological Monitoring},
-  booktitle = {Progress in Artificial Intelligence, EPIA 2024},
-  series = {Lecture Notes in Computer Science},
-  volume = {15400},
-  publisher = {Springer},
-  year = {2025},
-  doi = {10.1007/978-3-031-80084-9\_14}
-}
 ```
 
----
+The genomic module builds on Altimiras et al. (2024),
+[doi:10.3390/agronomy14030613](https://doi.org/10.3390/agronomy14030613).
 
-## License
+## Author
 
-The frontend and the backend orchestration service are both released under the
-[GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0).
-
-The network-use clause is deliberate: anyone who runs a modified version of this software as a
-network service must make their modified source available to its users. The backend orchestration
-service (agent loop, the eleven tool schemas, context-injection logic and system prompts) is
-included in this repository under `backend/`, together with the 63-query agent benchmark, the
-tool-selection and arithmetic-verification harnesses, and the expert-panel rating instrument.
-
----
-
-## Contributing
-
-Contributions are welcome. Please open an issue first to discuss proposed changes. This project follows standard GitHub flow:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
-
----
-
-## Acknowledgments
-
-- **Embrapa** — [WGISD](https://github.com/thsant/wgisd) grape image dataset
-- **Google Earth Engine** — Sentinel-2 satellite imagery
-- **Open-Meteo** — Free historical weather API
-- **OpenStreetMap / Nominatim** — Reverse geocoding
-- **PUCV** — Pontificia Universidad Catolica de Valparaiso, School of Computer Engineering
-
----
-
-*Developed by [Francisco Altimiras](https://orcid.org/0000-0003-1992-8338)*
+**Francisco Altimiras** — ORCID [0000-0003-1992-8338](https://orcid.org/0000-0003-1992-8338)
+Pontificia Universidad Catolica de Valparaiso (PUCV), Chile
