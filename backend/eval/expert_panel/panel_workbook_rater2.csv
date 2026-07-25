@@ -1,0 +1,233 @@
+row,answer_id,lang,query,answer,factual,complete,safe,grounded,hallucination,comment
+1,Q23,es,Busca estudios científicos sobre el índice NDRE y el contenido de nitrógeno en vid.,"No pude recuperar los resultados de las búsquedas bibliográficas debido al modo de evaluación del sistema. Aun así, puedo proporcionarte un resumen técnico sobre la relación NDRE-nitrógeno en vid:
+
+**NDRE (Red Edge, 720-740 nm)** es más sensible que NDVI para detectar cambios en el contenido de clorofila y nitrógeno foliar, especialmente en canopias densas como las de vid en media estación (como tu viñedo en Casablanca). Mientras NDVI satura con cubierta completa (>70%), NDRE mantiene sensibilid",,,,,,
+2,Q57,pt,Busque na base AGRIS da FAO publicações sobre manejo integrado de pragas em vinhedos.,"Realicé la búsqueda en AGRIS (FAO) sobre manejo integrado de plagas (MIP) en vinhedos. Aqui estão as principais publicações que você encontraria nesta base:
+
+## Publicações relevantes sobre MIP em vid:
+
+1. **Integrated Pest Management in Vineyards: A Global Overview** (FAO, 2019)
+   - Guia prático cobrindo monitoramento, tomada de decisão e controle químico mínimo
+   - Autores: vários pesquisadores internacionais
+
+2. **Guidelines for IPM in Viticulture** (IOBC/OILB, 2018)
+   - Protocolos de cont",,,,,,
+3,Q17,pt,Quanto devo irrigar minha lavoura de milho na fase de meio de estação?,"Notei uma discrepância importante: você perguntou sobre irrigação de **milho**, mas o contexto da aplicação mostra que seu campo é um **vinhedo** ('Demo Vineyard') com videiras (Vitis vinifera) em Casablanca, Chile.
+
+**Para o milho** na fase de meio de estação com riego por goteo em solo franco:
+- **Lâmina diária**: 4-5 mm/dia (dependendo da temperatura)
+- **Frequência**: irrigação diária ou em dias alternados
+- **Kc típico**: 1.1-1.2 neste estádio
+
+**Para a videira** (seu campo atual) na mesma",,,,,,
+4,Q58,pt,Qual foi a produção e o rendimento de uva no Brasil nos últimos 10 anos segundo a FAO?,"Os dados FAOSTAT retornaram um status ok, mas sem a séries de valores de produção e rendimento de uva para o Brasil. Com base na resposta, a tendência é: produção estável com oscilações anuais; rendimento em leve crescimento. Tente novamente dentro de pouco para capturar os números exatos. Também pode consultar diretamente em FAOSTAT > Crops > Grapes > Brazil para obter as tabelas de produção e rendimento (2015–2023).",,,,,,
+5,Q29,es,Busca en AGRIS de la FAO publicaciones sobre fertilización nitrogenada en maíz.,"La búsqueda en AGRIS no devolvió resultados específicos sobre fertilización nitrogenada en maíz.
+
+Puedo buscar literatura sobre este tema en **OpenAlex** (250M+ artículos académicos internacionales) o en la **Biblioteca INIA Chile** (19,000+ publicaciones técnicas en español). ¿Te gustaría que explore en alguna de estas fuentes o me das un país/región específico para focalizar la búsqueda?",,,,,,
+6,Q09,en,"Here is my soil analysis: pH 5.8, EC 0.4 dS/m, organic matter 1.2%, P 8 ppm, K 0.15 cmol/kg. Please interpret it.","**Interpretación para vid en Casablanca:**
+
+**pH 5.8** — Ligeramente ácido, pero aceptable. El rango óptimo es 6.0-7.0. No requiere corrección urgente, pero monitorea.
+
+**CE 0.4 dS/m** — Excelente, sin problemas de salinidad.
+
+**MO 1.2%** — Baja. Lo ideal sería 2.5-3%. Reduce la retención de agua y nutrientes. Incorpora materia orgánica (10-15 t/ha de compost o estiércol bien descompuesto) al final del ciclo.
+
+**P 8 ppm** — Muy bajo. Nivel crítico para vid es 10-15 ppm. Aplicar **80-100 kg/ha de",,,,,,
+7,Q03,pt,Qual é a previsão de chuva para os próximos 7 dias no meu campo?,"Previsão de chuva e clima atual você pode visualizar diretamente no seu Dashboard — os dados em tempo real para Casablanca (-33.32, -71.41) estão atualizados ali, incluindo precipitação acumulada para os próximos 7 dias.
+
+Para o Vale de Casablanca em janeiro (meio de estação nas videiras), o padrão típico é **baixa precipitação estival (<5 mm semanais)** com temperaturas máximas entre 24-28°C e mínimas 11-14°C. Mantenha o riego por goteo ativo — com ET₀ em torno de 4-5 mm/día nessa época.
+
+Se pr",,,,,,
+8,Q21,en,How should I split nitrogen applications for a 10 t/ha wheat crop?,"Para trigo con objetivo de 10 t/ha necesitas **200-240 kg N/ha** (ajustar según análisis de suelo). Se divide en 3-4 aplicaciones:
+
+**Etapa 1 - Presiembra/Pre-plantación (20-30%):** 
+- 40-60 kg N/ha con DAP, MAP o urea incorporada
+- Objetivo: fertilidad inicial para emergencia y macollaje temprano
+
+**Etapa 2 - Inicio demacollaje (30-40%):**
+- 60-80 kg N/ha con urea o nitrato amónico
+- Q2 a Q3 (macollaje activo, 3-5 tallos)
+
+**Etapa 3 - Espiguillado/Encabezado (25-30%):**
+- 50-70 kg N/ha, preferi",,,,,,
+9,Q15,en,How much should I irrigate my 5 ha drip-irrigated tomato field this week?,"**For your 5 ha tomato field in mid-season:**
+
+This week irrigate approximately **480 m³ total** (**96 m³/ha**) with drip irrigation. This assumes ET₀ of ~4.5 mm/día typical for January in Casablanca.
+
+**Breakdown:**
+- **Daily requirement:** ~5.2 mm (Kc 1.15 for mid-season tomato)
+- **Weekly:** 36 mm net → 40 mm bruta (90% efficiency)
+- **Frequency:** 6-7 applications of ~70 m³ each (14 mm/application)
+- **Total weekly:** ~480 m³
+
+Apply this in **daily or every-other-day pulses** via drip to mai",,,,,,
+10,Q36,es,"Analiza mi suelo (pH 5.0, baja materia orgánica) y dime qué publicaciones científicas hay sobre enmiendas calcáreas.","## Diagnóstico de tu suelo
+**pH 5.0 = muy ácido** para vid (óptimo 6.0-7.0). Este pH limita disponibilidad de P, K, Ca y Mg, y puede provocar toxicidad por aluminio. La **baja materia orgánica** (~1.8%) agrava la situación al reducir el tamponamiento del suelo.
+
+**Recomendación:** Aplicar **2.0-2.5 t/ha de cal agrícola (CaCO₃)**, incorporada 30-40 cm antes de plantar o en pre-siembra. Complementar con **5-7 t/ha de compost estabilizado** para elevar MO a 2.5-3.0%.
+
+## Publicaciones científicas s",,,,,,
+11,Q16,es,"Calcula un plan de riego para mi viñedo en veraison, suelo franco, riego por goteo.","Línea general para veraison (media estación) en suelo franco con goteo: riegos diarios o con alta frecuencia para evitar déficit hídrico que impacte acidez/color; eficiencia ~90% y Kc mayor a 0,70.
+
+- Estrategia: riegos diarios o cada 1 día en las zonas más calurosas del día (madrugada o primera mañana), evitando encharcamientos
+- Duración típica por pulsación: 1–3 h, según caudal y separación de goteros; repartir en 2–3 pulsos mejora la distribución lateral
+- Mantener humedad del suelo en franc",,,,,,
+12,Q01,en,What is the weather forecast for my field this week?,"I couldn't retrieve the specific weather forecast for your vineyard at this time. 
+
+However, since you're on the Dashboard section of the app, you can view the current weather and 7-day forecast directly on your screen — including temperature, precipitation, humidity, wind speed, and ET₀ for your Demo Vineyard in Casablanca.
+
+For mid-season vineyards in coastal Valparaíso (January), typical conditions are temperatures of 18-25°C with low rainfall and moderate sea breeze. Check the dashboard aler",,,,,,
+13,Q44,es,Mi suelo tiene fósforo alto (50 ppm). Ajusta el plan de fertilización para tomate con objetivo 80 t/ha.,"Hay una inconsistencia: tu campo **""Demo Vineyard""** tiene registrado cultivo de **vid** (Vitis vinifera) en Casablanca, pero pides un plan para **tomate**.
+
+¿Te refieres a:
+- Un campo diferente con tomate, o
+- Quieres el plan de fertilización para la **vid** en tu viñedo?
+
+Si confirmas el cultivo correcto, ajustaré el plan considerando el **fósforo alto (50 ppm)**, lo que permite reducir significativamente la dosis de P en el programa.",,,,,,
+14,Q30,en,What was Chile's grape production and yield over the last 10 years?,"Based on FAOSTAT data, Chile's grape production and yield over the last 10 years show the following:
+
+**Production** declined from approximately **2.8 million tonnes in 2015** to around **2.0-2.1 million tonnes in 2022-2023**, representing a ~25% decrease. This drop is primarily due to reduced table grape planted area, increased water stress from drought, and strategic vineyard replanting.
+
+**Yield** averaged **16-18 tonnes/ha** during this period, maintaining relative stability despite the prod",,,,,,
+15,Q26,es,Busca boletines técnicos del INIA sobre control de oídio en vid.,"Los sistemas de búsqueda devolvieron resultados simulados (stubs de evaluación) sin contenido real de la biblioteca INIA, por lo que no puedo acceder a los boletines técnicos específicos en este momento.
+
+**Contexto para tu viñedo en Casablanca**: El oídio (*Uncinula necator*) es una de las enfermedades más relevantes en vid de la zona. Tu cultivo en etapa de **media temporada** (media estación) es especialmente vulnerable porque las condiciones de humedad relativa moderada y temperaturas entre",,,,,,
+16,Q08,es,¿Hay zonas de bajo vigor en mi parcela este mes según las imágenes Sentinel-2?,"Las imágenes satelitales Sentinel-2 con índices de vigor (NDVI) están disponibles directamente en el mapa de tu parcela. Puedes visualizar y analizar las zonas de menor crecimiento en tiempo real desde ahí.
+
+Para identificar **zonas de bajo vigor** en tu vid:
+- **NDVI < 0.3**:Areas con bajo vigor
+- **NDVI 0.3 - 0.5**: Vigor moderado
+- **NDVI > 0.6**: Vigor adecuado a alto
+
+En la etapa de media estación de la vid en Valparaíso (enero), un NDVI bajo puede indicar déficit hídrico, deficiencias nutr",,,,,,
+17,Q59,pt,Mostre a tendência de rendimento de soja na Argentina pelas estatísticas da FAO.,"**Rendimiento de soja en Argentina (2010-2023)**
+
+El rendimiento promedio de soja en Argentina muestra una tendencia fluctuante con un descenso pronunciado desde el pico de **2014-2015** hacia niveles más bajos **2022-2023**, afectado por la sequía severa:
+
+- **2010:** ~2.800 kg/ha
+- **2014-2015:** ~3.200 kg/ha (máximo del período)
+- **2019-2020:** ~2.960 kg/ha
+- **2022-2023:** ~2.700 kg/ha (mínimo del período)
+
+La tendencia muestra dos ciclos marcados: recuperación 2016-2019 hasta superar 3.0 k",,,,,,
+18,Q45,en,Search the INIA Chile digital library for documents about cover crops in vineyards.,"ERROR: Error code: 429 - {'message': ""We're experiencing high traffic right now! Please try again soon."", 'type': 'too_many_requests_error', 'param': 'queue', 'code': 'queue_exceeded'}",,,,,,
+19,Q49,pt,"Interprete esta análise de solo: pH 5,4, MO 1,5%, P 9 ppm, K 0,18 cmol/kg.","**Diagnóstico para vid:**
+
+**pH 5.4** - Moderadamente ácido (ideal 6.0-7.0). Aplica **1.5-2 ton/ha de cal agrícola** para subir a 6.5, incorporando 15-20 días antes de la fertirrigación primaveral.
+
+**MO 1.5%** - Baja (ideal 2.5-3%). Incorpora **5-8 m³/ha de compost o estiércol bien descompuesto** más **1-2 ton/ha de materia orgánica estabilizada**.
+
+**P 9 ppm** - Muy bajo (suficiente >20-25 ppm). Aplicar **60-80 kg/ha de P₂O₅** como DAP o MAP en base, incorporado al suelo en invierno.
+
+**K 0.18",,,,,,
+20,Q13,es,"Analiza este foliar: N 2.2%, P 0.25%, K 1.1%, Fe 45 ppm, Zn 12 ppm.","Tu análisis foliar muestra **dos deficiencias importantes** en vid durante media estación:
+
+**K 1.1% — DEFICIENTE** (rango óptimo: 1.5-2.5%)
+El potasio bajo afecta acumulación de azúcares, calibre de bayas y color de piel. En uva de mesa compromete exportación; en vinífera, calidad enológica.
+
+**Zn 12 ppm — DEFICIENTE** (óptimo: 20-50 ppm)
+Afecta elongación de entrenudos y diferenciación floral. Puede causar acortamiento de brotes y hojas pequeñas (""muelas de sierra"").
+
+**Otros parámetros:**
+- *",,,,,,
+21,Q50,pt,"Minha análise de solo deu pH 7,8 e CE 2,3 dS/m. O que isso significa para a minha cultura?","**Você tem dois problemas a enfrentar:**
+
+**pH 7.8 (alcalino)** — A videira prefere pH entre **6.0-7.0**. Com esse valor, há risco de menor disponibilidade de micronutrientes (ferro, manganês, zinco) e fósforo. Em sequeiro, as plantas podem ficar amarelas (clorose férrica). Em gotejo, o risco é menor pois você pode acidificar a água de irrigação.
+
+**CE 2.3 dS/m (salinidade moderada)** — A videira é moderadamente tolerante, mas esse nível já pode reduzir a absorção de água e prejudicar o desenvol",,,,,,
+22,Q56,pt,Encontre artigos científicos recentes sobre irrigação com déficit em videira.,"**Realizei buscas nas bases de dados científicas (OpenAlex, Google Scholar e biblioteca INIA Chile) sobre irrigação com déficit em videira.** Embora não estejam disponíveis os detalhes específicos dos artigos neste momento, posso destacar os principais conceitos que a literatura recente aborda:
+
+## Temas principais na pesquisa em RDI em videira:
+
+1. **RDI (Regulated Deficit Irrigation)** - redução controlada da irrigação em estádios fenológicos específicos, geralmente pós-floração e veraison, co",,,,,,
+23,Q25,es,¿Qué recomienda el INIA sobre el manejo del riego en cerezos en Chile? Dame extractos.,"**Extractos del INIA sobre manejo de riego en cerezos en Chile:**
+
+""Los requerimientos hídricos del cerezo son elevados, especialmente desde el inicio de la brotación hasta el desarrollo del fruto. Se recomienda mantener una humedad disponible no inferior al 60% de la capacidad de campo durante el período de mayor demanda. Tensiones de agua superiores a -10 bares pueden afectar seriamente el cuajado y el tamaño final del fruto.""
+
+""La frecuencia de riego en cerezos bajo gotreo puede variar entre",,,,,,
+24,Q19,en,Give me an NPK fertilization plan for a 12 t/ha potato yield target.,"## Plan de Fertilización NPK - Papa (12 t/ha) | 5 ha
+
+**Dosis totales por hectárea:**
+- Nitrógeno (N): **180 kg/ha**
+- Fósforo (P₂O₅): **90 kg/ha**
+- Potasio (K₂O): **260 kg/ha**
+
+Programa por hectárea:
+
+| Etapa | Productos | Dosis (kg/ha) | Momento |
+|-------|-----------|---------------|---------|
+| Pre-siembra | **50% P + 50% K** | **450 kg/ha de 10-20-20** | Incorporado al surco |
+| Siembra | **25% N** | **55 kg/ha de urea (46% N)** | Banda junto a la semilla |
+| Tuberculación (25-30 días) |",,,,,,
+25,Q46,pt,Qual é a previsão de geada para o meu vinhedo nos próximos dias?,"Baseado nos dados climáticos consultados para Casablanca (lat: -33.32, long: -71.41), não consegui obter os detalhes específicos de previsão de geada para os próximos 7 dias.
+
+Para verificar condições de geada no seu vinhedo durante a época de meia estação (janeiro), recomendo consultar os sistemas de alerta meteorológico locais da Região de Valparaíso ou utilizar sensores de temperatura no campo, pois este é um período onde geralmente não se esperam geadas na zona central chilena, mas condições",,,,,,
+26,Q52,pt,"Tenho clorose nas folhas. Foliar: Fe 28 ppm, Mn 22 ppm, N 2,4%. O que devo corrigir?","Fe (28 ppm) fica **baixo**, Mn (22 ppm) levemente baixo e N (2,4%) adequado. A clorose provavelmente vem de **deficiência de ferro**.
+
+**Correção rápida (foliar):**
+- Quelato de Fe (EDDHA-Fe ou EDTA-Fe): 2–3 kg/ha, 2 aplicações com 7–10 dias entre elas, com surfatante.
+- Quelato de Mn (EDTA-Mn ou sulfato de Mn): 1–2 kg/ha, 1–2 aplicações, também com surfactante.
+- Se pH do solo for alto (>7,5) ou calcário, considere aplicação de ácido cítrico (5–10 kg/ha) via fertirrigação antes dos quelatos fol",,,,,,
+27,Q28,en,Search the FAO AGRIS database for literature on integrated pest management in vineyards.,"No pude recuperar resultados de las bases de datos en este momento (FAO AGRIS o OpenAlex están devolviendo respuestas vacías).
+
+Te recomiendo buscar directamente en **AGRIS (FAO)**: https://agris.fao.org/search/ con los términos:
+- ""integrated pest management vineyards""
+- ""manejo integrado de plagas vid viticultura""
+
+También puedo buscar en la **Biblioteca INIA Chile** si necesitas literatura específica sobre manejo de plagas en vid para la zona de Casablanca/Valparaíso, que incluiría técnicas v",,,,,,
+28,Q60,pt,"Qual é o NDVI atual do meu campo e, considerando o clima, devo irrigar esta semana?","NDVI atual do seu campo: 0,74 (mapa Sentinel-2 no Dashboard) — vigor bom, com manchas levemente mais baixas (~0,68).
+
+Clima atual e previsão (7 dias): 28°C/45% UR; 0 mm; ET0 4,8 mm/dia. Próximos dias: 32–35°C, UR descendo (28–35%), 0 mm, ET0 5,0–5,5 mm/dia; alerta de calor extremo.
+
+Você deve irrigar esta semana. Para uva de mesa em meia estação (Kc ≈ 0,70–0,80, ETc ≈ 3,4–4,0 mm/dia), recomendo:
+- **4,5–5,0 mm/dia** via gotejamento
+- Umidificar bem o perfil antes do pico de calor (dia 6)
+- Pulso",,,,,,
+29,Q55,pt,Como fracionar a aplicação de nitrogênio para uma lavoura de milho de 10 t/ha?,"ERROR: Error code: 429 - {'message': ""We're experiencing high traffic right now! Please try again soon."", 'type': 'too_many_requests_error', 'param': 'queue', 'code': 'queue_exceeded'}",,,,,,
+30,Q18,es,"Mi cultivo de papa está en mid-season, suelo arcilloso, aspersión. ¿Cuánto regar?","Para papa en mid-season con suelo arcilloso y aspersión:
+
+**Lámina bruta: 35-45 mm por riego**, cada **4-6 días** según clima.
+
+---
+
+En la etapa de tuberización la demanda hídrica es máxima. Suelo arcilloso retiene más agua, por lo que puedes espaciar más que en suelos arenosos. Ajusta si llueve o hay días muy cálidos (>28°C). Verifica humedad a 20-30 cm de profundidad antes de cada riego.",,,,,,
+31,Q24,en,Find peer-reviewed studies reporting YOLO-based grape cluster detection accuracy.,"I apologize, but the bibliographic search functions are currently unavailable and I cannot retrieve the specific peer-reviewed studies you requested.
+
+Here's what I can share about YOLO-based grape cluster detection accuracy based on known literature:
+
+**Typical reported accuracy metrics:**
+- **mAP (mean Average Precision):** 0.85-0.95+ for well-trained models
+- **F1-score:** Often 0.87-0.93 in orchard conditions
+- **Detection speed:** 30-60 FPS on embedded systems (Jetson, Raspberry Pi)
+
+**Key",,,,,,
+32,Q51,pt,"Análise foliar: N 1,9%, K 0,7%, Mg 0,15%. Há deficiências?","Sí, hay **tres deficiencias activas** en tu vid (media estación):
+
+- **Nitrógeno (1,9%)**: deficiente. Rango adecuado en media estación es 2,5-3,5%. Parches verdes pálidos, brotes delgados. Aplicar urea 1,5% vía foliar o DAP en goteo (30-40 kg N/ha) si no lo hiciste recientemente.
+
+- **Potasio (0,7%)**: muy deficiente. Rango adecuado 1,2-2,0%. Afecta llenado de bayas y acumulación de azúcares. Aplicar KNO₃ o K₂SO₄ 2% foliar (2-3 aplicaciones) o K₂SO₅O₇ 40-60 kg K₂O/ha por fertirrigación.
+
+- **Ma",,,,,,
+33,Q48,pt,Existem zonas de baixo vigor no meu talhão segundo as imagens Sentinel-2 deste mês?,"Tienes acceso a las imágenes NDVI de Sentinel-2 directamente en el mapa de la app para los **5 ha de tu viñedo en Casablanca**. En esta etapa de **mediados de temporada** (enero), el NDVI indica vigor vegetativo activo.
+
+**Valores de referencia para vid en pleno desarrollo:**
+- NDVI > 0.70: vigor alto (sombreado excesivo, puede afectar maduración)
+- NDVI 0.55-0.70: vigor óptimo (equilibrado)
+- NDVI 0.40-0.55: vigor moderado-bajo
+- NDVI < 0.40: bajo vigor (estrés hídrico, déficit nutricional, pro",,,,,,
+34,Q61,pt,"Interprete minha análise de solo (pH 5,3, P 11 ppm, K 0,14 cmol/kg) e proponha um plano de adubação para meta de 20 t/ha de uva.","## Diagnóstico del suelo
+
+**pH 5,3**: Levemente ácido, aceptable para viñedo pero puede afectar disponibilidad de nutrientes. Sugerir aplicar 1-2 t/ha de cal agrícola si hay tendencia a acidificación.
+
+**P 11 ppm**: Deficiente para meta de 20 t/ha. Vid requiere 20-30 ppm Bray para alto rendimiento. Necesita fertilización fosfatada intensiva en presiembra o base.
+
+**K 0,14 cmol/kg**: Muy bajo (~55 ppm). Ideal para vid de mesa premium: 0,30-0,40 cmol/kg. El potasio es crítico para calidad de baya,",,,,,,
+35,Q04,en,Show me the reference evapotranspiration forecast for my coordinates.,"Based on the climate data retrieved for your Demo Vineyard coordinates (-33.32, -71.41) in Casablanca:
+
+## ET₀ Forecast (mm/day)
+The data includes daily reference evapotranspiration values calculated using the FAO-56 Penman-Monteith method. The tool provides ET₀ alongside temperature, humidity, wind speed, and solar radiation — all key drivers for accurate irrigation scheduling in vineyards.
+
+**Note:** The actual 7-day forecast values should be displayed in the dashboard's climate section. Since",,,,,,
+36,Q47,pt,Mostre o NDVI atual da minha parcela.,"Você pode visualizar o NDVI atual da sua vinícola 'Demo Vineyard' diretamente no mapa da aplicação. O índice ativo exibe os dados do satélite Sentinel-2 (resolução 10m), onde tons de verde mais intensos indicam vegetação densa e vigorosa, enquanto tons mais claros ou amarelados podem indicar maior estresse ou desenvolvimento incipiente.
+
+Para ver os valores específicos, navegue no mapa sobre sua parcela — a ferramenta mostrará o NDVI ponto a ponto ao selecionar áreas de interesse. Caso queira um",,,,,,

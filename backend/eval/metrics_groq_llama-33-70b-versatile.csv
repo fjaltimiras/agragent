@@ -1,0 +1,22 @@
+id,lang,category,expect_tool,coverage,no_extraneous,correct,groups_satisfied,groups_total,called_total,called_in_gold,iterations,latency_s
+Q01,en,climate,True,False,True,False,0,1,0,0,0,0.0
+Q02,es,climate,True,False,True,False,0,1,0,0,0,0.0
+Q03,pt,climate,True,True,True,True,1,1,1,1,1,3.99
+Q04,en,climate,True,False,True,False,0,1,0,0,0,0.0
+Q05,en,satellite,True,False,True,False,0,1,0,0,0,0.0
+
+n_queries,5
+query_accuracy,0.2
+on_topic_accuracy,0.2
+abstention_accuracy,0.0
+tool_precision,1.0
+group_recall,0.2
+f1,0.33333333333333337
+mean_latency_s,0.8
+median_latency_s,0.0
+mean_iterations,0.2
+by_lang,"en=(0, 3)","es=(0, 1)","pt=(1, 1)"
+by_category,"climate=(1, 4)","satellite=(0, 1)"
+provider,groq
+model,llama-3.3-70b-versatile
+recovered_leaked_toolcalls,1

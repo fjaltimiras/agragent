@@ -2,7 +2,7 @@
 
 **agragent** is an open-source precision agriculture platform for any crop type and any location. It integrates satellite remote sensing, climate analytics, genomic data visualization, computer vision, and an **AI-powered agronomic assistant** into a single web application.
 
-The AI agent (powered by Claude) has access to 11 autonomous tools and six scientific data sources: Sentinel-2 / Google Earth Engine, Open-Meteo (80 years of climate), OpenAlex (250M+ research papers), AGRIS FAO (16.5M+ agricultural records), INIA Chile library (19K+ publications with semantic RAG), and FAOSTAT global crop statistics.
+The AI agent (powered by open-weight large language models served through OpenAI-compatible inference endpoints) has access to 11 autonomous tools and six scientific data sources: Sentinel-2 / Google Earth Engine, Open-Meteo (80 years of climate), OpenAlex (250M+ research papers), AGRIS FAO (16.5M+ agricultural records), INIA Chile library (19K+ publications with semantic RAG), and FAOSTAT global crop statistics.
 
 Developed as part of a PhD research project in Computer Science at the Pontificia Universidad Católica de Valparaíso (PUCV), Chile. The genomic module uses a *Vitis vinifera* RNA-seq dataset (Altimiras et al., 2024) as the research component; all other features are crop-agnostic.
 
@@ -13,6 +13,9 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 - [Features](#features)
 - [Chat Widget (agragent.com)](#chat-widget-agragentcom)
 - [Chat Integration (app.agragent.com)](#chat-integration-appagragentcom)
+- [WhatsApp Demo](#whatsapp-demo)
+- [WhatsApp Production Channel](#whatsapp-production-channel-meta-cloud-api)
+- [INIA Knowledge Base — Two-Layer RAG](#inia-knowledge-base--two-layer-rag)
 - [AI Assistant](#ai-assistant)
 - [How It Works](#how-it-works)
 - [Architecture](#architecture)
@@ -39,22 +42,22 @@ Developed as part of a PhD research project in Computer Science at the Pontifici
 
 | Module | Description |
 |---|---|
-| **Login** | Username/password authentication with role-based access (Admin, Viewer) |
+| **Login** | Client-side username/password session authentication with a role label. The role is descriptive only: there is **no server-side authorization** enforcement |
 | **Dashboard** | Dynamic agronomic overview: 8 KPIs, water balance, risk assessment, alerts, charts, **satellite indices**, and **yield prediction summary** — all derived from the user's polygon |
 | **Satellite Maps** | Sentinel-2 imagery via Google Earth Engine (auto-connected via service account) with 13 spectral indices grouped by category, scene browsing, split-screen temporal comparison, **location search** (Nominatim geocoding), and collapsible panels |
 | **Climate Data** | Real-time climate analytics from Open-Meteo — temperature, precipitation, humidity, solar radiation, ET₀, GDD, chill hours, frost, heat waves (8 KPIs + 6 charts), **GDD comparison between custom date ranges** |
 | **Genomic Analysis** | Real RNA-seq DEG data from Altimiras et al. (2024) — 3,603 DEGs across 8 phenological stages of *Vitis vinifera* |
 | **Image Analysis** | Integration with the WGISD dataset (Embrapa) — 300+ grape cluster images with YOLO bounding box annotations |
-| **Yield Prediction** | Dynamic yield prediction using PyCaret Extra Trees Regressor (R²=0.972) — yield/ha, total yield, harvest date, feature importance, satellite indices, and multi-model comparison — computed automatically from polygon data |
+| **Yield Estimation** | Heuristic yield estimate — a weighted sum of climate and satellite indicators with expert-assigned weights, **not a trained model** — plus yield/ha, total yield, harvest date, satellite indices, and a validation panel reporting measured accuracy on three public datasets |
 | **Field Action Plan** | Phenological delay analysis (GDD-based), chill hours assessment, seasonal activity calendar with stage-specific field operations, and climate alerts with agronomic recommendations |
-| **AI Assistant** | Context-aware conversational agent (Claude) with access to climate, satellite, soil, irrigation, and fertilization tools |
+| **AI Assistant** | Context-aware conversational agent (open-weight LLM) with access to climate, satellite, soil, irrigation, and fertilization tools |
 | **References** | Author info, ORCID, associated publications with DOIs, dataset citations |
 | **Multi-language** | English, Spanish, and Portuguese — language persisted in localStorage |
 
 ### Authentication
 
 - Login screen with username/password
-- Default users: `admin` (full access, GEE credentials auto-filled) and `demo` (viewer)
+- Default user: `demo` / `demo33` (viewer)
 - Sessions stored in sessionStorage (24h expiry)
 - User list stored in localStorage (can be extended)
 - Logout button in sidebar
@@ -157,15 +160,19 @@ A dedicated section for phenological tracking and seasonal planning:
 When a polygon is loaded, the system automatically computes yield predictions using climate and satellite data:
 
 - **Satellite indices extraction**: mean NDVI, NDRE, MSAVI, TCARI, EVI, NDMI computed via GEE `reduceRegion` over the polygon area
-- **Yield model**: PyCaret Extra Trees Regressor (R²=0.972, MAPE=3.8%) with 15 weighted features:
+- **Yield estimate**: a heuristic weighted sum of 15 climate and satellite indicators with expert-assigned
+  weights. It is **not a trained model**: no regressor runs in the browser, and no accuracy figure is
+  claimed for this estimate.
   - Climate: precipitation, GDD, max temperature, chill hours, humidity, ET₀, solar radiation, frost days, heat waves
   - Satellite: NDVI, NDRE, MSAVI, TCARI, EVI, NDMI
-- **Dynamic Feature Importance**: contribution = weight × normalized value, recalculated per prediction
+- **Indicator contributions**: contribution = weight × normalized value, recalculated per estimate
 - **Outputs**:
-  - Yield per hectare (t/ha) with confidence interval
+  - Yield per hectare (t/ha) with an indicative range (**not** a confidence interval)
   - Total yield based on polygon area
   - Estimated harvest date (GDD-based phenological model)
-- **Multi-model comparison**: Extra Trees, CatBoost, Random Forest, XGBoost, SVR — each produces its own prediction per polygon
+- **Validation panel**: reports measured accuracy on three real public datasets — FAOSTAT grapes
+  (R²=0.92, one-year-ahead), CropNet maize counties (R²=0.41, random CV) and a within-field vineyard
+  (R²=-0.12, MAPE 53%, operationally unusable). Predictability is scale-dependent.
 - **Dashboard integration**: satellite indices and yield summary cards update automatically
 
 ### Collapsible UI Panels
@@ -184,7 +191,8 @@ All map section panels (Sentinel-2 Controls, Layers & Tools, Vegetation Indices)
 - **WGISD dataset**: 300 images, 5 grape varieties (Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc, Syrah)
 - **Bounding box visualization**: Color-coded by cluster size, numbered labels, accurate canvas overlay
 - **Berry estimation**: Based on bbox area — small clusters ≈ 20 berries, large ≈ 80
-- **Upload your own image**: sent to the AgrAgent API for real-time YOLOv11 inference
+- **Upload your own image**: Sends to backend API (`POST /api/detect/`) for real-time YOLOv11 inference
+- **Backend**: FastAPI + YOLOv11n deployed on Railway (`agragent-api-production.up.railway.app`)
 - **Training script**: `yolo/train_wgisd.py` — downloads WGISD, trains YOLOv11n, exports ONNX
 
 ### Farmer-Friendly UX
@@ -199,7 +207,7 @@ All map section panels (Sentinel-2 Controls, Layers & Tools, Vegetation Indices)
 
 ## Chat Widget (agragent.com)
 
-A self-contained floating chat widget injected into `landing.html`, connecting visitors of [agragent.com](https://agragent.com) to the AgrAgent Claude agent.
+A self-contained floating chat widget injected into `landing.html`, connecting visitors of [agragent.com](https://agragent.com) to the AgrAgent assistant.
 
 | Feature | Detail |
 |---|---|
@@ -221,18 +229,211 @@ The existing "Consultar AgrAgent" section in `app.html` has been upgraded to use
 
 | Aspect | Detail |
 |---|---|
-| **Primary API** | AgrAgent API (11 tools, SSE streaming) |
+| **Primary API** | `agragent-api-production.up.railway.app` (Railway FastAPI — 11 tools, SSE streaming) |
 | **Fallback API** | `api.agragent.com` (Vercel serverless — 8 tools, always available) |
-| **Streaming** | SSE tokens appear progressively; falls back to JSON if unavailable |
+| **Streaming** | 5-second timeout to connect to Railway, then falls back to Vercel JSON if unavailable |
 | **Tools shown** | Climate, NDVI, Soil, Foliar, Irrigation, Fertilization, INIA library, INIA RAG, OpenAlex, AGRIS FAO, FAOSTAT (badge per tool) |
 | **Views** | Floating widget + full-page section update simultaneously (dual-view architecture) |
 | **Context** | `chatCollectAppContext()` prepends field polygon, climate KPIs, and active satellite index to every message |
 
 ---
 
+## WhatsApp Demo
+
+`whatsapp-demo.html` is a standalone prototype that simulates how AgrAgent would work as a WhatsApp conversational agent. It is a single HTML file with no build step, connecting directly to the FastAPI backend.
+
+### Purpose
+
+- Test the full agentic loop (open-weight LLM + **7 tools**) in a messaging-style UI before integrating with a real WhatsApp Business API
+- Demo agronomic conversations with soil/foliar report uploads, field location sharing, INIA bibliography search, and tool call visualization
+- Works on desktop and mobile browsers
+
+### Running the demo
+
+```bash
+# 1. Start the FastAPI backend
+cd backend
+python3 -m uvicorn app.main:app --reload --port 8000
+
+# 2. Serve the frontend (from agragent-app/)
+cd ..
+python3 -m http.server 8080
+
+# 3. Open in browser
+open http://localhost:8080/whatsapp-demo.html
+```
+
+Or open `whatsapp-demo.html` directly in the browser — the backend has CORS open for `*`, so `file://` also works.
+
+### Features
+
+| Feature | Description |
+|---|---|
+| **WhatsApp Web UI** | Dark theme, message bubbles, typing indicator, timestamps — fully responsive (mobile + desktop) |
+| **Conversation list** | Collapsible sidebar with search and history loaded from Supabase |
+| **Projects / folders** | Organize conversations into color-coded folders stored in localStorage; right-click to edit/delete |
+| **Rename & delete** | Hover a conversation → inline rename (Enter to save, Esc to cancel) or delete — no page reload |
+| **Markdown rendering** | Tables, lists, bold, code blocks in assistant responses |
+| **Tool badges** | Each response shows which tools the agent used (🌤️ Climate · 🛰️ NDVI · 🧪 Soil · 💧 Irrigation · 🌱 Fertilization · 📚 INIA) |
+| **INIA library search** | The agent can query 19K+ open-access agricultural documents from Biblioteca Digital INIA Chile in real time |
+| **File upload (📎)** | Attach PDF or Excel soil/foliar reports — parsed by backend and sent to the agent automatically |
+| **Field location (📍)** | Share field location via 4 methods (see below) |
+| **Config (⚙️)** | Change backend URL at runtime (useful to point to Railway instead of localhost) |
+| **Mobile** | Sidebar as full overlay, hamburger menu, full-screen modals, iOS-safe input font size |
+| **Streaming SSE** | `POST /api/chat/stream` — text tokens appear progressively; perceived latency ~2s vs 13s with blocking JSON |
+
+### Field Location Panel (📍)
+
+Clicking the 📍 button opens a panel with four ways to specify the field:
+
+| Tab | How it works |
+|---|---|
+| **🔍 Buscar** | Type a place name → Nominatim geocoding → pin on map |
+| **🛰️ GPS** | Enter latitude/longitude manually + optional area in ha |
+| **🗂️ KML/KMZ** | Drag and drop or select a KML/KMZ file → polygons parsed in-browser, area and centroid computed |
+| **✏️ Dibujar** | Draw the polygon directly on the map using Leaflet-Geoman tools (free polygon, rectangle, edit, delete) → area and centroid calculated automatically |
+
+On confirm, a structured message is sent to the agent with the centroid coordinates and polygon vertices so the agent can use them in `get_climate_data`, `get_ndvi_data`, and irrigation/fertilization tools.
+
+### Backend requirements
+
+The demo connects to the same FastAPI backend as the main app. Required environment variables in `backend/.env`:
+
+```env
+ANTHROPIC_API_KEY=sk-ant-...
+SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+VOYAGE_API_KEY=pa-...           # (opcional) — solo para RAG semántico INIA, free tier sin tarjeta
+```
+
+Pull from Vercel automatically:
+```bash
+cd agragent-api
+npx vercel env pull ../agragent-app/backend/.env --environment=production
+```
+
+---
+
+## WhatsApp Production Channel (Meta Cloud API)
+
+Beyond the demo HTML, AgrAgent connects to **real WhatsApp** via Meta's free Cloud API. Code lives in `backend/app/routers/whatsapp.py`, `backend/app/services/meta_whatsapp.py`, and `backend/app/services/wa_formatter.py`.
+
+### What's supported
+
+| Mensaje del usuario | Comportamiento del agente |
+|---|---|
+| Texto | Conversación normal con las 8 tools |
+| 📍 Location | Inyecta coordenadas como contexto |
+| 📂 PDF/Excel | Parsea informe de suelo o foliar |
+| 📂 KML/KMZ | Extrae polígono → centroide y área |
+| 🖼️ Imagen | Acuse de recibo (YOLOv11 = roadmap) |
+| 🎤 Voice note | Acuse de recibo (Whisper = roadmap) |
+| 🔘 Botón interactivo | Reply text se procesa como mensaje normal |
+
+### Setup
+
+Ver guía completa en [`backend/WHATSAPP_SETUP.md`](backend/WHATSAPP_SETUP.md).
+
+Pasos resumidos:
+1. Crear app en developers.facebook.com con producto WhatsApp
+2. Obtener `META_WHATSAPP_TOKEN`, `META_WHATSAPP_PHONE_ID`, definir `META_WHATSAPP_VERIFY_TOKEN`
+3. Exponer backend con HTTPS público (ngrok local o Railway producción)
+4. Configurar webhook URL en Meta: `https://TU_URL/api/whatsapp/webhook`
+5. Suscribir al campo `messages`
+6. Probar enviando un mensaje al número de prueba de Meta
+
+### Persistencia
+
+Cada usuario WhatsApp = un `user_id = "whatsapp:<phone>"` en la misma tabla `conversations` que el demo. Una sola conversation por número (el agente recuerda todo el historial).
+
+---
+
+## INIA Knowledge Base — Two-Layer RAG
+
+AgrAgent integrates with the **Biblioteca Digital INIA Chile** (DSpace 7, 19,000+ open-access agricultural documents) via **two complementary tools**:
+
+### Layer 1 — `search_inia_biblioteca` (live, metadata only)
+
+Real-time keyword search against the INIA REST API. Returns titles, authors, year, abstract, and link.
+
+- **Cost:** $0
+- **Storage:** 0 MB
+- **Setup:** none — works out of the box
+- **Use when:** user asks for bibliographic references, documents on a topic, or general literature panorama
+- Implementation: `services/inia.py`
+
+### Layer 2 — `search_inia_rag` (semantic, full-text)
+
+Semantic vector search over indexed text chunks of INIA documents. Returns actual textual passages ranked by cosine similarity to the query embedding.
+
+- **Embeddings:** [Voyage AI](https://www.voyageai.com/) `voyage-multilingual-2` (1024 dim, optimized for Spanish)
+- **Cost:** Free — Voyage offers **200M tokens/month free** (no credit card required). 19,000 INIA docs ≈ 100M tokens once, well within limits.
+- **Storage:** ~600 MB in Supabase pgvector
+- **Setup:** see below
+- **Use when:** user wants specific passages, doses, recommendations, or "what does INIA say about X?"
+- Implementation: `services/inia_rag.py`, `scripts/index_inia.py`, `scripts/inia_rag_schema.sql`
+
+#### Setup Layer 2 (RAG)
+
+```bash
+# 1. Apply pgvector schema in Supabase SQL Editor:
+#    paste content of backend/scripts/inia_rag_schema.sql
+
+# 2. Sign up free at https://dash.voyageai.com/ (no credit card)
+#    Generate API key, then add to backend/.env:
+echo "VOYAGE_API_KEY=pa-..." >> backend/.env
+
+# 3. Install indexer dependencies (if not already)
+cd backend
+pip install voyageai supabase python-dotenv
+
+# 4. Run the indexer
+#    Test small (50 docs viticultura, ~5 min)
+python3 scripts/index_inia.py --topic "vid OR uva OR vino" --limit 50
+
+#    Full viticulture corpus (~2500 docs, ~45 min)
+python3 scripts/index_inia.py --topic "vid OR uva OR vino" --limit 2500
+
+#    Other topics (each independent)
+python3 scripts/index_inia.py --topic riego --limit 1000
+python3 scripts/index_inia.py --topic "fertilizacion OR nutricion" --limit 1000
+```
+
+The indexer is **resumable** — it skips documents already indexed by UUID. Pre-extracted text bundles are downloaded directly from DSpace (no PDF parsing or OCR needed).
+
+#### Architecture diagram
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    AgrAgent (agentic loop)                  │
+│                                                             │
+│  ┌─────────────────────┐    ┌───────────────────────────┐ │
+│  │ search_inia_biblioteca   │ search_inia_rag            │ │
+│  │  (live metadata)    │    │  (semantic RAG)           │ │
+│  └──────────┬──────────┘    └─────────────┬─────────────┘ │
+└─────────────┼──────────────────────────────┼──────────────┘
+              │                              │
+              ▼                              ▼
+   ┌──────────────────────┐    ┌──────────────────────────┐
+   │ INIA REST API        │    │ Voyage AI embeddings     │
+   │ (DSpace 7)           │    │ voyage-multilingual-2    │
+   │ biblioteca.inia.cl   │    │ (1024 dim, free 200M/mo) │
+   └──────────────────────┘    └────────────┬─────────────┘
+                                            │
+                                            ▼
+                               ┌──────────────────────────┐
+                               │ Supabase pgvector        │
+                               │ • inia_documents         │
+                               │ • inia_chunks            │
+                               │ • match_inia_chunks()    │
+                               └──────────────────────────┘
+```
+
+---
+
 ## AI Assistant
 
-agragent includes an integrated AI agronomic assistant powered by [Claude](https://www.anthropic.com/claude) (Anthropic) via a FastAPI backend.
+agragent includes an integrated AI agronomic assistant powered by open-weight large language models (`gpt-oss-120b`, `gemma-4-31b`, `zai-glm-4.7`) served through OpenAI-compatible inference endpoints via a FastAPI backend. The inference layer is self-hostable and not tied to a single proprietary vendor.
 
 ### Availability
 
@@ -256,7 +457,7 @@ Every message automatically includes the current application state:
 
 ### Agent Tools
 
-The AI assistant has 11 tools it can invoke autonomously:
+The FastAPI backend agent (Railway) has 11 tools it can invoke autonomously:
 
 | Tool | Description |
 |---|---|
@@ -281,9 +482,15 @@ The Vercel serverless fallback (`api.agragent.com`) runs 8 of these tools (exclu
 - Quick-start cards translated to EN/ES/PT
 - Markdown rendering with tool-use badges
 
+### Backend
+
+The AI backend is a FastAPI service (`backend/`, released in this repository under AGPL-3.0) that calls open-weight models through OpenAI-compatible endpoints (Cerebras, with Groq as an automatic fallback) with an agentic loop (max 10 iterations per message).
+
+---
+
 ## How It Works
 
-1. **Login** with your credentials (default: `admin` / `agragent2026`)
+1. **Login** with your credentials (demo account: `demo` / `demo33`)
 2. **Navigate to Satellite Maps** and upload a KML/KMZ file or draw a polygon
 3. The app automatically:
    - Detects the location name via reverse geocoding
@@ -301,9 +508,9 @@ The Vercel serverless fallback (`api.agragent.com`) runs 8 of these tools (exclu
 
 agragent combines a **single-page frontend** (`index.html`) with an optional **FastAPI backend** for AI assistant capabilities:
 
-- **Frontend** (this repository): self-contained SPA with all HTML, CSS, and JS — runs standalone for monitoring features
-- **Backend** (private): a separate FastAPI service providing conversational AI via Claude, with tool-calling and conversation persistence in Supabase — not publicly released
-- **Deployment**: frontend on Vercel (`agragent.com`); the backend is consumed through the public AgrAgent API
+- **Frontend**: self-contained SPA with all HTML, CSS, and JS — runs standalone for monitoring features
+- **Backend** (`backend/`): FastAPI service providing conversational AI via open-weight models on OpenAI-compatible endpoints, with tool-calling and conversation persistence in Supabase. Released in this repository under AGPL-3.0
+- **Deployment**: frontend on Vercel (`agragent.com`), backend deployable independently
 
 ```
 ┌──────────────────────────────────────────────────────────┐
@@ -325,7 +532,7 @@ agragent combines a **single-page frontend** (`index.html`) with an optional **F
   Archive API     Engine API      Geocoding  │  (agro-agent)│
   (climate)       (Sentinel-2)    (location) │      │       │
        │                                     │  ┌───┴────┐  │
-   WGISD/GitHub                              │  │ Claude │  │
+   WGISD/GitHub                              │  │ Agent  │  │
    (grape images)                            │  │  API   │  │
                                              │  └───┬────┘  │
                                              │  ┌───┴────┐  │
@@ -378,6 +585,22 @@ open http://localhost:8080
 ```
 
 > **Note**: A local HTTP server is required (not `file://`) because the app makes API calls that require proper CORS handling.
+
+### With AI Assistant (Backend)
+
+```bash
+# Clone and set up the backend
+cd agro-agent
+cp .env.example .env
+# Edit .env with your ANTHROPIC_API_KEY and SUPABASE credentials
+pip install -r requirements.txt
+
+# Run the backend (serves frontend + API)
+uvicorn app.main:app --reload --port 8000
+
+# Open in browser
+open http://localhost:8000
+```
 
 ### Default Login Credentials
 
@@ -573,6 +796,16 @@ Sentinel-2 bands used: B2 (Blue, 490nm), B3 (Green, 560nm), B4 (Red, 665nm), B5 
 
 Frontend dependencies are loaded via CDN — no build step required.
 
+**Backend (AI Assistant)**
+
+| Component | Library | Version | Purpose |
+|---|---|---|---|
+| API framework | [FastAPI](https://fastapi.tiangolo.com/) | 0.115.0 | REST API for chat and conversations |
+| AI model | Open-weight LLMs via OpenAI-compatible endpoints (`gpt-oss-120b`, `gemma-4-31b`, `zai-glm-4.7`) | -- | Conversational agent with tool use |
+| Database | [Supabase](https://supabase.com/) | 2.10.0 | Conversation and message persistence |
+| Earth Engine | [earthengine-api](https://pypi.org/project/earthengine-api/) | 1.6.15 | Server-side satellite data |
+| PDF parsing | [pdfplumber](https://github.com/jsvine/pdfplumber) | 0.11.4 | Soil/foliar report extraction |
+| Excel parsing | [openpyxl](https://openpyxl.readthedocs.io/) | 3.1.5 | Spreadsheet analysis uploads |
 
 ---
 
@@ -586,13 +819,40 @@ agragent/
 ├── logo.png                # AgrAgent logo
 ├── poligono.kml            # Example field boundaries
 ├── README.md               # This file
-├── LICENSE                 # GNU AGPL v3.0
+├── LICENSE                 # AGPL-3.0
 └── .gitignore
 ```
 
-The AI backend (agent orchestration logic and prompts) is maintained as a
-separate, private service and is **not publicly released**. The frontend
-consumes it through the public AgrAgent API (`api.agragent.com`).
+The AI backend (`agro-agent/`) is maintained separately:
+
+```
+agro-agent/
+├── app/
+│   ├── main.py             # FastAPI entry point (serves frontend + API)
+│   ├── config.py           # Environment configuration
+│   ├── database.py         # Supabase client
+│   ├── agent/
+│   │   ├── claude.py       # AgroAgent - agentic loop (open-weight LLM)
+│   │   ├── tools.py        # 6 agronomic tools
+│   │   └── system_prompt.py
+│   ├── routers/
+│   │   ├── chat.py         # POST /api/chat, POST /api/chat/new
+│   │   ├── conversations.py # CRUD conversations + messages
+│   │   └── uploads.py      # File upload and parsing
+│   ├── services/
+│   │   ├── satellite.py    # GEE server-side queries
+│   │   ├── climate.py      # Climate data service
+│   │   ├── sentinel.py     # Sentinel-2 processing
+│   │   └── document.py     # PDF/Excel parsing
+│   └── models/
+│       └── schemas.py      # Pydantic schemas
+├── frontend/
+│   └── index.html          # Original standalone chat UI
+├── supabase/
+│   └── schema.sql          # Database schema
+├── requirements.txt
+└── .env.example
+```
 
 ---
 
@@ -663,7 +923,14 @@ If you use agragent in your research, please cite:
 
 ## License
 
-This project is released under the [GNU Affero General Public License v3.0 (AGPL-3.0)](LICENSE). The AGPL's network-use clause requires anyone who runs a modified version as a network service to make their source changes available under the same license.
+The frontend and the backend orchestration service are both released under the
+[GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0).
+
+The network-use clause is deliberate: anyone who runs a modified version of this software as a
+network service must make their modified source available to its users. The backend orchestration
+service (agent loop, the eleven tool schemas, context-injection logic and system prompts) is
+included in this repository under `backend/`, together with the 63-query agent benchmark, the
+tool-selection and arithmetic-verification harnesses, and the expert-panel rating instrument.
 
 ---
 

@@ -1,0 +1,13 @@
+id,tool,system,kc,et0,etc_expected,etc_actual,gross_expected,gross_actual,pass,detail
+grapevine-veraison-drip,irrigation,goteo,1.1,4.2,4.62,4.62,53.3,53.3,True,etc=True gross=True weekly=True
+tomate-mid-drip,irrigation,goteo,1.15,5.0,5.75,5.75,62.2,62.2,True,etc=True gross=True weekly=True
+maiz-mid-sprinkler,irrigation,aspersion,1.2,6.0,7.2,7.2,128.2,128.2,True,etc=True gross=True weekly=True
+trigo-dev-furrow,irrigation,surcos,0.7,3.5,2.45,2.45,87.3,87.3,True,etc=True gross=True weekly=True
+papa-late-flood,irrigation,inundacion,0.75,4.0,3.0,3.0,44.4,44.4,True,etc=True gross=True weekly=True
+lechuga-init-drip,irrigation,goteo,0.7,3.0,2.1,2.1,13.3,13.3,True,etc=True gross=True weekly=True
+tomate-60t-drip,fertilization,goteo,,,,,,,True,N_total=180.0/180.0 mass=True scheduled_N=179.5/180.0 budget=True
+maiz-12t-drip,fertilization,goteo,,,,,,,True,N_total=216.0/216.0 mass=True scheduled_N=215.6/216.0 budget=True
+trigo-8t-furrow,fertilization,surcos,,,,,,,True,N_total=176.0/176.0 mass=True scheduled_N=176.0/176.0 budget=True
+papa-45t-sprink,fertilization,aspersion,,,,,,,True,N_total=180.0/180.0 mass=True scheduled_N=179.5/180.0 budget=True
+lechuga-40t-drip,fertilization,goteo,,,,,,,True,N_total=80.0/80.0 mass=True scheduled_N=79.5/80.0 budget=True
+soya-4t-furrow,fertilization,surcos,,,,,,,True,N_total=280.0/280.0 mass=True scheduled_N=280.0/280.0 budget=True
