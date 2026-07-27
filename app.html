@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>agragent — Crop Monitoring &amp; Yield Prediction</title>
+<title>agragent: Crop Monitoring &amp; Yield Prediction</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.16.0/dist/leaflet-geoman.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1688,7 +1688,7 @@
     .gee-title { font-size: 0.8rem; }
     .gee-sub { font-size: 0.68rem; }
 
-    /* GEE Layer Controls — collapsible on mobile */
+    /* GEE Layer Controls: collapsible on mobile */
     .gee-layer-controls { padding: 10px 10px; }
     .gee-ctrl-toggle-wrap { display: block; }
     .gee-ctrl-toggle { display: block; }
@@ -1703,13 +1703,13 @@
     .gee-mode-btn { padding: 4px 8px; font-size: 0.68rem; }
     .gee-refresh-btn { padding: 4px 10px; font-size: 0.72rem; margin-left: 0; }
 
-    /* Index groups — horizontal scroll */
+    /* Index groups: horizontal scroll */
     .map-controls { padding: 8px 10px; gap: 6px; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
     .index-group { flex-shrink: 0; padding: 2px 4px; gap: 4px; }
     .index-group-label { font-size: 0.65rem; }
     .index-btn { padding: 8px 12px; font-size: 0.75rem; min-height: 40px; }
 
-    /* Map toolbar — collapsible on mobile */
+    /* Map toolbar: collapsible on mobile */
     .toolbar-toggle { display: block; }
     .map-toolbar { padding: 8px 10px; gap: 6px; }
     .map-toolbar.collapsed .toolbar-label,
@@ -1753,7 +1753,7 @@
     /* Charts */
     .chart-wrap canvas { max-height: 180px; }
 
-    /* Chat widget — full screen on mobile */
+    /* Chat widget: full screen on mobile */
     #chat-fab { bottom: 14px; right: 14px; width: 50px; height: 50px; }
     #chat-fab img { width: 30px !important; height: 30px !important; }
     #chat-widget {
@@ -1819,7 +1819,7 @@
     #map-container { height: 45vh; min-height: 250px; }
   }
 
-  /* Sidebar backdrop scrim — appears only when sidebar is open on mobile */
+  /* Sidebar backdrop scrim: appears only when sidebar is open on mobile */
   #sidebar-backdrop {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.45);
@@ -1847,7 +1847,7 @@
     input[type="number"], input[type="search"], input[type="date"],
     input[type="time"], textarea, select { font-size: 16px !important; }
 
-    /* Touch targets — buttons should be at least 40px tall */
+    /* Touch targets: buttons should be at least 40px tall */
     .nav-item { padding: 14px 18px; font-size: 0.95rem; }
 
     /* Topbar density */
@@ -1857,7 +1857,7 @@
     .hamburger { padding: 8px; }
     .hamburger .ic { width: 22px; height: 22px; }
 
-    /* Login screen — full width with safer padding */
+    /* Login screen: full width with safer padding */
     #login-screen > div { padding: 28px 22px !important; width: calc(100vw - 32px) !important; }
 
     /* Modal poly editor centered, full-width usable */
@@ -2183,7 +2183,7 @@ function editDisplayName() {
   }
 }
 
-// Auto-login if session exists — deferred to DOM ready so sidebar avatar/name elements exist
+// Auto-login if session exists: deferred to DOM ready so sidebar avatar/name elements exist
 (function() {
   function init() {
     const session = sessionStorage.getItem('agragent-session');
@@ -2312,22 +2312,22 @@ function editDisplayName() {
         <div class="kpi-grid">
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="location">Location</div>
-            <div class="kpi-value" id="dashLocation" style="font-size:1.1rem;margin-top:6px;">—</div>
-            <div class="kpi-sub" id="dashCoords">—</div>
+            <div class="kpi-value" id="dashLocation" style="font-size:1.1rem;margin-top:6px;">-</div>
+            <div class="kpi-sub" id="dashCoords">-</div>
           </div>
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="field_area">Field Area</div>
-            <div class="kpi-value" id="dashArea">—</div>
-            <div class="kpi-sub" id="dashPolygons">—</div>
+            <div class="kpi-value" id="dashArea">-</div>
+            <div class="kpi-sub" id="dashPolygons">-</div>
           </div>
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="season_gdd">Season GDD</div>
-            <div class="kpi-value" id="dashGDD">—</div>
+            <div class="kpi-value" id="dashGDD">-</div>
             <div class="kpi-sub" data-i18n="gdd_base">Growing Degree Days (base 10°C)</div>
           </div>
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="season_precip">Season Precip.</div>
-            <div class="kpi-value" id="dashPrecip">—</div>
+            <div class="kpi-value" id="dashPrecip">-</div>
             <div class="kpi-sub" data-i18n="precip_total">Total mm (Apr–present)</div>
           </div>
         </div>
@@ -2336,22 +2336,22 @@ function editDisplayName() {
         <div class="kpi-grid">
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="chill_hours">Chill Hours</div>
-            <div class="kpi-value" id="dashChill">—</div>
+            <div class="kpi-value" id="dashChill">-</div>
             <div class="kpi-sub" data-i18n="chill_range">0–7.2°C (Apr–Sep)</div>
           </div>
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="frost_days">Frost Days</div>
-            <div class="kpi-value" id="dashFrost" style="color:#60a5fa;">—</div>
+            <div class="kpi-value" id="dashFrost" style="color:#60a5fa;">-</div>
             <div class="kpi-sub" id="dashFrostSub" data-i18n="tmin_label">Tmin ≤ 0°C</div>
           </div>
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="heat_waves">Heat Waves</div>
-            <div class="kpi-value" id="dashHeatWave" style="color:var(--red);">—</div>
+            <div class="kpi-value" id="dashHeatWave" style="color:var(--red);">-</div>
             <div class="kpi-sub" id="dashHeatSub" data-i18n="heat_label">≥3 days &gt;35°C</div>
           </div>
           <div class="kpi-card">
             <div class="kpi-label" data-i18n="total_et">ET₀ Total</div>
-            <div class="kpi-value" id="dashET">—</div>
+            <div class="kpi-value" id="dashET">-</div>
             <div class="kpi-sub" data-i18n="et_sub">Evapotranspiration (mm)</div>
           </div>
         </div>
@@ -2374,26 +2374,26 @@ function editDisplayName() {
                   <div style="background:rgba(96,165,250,0.15);border-radius:6px;height:22px;overflow:hidden;">
                     <div id="dashPrecipBar" style="height:100%;background:rgba(96,165,250,0.7);border-radius:6px;width:0%;transition:width 0.8s;"></div>
                   </div>
-                  <div id="dashPrecipBarVal" style="font-size:0.72rem;color:#60a5fa;margin-top:2px;">—</div>
+                  <div id="dashPrecipBarVal" style="font-size:0.72rem;color:#60a5fa;margin-top:2px;">-</div>
                 </div>
                 <div style="flex:1;">
                   <div style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:4px;" data-i18n="evapotranspiration">Evapotranspiration</div>
                   <div style="background:rgba(82,183,136,0.15);border-radius:6px;height:22px;overflow:hidden;">
                     <div id="dashETBar" style="height:100%;background:rgba(82,183,136,0.7);border-radius:6px;width:0%;transition:width 0.8s;"></div>
                   </div>
-                  <div id="dashETBarVal" style="font-size:0.72rem;color:var(--accent);margin-top:2px;">—</div>
+                  <div id="dashETBarVal" style="font-size:0.72rem;color:var(--accent);margin-top:2px;">-</div>
                 </div>
               </div>
-              <div id="dashWaterDeficit" style="font-size:0.82rem;font-weight:600;text-align:center;padding:6px;border-radius:6px;background:rgba(255,255,255,0.03);">—</div>
+              <div id="dashWaterDeficit" style="font-size:0.82rem;font-weight:600;text-align:center;padding:6px;border-radius:6px;background:rgba(255,255,255,0.03);">-</div>
               <div style="margin-top:10px;">
                 <div style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:4px;" data-i18n="water_delta_season">Δ vs. previous season</div>
                 <div style="position:relative;background:rgba(255,255,255,0.04);border-radius:6px;height:18px;overflow:hidden;">
                   <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--border);"></div>
                   <div id="dashWaterDeltaBar" style="position:absolute;top:0;bottom:0;left:50%;width:0%;background:rgba(96,165,250,0.7);transition:width 0.8s;"></div>
                 </div>
-                <div id="dashWaterDeltaVal" style="font-size:0.72rem;color:var(--text-secondary);margin-top:3px;">—</div>
+                <div id="dashWaterDeltaVal" style="font-size:0.72rem;color:var(--text-secondary);margin-top:3px;">-</div>
               </div>
-              <div id="dashWaterSeason" style="font-size:0.72rem;color:var(--text-secondary);margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">—</div>
+              <div id="dashWaterSeason" style="font-size:0.72rem;color:var(--text-secondary);margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">-</div>
               <div style="font-size:0.68rem;color:var(--text-secondary);margin-top:8px;line-height:1.5;" data-i18n="water_balance_note">
                 P − ET₀ is an estimate of atmospheric demand; it is not a measurement of soil or plant water status.
                 It ignores water already applied, irrigation efficiency, water holding capacity and rooting depth.
@@ -2585,7 +2585,7 @@ function editDisplayName() {
             <div class="compare-side left-side">
               <span class="compare-label">◧ <span data-i18n="compare_left">LEFT</span></span>
               <select id="compare-left-date" class="compare-date-select">
-                <option value="" data-i18n="compare_select_date">— Select date —</option>
+                <option value="" data-i18n="compare_select_date">Select date</option>
               </select>
               <select id="compare-left-index" class="compare-index-select">
                 <optgroup label="Vigor" data-i18n-label="idx_vigor">
@@ -2621,7 +2621,7 @@ function editDisplayName() {
             <div class="compare-side right-side">
               <span class="compare-label" style="color:#60a5fa;">◨ <span data-i18n="compare_right">RIGHT</span></span>
               <select id="compare-right-date" class="compare-date-select">
-                <option value="" data-i18n="compare_select_date">— Select date —</option>
+                <option value="" data-i18n="compare_select_date">Select date</option>
               </select>
               <select id="compare-right-index" class="compare-index-select">
                 <optgroup label="Vigor" data-i18n-label="idx_vigor">
@@ -2786,22 +2786,22 @@ function editDisplayName() {
       <div class="grid-4 mb-20">
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="annual_gdd">Annual GDD</div>
-          <div class="kpi-value" id="kpiGDD" style="font-size:1.7rem;color:var(--accent);">—</div>
+          <div class="kpi-value" id="kpiGDD" style="font-size:1.7rem;color:var(--accent);">-</div>
           <div class="kpi-sub" data-i18n="gdd_sub">Growing Degree Days (base 10°C)</div>
         </div>
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="chill_hours">Chill Hours</div>
-          <div class="kpi-value" id="kpiChill" style="font-size:1.7rem;color:var(--accent);">—</div>
+          <div class="kpi-value" id="kpiChill" style="font-size:1.7rem;color:var(--accent);">-</div>
           <div class="kpi-sub" id="kpiChillSub" data-i18n="chill_sub">Hours 0–7.2°C (Apr–Sep)</div>
         </div>
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="frost_days">Frost Days</div>
-          <div class="kpi-value" id="kpiFrost" style="font-size:1.7rem;color:#60a5fa;">—</div>
+          <div class="kpi-value" id="kpiFrost" style="font-size:1.7rem;color:#60a5fa;">-</div>
           <div class="kpi-sub" id="kpiFrostSub" data-i18n="frost_sub">Days with Tmin ≤ 0°C</div>
         </div>
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="heat_waves">Heat Waves</div>
-          <div class="kpi-value" id="kpiHeatWave" style="font-size:1.7rem;color:var(--red);">—</div>
+          <div class="kpi-value" id="kpiHeatWave" style="font-size:1.7rem;color:var(--red);">-</div>
           <div class="kpi-sub" id="kpiHeatWaveSub" data-i18n="heat_wave_sub">≥3 consecutive days &gt;35°C</div>
         </div>
       </div>
@@ -2810,22 +2810,22 @@ function editDisplayName() {
       <div class="grid-4 mb-20">
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="dry_months">Dry Months</div>
-          <div class="kpi-value" id="kpiDry" style="font-size:1.7rem;color:var(--yellow);">—</div>
+          <div class="kpi-value" id="kpiDry" style="font-size:1.7rem;color:var(--yellow);">-</div>
           <div class="kpi-sub" id="kpiDrySub" data-i18n="dry_sub">&lt;30mm precipitation</div>
         </div>
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="avg_humidity">Avg Humidity</div>
-          <div class="kpi-value" id="kpiHumidity" style="font-size:1.7rem;color:#60a5fa;">—</div>
+          <div class="kpi-value" id="kpiHumidity" style="font-size:1.7rem;color:#60a5fa;">-</div>
           <div class="kpi-sub" data-i18n="avg_humidity">Avg Humidity (%)</div>
         </div>
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="total_solar">Total Solar Radiation</div>
-          <div class="kpi-value" id="kpiSolar" style="font-size:1.4rem;color:var(--yellow);">—</div>
+          <div class="kpi-value" id="kpiSolar" style="font-size:1.4rem;color:var(--yellow);">-</div>
           <div class="kpi-sub">MJ/m²</div>
         </div>
         <div class="card" style="text-align:center;">
           <div class="kpi-label" data-i18n="total_et">Total ET₀</div>
-          <div class="kpi-value" id="kpiET" style="font-size:1.7rem;color:var(--accent);">—</div>
+          <div class="kpi-value" id="kpiET" style="font-size:1.7rem;color:var(--accent);">-</div>
           <div class="kpi-sub" data-i18n="et_sub">Evapotranspiration (mm)</div>
         </div>
       </div>
@@ -2854,17 +2854,17 @@ function editDisplayName() {
           <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
             <div id="gddCompKpiA" class="kpi-card" style="flex:1;min-width:140px;text-align:center;padding:12px;background:rgba(82,183,136,0.1);border:1px solid rgba(82,183,136,0.3);border-radius:8px;">
               <div style="font-size:0.72rem;color:var(--text-secondary);" data-i18n="gdd_period_a">Period A</div>
-              <div id="gddCompTotalA" style="font-size:1.5rem;font-weight:700;color:#52b788;">—</div>
+              <div id="gddCompTotalA" style="font-size:1.5rem;font-weight:700;color:#52b788;">-</div>
               <div id="gddCompDatesA" style="font-size:0.68rem;color:var(--text-secondary);"></div>
             </div>
             <div id="gddCompKpiB" class="kpi-card" style="flex:1;min-width:140px;text-align:center;padding:12px;background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.3);border-radius:8px;">
               <div style="font-size:0.72rem;color:var(--text-secondary);" data-i18n="gdd_period_b">Period B</div>
-              <div id="gddCompTotalB" style="font-size:1.5rem;font-weight:700;color:#60a5fa;">—</div>
+              <div id="gddCompTotalB" style="font-size:1.5rem;font-weight:700;color:#60a5fa;">-</div>
               <div id="gddCompDatesB" style="font-size:0.68rem;color:var(--text-secondary);"></div>
             </div>
             <div class="kpi-card" style="flex:1;min-width:140px;text-align:center;padding:12px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);border-radius:8px;">
               <div style="font-size:0.72rem;color:var(--text-secondary);" data-i18n="gdd_difference">Difference</div>
-              <div id="gddCompDiff" style="font-size:1.5rem;font-weight:700;color:#a78bfa;">—</div>
+              <div id="gddCompDiff" style="font-size:1.5rem;font-weight:700;color:#a78bfa;">-</div>
               <div id="gddCompPct" style="font-size:0.68rem;color:var(--text-secondary);"></div>
             </div>
           </div>
@@ -2875,7 +2875,7 @@ function editDisplayName() {
       </div>
 
       <div class="card mb-20">
-        <div class="card-title" data-i18n="temp_chart">Monthly Temperature (Min/Max) — 12-Month Season</div>
+        <div class="card-title" data-i18n="temp_chart">Monthly Temperature (Min/Max): 12-Month Season</div>
         <div class="chart-wrap tall">
           <canvas id="tempChart"></canvas>
         </div>
@@ -3010,7 +3010,7 @@ function editDisplayName() {
         </div>
       </div>
 
-      <!-- DEG Tables by stage — tabbed -->
+      <!-- DEG Tables by stage: tabbed -->
       <div class="card mb-20">
         <div class="card-title" data-i18n="top_degs">Top Differentially Expressed Genes by Stage</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
@@ -3024,7 +3024,7 @@ function editDisplayName() {
           <button class="chip" onclick="showDEGStage('el41',this)">EL 41</button>
         </div>
 
-        <!-- EL 15 — Shoot/Inflorescence -->
+        <!-- EL 15: Shoot/Inflorescence -->
         <table class="data-table" id="deg-el15">
           <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
@@ -3049,7 +3049,7 @@ function editDisplayName() {
           </tbody>
         </table>
 
-        <!-- EL 27 — Berry development -->
+        <!-- EL 27: Berry development -->
         <table class="data-table" id="deg-el27" style="display:none">
           <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
@@ -3061,7 +3061,7 @@ function editDisplayName() {
           </tbody>
         </table>
 
-        <!-- EL 31 — Berry development -->
+        <!-- EL 31: Berry development -->
         <table class="data-table" id="deg-el31" style="display:none">
           <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
@@ -3073,7 +3073,7 @@ function editDisplayName() {
           </tbody>
         </table>
 
-        <!-- EL 35 — Veraison / Ripening -->
+        <!-- EL 35: Veraison / Ripening -->
         <table class="data-table" id="deg-el35" style="display:none">
           <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
@@ -3085,7 +3085,7 @@ function editDisplayName() {
           </tbody>
         </table>
 
-        <!-- EL 36 — Ripening -->
+        <!-- EL 36: Ripening -->
         <table class="data-table" id="deg-el36" style="display:none">
           <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
@@ -3097,7 +3097,7 @@ function editDisplayName() {
           </tbody>
         </table>
 
-        <!-- EL 38 — Ripening -->
+        <!-- EL 38: Ripening -->
         <table class="data-table" id="deg-el38" style="display:none">
           <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
@@ -3109,7 +3109,7 @@ function editDisplayName() {
           </tbody>
         </table>
 
-        <!-- EL 41 — Senescence -->
+        <!-- EL 41: Senescence -->
         <table class="data-table" id="deg-el41" style="display:none">
           <thead><tr><th data-i18n="th_gene_id">Gene ID</th><th>Log2FC</th><th>FDR</th><th data-i18n="th_stage">Stage</th><th data-i18n="th_regulation">Regulation</th></tr></thead>
           <tbody>
@@ -3163,7 +3163,7 @@ function editDisplayName() {
 
       <!-- DEG count summary table -->
       <div class="card">
-        <div class="card-title" data-i18n="deg_summary_title">Differential Expression Summary — All Comparisons vs. E-L 3 (Baseline)</div>
+        <div class="card-title" data-i18n="deg_summary_title">Differential Expression Summary: All Comparisons vs. E-L 3 (Baseline)</div>
         <table class="data-table">
           <thead>
             <tr>
@@ -3274,7 +3274,7 @@ function editDisplayName() {
         <div class="upload-zone" style="margin-top:12px;padding:28px 20px;" onclick="document.getElementById('fileInput').click()">
           <div class="upload-icon"><span class="ic ic-2x"><svg><use href="#i-image"/></svg></span></div>
           <div class="upload-text" data-i18n="img_upload_text">Drag or click to upload a field image</div>
-          <div class="upload-sub" data-i18n="img_upload_sub">Accepts .jpg · .png · .tiff — Max 50MB</div>
+          <div class="upload-sub" data-i18n="img_upload_sub">Accepts .jpg · .png · .tiff (max 50MB)</div>
           <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.tiff" style="display:none" onchange="analyzeUploadedImage(event)">
         </div>
         <div id="upload-result" style="display:none;margin-top:16px;"></div>
@@ -3296,12 +3296,12 @@ function editDisplayName() {
             </div>
           </div>
           <div class="viewer-meta">
-            <div class="viewer-meta-title" id="viewer-title">—</div>
-            <div class="viewer-meta-variety" id="viewer-variety">—</div>
+            <div class="viewer-meta-title" id="viewer-title">-</div>
+            <div class="viewer-meta-variety" id="viewer-variety">-</div>
             <div class="viewer-divider"></div>
             <div class="viewer-stat-row">
-              <div class="viewer-stat"><span class="vs-n" id="vm-clusters">—</span><span class="vs-l" data-i18n="img_clusters_detected">Clusters detected</span></div>
-              <div class="viewer-stat"><span class="vs-n" id="vm-berries">—</span><span class="vs-l" data-i18n="img_berries_est">Berries estimated</span></div>
+              <div class="viewer-stat"><span class="vs-n" id="vm-clusters">-</span><span class="vs-l" data-i18n="img_clusters_detected">Clusters detected</span></div>
+              <div class="viewer-stat"><span class="vs-n" id="vm-berries">-</span><span class="vs-l" data-i18n="img_berries_est">Berries estimated</span></div>
             </div>
             <div class="viewer-divider"></div>
             <div class="viewer-info-list" id="viewer-info-list"></div>
@@ -3314,7 +3314,7 @@ function editDisplayName() {
             </div>
             <div class="viewer-divider"></div>
             <div style="font-size:0.68rem;color:var(--text-secondary);line-height:1.6;background:rgba(255,255,255,0.03);padding:8px 10px;border-radius:6px;" data-i18n="img_berry_method">
-              <strong style="color:var(--text-primary);">Berry estimation method:</strong> Estimated from bounding box area of each detected cluster. Small clusters (~1% image area) ≈ 20 berries, large clusters (~8%) ≈ 80 berries. Linear interpolation, capped at 80/cluster. This is an approximation — real berry count requires instance segmentation.
+              <strong style="color:var(--text-primary);">Berry estimation method:</strong> Estimated from bounding box area of each detected cluster. Small clusters (~1% image area) ≈ 20 berries, large clusters (~8%) ≈ 80 berries. Linear interpolation, capped at 80/cluster. This is an approximation: real berry count requires instance segmentation.
             </div>
           </div>
         </div>
@@ -3395,18 +3395,18 @@ function editDisplayName() {
           <div class="label" id="yield-location-label" data-i18n="yield_predicted">Predicted Yield</div>
           <div style="display:flex;align-items:baseline;justify-content:center;gap:16px;flex-wrap:wrap;">
             <div>
-              <div class="value" id="yield-value">—</div>
+              <div class="value" id="yield-value">-</div>
               <div class="unit" data-i18n="yield_unit">tonnes / hectare</div>
             </div>
             <div style="text-align:center;">
-              <div style="font-size:2rem;font-weight:700;color:#60a5fa;" id="yield-total">—</div>
-              <div style="font-size:0.82rem;color:var(--text-secondary);"><span data-i18n="total">Total</span> (<span id="yield-total-area">—</span>)</div>
+              <div style="font-size:2rem;font-weight:700;color:#60a5fa;" id="yield-total">-</div>
+              <div style="font-size:0.82rem;color:var(--text-secondary);"><span data-i18n="total">Total</span> (<span id="yield-total-area">-</span>)</div>
             </div>
           </div>
-          <div class="ci" id="yield-ci">—</div>
+          <div class="ci" id="yield-ci">-</div>
           <div style="margin-top:10px;padding:10px 16px;background:rgba(74,222,128,0.08);border:1px solid var(--accent-dim);border-radius:8px;display:inline-block;">
             <span style="font-size:0.85rem;color:var(--text-secondary);" data-i18n="yield_harvest_label">Estimated harvest:</span>
-            <strong style="color:var(--accent);font-size:0.95rem;margin-left:6px;" id="yield-harvest-date">—</strong>
+            <strong style="color:var(--accent);font-size:0.95rem;margin-left:6px;" id="yield-harvest-date">-</strong>
             <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:3px;" id="yield-harvest-crop"></div>
           </div>
           <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:12px;">
@@ -3540,7 +3540,7 @@ function editDisplayName() {
           <div style="display:flex;gap:16px;flex-wrap:wrap;">
             <div style="flex:1;min-width:180px;text-align:center;padding:16px;background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.3);border-radius:8px;">
               <div style="font-size:0.72rem;color:var(--text-secondary);" data-i18n="plan_chill_accumulated">Accumulated</div>
-              <div id="plan-chill-actual" style="font-size:1.8rem;font-weight:700;color:#60a5fa;">—</div>
+              <div id="plan-chill-actual" style="font-size:1.8rem;font-weight:700;color:#60a5fa;">-</div>
               <div style="font-size:0.7rem;color:var(--text-secondary);">0–7.2°C (Apr–Sep)</div>
             </div>
             <div style="flex:1;min-width:180px;text-align:center;padding:16px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);border-radius:8px;">
@@ -3550,7 +3550,7 @@ function editDisplayName() {
             </div>
             <div style="flex:1;min-width:180px;text-align:center;padding:16px;border-radius:8px;" id="plan-chill-status-card">
               <div style="font-size:0.72rem;color:var(--text-secondary);" data-i18n="plan_chill_status">Status</div>
-              <div id="plan-chill-status" style="font-size:1.4rem;font-weight:700;">—</div>
+              <div id="plan-chill-status" style="font-size:1.4rem;font-weight:700;">-</div>
               <div id="plan-chill-status-sub" style="font-size:0.7rem;color:var(--text-secondary);"></div>
             </div>
           </div>
@@ -3676,12 +3676,12 @@ function editDisplayName() {
             </tr>
             <tr>
               <td><strong>Sentinel-2 SR</strong></td>
-              <td data-i18n="ds_s2_desc">COPERNICUS/S2_SR_HARMONIZED — 10m multispectral satellite imagery via Google Earth Engine</td>
+              <td data-i18n="ds_s2_desc">COPERNICUS/S2_SR_HARMONIZED: 10 m multispectral satellite imagery via Google Earth Engine</td>
               <td><span data-i18n="nav_maps">Satellite Maps</span> (NDVI, EVI, SAVI, MSAVI, NDRE, GNDVI, TCARI, CIre, NDMI, NDWI, BSI)</td>
             </tr>
             <tr>
               <td><a href="https://open-meteo.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;"><strong>Open-Meteo</strong></a></td>
-              <td data-i18n="ds_meteo_desc">Free open-source weather API — historical daily temperature and precipitation</td>
+              <td data-i18n="ds_meteo_desc">Free open-source weather API: historical daily temperature and precipitation</td>
               <td data-i18n="ds_use_climate">Climate Data section</td>
             </tr>
             <tr>
@@ -3805,7 +3805,7 @@ const i18n = {
     gee_lib_error: 'Could not load the GEE library. Check your connection.',
     gee_connecting: 'Connecting to Google Earth Engine...',
     gee_sentinel_sub: 'Sentinel-2 SR Harmonized · 10 m resolution',
-    gee_retry: 'Connection error — retrying in 10s...',
+    gee_retry: 'Connection error: retrying in 10s...',
     gee_last_load: 'Last load:',
     scenes_searching: 'Searching captures...',
     scenes_none: 'No captures for this period and cloud cover.',
@@ -3861,7 +3861,7 @@ const i18n = {
     risk_heat_stress: 'Heat Stress',
     days: 'days',
     waves: 'waves',
-    no_alerts_good: 'No alerts — conditions look good.',
+    no_alerts_good: 'No alerts: conditions look good.',
     climate_load_error: 'Could not load climate data:',
     alert_mark_field: 'Please mark a field on the map first.',
     alert_date_order: 'Start date must be before end date.',
@@ -3874,8 +3874,8 @@ const i18n = {
     ds_th_usage: 'Usage in agragent',
     ds_wgisd_desc: 'Wine Grape Instance Segmentation Dataset (Embrapa). 300+ images, 5 varieties, YOLO bounding boxes.',
     ds_use_images: 'Image Analysis section',
-    ds_s2_desc: 'COPERNICUS/S2_SR_HARMONIZED — 10 m multispectral satellite imagery via Google Earth Engine',
-    ds_meteo_desc: 'Free open-source weather API — historical daily temperature and precipitation',
+    ds_s2_desc: 'COPERNICUS/S2_SR_HARMONIZED: 10 m multispectral satellite imagery via Google Earth Engine',
+    ds_meteo_desc: 'Free open-source weather API: historical daily temperature and precipitation',
     ds_use_climate: 'Climate Data section',
     ds_rna_desc: '68 Vitis vinifera samples across 8 E-L stages. Processed with Salmon + edgeR pipeline',
     ds_use_genomic: 'Genomic Analysis section',
@@ -3943,14 +3943,14 @@ const i18n = {
     img_model_intro: 'YOLO26m fine-tuned on the official WGISD split (194 train / 48 validation / 58 test images), measured on the held-out test images. The detector has a single class, grape cluster: it locates and counts clusters, it does not identify the variety.',
     img_precision: 'Precision', img_recall: 'Recall', img_inference: 'Inference / image',
     img_white: 'White', img_red: 'Red', img_click_hint: 'Click image to see annotations',
-    img_upload_title: 'Analyze your own image', img_upload_text: 'Drag or click to upload a field image', img_upload_sub: 'Accepts .jpg · .png · .tiff — Max 50MB',
+    img_upload_title: 'Analyze your own image', img_upload_text: 'Drag or click to upload a field image', img_upload_sub: 'Accepts .jpg · .png · .tiff (max 50MB)',
     img_loading: 'Loading image and annotations...', img_clusters_detected: 'Clusters detected', img_berries_est: 'Berries estimated',
     img_annotations: 'Annotations: YOLO (bounding box)', img_resolution: 'Resolution: 2048 × 1365 px', img_data_source: 'Data:', img_show_bbox: 'Show bounding boxes',
     img_analyzing: 'Analyzing image with YOLO26...', img_api_offline: 'Detection server offline. Start the API to enable real-time detection.',
-    img_berry_method: '<strong style="color:var(--text-primary);">Berry estimation method:</strong> Estimated from bounding box area of each detected cluster. Small clusters (~1% image area) ≈ 20 berries, large clusters (~8%) ≈ 80 berries. Linear interpolation, capped at 80/cluster. This is an approximation — real berry count requires instance segmentation.',
+    img_berry_method: '<strong style="color:var(--text-primary);">Berry estimation method:</strong> Estimated from bounding box area of each detected cluster. Small clusters (~1% image area) ≈ 20 berries, large clusters (~8%) ≈ 80 berries. Linear interpolation, capped at 80/cluster. This is an approximation: real berry count requires instance segmentation.',
     editor_title: 'Field Properties', editor_name: 'Name', editor_name_ph: 'e.g. North Parcel',
     editor_desc: 'Description', editor_desc_ph: 'Notes, variety, observations...',
-    editor_stage: 'Growth stage', editor_select: '— Select —',
+    editor_stage: 'Growth stage', editor_select: 'Select',
     stage_bud: 'Bud break', stage_flower: 'Flowering', stage_fruit: 'Fruit set', stage_veraison: 'Color change / Ripening onset',
     stage_ripen: 'Ripening', stage_harvest: 'Harvest', stage_post: 'Post-harvest',
     editor_color: 'Color', editor_cancel: 'Cancel', editor_save: 'Save',
@@ -3968,26 +3968,26 @@ const i18n = {
     desc_SAVI: 'NDVI adjusted for bare-soil reflectance. Essential for young plants or crops with incomplete ground cover.',
     desc_MSAVI: 'Improved SAVI with automatic soil adjustment. Best for early-season monitoring or sparse canopy conditions.',
     desc_NDRE: 'Detects nitrogen deficiency before visible symptoms appear. High sensitivity to early nutritional stress. Key index for precision fertilization.',
-    desc_GNDVI: 'Chlorophyll content — higher sensitivity than NDVI. Ideal for monitoring leaf health and nutrient status throughout the season.',
+    desc_GNDVI: 'Chlorophyll content: higher sensitivity than NDVI. Ideal for monitoring leaf health and nutrient status throughout the season.',
     desc_TCARI: 'Chlorophyll absorption stress indicator. High values signal chlorosis, pest damage, or fungal disease on leaves.',
-    desc_CIRE: 'Leaf chlorophyll index — correlates with available plant nitrogen. Useful for calibrating and timing foliar fertilization.',
+    desc_CIRE: 'Leaf chlorophyll index: correlates with available plant nitrogen. Useful for calibrating and timing foliar fertilization.',
     desc_NDMI: 'Vegetation water content. Detects water stress before visual symptoms appear. Use to guide irrigation scheduling.',
     desc_NDWI: 'Identifies water bodies and waterlogged zones. Detects flooding, drainage problems, and areas with excess soil moisture.',
     desc_BSI: 'Bare soil and erosion mapping. Estimates ground cover and identifies unvegetated zones. Useful for cover-crop management.',
-    desc_RGB: 'True-color view — like a natural photograph. No spectral analysis. Provides a visual reference of overall field conditions.',
-    desc_FALSE: 'Vegetation in red tones — deeper red = higher photosynthetic activity. Sharp contrast between active and stressed/inactive zones.',
+    desc_RGB: 'True-color view: like a natural photograph. No spectral analysis. Provides a visual reference of overall field conditions.',
+    desc_FALSE: 'Vegetation in red tones: deeper red = higher photosynthetic activity. Sharp contrast between active and stressed/inactive zones.',
     desc_ALPHAEARTH: 'Google DeepMind AI embedding visualization. Colors represent unique spectral-temporal patterns detected by the model across 64 dimensions.',
     desc_ALPHAEARTH_CLASS: 'Automatic land cover classification using AI. Distinguishes vegetation (green), bare soil (brown), water (blue), and built-up areas (gray).',
     location: 'Location', field_area: 'Field Area', season_gdd: 'Heat Units', season_precip: 'Total Rainfall',
     climate_summary: 'Climate Summary', active_alerts: 'Alerts', monthly_temp_overview: 'Monthly Temperature',
-    loaded_polygons: 'Your Fields', no_polygons: 'No fields added yet.', no_alerts: 'No alerts — looking good!',
+    loaded_polygons: 'Your Fields', no_polygons: 'No fields added yet.', no_alerts: 'No alerts: looking good!',
     // Climate
     climate_title: 'Weather & Climate', climate_upload_msg: 'Mark your field on the map to see weather and climate data for your area.',
     annual_gdd: 'Heat Units', gdd_sub: 'Warmth accumulated for ripening', chill_hours: 'Cold Hours', chill_sub: 'Cold needed for bud break',
     frost_days: 'Frost Days', frost_sub: 'Days below freezing', heat_waves: 'Heat Waves', heat_wave_sub: '3+ very hot days in a row',
     dry_months: 'Dry Months', dry_sub: 'Low rainfall months', avg_humidity: 'Humidity', total_solar: 'Sunlight',
     total_et: 'Water Loss', et_sub: 'Water evaporated from soil & plants',
-    temp_chart: 'Monthly Temperature (Min/Max) — 12-Month Season', precip_chart: 'Monthly Precipitation (mm)',
+    temp_chart: 'Monthly Temperature (Min/Max): 12-Month Season', precip_chart: 'Monthly Precipitation (mm)',
     humidity_chart: 'Monthly Relative Humidity (%)', solar_chart: 'Monthly Solar Radiation (MJ/m²)',
     et_chart: 'Monthly Evapotranspiration ET₀ (mm)', gdd_chart: 'Growing Degree Days (GDD) Accumulation',
     gdd_compare_title: 'GDD Comparison Between Dates', gdd_period_a: 'Period A', gdd_period_b: 'Period B', gdd_compare_btn: 'Compare GDD', gdd_difference: 'Difference',
@@ -4030,7 +4030,7 @@ const i18n = {
     gee_loading: 'Loading satellite images...', gee_sentinel_info: 'Satellite images updated every 5 days · High resolution · Cloud-free',
     gee_auto_sub: 'Connecting to satellite images...',
     // Compare
-    compare_left: 'LEFT', compare_right: 'RIGHT', compare_select_date: '— Select date —',
+    compare_left: 'LEFT', compare_right: 'RIGHT', compare_select_date: 'Select date',
     compare_btn: 'Compare', compare_exit: 'Exit',
     // Layer list
     active_layers_header: 'Your fields', layer_placeholder: 'Upload a file or draw to add your fields.',
@@ -4052,11 +4052,11 @@ const i18n = {
     hist_heat: 'Heat Stress Days per Season (>35°C)', hist_table: 'Season Comparison Table',
     hist_upload: 'Mark your field on the map to see past seasons.',
     // Genomic
-    genomic_sub: 'RNA-seq Differential Expression — Vitis vinifera phenological stages (Altimiras et al.)',
+    genomic_sub: 'RNA-seq Differential Expression: Vitis vinifera phenological stages (Altimiras et al.)',
     total_reads: 'Total Reads', reads_sub: '68 RNA-seq samples', data_processed: 'Data Processed', data_sub: 'FASTQ files',
     pheno_stages: 'Phenological Stages', stages_sub: 'E-L 3 → E-L 41', unique_degs: 'Unique DEGs', degs_sub: 'FDR < 0.05 (edgeR)',
     pheno_progress: 'Phenological Stage Progress', season_progress: 'Season Progress',
-    veraison: 'Veraison', stage_35: 'Stage 35 — Modified E-L Scale',
+    veraison: 'Veraison', stage_35: 'Stage 35: Modified E-L Scale',
     bud: 'Bud', inflor: 'Inflor.', berry: 'Berry', ripen: 'Ripen', senesc: 'Senesc.',
     degs_per_stage: 'DEGs per Developmental Stage (vs. E-L 3 baseline)',
     sample_composition: 'Sample Composition by Variety', samples: 'samples',
@@ -4070,7 +4070,7 @@ const i18n = {
     go_compute_hint: 'Press <strong style="color:var(--accent);">Compute from UniProt</strong> to fetch real GO annotations for all genes in the DEG tables.',
     gene_detail_title: 'Gene Detail Viewer',
     gene_detail_hint: 'Click a <strong style="color:var(--accent);">VIT_ gene ID</strong> in any table to see:<br>Gene Ontology annotations · UniProt protein info · AlphaFold 3D structure',
-    deg_summary_title: 'Differential Expression Summary — All Comparisons vs. E-L 3 (Baseline)',
+    deg_summary_title: 'Differential Expression Summary: All Comparisons vs. E-L 3 (Baseline)',
     th_comparison: 'Comparison', th_major_stage: 'Major Stage', th_tissue: 'Tissue', th_replicates: 'Replicates',
     th_down: 'Down-regulated', th_up: 'Up-regulated', th_total_degs: 'Total DEGs',
     hist_th_season: 'Season', hist_th_precip: 'Precip (mm)', hist_th_avgmax: 'Avg Max °C', hist_th_avgmin: 'Avg Min °C',
@@ -4082,7 +4082,7 @@ const i18n = {
     // Alerts
     alert_no_kml: 'Could not find field data in this file. Try a different file.', alert_no_geom: 'No field boundaries found in this file.',
     alert_file_error: 'Could not read this file: ',
-    gee_help_msg: 'Satellite images connect automatically. No setup needed — just mark your field!',
+    gee_help_msg: 'Satellite images connect automatically. No setup needed: just mark your field!',
     climate_upload_sub: 'Mark your field to see weather data',
     saved_fields_title: 'My Saved Fields', saved_fields_empty: 'No saved fields yet. Draw or upload a polygon and save it.', load_all_fields: 'View all on map',
     save_current_field: 'Save current field', save_field_title: 'Save field', save_field_ph: 'e.g. North Parcel',
@@ -4115,7 +4115,7 @@ const i18n = {
     gee_lib_error: 'No se pudo cargar la librería GEE. Verifica tu conexión.',
     gee_connecting: 'Conectando a Google Earth Engine...',
     gee_sentinel_sub: 'Sentinel-2 SR Harmonized · 10 m de resolución',
-    gee_retry: 'Error al conectar — reintentando en 10s...',
+    gee_retry: 'Error al conectar: reintentando en 10s...',
     gee_last_load: 'Última carga:',
     scenes_searching: 'Buscando capturas...',
     scenes_none: 'Sin capturas para este período y nubosidad.',
@@ -4171,7 +4171,7 @@ const i18n = {
     risk_heat_stress: 'Estrés por calor',
     days: 'días',
     waves: 'olas',
-    no_alerts_good: 'Sin alertas — las condiciones se ven bien.',
+    no_alerts_good: 'Sin alertas: las condiciones se ven bien.',
     climate_load_error: 'No se pudieron cargar los datos climáticos:',
     alert_mark_field: 'Primero marca un campo en el mapa.',
     alert_date_order: 'La fecha de inicio debe ser anterior a la de término.',
@@ -4184,8 +4184,8 @@ const i18n = {
     ds_th_usage: 'Uso en agragent',
     ds_wgisd_desc: 'Wine Grape Instance Segmentation Dataset (Embrapa). 300+ imágenes, 5 variedades, cajas YOLO.',
     ds_use_images: 'Sección Análisis de imágenes',
-    ds_s2_desc: 'COPERNICUS/S2_SR_HARMONIZED — imágenes satelitales multiespectrales de 10 m vía Google Earth Engine',
-    ds_meteo_desc: 'API meteorológica libre y gratuita — temperatura y precipitación diaria histórica',
+    ds_s2_desc: 'COPERNICUS/S2_SR_HARMONIZED: imágenes satelitales multiespectrales de 10 m vía Google Earth Engine',
+    ds_meteo_desc: 'API meteorológica libre y gratuita: temperatura y precipitación diaria histórica',
     ds_use_climate: 'Sección Datos climáticos',
     ds_rna_desc: '68 muestras de Vitis vinifera en 8 estadios E-L. Procesadas con Salmon + edgeR',
     ds_use_genomic: 'Sección Análisis genómico',
@@ -4250,14 +4250,14 @@ const i18n = {
     img_model_intro: 'YOLO26m ajustado sobre la partición oficial de WGISD (194 entrenamiento / 48 validación / 58 prueba), medido sobre las imágenes de prueba reservadas. El detector tiene una sola clase, racimo de uva: localiza y cuenta racimos, no identifica la variedad.',
     img_precision: 'Precisión', img_recall: 'Exhaustividad', img_inference: 'Inferencia / imagen',
     img_white: 'Blanca', img_red: 'Tinta', img_click_hint: 'Clic en imagen para ver anotaciones',
-    img_upload_title: 'Analizar imagen propia', img_upload_text: 'Arrastra o haz clic para subir imagen de campo', img_upload_sub: 'Acepta .jpg · .png · .tiff — Máx 50MB',
+    img_upload_title: 'Analizar imagen propia', img_upload_text: 'Arrastra o haz clic para subir imagen de campo', img_upload_sub: 'Acepta .jpg · .png · .tiff (máx 50MB)',
     img_loading: 'Cargando imagen y anotaciones...', img_clusters_detected: 'Racimos detectados', img_berries_est: 'Bayas estimadas',
     img_annotations: 'Anotaciones: YOLO (bounding box)', img_resolution: 'Resolución: 2048 × 1365 px', img_data_source: 'Datos:', img_show_bbox: 'Mostrar bounding boxes',
     img_analyzing: 'Analizando imagen con YOLO26...', img_api_offline: 'Servidor de detección offline. Inicia la API para habilitar detección en tiempo real.',
-    img_berry_method: '<strong style="color:var(--text-primary);">Método de estimación de bayas:</strong> Estimado a partir del área del bounding box de cada racimo detectado. Racimos pequeños (~1% del área) ≈ 20 bayas, racimos grandes (~8%) ≈ 80 bayas. Interpolación lineal, máximo 80/racimo. Es una aproximación — el conteo real requiere segmentación de instancias.',
+    img_berry_method: '<strong style="color:var(--text-primary);">Método de estimación de bayas:</strong> Estimado a partir del área del bounding box de cada racimo detectado. Racimos pequeños (~1% del área) ≈ 20 bayas, racimos grandes (~8%) ≈ 80 bayas. Interpolación lineal, máximo 80/racimo. Es una aproximación: el conteo real requiere segmentación de instancias.',
     editor_title: 'Propiedades del Campo', editor_name: 'Nombre', editor_name_ph: 'ej: Parcela Norte',
     editor_desc: 'Descripción', editor_desc_ph: 'Notas, variedad, observaciones...',
-    editor_stage: 'Etapa de crecimiento', editor_select: '— Seleccionar —',
+    editor_stage: 'Etapa de crecimiento', editor_select: 'Seleccionar',
     stage_bud: 'Brotación', stage_flower: 'Floración', stage_fruit: 'Cuaja', stage_veraison: 'Cambio de color / Inicio de madurez',
     stage_ripen: 'Madurez', stage_harvest: 'Cosecha', stage_post: 'Post-cosecha',
     editor_color: 'Color', editor_cancel: 'Cancelar', editor_save: 'Guardar',
@@ -4277,17 +4277,17 @@ const i18n = {
     desc_NDRE: 'Detecta deficiencia de nitrógeno antes de que sea visible. Alta sensibilidad al estrés nutricional temprano. Clave para fertilización de precisión.',
     desc_GNDVI: 'Contenido de clorofila con mayor sensibilidad que el NDVI. Ideal para monitorear salud foliar y estado nutricional a lo largo de la temporada.',
     desc_TCARI: 'Indicador de absorción de clorofila bajo estrés. Valores altos señalan clorosis, daño por plagas o enfermedades foliares.',
-    desc_CIRE: 'Índice de clorofila foliar — correlaciona con nitrógeno disponible en planta. Útil para calibrar y programar fertilizaciones foliares.',
+    desc_CIRE: 'Índice de clorofila foliar: correlaciona con nitrógeno disponible en planta. Útil para calibrar y programar fertilizaciones foliares.',
     desc_NDMI: 'Contenido de agua en la vegetación. Detecta estrés hídrico antes de que aparezcan síntomas visuales. Guía la programación del riego.',
     desc_NDWI: 'Identifica cuerpos de agua y zonas anegadas. Detecta inundaciones, problemas de drenaje y exceso de humedad en el suelo.',
     desc_BSI: 'Mapeo de suelo expuesto y erosión. Estima cobertura del suelo e identifica zonas sin vegetación. Útil para manejo de coberturas.',
-    desc_RGB: 'Vista en color real — como una fotografía natural. Sin análisis espectral. Referencia visual del estado general del campo.',
-    desc_FALSE: 'Vegetación en tonos rojos — rojo más intenso = mayor actividad fotosintética. Contraste visual entre zonas activas y estresadas o inactivas.',
+    desc_RGB: 'Vista en color real: como una fotografía natural. Sin análisis espectral. Referencia visual del estado general del campo.',
+    desc_FALSE: 'Vegetación en tonos rojos: rojo más intenso = mayor actividad fotosintética. Contraste visual entre zonas activas y estresadas o inactivas.',
     desc_ALPHAEARTH: 'Visualización de embeddings de IA de Google DeepMind. Los colores representan patrones espectrales-temporales únicos detectados por el modelo en 64 dimensiones.',
     desc_ALPHAEARTH_CLASS: 'Clasificación automática de cobertura del suelo con IA. Distingue vegetación (verde), suelo expuesto (café), agua (azul) y zonas construidas (gris).',
     location: 'Ubicación', field_area: 'Superficie', season_gdd: 'Calor Acumulado', season_precip: 'Lluvia Total',
     climate_summary: 'Resumen del Clima', active_alerts: 'Alertas', monthly_temp_overview: 'Temperatura Mensual',
-    loaded_polygons: 'Tus Campos', no_polygons: 'Aún no has agregado campos.', no_alerts: 'Sin alertas — todo bien.',
+    loaded_polygons: 'Tus Campos', no_polygons: 'Aún no has agregado campos.', no_alerts: 'Sin alertas: todo bien.',
     climate_title: 'Clima', climate_upload_msg: 'Marca tu campo en el mapa para ver el clima de tu zona.',
     annual_gdd: 'Calor Acumulado', gdd_sub: 'Calor acumulado para el desarrollo del cultivo', chill_hours: 'Horas de Frío', chill_sub: 'Frío necesario para la brotación',
     frost_days: 'Días de Helada', frost_sub: 'Días bajo cero', heat_waves: 'Olas de Calor', heat_wave_sub: '3+ días muy calurosos seguidos',
@@ -4333,7 +4333,7 @@ const i18n = {
     gee_loading: 'Cargando imágenes satelitales...', gee_sentinel_info: 'Imágenes satelitales cada 5 días · Alta resolución · Sin nubes',
     gee_auto_sub: 'Conectando a imágenes satelitales...',
     // Compare
-    compare_left: 'IZQUIERDA', compare_right: 'DERECHA', compare_select_date: '— Elegir fecha —',
+    compare_left: 'IZQUIERDA', compare_right: 'DERECHA', compare_select_date: 'Elegir fecha',
     compare_btn: 'Comparar', compare_exit: 'Salir',
     // Layer list
     active_layers_header: 'Tus campos', layer_placeholder: 'Sube un archivo o dibuja para agregar tu campo.',
@@ -4359,7 +4359,7 @@ const i18n = {
     total_reads: 'Muestras Analizadas', reads_sub: '68 muestras de ARN', data_processed: 'Datos Procesados', data_sub: 'Archivos genéticos',
     pheno_stages: 'Etapas de Crecimiento', stages_sub: 'Desde brotación hasta senescencia', unique_degs: 'Genes Activos', degs_sub: 'Genes con cambios significativos',
     pheno_progress: 'Progreso del Cultivo', season_progress: 'Progreso de Temporada',
-    veraison: 'Envero', stage_35: 'Etapa 35 — Escala de crecimiento',
+    veraison: 'Envero', stage_35: 'Etapa 35: Escala de crecimiento',
     bud: 'Yema', inflor: 'Flor', berry: 'Baya', ripen: 'Madurez', senesc: 'Caída',
     degs_per_stage: 'Genes activos por etapa de crecimiento',
     sample_composition: 'Variedades analizadas', samples: 'muestras',
@@ -4373,7 +4373,7 @@ const i18n = {
     go_compute_hint: 'Presiona <strong style="color:var(--accent);">Calcular desde UniProt</strong> para obtener anotaciones GO reales de todos los genes en las tablas.',
     gene_detail_title: 'Detalle del Gen',
     gene_detail_hint: 'Haz clic en un <strong style="color:var(--accent);">ID VIT_</strong> en cualquier tabla para ver:<br>Anotaciones de Ontología Génica · Info proteica UniProt · Estructura 3D AlphaFold',
-    deg_summary_title: 'Resumen de Expresión Diferencial — Todas las comparaciones vs. E-L 3 (Línea base)',
+    deg_summary_title: 'Resumen de Expresión Diferencial: Todas las comparaciones vs. E-L 3 (Línea base)',
     th_comparison: 'Comparación', th_major_stage: 'Etapa Principal', th_tissue: 'Tejido', th_replicates: 'Réplicas',
     th_down: 'Sub-expresados', th_up: 'Sobre-expresados', th_total_degs: 'Total Genes',
     hist_th_season: 'Temporada', hist_th_precip: 'Lluvia (mm)', hist_th_avgmax: 'Máx. media °C', hist_th_avgmin: 'Mín. media °C',
@@ -4385,7 +4385,7 @@ const i18n = {
     // Alerts
     alert_no_kml: 'No se encontraron datos del campo en este archivo. Prueba con otro.', alert_no_geom: 'No se encontraron límites de campo en este archivo.',
     alert_file_error: 'No se pudo leer este archivo: ',
-    gee_help_msg: 'Las imágenes satelitales se conectan automáticamente. No necesitas configurar nada — solo marca tu campo.',
+    gee_help_msg: 'Las imágenes satelitales se conectan automáticamente. No necesitas configurar nada: solo marca tu campo.',
     climate_upload_sub: 'Marca tu campo para ver el clima',
     saved_fields_title: 'Mis Campos Guardados', saved_fields_empty: 'Aún no tienes campos guardados. Dibuja o sube un polígono y guárdalo.', load_all_fields: 'Ver todos en el mapa',
     save_current_field: 'Guardar campo actual', save_field_title: 'Guardar campo', save_field_ph: 'ej: Parcela Norte',
@@ -4418,7 +4418,7 @@ const i18n = {
     gee_lib_error: 'Não foi possível carregar a biblioteca GEE. Verifique sua conexão.',
     gee_connecting: 'Conectando ao Google Earth Engine...',
     gee_sentinel_sub: 'Sentinel-2 SR Harmonized · 10 m de resolução',
-    gee_retry: 'Erro ao conectar — tentando novamente em 10s...',
+    gee_retry: 'Erro ao conectar: tentando novamente em 10s...',
     gee_last_load: 'Último carregamento:',
     scenes_searching: 'Procurando capturas...',
     scenes_none: 'Sem capturas para este período e nebulosidade.',
@@ -4474,7 +4474,7 @@ const i18n = {
     risk_heat_stress: 'Estresse por calor',
     days: 'dias',
     waves: 'ondas',
-    no_alerts_good: 'Sem alertas — as condições parecem boas.',
+    no_alerts_good: 'Sem alertas: as condições parecem boas.',
     climate_load_error: 'Não foi possível carregar os dados climáticos:',
     alert_mark_field: 'Marque primeiro um campo no mapa.',
     alert_date_order: 'A data inicial deve ser anterior à final.',
@@ -4487,8 +4487,8 @@ const i18n = {
     ds_th_usage: 'Uso no agragent',
     ds_wgisd_desc: 'Wine Grape Instance Segmentation Dataset (Embrapa). 300+ imagens, 5 variedades, caixas YOLO.',
     ds_use_images: 'Seção Análise de imagens',
-    ds_s2_desc: 'COPERNICUS/S2_SR_HARMONIZED — imagens de satélite multiespectrais de 10 m via Google Earth Engine',
-    ds_meteo_desc: 'API meteorológica livre e gratuita — temperatura e precipitação diária histórica',
+    ds_s2_desc: 'COPERNICUS/S2_SR_HARMONIZED: imagens de satélite multiespectrais de 10 m via Google Earth Engine',
+    ds_meteo_desc: 'API meteorológica livre e gratuita: temperatura e precipitação diária histórica',
     ds_use_climate: 'Seção Dados climáticos',
     ds_rna_desc: '68 amostras de Vitis vinifera em 8 estádios E-L. Processadas com Salmon + edgeR',
     ds_use_genomic: 'Seção Análise genômica',
@@ -4553,14 +4553,14 @@ const i18n = {
     img_model_intro: 'YOLO26m ajustado sobre a partição oficial do WGISD (194 treino / 48 validação / 58 teste), medido nas imagens de teste reservadas. O detector tem uma única classe, cacho de uva: localiza e conta cachos, não identifica a variedade.',
     img_precision: 'Precisão', img_recall: 'Revocação', img_inference: 'Inferência / imagem',
     img_white: 'Branca', img_red: 'Tinta', img_click_hint: 'Clique na imagem para ver anotações',
-    img_upload_title: 'Analisar imagem própria', img_upload_text: 'Arraste ou clique para carregar imagem do campo', img_upload_sub: 'Aceita .jpg · .png · .tiff — Máx 50MB',
+    img_upload_title: 'Analisar imagem própria', img_upload_text: 'Arraste ou clique para carregar imagem do campo', img_upload_sub: 'Aceita .jpg · .png · .tiff (máx 50MB)',
     img_loading: 'Carregando imagem e anotações...', img_clusters_detected: 'Cachos detectados', img_berries_est: 'Bagas estimadas',
     img_annotations: 'Anotações: YOLO (bounding box)', img_resolution: 'Resolução: 2048 × 1365 px', img_data_source: 'Dados:', img_show_bbox: 'Mostrar bounding boxes',
     img_analyzing: 'Analisando imagem com YOLO26...', img_api_offline: 'Servidor de detecção offline. Inicie a API para habilitar detecção em tempo real.',
-    img_berry_method: '<strong style="color:var(--text-primary);">Método de estimativa de bagas:</strong> Estimado a partir da área do bounding box de cada cacho detectado. Cachos pequenos (~1% da área) ≈ 20 bagas, cachos grandes (~8%) ≈ 80 bagas. Interpolação linear, máximo 80/cacho. É uma aproximação — contagem real requer segmentação de instâncias.',
+    img_berry_method: '<strong style="color:var(--text-primary);">Método de estimativa de bagas:</strong> Estimado a partir da área do bounding box de cada cacho detectado. Cachos pequenos (~1% da área) ≈ 20 bagas, cachos grandes (~8%) ≈ 80 bagas. Interpolação linear, máximo 80/cacho. É uma aproximação: contagem real requer segmentação de instâncias.',
     editor_title: 'Propriedades do Campo', editor_name: 'Nome', editor_name_ph: 'ex: Parcela Norte',
     editor_desc: 'Descrição', editor_desc_ph: 'Notas, variedade, observações...',
-    editor_stage: 'Etapa de crescimento', editor_select: '— Selecionar —',
+    editor_stage: 'Etapa de crescimento', editor_select: 'Selecionar',
     stage_bud: 'Brotação', stage_flower: 'Floração', stage_fruit: 'Frutificação', stage_veraison: 'Mudança de cor / Início de maturação',
     stage_ripen: 'Maturação', stage_harvest: 'Colheita', stage_post: 'Pós-colheita',
     editor_color: 'Cor', editor_cancel: 'Cancelar', editor_save: 'Salvar',
@@ -4580,12 +4580,12 @@ const i18n = {
     desc_NDRE: 'Detecta deficiência de nitrogênio antes de ser visível. Alta sensibilidade ao estresse nutricional precoce. Chave para fertilização de precisão.',
     desc_GNDVI: 'Teor de clorofila com maior sensibilidade que o NDVI. Ideal para monitorar saúde foliar e estado nutricional ao longo da temporada.',
     desc_TCARI: 'Indicador de absorção de clorofila sob estresse. Valores altos indicam clorose, danos por pragas ou doenças foliares.',
-    desc_CIRE: 'Índice de clorofila foliar — correlaciona com nitrogênio disponível na planta. Útil para calibrar e programar fertilizações foliares.',
+    desc_CIRE: 'Índice de clorofila foliar: correlaciona com nitrogênio disponível na planta. Útil para calibrar e programar fertilizações foliares.',
     desc_NDMI: 'Teor de água na vegetação. Detecta estresse hídrico antes dos sintomas visuais aparecerem. Orienta o manejo de irrigação.',
     desc_NDWI: 'Identifica corpos d\'água e zonas alagadas. Detecta inundações, problemas de drenagem e excesso de umidade no solo.',
     desc_BSI: 'Mapeamento de solo exposto e erosão. Estima cobertura do solo e identifica zonas sem vegetação. Útil para manejo de coberturas.',
-    desc_RGB: 'Vista em cor natural — como uma fotografia. Sem análise espectral. Referência visual das condições gerais do campo.',
-    desc_FALSE: 'Vegetação em tons vermelhos — vermelho mais intenso = maior atividade fotossintética. Contraste visual entre zonas ativas e estressadas.',
+    desc_RGB: 'Vista em cor natural: como uma fotografia. Sem análise espectral. Referência visual das condições gerais do campo.',
+    desc_FALSE: 'Vegetação em tons vermelhos: vermelho mais intenso = maior atividade fotossintética. Contraste visual entre zonas ativas e estressadas.',
     desc_ALPHAEARTH: 'Visualização de embeddings de IA do Google DeepMind. As cores representam padrões espectrais-temporais únicos detectados pelo modelo em 64 dimensões.',
     desc_ALPHAEARTH_CLASS: 'Classificação automática de cobertura do solo com IA. Distingue vegetação (verde), solo exposto (marrom), água (azul) e áreas construídas (cinza).',
     location: 'Localização', field_area: 'Área do Campo', season_gdd: 'GDD da Safra', season_precip: 'Precip. da Safra',
@@ -4596,7 +4596,7 @@ const i18n = {
     frost_days: 'Dias de Geada', frost_sub: 'Dias com Tmin ≤ 0°C', heat_waves: 'Ondas de Calor', heat_wave_sub: '≥3 dias consecutivos >35°C',
     dry_months: 'Meses Secos', dry_sub: '<30mm precipitação', avg_humidity: 'Umidade Média', total_solar: 'Radiação Solar Total',
     total_et: 'ET₀ Total', et_sub: 'Evapotranspiração (mm)',
-    temp_chart: 'Temperatura Mensal (Min/Max) — Safra 12 Meses', precip_chart: 'Precipitação Mensal (mm)',
+    temp_chart: 'Temperatura Mensal (Min/Max): Safra 12 Meses', precip_chart: 'Precipitação Mensal (mm)',
     humidity_chart: 'Umidade Relativa Mensal (%)', solar_chart: 'Radiação Solar Mensal (MJ/m²)',
     et_chart: 'Evapotranspiração Mensal ET₀ (mm)', gdd_chart: 'Acumulação de Graus-Dia (GDD)',
     gdd_compare_title: 'Comparação de GDD entre Datas', gdd_period_a: 'Período A', gdd_period_b: 'Período B', gdd_compare_btn: 'Comparar GDD', gdd_difference: 'Diferença',
@@ -4607,7 +4607,7 @@ const i18n = {
     real_color: 'Cor Real', false_color: 'Cor Falsa',
     median: 'Mediana', captures: 'Capturas', compare: 'Comparar', refresh: 'Atualizar',
     no_polygon_gee: 'Primeiro carregue um KML/KMZ ou desenhe um polígono.',
-    genomic_title: 'Análise Genômica', genomic_sub: 'Expressão Diferencial RNA-seq — Estágios fenológicos de Vitis vinifera (Altimiras et al.)',
+    genomic_title: 'Análise Genômica', genomic_sub: 'Expressão Diferencial RNA-seq: Estágios fenológicos de Vitis vinifera (Altimiras et al.)',
     images_title: 'Análise de Imagens de Cultivo',
     yield_title: 'Previsão de Rendimento',
     // Plan
@@ -4635,7 +4635,7 @@ const i18n = {
     gee_loading: 'Carregando imagens GEE...', gee_sentinel_info: 'Sentinel-2 SR Harmonized · 10m resolução · Cloud masking automático (QA60) · Apenas área do polígono',
     gee_auto_sub: 'Conectando automaticamente ao Sentinel-2...',
     // Compare
-    compare_left: 'ESQUERDA', compare_right: 'DIREITA', compare_select_date: '— Selecionar data —',
+    compare_left: 'ESQUERDA', compare_right: 'DIREITA', compare_select_date: 'Selecionar data',
     compare_btn: 'Comparar', compare_exit: 'Sair',
     // Layer list
     active_layers_header: 'Camadas ativas', layer_placeholder: 'Carregue um KMZ/KML ou desenhe para adicionar camadas.',
@@ -4657,11 +4657,11 @@ const i18n = {
     hist_heat: 'Dias de Estresse Térmico por Safra (>35°C)', hist_table: 'Tabela Comparativa de Safras',
     hist_upload: 'Carregue um polígono para carregar dados históricos.',
     // Genomic
-    genomic_sub: 'Expressão Diferencial RNA-seq — Estágios fenológicos de Vitis vinifera (Altimiras et al.)',
+    genomic_sub: 'Expressão Diferencial RNA-seq: Estágios fenológicos de Vitis vinifera (Altimiras et al.)',
     total_reads: 'Leituras Totais', reads_sub: '68 amostras RNA-seq', data_processed: 'Dados Processados', data_sub: 'Arquivos FASTQ',
     pheno_stages: 'Estágios Fenológicos', stages_sub: 'Do abrolhamento à senescência', unique_degs: 'DEGs Únicos', degs_sub: 'Genes com alterações significativas',
     pheno_progress: 'Progresso Fenológico', season_progress: 'Progresso da Safra',
-    veraison: 'Véraison', stage_35: 'Estágio 35 — Escala E-L Modificada',
+    veraison: 'Véraison', stage_35: 'Estágio 35: Escala E-L Modificada',
     bud: 'Gema', inflor: 'Inflor.', berry: 'Baga', ripen: 'Maturação', senesc: 'Senesc.',
     degs_per_stage: 'DEGs por Estágio de Desenvolvimento (vs. E-L 3 base)',
     sample_composition: 'Composição de Amostras por Variedade', samples: 'amostras',
@@ -4675,7 +4675,7 @@ const i18n = {
     go_compute_hint: 'Pressione <strong style="color:var(--accent);">Calcular via UniProt</strong> para buscar anotações GO reais de todos os genes nas tabelas.',
     gene_detail_title: 'Detalhe do Gene',
     gene_detail_hint: 'Clique em um <strong style="color:var(--accent);">ID VIT_</strong> em qualquer tabela para ver:<br>Anotações de Ontologia Gênica · Info proteica UniProt · Estrutura 3D AlphaFold',
-    deg_summary_title: 'Resumo de Expressão Diferencial — Todas comparações vs. E-L 3 (Base)',
+    deg_summary_title: 'Resumo de Expressão Diferencial: Todas comparações vs. E-L 3 (Base)',
     th_comparison: 'Comparação', th_major_stage: 'Estágio Principal', th_tissue: 'Tecido', th_replicates: 'Réplicas',
     th_down: 'Sub-expressos', th_up: 'Sobre-expressos', th_total_degs: 'Total de genes',
     hist_th_season: 'Temporada', hist_th_precip: 'Chuva (mm)', hist_th_avgmax: 'Máx. média °C', hist_th_avgmin: 'Mín. média °C',
@@ -4928,7 +4928,7 @@ const tickOpts = { color: '#7fa892', font: { size: 11 } };
 })();
 
 // ═══════════════════════════════════════
-// CHART 2: Temperature (placeholder — filled by loadClimateData)
+// CHART 2: Temperature (placeholder: filled by loadClimateData)
 // ═══════════════════════════════════════
 (function() {
   const months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
@@ -4961,7 +4961,7 @@ const tickOpts = { color: '#7fa892', font: { size: 11 } };
 })();
 
 // ═══════════════════════════════════════
-// CHART 3: Precipitation (placeholder — filled by loadClimateData)
+// CHART 3: Precipitation (placeholder: filled by loadClimateData)
 // ═══════════════════════════════════════
 (function() {
   const months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
@@ -4988,7 +4988,7 @@ const tickOpts = { color: '#7fa892', font: { size: 11 } };
 })();
 
 // ═══════════════════════════════════════
-// CHART 4: Humidity (placeholder — filled by loadClimateData)
+// CHART 4: Humidity (placeholder: filled by loadClimateData)
 // ═══════════════════════════════════════
 (function() {
   const months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
@@ -5016,7 +5016,7 @@ const tickOpts = { color: '#7fa892', font: { size: 11 } };
 })();
 
 // ═══════════════════════════════════════
-// CHART 5: Solar Radiation (placeholder — filled by loadClimateData)
+// CHART 5: Solar Radiation (placeholder: filled by loadClimateData)
 // ═══════════════════════════════════════
 (function() {
   const months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
@@ -5043,7 +5043,7 @@ const tickOpts = { color: '#7fa892', font: { size: 11 } };
 })();
 
 // ═══════════════════════════════════════
-// CHART 6: Evapotranspiration (placeholder — filled by loadClimateData)
+// CHART 6: Evapotranspiration (placeholder: filled by loadClimateData)
 // ═══════════════════════════════════════
 (function() {
   const months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
@@ -5070,7 +5070,7 @@ const tickOpts = { color: '#7fa892', font: { size: 11 } };
 })();
 
 // ═══════════════════════════════════════
-// CHART 7: GDD Accumulation (placeholder — filled by loadClimateData)
+// CHART 7: GDD Accumulation (placeholder: filled by loadClimateData)
 // ═══════════════════════════════════════
 (function() {
   const months = ['Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
@@ -5113,7 +5113,7 @@ let agAreaHa = 0;     // polygon area in hectares
 let agCrop = 'uva_vinif'; // selected crop key for harvest date model
 
 // Reverse geocode coordinates to get location name (BigDataCloud: free, no key, CORS,
-// no aggressive rate limit — Nominatim was being blocked/rate-limited from the browser)
+// no aggressive rate limit: Nominatim was being blocked/rate-limited from the browser)
 async function updateLocationName(lat, lng) {
   try {
     const resp = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=${currentLang}`);
@@ -5123,18 +5123,18 @@ async function updateLocationName(lat, lng) {
     const name = parts.join(', ');
     if (name) {
       document.getElementById('location-label').textContent = name;
-      document.getElementById('climate-location-label').textContent = name + ' — ' + t('season_label') + ' 2025/2026';
-      document.getElementById('yield-location-label').textContent = t('yield_predicted') + ' — ' + name;
+      document.getElementById('climate-location-label').textContent = name + ': ' + t('season_label') + ' 2025/2026';
+      document.getElementById('yield-location-label').textContent = t('yield_predicted') + ': ' + name;
     }
   } catch (e) {
     console.warn('Reverse geocoding failed:', e);
   }
 }
 
-// Called when polygons are removed or edited — resets or recalculates all sections
+// Called when polygons are removed or edited: resets or recalculates all sections
 function onPolygonChanged() {
   if (kmlRawCoords.length === 0) {
-    // No polygons left — reset everything
+    // No polygons left: reset everything
     agClimate = {};
     agIndices = {};
     agAreaHa = 0;
@@ -5164,22 +5164,22 @@ function onPolygonChanged() {
     // Reset climate section
     ['kpiGDD','kpiChill','kpiFrost','kpiHeatWave','kpiDry','kpiHumidity','kpiSolar','kpiET'].forEach(id => {
       const e = document.getElementById(id);
-      if (e) e.textContent = '—';
+      if (e) e.textContent = '-';
     });
 
     // Reset phenological stage
     const arc = document.getElementById('pheno-gauge-arc');
     if (arc) { arc.setAttribute('stroke-dashoffset', '439.8'); arc.setAttribute('stroke', 'var(--text-secondary)'); }
     const pctEl = document.getElementById('pheno-pct');
-    if (pctEl) pctEl.textContent = '—';
+    if (pctEl) pctEl.textContent = '-';
     const nameEl = document.getElementById('pheno-stage-name');
-    if (nameEl) { nameEl.textContent = '—'; nameEl.style.color = ''; }
+    if (nameEl) { nameEl.textContent = '-'; nameEl.style.color = ''; }
     const subEl = document.getElementById('pheno-stage-sub');
     if (subEl) subEl.textContent = t('upload_field_to_calc');
 
     return;
   }
-  // Polygons still exist — recalculate with updated geometry
+  // Polygons still exist: recalculate with updated geometry
   onPolygonAdded();
   if (geeConnected) loadGEELayer(currentGEEIndex);
 }
@@ -5539,7 +5539,7 @@ async function loadClimateData() {
 
     // Averages for KPIs
     const avgHumAll = humid.filter(v => v != null);
-    const meanHumidity = avgHumAll.length ? +(avgHumAll.reduce((s,v) => s+v, 0) / avgHumAll.length).toFixed(0) : '—';
+    const meanHumidity = avgHumAll.length ? +(avgHumAll.reduce((s,v) => s+v, 0) / avgHumAll.length).toFixed(0) : '-';
     const totalSolar = +monthSolar.reduce((s,v) => s+v, 0).toFixed(0);
     const totalET = +monthET.reduce((s,v) => s+v, 0).toFixed(0);
 
@@ -5551,7 +5551,7 @@ async function loadClimateData() {
     document.getElementById('kpiHeatWave').textContent = heatWaves;
     document.getElementById('kpiHeatWaveSub').textContent = `${heatDays} days >35°C total`;
     document.getElementById('kpiDry').textContent = dryMonths;
-    document.getElementById('kpiDrySub').textContent = dryNames.length > 0 ? dryNames.join(', ') : '—';
+    document.getElementById('kpiDrySub').textContent = dryNames.length > 0 ? dryNames.join(', ') : '-';
     document.getElementById('kpiHumidity').textContent = meanHumidity + '%';
     document.getElementById('kpiSolar').textContent = totalSolar.toLocaleString();
     document.getElementById('kpiET').textContent = totalET;
@@ -5598,8 +5598,8 @@ async function loadClimateData() {
     const totalPrecipSeason = +monthPrecRound.reduce((s,v) => s+v, 0).toFixed(0);
     const avgMaxAll = avgMax.filter(v=>v);
     const avgMinAll = avgMin.filter(v=>v);
-    const meanMax = avgMaxAll.length ? (avgMaxAll.reduce((s,v)=>s+v,0)/avgMaxAll.length).toFixed(1) : '—';
-    const meanMin = avgMinAll.length ? (avgMinAll.reduce((s,v)=>s+v,0)/avgMinAll.length).toFixed(1) : '—';
+    const meanMax = avgMaxAll.length ? (avgMaxAll.reduce((s,v)=>s+v,0)/avgMaxAll.length).toFixed(1) : '-';
+    const meanMin = avgMinAll.length ? (avgMinAll.reduce((s,v)=>s+v,0)/avgMinAll.length).toFixed(1) : '-';
 
     // KPI row 1
     const el = id => document.getElementById(id);
@@ -5837,10 +5837,10 @@ async function compareGDD() {
     document.getElementById('gddCompDatesB').textContent = `${startB} → ${endB} (${resultB.days}d)`;
 
     const diff = resultA.total - resultB.total;
-    const pct = resultB.total > 0 ? ((diff / resultB.total) * 100).toFixed(1) : '—';
+    const pct = resultB.total > 0 ? ((diff / resultB.total) * 100).toFixed(1) : '-';
     document.getElementById('gddCompDiff').textContent = (diff > 0 ? '+' : '') + diff.toLocaleString();
     document.getElementById('gddCompDiff').style.color = diff >= 0 ? '#52b788' : '#ef4444';
-    document.getElementById('gddCompPct').textContent = pct !== '—' ? `${diff >= 0 ? '+' : ''}${pct}%` : '';
+    document.getElementById('gddCompPct').textContent = pct !== '-' ? `${diff >= 0 ? '+' : ''}${pct}%` : '';
 
     // Chart
     if (chartInstances.gddCompare) chartInstances.gddCompare.destroy();
@@ -6080,7 +6080,7 @@ async function loadHistoricalData() {
       seasonData.forEach(s => {
         const gddColor = s.gdd >= avgGDD ? 'var(--green)' : 'var(--red)';
         const precColor = s.precip >= avgPrec ? 'var(--accent)' : 'var(--yellow)';
-        html += `<tr><td><strong>${s.label}</strong></td><td style="color:${gddColor}">${s.gdd.toLocaleString()}</td><td style="color:${precColor}">${s.precip}</td><td>${s.meanMax || '—'}</td><td>${s.meanMin || '—'}</td><td>${s.frostDays}</td><td style="color:${s.heatDays > 5 ? 'var(--red)' : ''}">${s.heatDays}</td><td>${s.heatWaves}</td></tr>`;
+        html += `<tr><td><strong>${s.label}</strong></td><td style="color:${gddColor}">${s.gdd.toLocaleString()}</td><td style="color:${precColor}">${s.precip}</td><td>${s.meanMax || '-'}</td><td>${s.meanMin || '-'}</td><td>${s.frostDays}</td><td style="color:${s.heatDays > 5 ? 'var(--red)' : ''}">${s.heatDays}</td><td>${s.heatWaves}</td></tr>`;
       });
       // Averages row
       html += `<tr style="border-top:2px solid var(--accent);font-weight:700;"><td>${t('hist_th_average')}</td><td>${avgGDD.toLocaleString()}</td><td>${avgPrec}</td><td>${(seasonData.reduce((s,d) => s + (d.meanMax||0), 0) / seasonData.length).toFixed(1)}</td><td>${(seasonData.reduce((s,d) => s + (d.meanMin||0), 0) / seasonData.length).toFixed(1)}</td><td>${Math.round(seasonData.reduce((s,d) => s + d.frostDays, 0) / seasonData.length)}</td><td>${Math.round(seasonData.reduce((s,d) => s + d.heatDays, 0) / seasonData.length)}</td><td>${(seasonData.reduce((s,d) => s + d.heatWaves, 0) / seasonData.length).toFixed(1)}</td></tr>`;
@@ -6355,7 +6355,7 @@ function renderGeneDetail(panel, geneId, data) {
 }
 
 // ═══════════════════════════════════════
-// GO ENRICHMENT (real — fetches from UniProt)
+// GO ENRICHMENT (real: fetches from UniProt)
 // ═══════════════════════════════════════
 let goEnrichmentData = null; // { BP: {term: count}, MF: {}, CC: {} }
 
@@ -6432,7 +6432,7 @@ async function computeGOEnrichment() {
   }
 
   goEnrichmentData = goCounts;
-  statusEl.textContent = `Done — ${fetched} genes analyzed`;
+  statusEl.textContent = `Done: ${fetched} genes analyzed`;
   renderGOEnrichment();
 }
 
@@ -6479,7 +6479,7 @@ function showDEGStage(stageId, btn) {
 
 // ═══════════════════════════════════════
 // CHART 5: Historical Yield
-// (Historical yield chart removed — now computed dynamically)
+// (Historical yield chart removed: now computed dynamically)
 
 // ═══════════════════════════════════════
 // ═══════════════════════════════════════
@@ -6531,7 +6531,7 @@ function initMap() {
   vineMap.getContainer().addEventListener('touchstart', () => vineMap.invalidateSize(), { passive: true });
   vineMap.getContainer().addEventListener('pointerdown', () => vineMap.invalidateSize(), { passive: true });
 
-  // No default polygons — user must upload KML/KMZ or draw a polygon
+  // No default polygons: user must upload KML/KMZ or draw a polygon
   renderLayerList();
 }
 
@@ -6583,7 +6583,7 @@ async function searchLocation() {
       </div>`;
     }).join('');
   } catch (err) {
-    locationResults.innerHTML = '<div class="location-result-item" style="color:#f87171;cursor:default;">Search error — try again</div>';
+    locationResults.innerHTML = '<div class="location-result-item" style="color:#f87171;cursor:default;">Search error: try again</div>';
   }
 }
 
@@ -6616,7 +6616,7 @@ function setIndex(btn, idx) {
     const tips = INDEX_TIPS[idx] || {};
 
     // Header
-    document.getElementById('iic-title').textContent = (meta.title || idx).split(' — ')[0];
+    document.getElementById('iic-title').textContent = (meta.title || idx).split(': ')[0];
     document.getElementById('iic-formula').textContent = meta.formula || '';
 
     // Description
@@ -6670,33 +6670,33 @@ const INDEX_META = {
   NDRE:  { title: 'NDRE: Red Edge Vegetation Index', formula: '(NIR − RedEdge) / (NIR + RedEdge) · B8, B5', gradient: 'linear-gradient(to right,#d73027,#fdae61,#fee08b,#d9ef8b,#66bd63,#1a9850)', labels: ['-0.1','0.1','0.2','0.4','0.5'] },
   GNDVI: { title: 'GNDVI: Green NDVI', formula: '(NIR − GREEN) / (NIR + GREEN) · B8, B3', gradient: 'linear-gradient(to right,#d73027,#f46d43,#fdae61,#d9ef8b,#a6d96a,#1a9850)', labels: ['0.0','0.2','0.4','0.6','0.8'] },
   TCARI: { title: 'TCARI: Transformed Chlorophyll Absorption', formula: '3·((B5−B4)−0.2·(B5−B3)·(B5/B4))', gradient: 'linear-gradient(to right,#1a9850,#d9ef8b,#fdae61,#d73027)', labels: ['Bajo (sano)','0.1','0.2','0.4','Alto (estrés)'] },
-  CIRE:  { title: 'CIre — Chlorophyll Index Red Edge', formula: '(NIR / RedEdge) − 1 · B8, B5', gradient: 'linear-gradient(to right,#d73027,#fdae61,#fee08b,#a6d96a,#1a9850,#006837)', labels: ['0','0.5','1.0','2.0','3.0+'] },
+  CIRE:  { title: 'CIre: Chlorophyll Index Red Edge', formula: '(NIR / RedEdge) − 1 · B8, B5', gradient: 'linear-gradient(to right,#d73027,#fdae61,#fee08b,#a6d96a,#1a9850,#006837)', labels: ['0','0.5','1.0','2.0','3.0+'] },
   // ── Agua ──
   NDMI:  { title: 'NDMI: Normalized Difference Moisture Index', formula: '(NIR − SWIR) / (NIR + SWIR) · B8, B11', gradient: 'linear-gradient(to right,#d73027,#f46d43,#fdae61,#abd9e9,#74add1,#4575b4)', labels: ['-0.5 (Seco)','−0.2','0.0','0.2','0.4','0.6 (Húmedo)'] },
   NDWI:  { title: 'NDWI: Normalized Difference Water Index', formula: '(GREEN − NIR) / (GREEN + NIR) · B3, B8', gradient: 'linear-gradient(to right,#a6611a,#dfc27d,#f5f5f5,#80cdc1,#018571)', labels: ['-0.5 (Seco)','−0.2','0.0','0.2','0.5 (Agua)'] },
   // ── Suelo ──
   BSI:   { title: 'BSI: Bare Soil Index', formula: '((SWIR+RED)−(NIR+BLUE))/((SWIR+RED)+(NIR+BLUE)) · B11,B4,B8,B2', gradient: 'linear-gradient(to right,#1a9850,#a6d96a,#fee08b,#c8a46e,#8B4513)', labels: ['-0.4 (Veg.)','−0.1','0.0','0.2','0.4 (Suelo)'] },
   // ── Visual ──
-  RGB:   { title: 'Color Real — RGB', formula: 'B4 (Red), B3 (Green), B2 (Blue)', gradient: 'linear-gradient(to right,#1a5ca8,#2e8b57,#8B4513,#c8a46e,#f5f5f5)', labels: ['Agua','Vegetación','Suelo','Seco','Nubes'] },
-  FALSE: { title: 'Falso Color — NIR composit', formula: 'B8 (NIR), B4 (Red), B3 (Green) · veg.=rojo', gradient: 'linear-gradient(to right,#1a1a2e,#0d4a1a,#2e8b57,#c0392b,#8b0000)', labels: ['No veg.','Baja','Media','Alta','Muy alta'] },
+  RGB:   { title: 'Color Real: RGB', formula: 'B4 (Red), B3 (Green), B2 (Blue)', gradient: 'linear-gradient(to right,#1a5ca8,#2e8b57,#8B4513,#c8a46e,#f5f5f5)', labels: ['Agua','Vegetación','Suelo','Seco','Nubes'] },
+  FALSE: { title: 'Falso Color: NIR composit', formula: 'B8 (NIR), B4 (Red), B3 (Green) · veg.=rojo', gradient: 'linear-gradient(to right,#1a1a2e,#0d4a1a,#2e8b57,#c0392b,#8b0000)', labels: ['No veg.','Baja','Media','Alta','Muy alta'] },
   // ── IA · AlphaEarth ──
-  ALPHAEARTH:       { title: 'AlphaEarth — PCA Falso Color', formula: 'Google DeepMind · 64-dim embeddings · Componentes 0-1-2 → RGB · Anual 2017-2025', gradient: 'linear-gradient(to right,#0d0221,#1a0a4e,#2e1a8c,#4a6fa5,#68c9b0,#f5f5f5)', labels: ['Patrón A','','Centro','','Patrón B'] },
-  ALPHAEARTH_CLASS: { title: 'AlphaEarth — Cobertura del Suelo', formula: 'K-means 4 clases · vegetación · suelo · agua · urbano/otro', gradient: 'linear-gradient(to right,#1a9850,#c8a46e,#4575b4,#888888)', labels: ['Vegetación','Suelo','Agua','Urbano/Otro'] }
+  ALPHAEARTH:       { title: 'AlphaEarth: PCA Falso Color', formula: 'Google DeepMind · 64-dim embeddings · Componentes 0-1-2 → RGB · Anual 2017-2025', gradient: 'linear-gradient(to right,#0d0221,#1a0a4e,#2e1a8c,#4a6fa5,#68c9b0,#f5f5f5)', labels: ['Patrón A','','Centro','','Patrón B'] },
+  ALPHAEARTH_CLASS: { title: 'AlphaEarth: Cobertura del Suelo', formula: 'K-means 4 clases · vegetación · suelo · agua · urbano/otro', gradient: 'linear-gradient(to right,#1a9850,#c8a46e,#4575b4,#888888)', labels: ['Vegetación','Suelo','Agua','Urbano/Otro'] }
 };
 
-// Agronomic interpretation per index — what values mean and when to act
+// Agronomic interpretation per index: what values mean and when to act
 const INDEX_TIPS = {
-  NDVI:  { good:'> 0.6 — vigor activo, cultivo en buen estado', alert:'< 0.3 — revisar riego, nutrición o presencia de plagas', when:'Todo el año · índice base de monitoreo estacional' },
-  EVI:   { good:'> 0.5 — dosel denso y activo', alert:'< 0.2 — posible estrés hídrico o baja densidad foliar', when:'Mejor en cultivos densos: viñedos y frutales' },
-  SAVI:  { good:'> 0.4 — buen desarrollo vegetativo', alert:'< 0.15 — cobertura baja, evaluar densidad de siembra', when:'Inicio de temporada · plantas jóvenes o recién transplantadas' },
-  MSAVI: { good:'> 0.4 — vegetación establecida', alert:'< 0.1 — suelo dominante, cobertura muy baja', when:'Inicio de temporada · parcelas con claros o baja emergencia' },
-  NDRE:  { good:'> 0.3 — estado nutricional N adecuado', alert:'< 0.15 — probable deficiencia de nitrógeno', when:'Pre-floración y cuaje · calibrar plan de fertilización' },
-  GNDVI: { good:'> 0.5 — clorofila alta, hoja sana', alert:'< 0.25 — clorosis o estrés nutricional activo', when:'Mitad de temporada · monitoreo de salud foliar' },
-  TCARI: { good:'< 0.15 — cultivo sano, alta clorofila', alert:'> 0.30 — clorosis, daño por plagas o hongos foliares', when:'Floración y desarrollo de fruto · detección temprana de patógenos' },
-  CIRE:  { good:'> 1.5 — contenido de N foliar adecuado', alert:'< 0.8 — aplicar fertilización nitrogenada foliar', when:'Pre-floración · calibrar dosis de nitrógeno' },
-  NDMI:  { good:'> 0.2 — contenido hídrico adecuado', alert:'< −0.1 — estrés hídrico activo, adelantar turno de riego', when:'Veranos secos · programar frecuencia de riego' },
-  NDWI:  { good:'< 0 — sin agua libre superficial', alert:'> 0.1 — zona con exceso de agua o anegamiento', when:'Post-lluvia intensa · detectar zonas de drenaje deficiente' },
-  BSI:   { good:'< −0.1 — buena cobertura vegetal del suelo', alert:'> 0.2 — suelo expuesto, erosión o falla en cultivo', when:'Pre-siembra y post-cosecha · evaluación de cobertura residual' },
+  NDVI:  { good:'> 0.6: vigor activo, cultivo en buen estado', alert:'< 0.3: revisar riego, nutrición o presencia de plagas', when:'Todo el año · índice base de monitoreo estacional' },
+  EVI:   { good:'> 0.5: dosel denso y activo', alert:'< 0.2: posible estrés hídrico o baja densidad foliar', when:'Mejor en cultivos densos: viñedos y frutales' },
+  SAVI:  { good:'> 0.4: buen desarrollo vegetativo', alert:'< 0.15: cobertura baja, evaluar densidad de siembra', when:'Inicio de temporada · plantas jóvenes o recién transplantadas' },
+  MSAVI: { good:'> 0.4: vegetación establecida', alert:'< 0.1: suelo dominante, cobertura muy baja', when:'Inicio de temporada · parcelas con claros o baja emergencia' },
+  NDRE:  { good:'> 0.3: estado nutricional N adecuado', alert:'< 0.15: probable deficiencia de nitrógeno', when:'Pre-floración y cuaje · calibrar plan de fertilización' },
+  GNDVI: { good:'> 0.5: clorofila alta, hoja sana', alert:'< 0.25: clorosis o estrés nutricional activo', when:'Mitad de temporada · monitoreo de salud foliar' },
+  TCARI: { good:'< 0.15: cultivo sano, alta clorofila', alert:'> 0.30: clorosis, daño por plagas o hongos foliares', when:'Floración y desarrollo de fruto · detección temprana de patógenos' },
+  CIRE:  { good:'> 1.5: contenido de N foliar adecuado', alert:'< 0.8: aplicar fertilización nitrogenada foliar', when:'Pre-floración · calibrar dosis de nitrógeno' },
+  NDMI:  { good:'> 0.2: contenido hídrico adecuado', alert:'< −0.1: estrés hídrico activo, adelantar turno de riego', when:'Veranos secos · programar frecuencia de riego' },
+  NDWI:  { good:'< 0: sin agua libre superficial', alert:'> 0.1: zona con exceso de agua o anegamiento', when:'Post-lluvia intensa · detectar zonas de drenaje deficiente' },
+  BSI:   { good:'< −0.1: buena cobertura vegetal del suelo', alert:'> 0.2: suelo expuesto, erosión o falla en cultivo', when:'Pre-siembra y post-cosecha · evaluación de cobertura residual' },
   RGB:   { good:'Verde intenso y uniforme = vegetación activa', alert:'Tonos amarillos o cafés = senescencia o estrés visible', when:'Referencia visual general · inspección rápida del campo' },
   FALSE: { good:'Rojo intenso = alta actividad fotosintética', alert:'Gris/negro = sin vegetación o estrés severo', when:'Comparación rápida de vigor entre parcelas o temporadas' },
   ALPHAEARTH:       { good:'Colores contrastados = zonas espectralmente distintas', alert:'Zona uniforme = terreno homogéneo o falta de contraste', when:'Identificar patrones espaciales invisibles en índices simples' },
@@ -6838,7 +6838,7 @@ function loadGEELayer(idx) {
     return;
   }
 
-  // AlphaEarth uses a different annual dataset — delegate to its own loader
+  // AlphaEarth uses a different annual dataset: delegate to its own loader
   if (idx.startsWith('ALPHAEARTH')) { loadAlphaEarthLayer(idx); return; }
 
   const startDate = document.getElementById('gee-start').value;
@@ -7072,7 +7072,7 @@ function refreshGEELayer() {
 }
 
 // ═══════════════════════════════════════
-// PHENOLOGICAL STAGE (from GDD — Modified E-L Scale)
+// PHENOLOGICAL STAGE (from GDD: Modified E-L Scale)
 // ═══════════════════════════════════════
 // GDD thresholds based on Coombe (1995) Modified E-L system for Vitis vinifera
 // and calibrated with data from Altimiras et al. (2024) RNA-seq phenological stages.
@@ -7115,7 +7115,7 @@ function updatePhenologicalStage(gdd) {
   const nameEl = document.getElementById('pheno-stage-name');
   if (nameEl) { nameEl.textContent = stage.name; nameEl.style.color = stage.color; }
   const subEl = document.getElementById('pheno-stage-sub');
-  if (subEl) subEl.textContent = 'E-L ' + stage.el + ' — GDD: ' + gdd + ' / ' + maxGDD;
+  if (subEl) subEl.textContent = 'E-L ' + stage.el + ': GDD: ' + gdd + ' / ' + maxGDD;
 
   // Update timeline dots and lines
   const timelineEls = [3, 15, 27, 35, 38, 41];
@@ -7136,24 +7136,24 @@ function updatePhenologicalStage(gdd) {
 }
 
 // ═══════════════════════════════════════
-// FIELD ACTION PLAN — Phenological Delay & Activities
+// FIELD ACTION PLAN: Phenological Delay & Activities
 // ═══════════════════════════════════════
 
 // Activities per phenological stage (keyed by E-L number)
 const FIELD_ACTIVITIES = {
   3:  [{ activity: 'Bud inspection & frost protection setup', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-shield\"/></svg>', category: 'protection' },
        { activity: 'Apply dormant oil spray', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-droplet\"/></svg>', category: 'phytosanitary' }],
-  5:  [{ activity: 'Shoot thinning — remove weak shoots', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-scissors\"/></svg>', category: 'canopy' },
+  5:  [{ activity: 'Shoot thinning: remove weak shoots', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-scissors\"/></svg>', category: 'canopy' },
        { activity: 'First foliar fertilization (N)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-flask\"/></svg>', category: 'nutrition' }],
-  15: [{ activity: 'Canopy management — leaf removal (basal)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-leaf\"/></svg>', category: 'canopy' },
+  15: [{ activity: 'Canopy management: leaf removal (basal)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-leaf\"/></svg>', category: 'canopy' },
        { activity: 'Pest &amp; disease monitoring', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-search\"/></svg>', category: 'phytosanitary' }],
   17: [{ activity: 'Avoid irrigation stress during flowering', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-droplet\"/></svg>', category: 'irrigation' },
        { activity: 'Botrytis preventive spray', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-spray\"/></svg>', category: 'phytosanitary' }],
   27: [{ activity: 'Fruit thinning (load adjustment)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-scissors\"/></svg>', category: 'canopy' },
        { activity: 'Soil analysis & mid-season fertilization', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-flask\"/></svg>', category: 'nutrition' }],
-  31: [{ activity: 'Irrigation scheduling — deficit irrigation phase', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-droplet\"/></svg>', category: 'irrigation' },
+  31: [{ activity: 'Irrigation scheduling: deficit irrigation phase', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-droplet\"/></svg>', category: 'irrigation' },
        { activity: 'Second pest monitoring pass', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-search\"/></svg>', category: 'phytosanitary' }],
-  35: [{ activity: 'Reduce irrigation — promote sugar concentration', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-droplet\"/></svg>', category: 'irrigation' },
+  35: [{ activity: 'Reduce irrigation: promote sugar concentration', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-droplet\"/></svg>', category: 'irrigation' },
        { activity: 'Bird netting installation', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-shield\"/></svg>', category: 'protection' },
        { activity: 'Monitor Brix, pH, titratable acidity', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-bar-chart\"/></svg>', category: 'monitoring' }],
   36: [{ activity: 'Leaf pulling (sun exposure for ripening)', icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-leaf\"/></svg>', category: 'canopy' },
@@ -7229,8 +7229,8 @@ function updateFieldPlan() {
       statusColor = '#52b788';
     }
 
-    const dateStr = expectedDate ? expectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
-    const shiftStr = reached ? '—' : (shiftDays !== null ? (shiftDays > 0 ? '+' + shiftDays : shiftDays) : '—');
+    const dateStr = expectedDate ? expectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '-';
+    const shiftStr = reached ? '-' : (shiftDays !== null ? (shiftDays > 0 ? '+' + shiftDays : shiftDays) : '-');
     const shiftColor = shiftDays > 5 ? '#ef4444' : shiftDays < -5 ? '#60a5fa' : '#52b788';
 
     html += `<tr>
@@ -7268,7 +7268,7 @@ function updateFieldPlan() {
     chillStatus.style.color = '#ef4444';
     chillCard.style.background = 'rgba(239,68,68,0.1)';
     chillCard.style.border = '1px solid rgba(239,68,68,0.3)';
-    chillSub.textContent = lang === 'es' ? 'Riesgo de brotación pobre — considerar cianamida' : lang === 'pt' ? 'Risco de brotação fraca — considerar cianamida' : 'Risk of poor bud break — consider cyanamide';
+    chillSub.textContent = lang === 'es' ? 'Riesgo de brotación pobre: considerar cianamida' : lang === 'pt' ? 'Risco de brotação fraca: considerar cianamida' : 'Risk of poor bud break: consider cyanamide';
   }
 
   // --- Activities timeline ---
@@ -7316,13 +7316,13 @@ function updateFieldPlan() {
   // GDD-based alerts
   const avgRef = 7.5;
   if (dailyGDDRate < avgRef * 0.75) {
-    alerts.push({ icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-snowflake\"/></svg>', color: '#60a5fa', text: lang === 'es' ? `Acumulación de GDD lenta (${dailyGDDRate.toFixed(1)}/día vs ${avgRef} referencia). Temporada fría — las etapas fenológicas llegarán tarde. Considerar manejos para acelerar maduración.`
-      : lang === 'pt' ? `Acumulação de GDD lenta (${dailyGDDRate.toFixed(1)}/dia vs ${avgRef} ref). Safra fria — estágios fenológicos atrasados.`
-      : `Slow GDD accumulation (${dailyGDDRate.toFixed(1)}/day vs ${avgRef} reference). Cool season — phenological stages will arrive late. Consider canopy management to accelerate ripening.` });
+    alerts.push({ icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-snowflake\"/></svg>', color: '#60a5fa', text: lang === 'es' ? `Acumulación de GDD lenta (${dailyGDDRate.toFixed(1)}/día vs ${avgRef} referencia). Temporada fría: las etapas fenológicas llegarán tarde. Considerar manejos para acelerar maduración.`
+      : lang === 'pt' ? `Acumulação de GDD lenta (${dailyGDDRate.toFixed(1)}/dia vs ${avgRef} ref). Safra fria: estágios fenológicos atrasados.`
+      : `Slow GDD accumulation (${dailyGDDRate.toFixed(1)}/day vs ${avgRef} reference). Cool season: phenological stages will arrive late. Consider canopy management to accelerate ripening.` });
   } else if (dailyGDDRate > avgRef * 1.25) {
-    alerts.push({ icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-flame\"/></svg>', color: '#ef4444', text: lang === 'es' ? `Acumulación de GDD rápida (${dailyGDDRate.toFixed(1)}/día vs ${avgRef} referencia). Temporada calurosa — maduración acelerada. Monitorear estrés hídrico y proteger racimos del sol.`
-      : lang === 'pt' ? `Acumulação de GDD rápida (${dailyGDDRate.toFixed(1)}/dia vs ${avgRef} ref). Safra quente — maturação acelerada. Monitorar estresse hídrico.`
-      : `Fast GDD accumulation (${dailyGDDRate.toFixed(1)}/day vs ${avgRef} reference). Warm season — accelerated ripening. Monitor water stress and protect clusters from sunburn.` });
+    alerts.push({ icon: '<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;margin-right:0px;\"><use href=\"#i-flame\"/></svg>', color: '#ef4444', text: lang === 'es' ? `Acumulación de GDD rápida (${dailyGDDRate.toFixed(1)}/día vs ${avgRef} referencia). Temporada calurosa: maduración acelerada. Monitorear estrés hídrico y proteger racimos del sol.`
+      : lang === 'pt' ? `Acumulação de GDD rápida (${dailyGDDRate.toFixed(1)}/dia vs ${avgRef} ref). Safra quente: maturação acelerada. Monitorar estresse hídrico.`
+      : `Fast GDD accumulation (${dailyGDDRate.toFixed(1)}/day vs ${avgRef} reference). Warm season: accelerated ripening. Monitor water stress and protect clusters from sunburn.` });
   }
 
   if (C.frostDays > 0) {
@@ -7367,7 +7367,7 @@ function updateFieldPlan() {
 // ═══════════════════════════════════════
 function computeSatelliteIndices() {
   if (!geeConnected || !window.ee || kmlRawCoords.length === 0) {
-    // No GEE — run prediction with climate only, using default index estimates
+    // No GEE: run prediction with climate only, using default index estimates
     agIndices = { NDVI: 0.55, NDRE: 0.30, MSAVI: 0.40, TCARI: 0.12, EVI: 0.35, NDMI: 0.15 };
     runYieldPrediction();
     return;
@@ -7436,7 +7436,7 @@ function computeSatelliteIndices() {
 }
 
 // ═══════════════════════════════════════
-// HARVEST DATE ML MODEL — phenological weighted features
+// HARVEST DATE ML MODEL: phenological weighted features
 // Weights derived from: Campoy et al. (2011), Parker et al. (2011),
 // Molitor et al. (2014), Ruiz et al. (2007), FAO crop calendars.
 // Architecture: normalized feature weighted sum → phenological score → harvest DOY.
@@ -7653,11 +7653,11 @@ function updateYieldSection(p) {
   if (ciEl) {
     const C = agClimate;
     ciEl.innerHTML = `
-      <tr><td>GDD</td><td><strong>${C.totalGDD?.toLocaleString() || '—'}</strong></td></tr>
-      <tr><td>Precipitation</td><td><strong>${C.totalPrecip || '—'} mm</strong></td></tr>
-      <tr><td>Chill Hours</td><td><strong>${C.chillHours?.toLocaleString() || '—'}</strong></td></tr>
-      <tr><td>Max Temp (avg)</td><td><strong>${C.meanMax || '—'}°C</strong></td></tr>
-      <tr><td>ET₀</td><td><strong>${C.totalET || '—'} mm</strong></td></tr>
+      <tr><td>GDD</td><td><strong>${C.totalGDD?.toLocaleString() || '-'}</strong></td></tr>
+      <tr><td>Precipitation</td><td><strong>${C.totalPrecip || '-'} mm</strong></td></tr>
+      <tr><td>Chill Hours</td><td><strong>${C.chillHours?.toLocaleString() || '-'}</strong></td></tr>
+      <tr><td>Max Temp (avg)</td><td><strong>${C.meanMax || '-'}°C</strong></td></tr>
+      <tr><td>ET₀</td><td><strong>${C.totalET || '-'} mm</strong></td></tr>
       <tr><td>Frost Days</td><td><strong>${C.frostDays || 0}</strong></td></tr>
       <tr><td>Heat Waves</td><td><strong>${C.heatWaves || 0}</strong></td></tr>`;
   }
@@ -7687,7 +7687,7 @@ function updateYieldSection(p) {
     dashYield.innerHTML = `
       <div style="text-align:center;padding:8px 0;">
         <div style="font-size:2.2rem;font-weight:800;color:var(--accent);">${p.yieldPerHa} <span style="font-size:1rem;font-weight:400;">t/ha</span></div>
-        <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:2px;">${el('yield-ci')?.textContent || '—'}</div>
+        <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:2px;">${el('yield-ci')?.textContent || '-'}</div>
         <div style="margin:10px 0;padding:8px 12px;background:rgba(96,165,250,0.08);border-radius:6px;display:inline-block;">
           <span style="font-size:0.8rem;color:var(--text-secondary);">Total:</span>
           <strong style="color:#60a5fa;font-size:1rem;margin-left:4px;">${p.totalYield} t</strong>
@@ -7757,13 +7757,13 @@ function fetchSceneList() {
 
     availableScenes = ts.map((t, i) => ({
       date: new Date(t).toISOString().slice(0, 10),
-      cloud: cl[i] != null ? cl[i].toFixed(1) : '—'
+      cloud: cl[i] != null ? cl[i].toFixed(1) : '-'
     }));
 
     // populate compare dropdowns
     const opts = availableScenes.map(s => `<option value="${s.date}">${s.date} · ☁ ${s.cloud}%</option>`).join('');
-    document.getElementById('compare-left-date').innerHTML  = '<option value="">— ' + t('compare_left') + ' —</option>' + opts;
-    document.getElementById('compare-right-date').innerHTML = '<option value="">— ' + t('compare_right') + ' —</option>' + opts;
+    document.getElementById('compare-left-date').innerHTML  = '<option value="">' + t('compare_left') + '</option>' + opts;
+    document.getElementById('compare-right-date').innerHTML = '<option value="">' + t('compare_right') + '</option>' + opts;
 
     countEl.textContent = availableScenes.length + ' capturas';
     listEl.innerHTML = availableScenes.map((s, i) =>
@@ -7876,7 +7876,7 @@ async function loadComparison() {
 
     setMapLoading(false);
     document.getElementById('compare-status').innerHTML =
-      `◧ <strong>${dateL}</strong> (${idxL}) &nbsp;|&nbsp; <strong>${dateR}</strong> (${idxR}) ◨ — ${t('compare_drag')}`;
+      `◧ <strong>${dateL}</strong> (${idxL}) &nbsp;|&nbsp; <strong>${dateR}</strong> (${idxR}) ◨: ${t('compare_drag')}`;
     document.getElementById('map-source-badge').innerHTML =
       `◧ <strong>${dateL}</strong> · ${idxL} &nbsp;VS&nbsp; <strong>${dateR}</strong> · ${idxR} ◨`;
   } catch(e) {
@@ -7895,7 +7895,7 @@ function stopComparison(resetLayer = true) {
 // ─── SHARED HELPERS ──────────────────────────────────
 function buildClipGeom() {
   if (kmlRawCoords.length > 0) {
-    // ee.Geometry.Polygon expects [[[lng,lat],...]] — wrap each ring in an array
+    // ee.Geometry.Polygon expects [[[lng,lat],...]]: wrap each ring in an array
     return kmlRawCoords.length === 1
       ? ee.Geometry.Polygon([kmlRawCoords[0]])
       : ee.Geometry.MultiPolygon(kmlRawCoords.map(r => [r]));
@@ -7993,7 +7993,7 @@ function setGEEOpacity(val) {
 
 function setGEEStatus(type, msg) {
   const el = document.getElementById('gee-status');
-  if (!el) return;  // panel was removed from UI — silent no-op
+  if (!el) return;  // panel was removed from UI: silent no-op
   el.className = 'gee-status ' + type;
   el.textContent = msg;
 }
@@ -8111,7 +8111,7 @@ async function openImageViewer(id, code) {
   document.getElementById('img-viewer').style.display = 'flex';
   document.getElementById('viewer-loading').style.display = 'flex';
   document.getElementById('viewer-title').textContent = id + '.jpg';
-  document.getElementById('viewer-variety').textContent = `${code} — ${v.name} · ${v.type}`;
+  document.getElementById('viewer-variety').textContent = `${code}: ${v.name} · ${v.type}`;
   document.getElementById('viewer-img-id').textContent = id;
   document.getElementById('vm-clusters').textContent = '…';
   document.getElementById('vm-berries').textContent = '…';
@@ -8203,8 +8203,8 @@ async function loadAndDrawBBoxes(id, img, updateStats) {
     });
     berryEst = Math.min(berryEst, clusterCount * 80); // cap at 80 per cluster
 
-    document.getElementById('vm-clusters').textContent = clusterCount || '—';
-    document.getElementById('vm-berries').textContent = berryEst || '—';
+    document.getElementById('vm-clusters').textContent = clusterCount || '-';
+    document.getElementById('vm-berries').textContent = berryEst || '-';
     document.getElementById('viewer-bbox-count').textContent = clusterCount + ' ' + t('img_clusters_detected');
 
     const badge = document.getElementById('badge-' + id);
@@ -8623,7 +8623,7 @@ function initGeoman() {
       renderLayerList();
       onPolygonChanged();
     } else {
-      // Layer not in userLayers (orphan) — just remove from map
+      // Layer not in userLayers (orphan): just remove from map
       if (vineMap.hasLayer(e.layer)) vineMap.removeLayer(e.layer);
     }
   });
@@ -8872,7 +8872,7 @@ let colorIdx = 0;
 function randomLayerColor() { return LAYER_COLORS[colorIdx++ % LAYER_COLORS.length]; }
 
 // ═══════════════════════════════════════
-// AI CHAT — agragent Integration
+// AI CHAT: agragent Integration
 // ═══════════════════════════════════════
 // API endpoints: Vercel (streaming + 11 tools) primary, Railway fallback if available
 const CHAT_API        = 'https://api.agragent.com';   // Vercel – always up, JSON fallback
@@ -9103,9 +9103,9 @@ function chatCannedAnswer(question, ctx) {
     if (currentLang === 'es') return `## Salud del cultivo
 **${loc}**${area ? ' (' + area + ')' : ''} presenta un estado vegetativo **${qual(d.ndviQ) || 'estable'}** según las imágenes satelitales Sentinel-2:
 
-- **NDVI ${d.ndvi || 'n/d'}** — vigor ${qual(d.ndviQ) || 'normal'}: refleja la cobertura foliar y la actividad fotosintética.
-- **NDRE ${d.ndre || 'n/d'}** — nitrógeno/clorofila ${qual(d.ndreQ) || 'adecuado'}: buen estado nutricional del dosel.
-- **NDMI ${d.ndmi || 'n/d'}** — humedad del tejido ${qual(d.ndmiQ) || 'moderada'}.
+- **NDVI ${d.ndvi || 'n/d'}**: vigor ${qual(d.ndviQ) || 'normal'}: refleja la cobertura foliar y la actividad fotosintética.
+- **NDRE ${d.ndre || 'n/d'}**: nitrógeno/clorofila ${qual(d.ndreQ) || 'adecuado'}: buen estado nutricional del dosel.
+- **NDMI ${d.ndmi || 'n/d'}**: humedad del tejido ${qual(d.ndmiQ) || 'moderada'}.
 
 **Interpretación:** un NDVI por encima de 0.6 indica un cultivo bien desarrollado y sin estrés evidente. Vigila el balance hídrico (${d.wbal != null ? d.wbal + ' mm' : 'n/d'}) y la presión de heladas (${d.frost || '0'} días esta temporada).
 
@@ -9113,9 +9113,9 @@ function chatCannedAnswer(question, ctx) {
     if (currentLang === 'pt') return `## Saúde do cultivo
 **${loc}**${area ? ' (' + area + ')' : ''} apresenta um estado vegetativo **${qual(d.ndviQ) || 'estável'}** segundo as imagens de satélite Sentinel-2:
 
-- **NDVI ${d.ndvi || 'n/d'}** — vigor ${qual(d.ndviQ) || 'normal'}: reflete a cobertura foliar e a atividade fotossintética.
-- **NDRE ${d.ndre || 'n/d'}** — nitrogênio/clorofila ${qual(d.ndreQ) || 'adequado'}: bom estado nutricional do dossel.
-- **NDMI ${d.ndmi || 'n/d'}** — umidade do tecido ${qual(d.ndmiQ) || 'moderada'}.
+- **NDVI ${d.ndvi || 'n/d'}**: vigor ${qual(d.ndviQ) || 'normal'}: reflete a cobertura foliar e a atividade fotossintética.
+- **NDRE ${d.ndre || 'n/d'}**: nitrogênio/clorofila ${qual(d.ndreQ) || 'adequado'}: bom estado nutricional do dossel.
+- **NDMI ${d.ndmi || 'n/d'}**: umidade do tecido ${qual(d.ndmiQ) || 'moderada'}.
 
 **Interpretação:** um NDVI acima de 0.6 indica uma cultura bem desenvolvida e sem estresse evidente. Acompanhe o balanço hídrico (${d.wbal != null ? d.wbal + ' mm' : 'n/d'}) e a pressão de geadas (${d.frost || '0'} dias nesta temporada).
 
@@ -9123,9 +9123,9 @@ function chatCannedAnswer(question, ctx) {
     return `## Crop health
 **${loc}**${area ? ' (' + area + ')' : ''} shows a **${qual(d.ndviQ) || 'stable'}** vegetative status based on Sentinel-2 satellite imagery:
 
-- **NDVI ${d.ndvi || 'n/a'}** — ${qual(d.ndviQ) || 'normal'} vigor: reflects canopy cover and photosynthetic activity.
-- **NDRE ${d.ndre || 'n/a'}** — nitrogen/chlorophyll ${qual(d.ndreQ) || 'adequate'}: good canopy nutritional status.
-- **NDMI ${d.ndmi || 'n/a'}** — ${qual(d.ndmiQ) || 'moderate'} tissue moisture.
+- **NDVI ${d.ndvi || 'n/a'}**: ${qual(d.ndviQ) || 'normal'} vigor: reflects canopy cover and photosynthetic activity.
+- **NDRE ${d.ndre || 'n/a'}**: nitrogen/chlorophyll ${qual(d.ndreQ) || 'adequate'}: good canopy nutritional status.
+- **NDMI ${d.ndmi || 'n/a'}**: ${qual(d.ndmiQ) || 'moderate'} tissue moisture.
 
 **Interpretation:** an NDVI above 0.6 indicates a well-developed crop with no evident stress. Keep an eye on the water balance (${d.wbal != null ? d.wbal + ' mm' : 'n/a'}) and frost pressure (${d.frost || '0'} days this season).
 
@@ -9202,8 +9202,8 @@ For a detailed per-sector and flow-rate calculation, upload your irrigation syst
     if (currentLang === 'es') return `## Fertilización
 Para **${loc}**${area ? ' (' + area + ')' : ''}, según el estado nutricional satelital:
 
-- **NDRE ${d.ndre || 'n/d'}** (${qual(d.ndreQ) || 'adecuado'}) — proxy del nitrógeno foliar: un valor en este rango sugiere un nivel de N adecuado, sin deficiencias marcadas.
-- **NDVI ${d.ndvi || 'n/d'}** — buen vigor general del cultivo.
+- **NDRE ${d.ndre || 'n/d'}** (${qual(d.ndreQ) || 'adecuado'}): proxy del nitrógeno foliar: un valor en este rango sugiere un nivel de N adecuado, sin deficiencias marcadas.
+- **NDVI ${d.ndvi || 'n/d'}**: buen vigor general del cultivo.
 
 **Recomendación:**
 - **Nitrógeno (N):** mantener dosis de mantenimiento; el NDRE no muestra deficiencia aguda.
@@ -9214,8 +9214,8 @@ Sube un informe de suelo o foliar (PDF/Excel) en **Plan de campo** para una reco
     if (currentLang === 'pt') return `## Fertilização
 Para **${loc}**${area ? ' (' + area + ')' : ''}, segundo o estado nutricional via satélite:
 
-- **NDRE ${d.ndre || 'n/d'}** (${qual(d.ndreQ) || 'adequado'}) — proxy do nitrogênio foliar: um valor nesta faixa sugere nível de N adequado, sem deficiências marcadas.
-- **NDVI ${d.ndvi || 'n/d'}** — bom vigor geral da cultura.
+- **NDRE ${d.ndre || 'n/d'}** (${qual(d.ndreQ) || 'adequado'}): proxy do nitrogênio foliar: um valor nesta faixa sugere nível de N adequado, sem deficiências marcadas.
+- **NDVI ${d.ndvi || 'n/d'}**: bom vigor geral da cultura.
 
 **Recomendação:**
 - **Nitrogênio (N):** manter dose de manutenção; o NDRE não mostra deficiência aguda.
@@ -9226,8 +9226,8 @@ Carregue um laudo de solo ou foliar (PDF/Excel) em **Plano de campo** para uma r
     return `## Fertilization
 For **${loc}**${area ? ' (' + area + ')' : ''}, based on satellite-derived nutritional status:
 
-- **NDRE ${d.ndre || 'n/a'}** (${qual(d.ndreQ) || 'adequate'}) — a proxy for leaf nitrogen: a value in this range suggests an adequate N level with no marked deficiency.
-- **NDVI ${d.ndvi || 'n/a'}** — good overall crop vigor.
+- **NDRE ${d.ndre || 'n/a'}** (${qual(d.ndreQ) || 'adequate'}): a proxy for leaf nitrogen: a value in this range suggests an adequate N level with no marked deficiency.
+- **NDVI ${d.ndvi || 'n/a'}**: good overall crop vigor.
 
 **Recommendation:**
 - **Nitrogen (N):** keep a maintenance dose; NDRE shows no acute deficiency.
@@ -9333,7 +9333,7 @@ async function chatSend() {
   } catch (e) {
     chatHideTyping();
     chatHideToolStatus();
-    // Railway is down or timed out — fall through to Vercel
+    // Railway is down or timed out: fall through to Vercel
   }
 
   // ── Fallback: Vercel non-streaming ────────────────────────────────
@@ -9678,7 +9678,7 @@ function chatToggleConvList() {
 }
 
 const SECTION_CONTEXT = {
-  dashboard: { label: 'My Field', ctx: 'The user is viewing the Dashboard overview with all KPIs, satellite indices, yield prediction summary, water balance, risk assessment, and alerts. You have access to ALL computed data below — use it to give specific, data-driven advice.' },
+  dashboard: { label: 'My Field', ctx: 'The user is viewing the Dashboard overview with all KPIs, satellite indices, yield prediction summary, water balance, risk assessment, and alerts. You have access to ALL computed data below: use it to give specific, data-driven advice.' },
   maps: { label: 'Field Map', ctx: 'The user is viewing the satellite map with Sentinel-2 imagery. Indices available: Plant Health (NDVI), Vigor+ (EVI), Young Plants (SAVI), Sparse (MSAVI), Nutrition (NDRE), Early Stress (GNDVI), Chlorophyll (TCARI), N-Status (CIre), Moisture (NDMI), Leaf Water (NDWI), Bare Soil (BSI). Use the satellite index values below to assess crop condition.' },
   climate: { label: 'Weather', ctx: 'The user is viewing detailed climate data. You have access to all computed KPIs below (GDD, chill hours, frost, heat waves, precipitation, ET0, etc.). Use these to give specific agronomic recommendations for their field or crop.' },
   genomic: { label: 'Genetics', ctx: 'The user is viewing genomic analysis: 3,603 DEGs from RNA-seq of Vitis vinifera across 8 phenological stages (E-L 3 to E-L 41). Data from Altimiras et al. 2024, Agronomy.' },
@@ -9699,8 +9699,8 @@ function chatCollectAppContext() {
   // ═══ FIELD INFO ═══
   const location = el('dashLocation');
   const area = el('dashArea');
-  if (location && location !== '—') parts.push('Field location: ' + location);
-  if (area && area !== '—') parts.push('Field area: ' + area + ' (' + agAreaHa.toFixed(2) + ' hectares)');
+  if (location && location !== '-') parts.push('Field location: ' + location);
+  if (area && area !== '-') parts.push('Field area: ' + area + ' (' + agAreaHa.toFixed(2) + ' hectares)');
   if (typeof userLayers !== 'undefined' && userLayers.length > 0) {
     parts.push('Loaded polygons: ' + userLayers.length + ' (' + userLayers.map(l => l.name || 'unnamed').join(', ') + ')');
   }
@@ -9720,7 +9720,7 @@ function chatCollectAppContext() {
     parts.push('Chill Hours (0-7.2°C, Apr-Sep): ' + C.chillHours);
     parts.push('Total Precipitation: ' + C.totalPrecip + ' mm');
     parts.push('Total Evapotranspiration (ET0): ' + C.totalET + ' mm');
-    parts.push('Water Balance: ' + (C.totalPrecip - C.totalET) + ' mm (' + (C.totalPrecip >= C.totalET ? 'surplus' : 'deficit — irrigation needed') + ')');
+    parts.push('Water Balance: ' + (C.totalPrecip - C.totalET) + ' mm (' + (C.totalPrecip >= C.totalET ? 'surplus' : 'deficit: irrigation needed') + ')');
     parts.push('Average Max Temperature: ' + C.meanMax + '°C');
     parts.push('Average Min Temperature: ' + C.meanMin + '°C');
     parts.push('Average Humidity: ' + C.meanHumidity + '%');
@@ -9767,12 +9767,12 @@ function chatCollectAppContext() {
   if (typeof agIndices === 'object' && agIndices.NDVI) {
     const S = agIndices;
     parts.push('Satellite indices (polygon mean from Sentinel-2):');
-    parts.push('  NDVI (plant health/vigor): ' + S.NDVI.toFixed(4) + (S.NDVI > 0.6 ? ' (good)' : S.NDVI > 0.3 ? ' (moderate)' : ' (low — possible stress)'));
-    parts.push('  NDRE (nitrogen/chlorophyll): ' + S.NDRE.toFixed(4) + (S.NDRE > 0.4 ? ' (good)' : S.NDRE > 0.2 ? ' (moderate)' : ' (low — possible N deficiency)'));
+    parts.push('  NDVI (plant health/vigor): ' + S.NDVI.toFixed(4) + (S.NDVI > 0.6 ? ' (good)' : S.NDVI > 0.3 ? ' (moderate)' : ' (low: possible stress)'));
+    parts.push('  NDRE (nitrogen/chlorophyll): ' + S.NDRE.toFixed(4) + (S.NDRE > 0.4 ? ' (good)' : S.NDRE > 0.2 ? ' (moderate)' : ' (low: possible N deficiency)'));
     parts.push('  EVI (enhanced vigor): ' + S.EVI.toFixed(4));
     parts.push('  MSAVI (soil-adjusted vigor): ' + S.MSAVI.toFixed(4));
     parts.push('  TCARI (chlorophyll absorption): ' + S.TCARI.toFixed(4) + (S.TCARI < 0.15 ? ' (healthy)' : S.TCARI < 0.25 ? ' (moderate stress)' : ' (high stress)'));
-    parts.push('  NDMI (soil/plant moisture): ' + S.NDMI.toFixed(4) + (S.NDMI > 0.3 ? ' (well hydrated)' : S.NDMI > 0.1 ? ' (moderate)' : ' (dry — water stress)'));
+    parts.push('  NDMI (soil/plant moisture): ' + S.NDMI.toFixed(4) + (S.NDMI > 0.3 ? ' (well hydrated)' : S.NDMI > 0.1 ? ' (moderate)' : ' (dry: water stress)'));
   }
 
   // ═══ YIELD PREDICTION ═══
@@ -9780,12 +9780,12 @@ function chatCollectAppContext() {
   const yieldTotal = document.getElementById('yield-total');
   const yieldCI = document.getElementById('yield-ci');
   const yieldHarvest = document.getElementById('yield-harvest-date');
-  if (yieldVal && yieldVal.textContent !== '—') {
+  if (yieldVal && yieldVal.textContent !== '-') {
     parts.push('--- YIELD ESTIMATE (heuristic) ---');
     parts.push('Estimated yield: ' + yieldVal.textContent + ' tonnes/hectare');
     if (yieldTotal) parts.push('Total production: ' + yieldTotal.textContent + ' (area: ' + agAreaHa.toFixed(1) + ' ha)');
     if (yieldCI) parts.push('Indicative range (not a calibrated interval): ' + yieldCI.textContent);
-    if (yieldHarvest && yieldHarvest.textContent !== '—') parts.push('Estimated harvest date: ' + yieldHarvest.textContent);
+    if (yieldHarvest && yieldHarvest.textContent !== '-') parts.push('Estimated harvest date: ' + yieldHarvest.textContent);
     parts.push('Method: heuristic weighted sum of climate and satellite indicators, expert-assigned weights. Not a trained model; do not quote accuracy figures for it.');
 
     // Feature contributions
@@ -9815,7 +9815,7 @@ function chatCollectAppContext() {
   const vmClusters = el('vm-clusters');
   const vmBerries = el('vm-berries');
   const viewerTitle = el('viewer-title');
-  if (vmClusters && vmClusters !== '—' && document.getElementById('img-viewer').style.display !== 'none') {
+  if (vmClusters && vmClusters !== '-' && document.getElementById('img-viewer').style.display !== 'none') {
     parts.push('--- WGISD IMAGE VIEWER ---');
     if (viewerTitle) parts.push('Image: ' + viewerTitle);
     parts.push('Clusters detected: ' + vmClusters);
@@ -9829,7 +9829,7 @@ function chatCollectAppContext() {
   }
 
   if (parts.length === 0) return '';
-  return '[App Context — All computed data from agragent platform]\n' + parts.join('\n') + '\n[/App Context]\n\n';
+  return '[App Context: All computed data from agragent platform]\n' + parts.join('\n') + '\n[/App Context]\n\n';
 }
 
 function chatGetActiveSection() {
@@ -10011,7 +10011,7 @@ function buildFieldThumb(geometry, color) {
   const url = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export'
     + `?bbox=${bbox}&bboxSR=4326&imageSR=4326&size=${W},${H}&format=jpg&f=image`;
 
-  // Satellite image only (no polygon overlay — it could appear misaligned vs the
+  // Satellite image only (no polygon overlay: it could appear misaligned vs the
   // cropped image, so we show just the satellite thumbnail of the field).
   return `<img class="sf-thumb-img" loading="lazy" src="${url}" alt="" onerror="this.style.display='none'">`;
 }
@@ -10236,7 +10236,7 @@ function showSavedFieldsForSession() {
 }
 
 // ═══════════════════════════════════════
-// SEASON SELECTOR — Hemisferio Sur (Nov–Abr)
+// SEASON SELECTOR: Hemisferio Sur (Nov–Abr)
 // Sentinel-2 SR Harmonized disponible desde 2017
 // ═══════════════════════════════════════
 function initSeasonSelector() {
@@ -10316,7 +10316,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="form-field">
       <label data-i18n="yield_crop_label">Crop type</label>
       <select id="editor-crop-type">
-        <option value="" data-i18n="editor_select">— Select —</option>
+        <option value="" data-i18n="editor_select">Select</option>
         <optgroup label="Viñas"><option value="uva_vinif" data-i18n="crop_uva_vinif">Uva Vinífera</option><option value="uva_mesa" data-i18n="crop_uva_mesa">Uva de Mesa</option></optgroup>
         <optgroup label="Carozos"><option value="cereza" data-i18n="crop_cereza">Cereza</option><option value="durazno" data-i18n="crop_durazno">Durazno / Nectarín</option><option value="ciruela" data-i18n="crop_ciruela">Ciruela</option><option value="damasco" data-i18n="crop_damasco">Damasco</option></optgroup>
         <optgroup label="Berries"><option value="arandano" data-i18n="crop_arandano">Arándano</option><option value="frutilla" data-i18n="crop_frutilla">Frutilla / Fresa</option></optgroup>
@@ -10329,7 +10329,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="form-field">
       <label data-i18n="editor_stage">Growth stage</label>
       <select id="editor-stage">
-        <option value="" data-i18n="editor_select">— Select —</option>
+        <option value="" data-i18n="editor_select">Select</option>
         <option value="Bud break" data-i18n="stage_bud">Bud break</option>
         <option value="Flowering" data-i18n="stage_flower">Flowering</option>
         <option value="Fruit set" data-i18n="stage_fruit">Fruit set</option>
