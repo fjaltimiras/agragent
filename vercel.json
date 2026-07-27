@@ -3,20 +3,6 @@
   "installCommand": "",
   "framework": null,
   "rewrites": [
-    {
-      "source": "/inia",
-      "has": [{ "type": "host", "value": "agragent.com" }],
-      "destination": "/inia.html"
-    },
-    {
-      "source": "/(.*)",
-      "has": [{ "type": "host", "value": "app.agragent.com" }],
-      "destination": "/app.html"
-    },
-    {
-      "source": "/(.*)",
-      "has": [{ "type": "host", "value": "agragent.com" }],
-      "destination": "/landing.html"
-    }
+    { "source": "/(.*)", "destination": "/app.html" }
   ]
 }

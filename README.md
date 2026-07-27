@@ -30,13 +30,18 @@ endpoints, so the inference layer is self-hostable and not tied to a proprietary
 
 ```
 app.html          single-page frontend (satellite, climate, genomics, vision, yield, assistant)
-landing.html      public landing page
+poligono.kml      sample field boundary, so the workflow can be exercised without drawing one
 backend/          FastAPI orchestration service: agent loop, tool schemas, system prompts
   app/agent/      the agentic loop and the eleven tool definitions
   app/services/   domain services (climate, satellite, INIA RAG, AGRIS, FAOSTAT, OpenAlex)
   eval/           evaluation harnesses, benchmark and results
 yolo/             train_yolo26_wgisd.py: fine-tunes YOLO26m on the official WGISD split
 ```
+
+This repository is scoped to what reproduces the paper. The marketing landing page served at
+`agragent.com`, and the institutional logos it uses, are deliberately not included; the platform itself is
+`app.html`, which is the frontend the manuscript describes. The deployment therefore contains files this
+repository does not, and `vercel.json` here differs accordingly: it simply serves `app.html`.
 
 ## Running it locally
 
