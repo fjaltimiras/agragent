@@ -4,7 +4,7 @@ import uuid
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from app.models.schemas import ChatRequest, ChatResponse, ConversationCreate, ConversationResponse
-from app.agent.claude import AgroAgent
+from app.agent.agro_agent import AgroAgent
 from app.database import get_db
 
 logger = logging.getLogger(__name__)

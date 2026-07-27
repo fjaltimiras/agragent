@@ -35,7 +35,7 @@ backend/          FastAPI orchestration service: agent loop, tool schemas, syste
   app/agent/      the agentic loop and the eleven tool definitions
   app/services/   domain services (climate, satellite, INIA RAG, AGRIS, FAOSTAT, OpenAlex)
   eval/           evaluation harnesses, benchmark and results
-yolo/             YOLO26 training script for the WGISD dataset
+yolo/             train_yolo26_wgisd.py: fine-tunes YOLO26m on the official WGISD split
 ```
 
 ## Running it locally
@@ -77,6 +77,20 @@ The arithmetic check needs no API key and no network:
 ```bash
 cd backend && python3 eval/verify_arithmetic.py
 ```
+
+The tool-selection benchmark drives the production agent stack against an OpenAI-compatible endpoint,
+one model pinned per run, with tool execution stubbed to isolate selection:
+
+```bash
+cd backend
+python3 eval/run_eval_openweight.py --provider cerebras --model gpt-oss-120b --sleep 0.5 --timeout 90
+python3 eval/run_eval_openweight.py --provider cerebras --model zai-glm-4.7 --mode router   # ablation
+python3 eval/run_eval_openweight.py --provider cerebras --dry-run                            # no API calls
+```
+
+Model identifiers are reproduced verbatim as the endpoint advertises them. No sampling parameter is
+overridden and no seed is set, so runs are not bitwise reproducible; the archived per-model results in
+`backend/eval/` are the ones reported in the manuscript.
 
 Predictability is scale-dependent: the platform reports this rather than quoting a single accuracy figure.
 The yield estimate is a weighted heuristic, **not** a trained model, and no accuracy figure is claimed for it.

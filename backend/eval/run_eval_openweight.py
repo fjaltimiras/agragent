@@ -2,17 +2,15 @@
 """
 AgrAgent tool-selection evaluation harness — OPEN-WEIGHT edition.
 
-Same benchmark and scoring as run_eval.py, but drives the *production* agent
-stack instead of Anthropic: OpenAI-compatible chat.completions against an
+Drives the *production* agent stack: OpenAI-compatible chat.completions against an
 open-weight model served by Cerebras (gpt-oss-120b) or Groq
-(llama-3.3-70b-versatile), mirroring app/agent/claude.py exactly (OpenAI tool
+(llama-3.3-70b-versatile), mirroring app/agent/agro_agent.py exactly (OpenAI tool
 format, tool_choice="auto", max_tokens=1024, role:"tool" stub results, K=10 loop).
 
 One provider/model is pinned per run so the reported metrics are attributable to
 that specific model (no cross-provider fallback here — unlike production, which
 falls back for availability). Tool execution is STUBBED to isolate tool
-*selection*. The historical Claude metrics.csv is left untouched; outputs are
-written to per-model files.
+*selection*. Outputs are written to per-model files.
 
 Usage (from the backend directory):
   python3 eval/run_eval_openweight.py --provider cerebras            # gpt-oss-120b
@@ -35,9 +33,9 @@ EVAL_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(BACKEND_DIR))
 
 MAX_ITERATIONS = 10
-MAX_TOKENS = 1024  # matches production (app/agent/claude.py)
+MAX_TOKENS = 1024  # matches production (app/agent/agro_agent.py)
 
-# OpenAI-compatible providers (mirrors app/agent/claude.py). One is pinned per run.
+# OpenAI-compatible providers (mirrors app/agent/agro_agent.py). One is pinned per run.
 PROVIDERS = {
     "cerebras": {"base_url": "https://api.cerebras.ai/v1", "key_env": "CEREBRAS_API_KEY", "model": "gpt-oss-120b"},
     "groq":     {"base_url": "https://api.groq.com/openai/v1", "key_env": "GROQ_API_KEY", "model": "llama-3.3-70b-versatile"},
@@ -148,7 +146,7 @@ def make_completion(client, model, messages, tools):
 def run_query(client, model, tools, system_prompt, query, max_iterations=MAX_ITERATIONS):
     """Run one query through the agentic loop with stubbed tool execution.
 
-    Mirrors app/agent/claude.py: system prompt as first message, OpenAI tool
+    Mirrors app/agent/agro_agent.py: system prompt as first message, OpenAI tool
     format, assistant turn rebuilt with tool_calls, results returned as
     role:"tool" messages. Returns called tools (ordered), unique set,
     iterations, latency, and final text.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Deterministic arithmetic-correctness check for AgrAgent's quantitative tools.
 
-Unlike ``run_eval.py`` (which measures *tool selection* with a stubbed executor),
+Unlike ``run_eval_openweight.py`` (which measures *tool selection* with a stubbed executor),
 this harness exercises the *production* numeric implementations of the irrigation
 and fertilization tools and checks their outputs against independently computed
 FAO-56 / mass-balance references. It requires no LLM and no network: it imports
@@ -33,7 +33,7 @@ _BACKEND = os.path.dirname(_HERE)
 if _BACKEND not in sys.path:
     sys.path.insert(0, _BACKEND)
 
-from app.agent.claude import (  # noqa: E402
+from app.agent.agro_agent import (  # noqa: E402
     AgroAgent,
     KC_TABLE,
     SOIL_AWC,

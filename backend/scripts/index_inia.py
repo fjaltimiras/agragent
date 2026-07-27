@@ -3,7 +3,7 @@
 INIA RAG Indexer — AgrAgent Phase 2
 
 Indexa documentos de la Biblioteca Digital INIA Chile en Supabase pgvector
-para búsqueda semántica desde el agente Claude.
+para búsqueda semántica desde el agente.
 
 Estrategia:
   1. Buscar documentos en INIA por tema (search API)

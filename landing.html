@@ -1903,7 +1903,7 @@ section + section::before {
             <div class="apb-slide-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg></div>
             <div class="apb-slide-title" data-i18n="slide4_title">AI Agronomic Agent</div>
             <div class="apb-slide-metric">11 tools · OpenAlex · AGRIS FAO · FAOSTAT</div>
-            <div class="apb-slide-sub" data-i18n="slide4_sub">Asistente Claude con acceso a tu campo, clima, NDVI y bibliografía científica en tiempo real.</div>
+            <div class="apb-slide-sub" data-i18n="slide4_sub">Asistente IA con acceso a tu campo, clima, NDVI y bibliografía científica en tiempo real.</div>
           </div>
           <div class="apb-slide-canvas">
             <div class="chat-mockup">
@@ -2262,11 +2262,11 @@ section + section::before {
         </div>
 
         <div class="feat-panel" id="fp-3">
-          <div class="feat-badge" data-i18n="f4_metric">300+ annotated images · 5 grape varieties · YOLOv11</div>
+          <div class="feat-badge" data-i18n="f4_metric">300 annotated images · 5 grape varieties · YOLO26</div>
           <h3 data-i18n="f4_headline">Identify and count clusters from the field</h3>
           <p class="feat-sub" data-i18n="f4_sub">State-of-the-art computer vision trained on WGISD (Embrapa). Upload your own image and get results in seconds.</p>
           <ul class="feat-bullets">
-            <li data-i18n="f4_b1">YOLOv11 model trained on Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc, and Syrah</li>
+            <li data-i18n="f4_b1">YOLO26 model trained on Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc, and Syrah</li>
             <li data-i18n="f4_b2">Real-time inference in the cloud: send a field photo, get annotated bounding boxes and cluster count</li>
             <li data-i18n="f4_b3">WGISD dataset browser with color-coded bounding boxes and berry-count estimates</li>
           </ul>
@@ -2288,7 +2288,7 @@ section + section::before {
         <div class="feat-panel" id="fp-5">
           <div class="feat-badge" data-i18n="f6_metric">11 autonomous tools · INIA RAG · 266M+ publications</div>
           <h3 data-i18n="f6_headline">Your expert agronomist, available 24/7</h3>
-          <p class="feat-sub" data-i18n="f6_sub">Claude-powered agent with real-time access to your field data, climate, satellite indices, and the full INIA Chile scientific library.</p>
+          <p class="feat-sub" data-i18n="f6_sub">Open-weight AI agent with real-time access to your field data, climate, satellite indices, and the full INIA Chile scientific library.</p>
           <ul class="feat-bullets">
             <li data-i18n="f6_b1">Soil and foliar report analysis, irrigation scheduling, and N-P-K fertilization plans, from uploaded PDFs</li>
             <li data-i18n="f6_b2">Semantic RAG search over 19,000+ INIA Chile technical publications for evidence-based recommendations</li>
@@ -3023,7 +3023,7 @@ const translations = {
     slide3_title: "Yield Prediction",
     slide3_sub: "Heuristic estimate from 15 satellite + climate indicators, with a real-data validation panel",
     slide4_title: "AI Agronomic Agent",
-    slide4_sub: "Claude-powered assistant with real-time field, climate and satellite context",
+    slide4_sub: "Open-weight AI assistant with real-time field, climate and satellite context",
     uc_label: "Who uses agragent",
     uc_title: "Built for every agricultural professional",
     uc1_title: "Researchers", uc1_desc: "Access genomic DEG data, yield models, RNA-seq datasets, and peer-reviewed bibliographic search across 19,000+ INIA publications.",
@@ -3052,9 +3052,9 @@ const translations = {
     f1_title: "Satellite Sensing", f1_metric: "13 spectral indices · 10m · 5-day revisit", f1_headline: "See your field from space, in real time", f1_sub: "Sentinel-2 via Google Earth Engine, cloud-free composites updated every 5 days, clipped to your exact polygon.", f1_b1: "13 indices: NDVI, NDRE, MSAVI, TCARI, EVI, NDMI and more for complete crop health monitoring", f1_b2: "Split-screen temporal comparison to track crop evolution between any two dates", f1_b3: "Early detection of water stress, pest pressure, and nutrient deficiencies weeks before visible symptoms",
     f2_title: "Climate Analytics", f2_metric: "8 KPIs · 80 years historical data · worldwide", f2_headline: "Make decisions with climate on your side", f2_sub: "Real-time data from Open-Meteo for any location on Earth. No API key, no limits.", f2_b1: "GDD, chill hours, frost days, heat waves, water balance, solar radiation, and ET₀ (FAO Penman-Monteith)", f2_b2: "Automatic phenological alerts calibrated to your crop and season calendar", f2_b3: "Multi-period GDD comparison to benchmark current season against historical averages",
     f3_title: "Genomic Analysis", f3_metric: "3,603 DEGs · 8 phenological stages · 68 RNA-seq samples", f3_headline: "Genomics meets the vineyard", f3_sub: "Real RNA-seq DEG data from Altimiras et al. (2024), published science directly in your browser.", f3_b1: "Interactive DEG tables with logFC and FDR values across 8 E-L growth stages of Vitis vinifera", f3_b2: "Gene Ontology enrichment, UniProt annotations, and AlphaFold 3D protein structures on demand", f3_b3: "RNA-seq pipeline visualization from raw reads to differential expression",
-    f4_title: "Computer Vision", f4_metric: "300+ annotated images · 5 grape varieties · YOLOv11", f4_headline: "Identify and count clusters from the field", f4_sub: "State-of-the-art vision trained on WGISD (Embrapa). Upload your own image and get results in seconds.", f4_b1: "YOLOv11 trained on Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc, and Syrah", f4_b2: "Real-time cloud inference: send a field photo, get annotated bounding boxes and cluster count", f4_b3: "WGISD dataset browser with color-coded bounding boxes and berry-count estimates",
+    f4_title: "Computer Vision", f4_metric: "300 annotated images · 5 grape varieties · YOLO26", f4_headline: "Identify and count clusters from the field", f4_sub: "State-of-the-art vision trained on WGISD (Embrapa). Upload your own image and get results in seconds.", f4_b1: "YOLO26 trained on Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc, and Syrah", f4_b2: "Real-time cloud inference: send a field photo, get annotated bounding boxes and cluster count", f4_b3: "WGISD dataset browser with color-coded bounding boxes and berry-count estimates",
     f5_title: "Yield Prediction", f5_metric: "15 weighted indicators · validated on public data", f5_headline: "Estimate your harvest, and know what it is worth", f5_sub: "A heuristic estimate from 15 satellite + climate indicators with expert-assigned weights, auto-updates when you load a new polygon. It is not a trained model.", f5_b1: "Estimated yield (t/ha), total production, and estimated harvest date from GDD-based phenological model", f5_b2: "Per-indicator contributions: see which variables (NDVI, ET₀, GDD…) drive the estimate", f5_b3: "Validation on real public datasets: predictability is scale-dependent, and the platform tells you so",
-    f6_title: "AI Assistant", f6_metric: "11 autonomous tools · INIA RAG · 266M+ publications", f6_headline: "Your expert agronomist, available 24/7", f6_sub: "Claude-powered agent with access to INIA Chile, OpenAlex (250M+ papers), AGRIS (FAO, 16.5M records), and FAOSTAT global statistics.", f6_b1: "Soil and foliar report analysis, irrigation scheduling, and N-P-K fertilization plans from uploaded PDFs", f6_b2: "Semantic RAG in INIA Chile + OpenAlex + AGRIS (FAO): evidence-based recommendations from 266M+ scientific sources", f6_b3: "FAOSTAT benchmarks: compare your field yield against national and global averages for any crop",
+    f6_title: "AI Assistant", f6_metric: "11 autonomous tools · INIA RAG · 266M+ publications", f6_headline: "Your expert agronomist, available 24/7", f6_sub: "Open-weight AI agent with access to INIA Chile, OpenAlex (250M+ papers), AGRIS (FAO, 16.5M records), and FAOSTAT global statistics.", f6_b1: "Soil and foliar report analysis, irrigation scheduling, and N-P-K fertilization plans from uploaded PDFs", f6_b2: "Semantic RAG in INIA Chile + OpenAlex + AGRIS (FAO): evidence-based recommendations from 266M+ scientific sources", f6_b3: "FAOSTAT benchmarks: compare your field yield against national and global averages for any crop",
     feat_cta: "Open platform →",
     how_label: "How it works",
     how_title: "From field to insight in minutes",
@@ -3073,7 +3073,7 @@ const translations = {
     tech_gee: "Server-side satellite image processing with cloud masking and index computation.",
     tech_chart: "10+ interactive charts for climate, genomic, and yield data visualization.",
     tech_fastapi: "High-performance Python backend for AI assistant and data processing.",
-    tech_claude: "Agentic AI with tool-calling for context-aware agronomic recommendations.",
+    tech_llm: "Agentic AI with tool-calling for context-aware agronomic recommendations.",
     tech_meteo: "Free, global historical weather data with no API key required.",
     tech_supabase: "Open-source PostgreSQL backend for data persistence, authentication, and real-time APIs.",
     tech_yolo: "State-of-the-art object detection model for crop identification and counting in field imagery.",
@@ -3137,7 +3137,7 @@ const translations = {
     slide3_title: "Predicci\u00f3n de Rendimiento",
     slide3_sub: "Estimaci\u00f3n heur\u00edstica a partir de 15 indicadores satelitales y clim\u00e1ticos, con panel de validaci\u00f3n",
     slide4_title: "Agente Agron\u00f3mico IA",
-    slide4_sub: "Asistente Claude con contexto de campo, clima e \u00edndices satelitales en tiempo real",
+    slide4_sub: "Asistente IA con contexto de campo, clima e \u00edndices satelitales en tiempo real",
     uc_label: "\u00bfPara qui\u00e9n es?",
     uc_title: "Dise\u00f1ado para cada profesional agr\u00edcola",
     uc1_title: "Investigadores", uc1_desc: "Accede a datos DEGs de RNA-seq, modelos de rendimiento, datasets publicados y b\u00fasqueda bibliogr\u00e1fica en 19.000+ publicaciones del INIA.",
@@ -3167,9 +3167,9 @@ const translations = {
     f1_desc: "Im\u00e1genes Sentinel-2 v\u00eda Google Earth Engine con 13 \u00edndices de vegetaci\u00f3n a resoluci\u00f3n de 10m.",
     f2_title: "Anal\u00edtica Clim\u00e1tica", f2_metric: "8 KPIs \u00b7 80 a\u00f1os de datos \u00b7 cobertura mundial", f2_headline: "Toma decisiones con el clima a tu favor", f2_sub: "Datos en tiempo real de Open-Meteo para cualquier punto del planeta \u2014 sin clave de API, sin l\u00edmites.", f2_b1: "GDD, horas fr\u00edo, heladas, olas de calor, balance h\u00eddrico, radiaci\u00f3n solar y ET\u2080 (FAO Penman-Monteith)", f2_b2: "Alertas fenol\u00f3gicas autom\u00e1ticas calibradas a tu cultivo y calendario del hemisferio sur", f2_b3: "Comparaci\u00f3n de per\u00edodos GDD para comparar la temporada actual con promedios hist\u00f3ricos",
     f3_title: "An\u00e1lisis Gen\u00f3mico", f3_metric: "3.603 DEGs \u00b7 8 etapas fenol\u00f3gicas \u00b7 68 muestras RNA-seq", f3_headline: "Gen\u00f3mica al servicio del vi\u00f1edo", f3_sub: "Datos RNA-seq reales de Altimiras et al. (2024) \u2014 ciencia publicada directamente en tu navegador.", f3_b1: "Tablas interactivas de DEGs con logFC y FDR en 8 etapas E-L de Vitis vinifera", f3_b2: "Enriquecimiento GO, anotaciones UniProt y estructuras 3D AlphaFold bajo demanda", f3_b3: "Visualizaci\u00f3n del pipeline RNA-seq desde lecturas crudas hasta expresi\u00f3n diferencial",
-    f4_title: "Visi\u00f3n Computacional", f4_metric: "300+ im\u00e1genes anotadas \u00b7 5 variedades \u00b7 YOLOv11", f4_headline: "Identifica y cuenta racimos desde el campo", f4_sub: "Visi\u00f3n de vanguardia entrenada en WGISD (Embrapa) \u2014 sube tu propia foto y obt\u00e9n resultados en segundos.", f4_b1: "YOLOv11 entrenado en Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc y Syrah", f4_b2: "Inferencia en la nube en tiempo real \u2014 env\u00eda una foto de campo, obt\u00e9n bounding boxes y conteo", f4_b3: "Visor del dataset WGISD con cajas de detecci\u00f3n codificadas por color y estimaci\u00f3n de bayas",
+    f4_title: "Visi\u00f3n Computacional", f4_metric: "300 im\u00e1genes anotadas \u00b7 5 variedades \u00b7 YOLO26", f4_headline: "Identifica y cuenta racimos desde el campo", f4_sub: "Visi\u00f3n de vanguardia entrenada en WGISD (Embrapa) \u2014 sube tu propia foto y obt\u00e9n resultados en segundos.", f4_b1: "YOLO26 entrenado en Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc y Syrah", f4_b2: "Inferencia en la nube en tiempo real \u2014 env\u00eda una foto de campo, obt\u00e9n bounding boxes y conteo", f4_b3: "Visor del dataset WGISD con cajas de detecci\u00f3n codificadas por color y estimaci\u00f3n de bayas",
     f5_title: "Predicci\u00f3n de Rendimiento", f5_metric: "15 indicadores ponderados \u00b7 validado con datos p\u00fablicos", f5_headline: "Estima tu cosecha, y sabe cu\u00e1nto vale esa estimaci\u00f3n", f5_sub: "Estimaci\u00f3n heur\u00edstica a partir de 15 indicadores satelitales y clim\u00e1ticos con pesos asignados por experto; se actualiza autom\u00e1ticamente con cada pol\u00edgono. No es un modelo entrenado.", f5_b1: "Rendimiento estimado (t/ha), producci\u00f3n total y fecha estimada de cosecha por modelo fenol\u00f3gico GDD", f5_b2: "Contribuci\u00f3n por indicador: NDVI, ET\u2080, GDD y cu\u00e1l pesa m\u00e1s en la estimaci\u00f3n", f5_b3: "Validaci\u00f3n con datos p\u00fablicos reales: la predictibilidad depende de la escala, y la plataforma lo indica",
-    f6_title: "Asistente IA", f6_metric: "11 herramientas aut\u00f3nomas \u00b7 RAG INIA \u00b7 266M+ publicaciones", f6_headline: "Tu agr\u00f3nomo experto disponible 24/7", f6_sub: "Agente Claude con acceso a INIA Chile, OpenAlex (250M+ papers), AGRIS FAO (16.5M registros) y estad\u00edsticas globales FAOSTAT.", f6_b1: "An\u00e1lisis de suelo y foliar, planificaci\u00f3n de riego y fertilizaci\u00f3n N-P-K desde PDFs adjuntos", f6_b2: "RAG sem\u00e1ntico en INIA Chile + OpenAlex + AGRIS FAO: recomendaciones con respaldo de 266M+ fuentes cient\u00edficas", f6_b3: "Benchmarks FAOSTAT: compara el rendimiento de tu campo con promedios nacionales y globales para cualquier cultivo",
+    f6_title: "Asistente IA", f6_metric: "11 herramientas aut\u00f3nomas \u00b7 RAG INIA \u00b7 266M+ publicaciones", f6_headline: "Tu agr\u00f3nomo experto disponible 24/7", f6_sub: "Agente IA de pesos abiertos con acceso a INIA Chile, OpenAlex (250M+ papers), AGRIS FAO (16.5M registros) y estad\u00edsticas globales FAOSTAT.", f6_b1: "An\u00e1lisis de suelo y foliar, planificaci\u00f3n de riego y fertilizaci\u00f3n N-P-K desde PDFs adjuntos", f6_b2: "RAG sem\u00e1ntico en INIA Chile + OpenAlex + AGRIS FAO: recomendaciones con respaldo de 266M+ fuentes cient\u00edficas", f6_b3: "Benchmarks FAOSTAT: compara el rendimiento de tu campo con promedios nacionales y globales para cualquier cultivo",
     feat_cta: "Abrir plataforma \u2192",
     how_label: "C\u00f3mo funciona",
     how_title: "Del campo al conocimiento en minutos",
@@ -3188,7 +3188,7 @@ const translations = {
     tech_gee: "Procesamiento de im\u00e1genes satelitales del lado del servidor con enmascaramiento de nubes.",
     tech_chart: "M\u00e1s de 10 gr\u00e1ficos interactivos para visualizaci\u00f3n de datos clim\u00e1ticos, gen\u00f3micos y de rendimiento.",
     tech_fastapi: "Backend Python de alto rendimiento para el asistente IA y procesamiento de datos.",
-    tech_claude: "IA ag\u00e9ntica con llamado de herramientas para recomendaciones agron\u00f3micas contextuales.",
+    tech_llm: "IA ag\u00e9ntica con llamado de herramientas para recomendaciones agron\u00f3micas contextuales.",
     tech_meteo: "Datos meteorol\u00f3gicos hist\u00f3ricos globales y gratuitos sin necesidad de API key.",
     tech_supabase: "Backend PostgreSQL de c\u00f3digo abierto para persistencia de datos, autenticaci\u00f3n y APIs en tiempo real.",
     tech_yolo: "Modelo de detecci\u00f3n de objetos de \u00faltima generaci\u00f3n para identificaci\u00f3n y conteo de cultivos en im\u00e1genes de campo.",
@@ -3252,7 +3252,7 @@ const translations = {
     slide3_title: "Previsão de Rendimento",
     slide3_sub: "Estimativa heurística a partir de 15 indicadores de satélite e clima, com painel de validação",
     slide4_title: "Agente Agronômico IA",
-    slide4_sub: "Assistente Claude com contexto de campo, clima e índices de satélite em tempo real",
+    slide4_sub: "Assistente IA com contexto de campo, clima e índices de satélite em tempo real",
     uc_label: "Para quem é?",
     uc_title: "Desenvolvido para cada profissional agrícola",
     uc1_title: "Pesquisadores", uc1_desc: "Acesse dados DEGs de RNA-seq, modelos de rendimento, datasets publicados e busca bibliográfica em 19.000+ publicações do INIA.",
@@ -3281,9 +3281,9 @@ const translations = {
     f1_title: "Imagens Satelitais", f1_metric: "13 \u00edndices espectrais \u00b7 10m \u00b7 revisita 5 dias", f1_headline: "Veja seu campo do espa\u00e7o, em tempo real", f1_sub: "Sentinel-2 via Google Earth Engine \u2014 compostos sem nuvens atualizados a cada 5 dias, recortados ao seu pol\u00edgono.", f1_b1: "13 \u00edndices: NDVI, NDRE, MSAVI, TCARI, EVI, NDMI e mais para monitoramento completo", f1_b2: "Compara\u00e7\u00e3o temporal split-screen para rastrear a evolu\u00e7\u00e3o da cultura entre quaisquer duas datas", f1_b3: "Detec\u00e7\u00e3o precoce de estresse h\u00eddrico, pragas e defici\u00eancias nutricionais semanas antes dos sintomas",
     f2_title: "Anal\u00edtica Clim\u00e1tica", f2_metric: "8 KPIs \u00b7 80 anos de dados \u00b7 cobertura mundial", f2_headline: "Tome decis\u00f5es com o clima ao seu favor", f2_sub: "Dados em tempo real da Open-Meteo para qualquer ponto do planeta \u2014 sem chave de API, sem limites.", f2_b1: "GDD, horas de frio, geadas, ondas de calor, balan\u00e7o h\u00eddrico, radia\u00e7\u00e3o solar e ET\u2080 (FAO Penman-Monteith)", f2_b2: "Alertas fenol\u00f3gicas autom\u00e1ticas calibradas para sua cultura e calend\u00e1rio do hemisf\u00e9rio sul", f2_b3: "Compara\u00e7\u00e3o de per\u00edodos GDD para comparar a temporada atual com m\u00e9dias hist\u00f3ricas",
     f3_title: "An\u00e1lise Gen\u00f4mica", f3_metric: "3.603 DEGs \u00b7 8 est\u00e1gios fenol\u00f3gicos \u00b7 68 amostras RNA-seq", f3_headline: "Gen\u00f4mica a servi\u00e7o do vinhedo", f3_sub: "Dados RNA-seq reais de Altimiras et al. (2024) \u2014 ci\u00eancia publicada diretamente no seu navegador.", f3_b1: "Tabelas interativas de DEGs com logFC e FDR em 8 est\u00e1gios E-L de Vitis vinifera", f3_b2: "Enriquecimento GO, anota\u00e7\u00f5es UniProt e estruturas 3D AlphaFold sob demanda", f3_b3: "Visualiza\u00e7\u00e3o do pipeline RNA-seq desde leituras brutas at\u00e9 express\u00e3o diferencial",
-    f4_title: "Vis\u00e3o Computacional", f4_metric: "300+ imagens anotadas \u00b7 5 variedades \u00b7 YOLOv11", f4_headline: "Identifique e conte cachos do campo", f4_sub: "Vis\u00e3o de ponta treinada no WGISD (Embrapa) \u2014 envie sua pr\u00f3pria foto e obtenha resultados em segundos.", f4_b1: "YOLOv11 treinado em Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc e Syrah", f4_b2: "Infer\u00eancia em nuvem em tempo real \u2014 envie uma foto do campo, obtenha bounding boxes e contagem", f4_b3: "Visualizador do dataset WGISD com caixas de detec\u00e7\u00e3o e estimativas de bagas",
+    f4_title: "Vis\u00e3o Computacional", f4_metric: "300 imagens anotadas \u00b7 5 variedades \u00b7 YOLO26", f4_headline: "Identifique e conte cachos do campo", f4_sub: "Vis\u00e3o de ponta treinada no WGISD (Embrapa) \u2014 envie sua pr\u00f3pria foto e obtenha resultados em segundos.", f4_b1: "YOLO26 treinado em Chardonnay, Cabernet Franc, Cabernet Sauvignon, Sauvignon Blanc e Syrah", f4_b2: "Infer\u00eancia em nuvem em tempo real \u2014 envie uma foto do campo, obtenha bounding boxes e contagem", f4_b3: "Visualizador do dataset WGISD com caixas de detec\u00e7\u00e3o e estimativas de bagas",
     f5_title: "Previs\u00e3o de Rendimento", f5_metric: "15 indicadores ponderados \u00b7 validado com dados p\u00fablicos", f5_headline: "Estime sua colheita, e saiba quanto vale essa estimativa", f5_sub: "Estimativa heur\u00edstica a partir de 15 indicadores de sat\u00e9lite e clima com pesos atribu\u00eddos por especialista; atualiza automaticamente a cada pol\u00edgono. N\u00e3o \u00e9 um modelo treinado.", f5_b1: "Rendimento estimado (t/ha), produ\u00e7\u00e3o total e data estimada de colheita por modelo fenol\u00f3gico GDD", f5_b2: "Contribui\u00e7\u00e3o por indicador: NDVI, ET\u2080, GDD e qual pesa mais na estimativa", f5_b3: "Valida\u00e7\u00e3o com dados p\u00fablicos reais: a previsibilidade depende da escala, e a plataforma indica isso",
-    f6_title: "Assistente IA", f6_metric: "11 ferramentas aut\u00f4nomas \u00b7 RAG INIA \u00b7 266M+ publica\u00e7\u00f5es", f6_headline: "Seu agr\u00f4nomo especialista dispon\u00edvel 24/7", f6_sub: "Agente Claude com acesso ao INIA Chile, OpenAlex (250M+ papers), AGRIS FAO (16.5M registros) e estat\u00edsticas globais FAOSTAT.", f6_b1: "An\u00e1lise de solo e foliar, planejamento de irriga\u00e7\u00e3o e fertiliza\u00e7\u00e3o N-P-K a partir de PDFs enviados", f6_b2: "RAG sem\u00e2ntico no INIA Chile + OpenAlex + AGRIS FAO: recomenda\u00e7\u00f5es com base em 266M+ fontes cient\u00edficas", f6_b3: "Benchmarks FAOSTAT: compare o rendimento do seu campo com m\u00e9dias nacionais e globais para qualquer cultura",
+    f6_title: "Assistente IA", f6_metric: "11 ferramentas aut\u00f4nomas \u00b7 RAG INIA \u00b7 266M+ publica\u00e7\u00f5es", f6_headline: "Seu agr\u00f4nomo especialista dispon\u00edvel 24/7", f6_sub: "Agente IA de pesos abertos com acesso ao INIA Chile, OpenAlex (250M+ papers), AGRIS FAO (16.5M registros) e estat\u00edsticas globais FAOSTAT.", f6_b1: "An\u00e1lise de solo e foliar, planejamento de irriga\u00e7\u00e3o e fertiliza\u00e7\u00e3o N-P-K a partir de PDFs enviados", f6_b2: "RAG sem\u00e2ntico no INIA Chile + OpenAlex + AGRIS FAO: recomenda\u00e7\u00f5es com base em 266M+ fontes cient\u00edficas", f6_b3: "Benchmarks FAOSTAT: compare o rendimento do seu campo com m\u00e9dias nacionais e globais para qualquer cultura",
     feat_cta: "Abrir plataforma \u2192",
     how_label: "Como funciona",
     how_title: "Do campo ao conhecimento em minutos",
@@ -3302,7 +3302,7 @@ const translations = {
     tech_gee: "Processamento de imagens de sat\u00e9lite no servidor com mascaramento de nuvens.",
     tech_chart: "Mais de 10 gr\u00e1ficos interativos para visualiza\u00e7\u00e3o de dados clim\u00e1ticos, gen\u00f4micos e de rendimento.",
     tech_fastapi: "Backend Python de alto desempenho para o assistente IA e processamento de dados.",
-    tech_claude: "IA ag\u00eantica com chamada de ferramentas para recomenda\u00e7\u00f5es agron\u00f4micas contextuais.",
+    tech_llm: "IA ag\u00eantica com chamada de ferramentas para recomenda\u00e7\u00f5es agron\u00f4micas contextuais.",
     tech_meteo: "Dados meteorol\u00f3gicos hist\u00f3ricos globais e gratuitos sem necessidade de API key.",
     tech_supabase: "Backend PostgreSQL de c\u00f3digo aberto para persist\u00eancia de dados, autentica\u00e7\u00e3o e APIs em tempo real.",
     tech_yolo: "Modelo de detec\u00e7\u00e3o de objetos de \u00faltima gera\u00e7\u00e3o para identifica\u00e7\u00e3o e contagem de culturas em imagens de campo.",

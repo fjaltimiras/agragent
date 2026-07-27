@@ -33,7 +33,6 @@ LIMIT 30;
 Pegar aquí el resultado para decidir qué purgar. Sospechosos habituales en AgrAgent:
 - **Embeddings INIA RAG** (tabla con columna `vector`, ej. `inia_chunks`) → **REGENERABLE** con
   `scripts/index_inia.py`; NO necesita respaldo, es el mejor candidato a borrar.
-- `aes_flights` / `aes_images` (JSONB de detecciones YOLO) → datos del POC AES.
 - `messages` / `conversations` (historial de chat).
 
 ---
@@ -84,9 +83,9 @@ es grande y regenerable.)
 -- Ejemplo: vaciar embeddings INIA (REGENERABLE con index_inia.py). Ajustar nombre real.
 TRUNCATE TABLE inia_chunks;
 
--- Ejemplo: purgar detecciones AES antiguas (ajustar tabla/condición tras ver los tamaños)
--- DELETE FROM aes_flights WHERE created_at < now() - interval '90 days';
--- VACUUM FULL aes_flights;
+-- Ejemplo: purgar historial de chat antiguo (ajustar condición tras ver los tamaños)
+-- DELETE FROM messages WHERE created_at < now() - interval '90 days';
+-- VACUUM FULL messages;
 ```
 
 Tras vaciar, re-medir con el bloque del paso 1. Cuando `db_total` baje de ~500 MB, la restricción
