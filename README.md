@@ -123,7 +123,7 @@ orchestration layer are covered.
   title = {agragent: An Agentic Multimodal Architecture for Crop Monitoring and Decision Support},
   year = {2026},
   url = {https://github.com/fjaltimiras/agragent},
-  institution = {Pontificia Universidad Cat\'{o}lica de Valpara\'{i}so}
+  institution = {N\'{u}cleo de Investigaci\'{o}n en Data Science, Facultad de Ingenier\'{i}a y Negocios, Universidad de las Am\'{e}ricas}
 }
 ```
 
@@ -133,4 +133,5 @@ The genomic module builds on Altimiras et al. (2024),
 ## Author
 
 **Francisco Altimiras** — ORCID [0000-0003-1992-8338](https://orcid.org/0000-0003-1992-8338)
-Pontificia Universidad Catolica de Valparaiso (PUCV), Chile
+Núcleo de Investigación en Data Science, Facultad de Ingeniería y Negocios,
+Universidad de las Américas, Chile
