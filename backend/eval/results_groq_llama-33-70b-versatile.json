@@ -1,0 +1,170 @@
+{
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "n_tools": 11,
+  "summary": {
+    "n_queries": 5,
+    "query_accuracy": 0.2,
+    "on_topic_accuracy": 0.2,
+    "abstention_accuracy": 0.0,
+    "tool_precision": 1.0,
+    "group_recall": 0.2,
+    "f1": 0.33333333333333337,
+    "mean_latency_s": 0.8,
+    "median_latency_s": 0.0,
+    "mean_iterations": 0.2,
+    "by_lang": {
+      "en": [
+        0,
+        3
+      ],
+      "es": [
+        0,
+        1
+      ],
+      "pt": [
+        1,
+        1
+      ]
+    },
+    "by_category": {
+      "climate": [
+        1,
+        4
+      ],
+      "satellite": [
+        0,
+        1
+      ]
+    },
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "recovered_leaked_toolcalls": 1
+  },
+  "results": [
+    {
+      "id": "Q01",
+      "lang": "en",
+      "category": "climate",
+      "query": "What is the weather forecast for my field this week?",
+      "groups": [
+        [
+          "get_climate_data"
+        ]
+      ],
+      "gold": [
+        "get_climate_data"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 0,
+      "latency_s": 0.0,
+      "final_text": "ERROR: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jkr91tp8e2jvfvq83a32mg1w` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 93078, Requested 7902. Please try again in 14m6.72s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q02",
+      "lang": "es",
+      "category": "climate",
+      "query": "¿Va a helar en los próximos días en mi viñedo?",
+      "groups": [
+        [
+          "get_climate_data"
+        ]
+      ],
+      "gold": [
+        "get_climate_data"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 0,
+      "latency_s": 0.0,
+      "final_text": "ERROR: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jkr91tp8e2jvfvq83a32mg1w` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 93066, Requested 7908. Please try again in 14m1.536s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q03",
+      "lang": "pt",
+      "category": "climate",
+      "query": "Qual é a previsão de chuva para os próximos 7 dias no meu campo?",
+      "groups": [
+        [
+          "get_climate_data"
+        ]
+      ],
+      "gold": [
+        "get_climate_data"
+      ],
+      "called": [
+        "get_climate_data"
+      ],
+      "called_set": [
+        "get_climate_data"
+      ],
+      "iterations": 1,
+      "latency_s": 3.99,
+      "final_text": "[recovered leaked tool call]",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q04",
+      "lang": "en",
+      "category": "climate",
+      "query": "Show me the reference evapotranspiration forecast for my coordinates.",
+      "groups": [
+        [
+          "get_climate_data"
+        ]
+      ],
+      "gold": [
+        "get_climate_data"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 0,
+      "latency_s": 0.0,
+      "final_text": "ERROR: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jkr91tp8e2jvfvq83a32mg1w` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99970, Requested 6913. Please try again in 1h39m6.912s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q05",
+      "lang": "en",
+      "category": "satellite",
+      "query": "Show me the current NDVI of my field.",
+      "groups": [
+        [
+          "get_ndvi_data"
+        ]
+      ],
+      "gold": [
+        "get_ndvi_data"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 0,
+      "latency_s": 0.0,
+      "final_text": "ERROR: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jkr91tp8e2jvfvq83a32mg1w` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99958, Requested 6910. Please try again in 1h38m53.952s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    }
+  ]
+}

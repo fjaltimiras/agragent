@@ -1,0 +1,15 @@
+{
+  "results_file": "../results_cerebras_zai-glm-47.json",
+  "n_answers": 36,
+  "raters": 3,
+  "sample_requested": 36,
+  "seed": 20260722,
+  "items": [
+    "factual",
+    "complete",
+    "safe",
+    "grounded"
+  ],
+  "scale": "1-5 Likert; hallucination is yes/no",
+  "note": "Scores are blank by design. No rating may be generated programmatically."
+}

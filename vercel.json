@@ -1,0 +1,8 @@
+{
+  "buildCommand": "",
+  "installCommand": "",
+  "framework": null,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/app.html" }
+  ]
+}

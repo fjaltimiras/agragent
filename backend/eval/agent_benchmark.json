@@ -1,0 +1,82 @@
+{
+  "_about": "Labeled benchmark for evaluating AgrAgent tool-selection behavior. 'groups' is a list of intent groups; the agent must call at least one tool from EACH group (interchangeable alternatives within a group). 'gold' is the flat set of acceptable tools (no false-positive penalty). Empty groups + gold = out-of-scope (agent should abstain from tool use). Ground-truth labels assigned by the authors.",
+  "_tools": ["get_climate_data", "get_ndvi_data", "analyze_soil_report", "analyze_foliar_report", "calculate_irrigation_plan", "calculate_fertilization_plan", "search_openalex", "search_inia_rag", "search_inia_biblioteca", "search_agris", "get_faostat_data"],
+  "queries": [
+    {"id": "Q01", "lang": "en", "category": "climate", "query": "What is the weather forecast for my field this week?", "groups": [["get_climate_data"]], "gold": ["get_climate_data"]},
+    {"id": "Q02", "lang": "es", "category": "climate", "query": "¿Va a helar en los próximos días en mi viñedo?", "groups": [["get_climate_data"]], "gold": ["get_climate_data"]},
+    {"id": "Q03", "lang": "pt", "category": "climate", "query": "Qual é a previsão de chuva para os próximos 7 dias no meu campo?", "groups": [["get_climate_data"]], "gold": ["get_climate_data"]},
+    {"id": "Q04", "lang": "en", "category": "climate", "query": "Show me the reference evapotranspiration forecast for my coordinates.", "groups": [["get_climate_data"]], "gold": ["get_climate_data"]},
+
+    {"id": "Q05", "lang": "en", "category": "satellite", "query": "Show me the current NDVI of my field.", "groups": [["get_ndvi_data"]], "gold": ["get_ndvi_data"]},
+    {"id": "Q06", "lang": "es", "category": "satellite", "query": "¿Cómo está el vigor vegetativo de mi parcela según el satélite?", "groups": [["get_ndvi_data"]], "gold": ["get_ndvi_data"]},
+    {"id": "Q07", "lang": "en", "category": "satellite", "query": "What is the average NDVI over my field for the last month?", "groups": [["get_ndvi_data"]], "gold": ["get_ndvi_data"]},
+    {"id": "Q08", "lang": "es", "category": "satellite", "query": "¿Hay zonas de bajo vigor en mi parcela este mes según las imágenes Sentinel-2?", "groups": [["get_ndvi_data"]], "gold": ["get_ndvi_data"]},
+
+    {"id": "Q09", "lang": "en", "category": "soil", "query": "Here is my soil analysis: pH 5.8, EC 0.4 dS/m, organic matter 1.2%, P 8 ppm, K 0.15 cmol/kg. Please interpret it.", "groups": [["analyze_soil_report"]], "gold": ["analyze_soil_report"]},
+    {"id": "Q10", "lang": "es", "category": "soil", "query": "Interpreta este análisis de suelo: pH 7.9, CE 2.1 dS/m, materia orgánica 0.8%, P 45 ppm, K 0.6 cmol/kg.", "groups": [["analyze_soil_report"]], "gold": ["analyze_soil_report"]},
+    {"id": "Q11", "lang": "en", "category": "soil", "query": "Interpret soil: pH 6.2, OM 3.5%, N 0.2%, P 25 ppm, K 0.4, Ca 8, Mg 2 cmol/kg.", "groups": [["analyze_soil_report"]], "gold": ["analyze_soil_report"]},
+
+    {"id": "Q12", "lang": "en", "category": "foliar", "query": "My leaf tissue analysis shows N 1.8%, K 0.6%, Mg 0.18%. Are there any deficiencies?", "groups": [["analyze_foliar_report"]], "gold": ["analyze_foliar_report"]},
+    {"id": "Q13", "lang": "es", "category": "foliar", "query": "Analiza este foliar: N 2.2%, P 0.25%, K 1.1%, Fe 45 ppm, Zn 12 ppm.", "groups": [["analyze_foliar_report"]], "gold": ["analyze_foliar_report"]},
+    {"id": "Q14", "lang": "es", "category": "foliar", "query": "Tengo clorosis férrica visible. Aquí va el foliar: Fe 30 ppm, Mn 25 ppm, N 2.5%. ¿Qué corrijo?", "groups": [["analyze_foliar_report"]], "gold": ["analyze_foliar_report"]},
+
+    {"id": "Q15", "lang": "en", "category": "irrigation", "query": "How much should I irrigate my 5 ha drip-irrigated tomato field this week?", "groups": [["calculate_irrigation_plan"]], "gold": ["calculate_irrigation_plan", "get_climate_data"]},
+    {"id": "Q16", "lang": "es", "category": "irrigation", "query": "Calcula un plan de riego para mi viñedo en veraison, suelo franco, riego por goteo.", "groups": [["calculate_irrigation_plan"]], "gold": ["calculate_irrigation_plan", "get_climate_data"]},
+    {"id": "Q17", "lang": "pt", "category": "irrigation", "query": "Quanto devo irrigar minha lavoura de milho na fase de meio de estação?", "groups": [["calculate_irrigation_plan"]], "gold": ["calculate_irrigation_plan", "get_climate_data"]},
+    {"id": "Q18", "lang": "es", "category": "irrigation", "query": "Mi cultivo de papa está en mid-season, suelo arcilloso, aspersión. ¿Cuánto regar?", "groups": [["calculate_irrigation_plan"]], "gold": ["calculate_irrigation_plan", "get_climate_data"]},
+
+    {"id": "Q19", "lang": "en", "category": "fertilization", "query": "Give me an NPK fertilization plan for a 12 t/ha potato yield target.", "groups": [["calculate_fertilization_plan"]], "gold": ["calculate_fertilization_plan"]},
+    {"id": "Q20", "lang": "es", "category": "fertilization", "query": "Plan de fertilización para uva de mesa, objetivo 25 t/ha.", "groups": [["calculate_fertilization_plan"]], "gold": ["calculate_fertilization_plan"]},
+    {"id": "Q21", "lang": "en", "category": "fertilization", "query": "How should I split nitrogen applications for a 10 t/ha wheat crop?", "groups": [["calculate_fertilization_plan"]], "gold": ["calculate_fertilization_plan"]},
+
+    {"id": "Q22", "lang": "en", "category": "literature_openalex", "query": "Find recent peer-reviewed scientific papers on deficit irrigation in grapevine.", "groups": [["search_openalex", "search_agris", "search_inia_rag", "search_inia_biblioteca"]], "gold": ["search_openalex", "search_agris", "search_inia_rag", "search_inia_biblioteca"]},
+    {"id": "Q23", "lang": "es", "category": "literature_openalex", "query": "Busca estudios científicos sobre el índice NDRE y el contenido de nitrógeno en vid.", "groups": [["search_openalex", "search_agris", "search_inia_rag", "search_inia_biblioteca"]], "gold": ["search_openalex", "search_agris", "search_inia_rag", "search_inia_biblioteca"]},
+    {"id": "Q24", "lang": "en", "category": "literature_openalex", "query": "Find peer-reviewed studies reporting YOLO-based grape cluster detection accuracy.", "groups": [["search_openalex", "search_agris", "search_inia_rag", "search_inia_biblioteca"]], "gold": ["search_openalex", "search_agris", "search_inia_rag", "search_inia_biblioteca"]},
+
+    {"id": "Q25", "lang": "es", "category": "literature_inia", "query": "¿Qué recomienda el INIA sobre el manejo del riego en cerezos en Chile? Dame extractos.", "groups": [["search_inia_rag", "search_inia_biblioteca"]], "gold": ["search_inia_rag", "search_inia_biblioteca"]},
+    {"id": "Q26", "lang": "es", "category": "literature_inia", "query": "Busca boletines técnicos del INIA sobre control de oídio en vid.", "groups": [["search_inia_biblioteca", "search_inia_rag"]], "gold": ["search_inia_biblioteca", "search_inia_rag"]},
+    {"id": "Q27", "lang": "es", "category": "literature_inia", "query": "Recupera las dosis de riego recomendadas por el INIA para arándanos, con cifras.", "groups": [["search_inia_rag", "search_inia_biblioteca"]], "gold": ["search_inia_rag", "search_inia_biblioteca"]},
+
+    {"id": "Q28", "lang": "en", "category": "literature_agris", "query": "Search the FAO AGRIS database for literature on integrated pest management in vineyards.", "groups": [["search_agris", "search_openalex"]], "gold": ["search_agris", "search_openalex"]},
+    {"id": "Q29", "lang": "es", "category": "literature_agris", "query": "Busca en AGRIS de la FAO publicaciones sobre fertilización nitrogenada en maíz.", "groups": [["search_agris", "search_openalex"]], "gold": ["search_agris", "search_openalex"]},
+
+    {"id": "Q30", "lang": "en", "category": "faostat", "query": "What was Chile's grape production and yield over the last 10 years?", "groups": [["get_faostat_data"]], "gold": ["get_faostat_data"]},
+    {"id": "Q31", "lang": "es", "category": "faostat", "query": "¿Cuál es la superficie cosechada de maíz en Brasil según la FAO?", "groups": [["get_faostat_data"]], "gold": ["get_faostat_data"]},
+    {"id": "Q32", "lang": "en", "category": "faostat", "query": "Give me wheat yield trends in Argentina from FAO statistics.", "groups": [["get_faostat_data"]], "gold": ["get_faostat_data"]},
+
+    {"id": "Q33", "lang": "en", "category": "multi", "query": "What is my field's current NDVI, and based on the weather should I irrigate this week?", "groups": [["get_ndvi_data"], ["calculate_irrigation_plan"]], "gold": ["get_ndvi_data", "calculate_irrigation_plan", "get_climate_data"]},
+    {"id": "Q34", "lang": "en", "category": "multi", "query": "Check the weather and then give me an irrigation plan for my drip-irrigated vineyard.", "groups": [["get_climate_data"], ["calculate_irrigation_plan"]], "gold": ["get_climate_data", "calculate_irrigation_plan"]},
+    {"id": "Q35", "lang": "en", "category": "multi", "query": "Interpret my soil analysis (pH 5.5, P 10 ppm, K 0.12 cmol/kg) and then propose a fertilization plan for a 20 t/ha grape target.", "groups": [["analyze_soil_report"], ["calculate_fertilization_plan"]], "gold": ["analyze_soil_report", "calculate_fertilization_plan"]},
+    {"id": "Q36", "lang": "es", "category": "multi", "query": "Analiza mi suelo (pH 5.0, baja materia orgánica) y dime qué publicaciones científicas hay sobre enmiendas calcáreas.", "groups": [["analyze_soil_report"], ["search_openalex", "search_agris", "search_inia_rag", "search_inia_biblioteca"]], "gold": ["analyze_soil_report", "search_openalex", "search_agris", "search_inia_rag", "search_inia_biblioteca"]},
+    {"id": "Q37", "lang": "en", "category": "multi", "query": "Compare my grape yield potential against national FAO statistics and find papers on improving vineyard yield.", "groups": [["get_faostat_data"], ["search_openalex", "search_agris", "search_inia_rag", "search_inia_biblioteca"]], "gold": ["get_faostat_data", "search_openalex", "search_agris", "search_inia_rag", "search_inia_biblioteca"]},
+
+    {"id": "Q38", "lang": "en", "category": "out_of_scope", "query": "Hello, who are you and what can you do?", "groups": [], "gold": []},
+    {"id": "Q39", "lang": "es", "category": "out_of_scope", "query": "Gracias, muy útil tu ayuda.", "groups": [], "gold": []},
+    {"id": "Q40", "lang": "en", "category": "out_of_scope", "query": "What is the capital of France?", "groups": [], "gold": []},
+    {"id": "Q41", "lang": "en", "category": "out_of_scope", "query": "Conceptually, what does the NDVI index represent?", "groups": [], "gold": []},
+    {"id": "Q42", "lang": "es", "category": "out_of_scope", "query": "Cuéntame un chiste sobre agricultores.", "groups": [], "gold": []},
+    {"id": "Q43", "lang": "pt", "category": "out_of_scope", "query": "Bom dia! Tudo bem com você?", "groups": [], "gold": []},
+
+    {"id": "Q44", "lang": "es", "category": "fertilization", "query": "Mi suelo tiene fósforo alto (50 ppm). Ajusta el plan de fertilización para tomate con objetivo 80 t/ha.", "groups": [["calculate_fertilization_plan"]], "gold": ["calculate_fertilization_plan", "analyze_soil_report"]},
+    {"id": "Q45", "lang": "en", "category": "literature_inia", "query": "Search the INIA Chile digital library for documents about cover crops in vineyards.", "groups": [["search_inia_biblioteca", "search_inia_rag"]], "gold": ["search_inia_biblioteca", "search_inia_rag"]},
+
+    {"id": "Q46", "lang": "pt", "category": "climate", "query": "Qual é a previsão de geada para o meu vinhedo nos próximos dias?", "groups": [["get_climate_data"]], "gold": ["get_climate_data"]},
+    {"id": "Q47", "lang": "pt", "category": "satellite", "query": "Mostre o NDVI atual da minha parcela.", "groups": [["get_ndvi_data"]], "gold": ["get_ndvi_data"]},
+    {"id": "Q48", "lang": "pt", "category": "satellite", "query": "Existem zonas de baixo vigor no meu talhão segundo as imagens Sentinel-2 deste mês?", "groups": [["get_ndvi_data"]], "gold": ["get_ndvi_data"]},
+    {"id": "Q49", "lang": "pt", "category": "soil", "query": "Interprete esta análise de solo: pH 5,4, MO 1,5%, P 9 ppm, K 0,18 cmol/kg.", "groups": [["analyze_soil_report"]], "gold": ["analyze_soil_report"]},
+    {"id": "Q50", "lang": "pt", "category": "soil", "query": "Minha análise de solo deu pH 7,8 e CE 2,3 dS/m. O que isso significa para a minha cultura?", "groups": [["analyze_soil_report"]], "gold": ["analyze_soil_report"]},
+    {"id": "Q51", "lang": "pt", "category": "foliar", "query": "Análise foliar: N 1,9%, K 0,7%, Mg 0,15%. Há deficiências?", "groups": [["analyze_foliar_report"]], "gold": ["analyze_foliar_report"]},
+    {"id": "Q52", "lang": "pt", "category": "foliar", "query": "Tenho clorose nas folhas. Foliar: Fe 28 ppm, Mn 22 ppm, N 2,4%. O que devo corrigir?", "groups": [["analyze_foliar_report"]], "gold": ["analyze_foliar_report"]},
+    {"id": "Q53", "lang": "pt", "category": "irrigation", "query": "Quanto devo irrigar meu vinhedo de 5 ha por gotejamento nesta semana?", "groups": [["calculate_irrigation_plan"]], "gold": ["calculate_irrigation_plan", "get_climate_data"]},
+    {"id": "Q54", "lang": "pt", "category": "fertilization", "query": "Elabore um plano de adubação NPK para uma meta de 15 t/ha de uva.", "groups": [["calculate_fertilization_plan"]], "gold": ["calculate_fertilization_plan"]},
+    {"id": "Q55", "lang": "pt", "category": "fertilization", "query": "Como fracionar a aplicação de nitrogênio para uma lavoura de milho de 10 t/ha?", "groups": [["calculate_fertilization_plan"]], "gold": ["calculate_fertilization_plan"]},
+    {"id": "Q56", "lang": "pt", "category": "literature_openalex", "query": "Encontre artigos científicos recentes sobre irrigação com déficit em videira.", "groups": [["search_openalex", "search_agris", "search_inia_rag", "search_inia_biblioteca"]], "gold": ["search_openalex", "search_agris", "search_inia_rag", "search_inia_biblioteca"]},
+    {"id": "Q57", "lang": "pt", "category": "literature_agris", "query": "Busque na base AGRIS da FAO publicações sobre manejo integrado de pragas em vinhedos.", "groups": [["search_agris", "search_openalex"]], "gold": ["search_agris", "search_openalex"]},
+    {"id": "Q58", "lang": "pt", "category": "faostat", "query": "Qual foi a produção e o rendimento de uva no Brasil nos últimos 10 anos segundo a FAO?", "groups": [["get_faostat_data"]], "gold": ["get_faostat_data"]},
+    {"id": "Q59", "lang": "pt", "category": "faostat", "query": "Mostre a tendência de rendimento de soja na Argentina pelas estatísticas da FAO.", "groups": [["get_faostat_data"]], "gold": ["get_faostat_data"]},
+    {"id": "Q60", "lang": "pt", "category": "multi", "query": "Qual é o NDVI atual do meu campo e, considerando o clima, devo irrigar esta semana?", "groups": [["get_ndvi_data"], ["calculate_irrigation_plan"]], "gold": ["get_ndvi_data", "calculate_irrigation_plan", "get_climate_data"]},
+    {"id": "Q61", "lang": "pt", "category": "multi", "query": "Interprete minha análise de solo (pH 5,3, P 11 ppm, K 0,14 cmol/kg) e proponha um plano de adubação para meta de 20 t/ha de uva.", "groups": [["analyze_soil_report"], ["calculate_fertilization_plan"]], "gold": ["analyze_soil_report", "calculate_fertilization_plan"]},
+    {"id": "Q62", "lang": "pt", "category": "out_of_scope", "query": "Bom dia, o que você consegue fazer?", "groups": [], "gold": []},
+    {"id": "Q63", "lang": "pt", "category": "out_of_scope", "query": "Qual é a capital da Austrália?", "groups": [], "gold": []}
+  ]
+}

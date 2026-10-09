@@ -1,0 +1,1821 @@
+{
+  "provider": "cerebras",
+  "model": "gemma-4-31b",
+  "n_tools": 11,
+  "summary": {
+    "n_queries": 63,
+    "query_accuracy": 0.7301587301587301,
+    "on_topic_accuracy": 0.6909090909090909,
+    "abstention_accuracy": 1.0,
+    "tool_precision": 1.0,
+    "group_recall": 0.6935483870967742,
+    "f1": 0.8190476190476191,
+    "mean_latency_s": 21.02,
+    "median_latency_s": 1.44,
+    "mean_iterations": 1.71,
+    "by_lang": {
+      "en": [
+        18,
+        23
+      ],
+      "es": [
+        15,
+        19
+      ],
+      "pt": [
+        13,
+        21
+      ]
+    },
+    "by_category": {
+      "climate": [
+        5,
+        5
+      ],
+      "faostat": [
+        5,
+        5
+      ],
+      "fertilization": [
+        2,
+        6
+      ],
+      "foliar": [
+        1,
+        5
+      ],
+      "irrigation": [
+        4,
+        5
+      ],
+      "literature_agris": [
+        3,
+        3
+      ],
+      "literature_inia": [
+        4,
+        4
+      ],
+      "literature_openalex": [
+        4,
+        4
+      ],
+      "multi": [
+        5,
+        7
+      ],
+      "out_of_scope": [
+        8,
+        8
+      ],
+      "satellite": [
+        1,
+        6
+      ],
+      "soil": [
+        4,
+        5
+      ]
+    },
+    "provider": "cerebras",
+    "model": "gemma-4-31b",
+    "recovered_leaked_toolcalls": 0
+  },
+  "results": [
+    {
+      "id": "Q01",
+      "lang": "en",
+      "category": "climate",
+      "query": "What is the weather forecast for my field this week?",
+      "groups": [
+        [
+          "get_climate_data"
+        ]
+      ],
+      "gold": [
+        "get_climate_data"
+      ],
+      "called": [
+        "get_climate_data"
+      ],
+      "called_set": [
+        "get_climate_data"
+      ],
+      "iterations": 2,
+      "latency_s": 1.89,
+      "final_text": "The weather forecast for **Demo Vineyard** in Casablanca indicates stable summer conditions. Expect maximum temperatures around **24-27°C** and minimums between **12-15°C**.\n\nNo significant precipitation is expected this week, maintaining a high **ET₀**, which suggests a steady demand for irrigation via your drip system. Keep a close eye on the balance hídrico in the dashboard to avoid water stress during this mid-season stage.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q02",
+      "lang": "es",
+      "category": "climate",
+      "query": "¿Va a helar en los próximos días en mi viñedo?",
+      "groups": [
+        [
+          "get_climate_data"
+        ]
+      ],
+      "gold": [
+        "get_climate_data"
+      ],
+      "called": [
+        "get_climate_data"
+      ],
+      "called_set": [
+        "get_climate_data"
+      ],
+      "iterations": 2,
+      "latency_s": 59.29,
+      "final_text": "No hay pronóstico de heladas para los próximos días en Casablanca. Las temperaturas mínimas se mantienen muy por encima del punto crítico para la vid en esta etapa de media estación.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q03",
+      "lang": "pt",
+      "category": "climate",
+      "query": "Qual é a previsão de chuva para os próximos 7 dias no meu campo?",
+      "groups": [
+        [
+          "get_climate_data"
+        ]
+      ],
+      "gold": [
+        "get_climate_data"
+      ],
+      "called": [
+        "get_climate_data"
+      ],
+      "called_set": [
+        "get_climate_data"
+      ],
+      "iterations": 2,
+      "latency_s": 0.93,
+      "final_text": "A previsão para os próximos 7 dias em Casablanca indica **ausência de chuvas significativas**, com precipitação total estimada em **0 mm**.\n\nAs condições permanecerão secas, o que exigirá a manutenção rigorosa do seu plano de irrigação por gotejo para a videira, especialmente nesta etapa de meias-estação.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q04",
+      "lang": "en",
+      "category": "climate",
+      "query": "Show me the reference evapotranspiration forecast for my coordinates.",
+      "groups": [
+        [
+          "get_climate_data"
+        ]
+      ],
+      "gold": [
+        "get_climate_data"
+      ],
+      "called": [
+        "get_climate_data"
+      ],
+      "called_set": [
+        "get_climate_data"
+      ],
+      "iterations": 2,
+      "latency_s": 58.11,
+      "final_text": "The reference evapotranspiration (**ET₀**) for your vineyard in Casablanca is **5.2 mm/day** for today, with a 7-day forecast averaging between **4.8 and 5.5 mm/day**.\n\nThese values reflect the typical high demand for mid-January in the Valparaíso Region. Given your **loam** soil and **drip** system, ensure you adjust your irrigation frequency to maintain optimal soil moisture during this mid-season stage.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q05",
+      "lang": "en",
+      "category": "satellite",
+      "query": "Show me the current NDVI of my field.",
+      "groups": [
+        [
+          "get_ndvi_data"
+        ]
+      ],
+      "gold": [
+        "get_ndvi_data"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.38,
+      "final_text": "Puedes ver el **NDVI actual** y otros índices de vegetación directamente en el mapa de la aplicación, donde tienes acceso a las imágenes satelitales de Sentinel-2 con resolución de 10 metros.",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q06",
+      "lang": "es",
+      "category": "satellite",
+      "query": "¿Cómo está el vigor vegetativo de mi parcela según el satélite?",
+      "groups": [
+        [
+          "get_ndvi_data"
+        ]
+      ],
+      "gold": [
+        "get_ndvi_data"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.78,
+      "final_text": "Puedes ver el vigor vegetativo actual directamente en el **mapa de la app**, donde tienes activo el índice **NDVI** (o NDRE/MSAVI) basado en imágenes de Sentinel-2 con resolución de 10m.\n\nAnaliza las zonas en color verde oscuro como áreas de alto vigor y las zonas amarillas o rojas como puntos de posible estrés o menor densidad foliar.",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q07",
+      "lang": "en",
+      "category": "satellite",
+      "query": "What is the average NDVI over my field for the last month?",
+      "groups": [
+        [
+          "get_ndvi_data"
+        ]
+      ],
+      "gold": [
+        "get_ndvi_data"
+      ],
+      "called": [
+        "get_ndvi_data"
+      ],
+      "called_set": [
+        "get_ndvi_data"
+      ],
+      "iterations": 2,
+      "latency_s": 1.17,
+      "final_text": "The average NDVI for 'Demo Vineyard' over the last month is **0.72**, indicating a high level of vegetative vigor typical for the mid-season stage in Casablanca.\n\nYou can view the detailed spatial distribution of this index directly on the map in the app.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q08",
+      "lang": "es",
+      "category": "satellite",
+      "query": "¿Hay zonas de bajo vigor en mi parcela este mes según las imágenes Sentinel-2?",
+      "groups": [
+        [
+          "get_ndvi_data"
+        ]
+      ],
+      "gold": [
+        "get_ndvi_data"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 55.8,
+      "final_text": "Puedes ver las zonas de bajo vigor directamente en el **mapa de la app**, seleccionando el índice **NDVI** o **NDRE** activo para tu campo 'Demo Vineyard'.\n\nComo experto, te sugiero buscar áreas con valores de NDVI inferiores a **0.4** en este estadío de media estación; estas zonas podrían indicar estrés hídrico, deficiencias nutricionales o problemas de drenaje en tu suelo franco.",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q09",
+      "lang": "en",
+      "category": "soil",
+      "query": "Here is my soil analysis: pH 5.8, EC 0.4 dS/m, organic matter 1.2%, P 8 ppm, K 0.15 cmol/kg. Please interpret it.",
+      "groups": [
+        [
+          "analyze_soil_report"
+        ]
+      ],
+      "gold": [
+        "analyze_soil_report"
+      ],
+      "called": [
+        "analyze_soil_report"
+      ],
+      "called_set": [
+        "analyze_soil_report"
+      ],
+      "iterations": 2,
+      "latency_s": 1.33,
+      "final_text": "Tu suelo presenta una **acidez moderada (pH 5.8)** y niveles **bajos de materia orgánica (1.2%)**, lo que limita la disponibilidad de nutrientes y la retención de agua. El **fósforo (8 ppm)** y el **potasio (0.15 cmol/kg)** están en niveles deficientes para una vid en etapa de media estación.\n\nLa conductividad eléctrica (0.4 dS/m) es baja, descartando problemas de salinidad. Sin embargo, el pH bajo puede inhibir la absorción de P y Mg, y aumentar la solubilidad de aluminio o manganeso.\n\nRecomend",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q10",
+      "lang": "es",
+      "category": "soil",
+      "query": "Interpreta este análisis de suelo: pH 7.9, CE 2.1 dS/m, materia orgánica 0.8%, P 45 ppm, K 0.6 cmol/kg.",
+      "groups": [
+        [
+          "analyze_soil_report"
+        ]
+      ],
+      "gold": [
+        "analyze_soil_report"
+      ],
+      "called": [
+        "analyze_soil_report"
+      ],
+      "called_set": [
+        "analyze_soil_report"
+      ],
+      "iterations": 2,
+      "latency_s": 1.13,
+      "final_text": "Tu suelo presenta un **pH ligeramente alcalino (7.9)** y **salinidad moderada (CE 2.1 dS/m)**, lo que puede limitar la disponibilidad de fósforo y micronutrientes (Fe, Zn, Mn). La **materia orgánica es muy baja (0.8%)**, afectando la retención de humedad y la estructura del suelo.\n\nEl **fósforo (45 ppm)** y el **potasio (0.6 cmol/kg)** están en niveles suficientes para la vid.\n\nRecomendaciones:\n- Aplicar **materia orgánica** (compost o humus) para mejorar la estructura y bajar el pH.\n- Monitorea",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q11",
+      "lang": "en",
+      "category": "soil",
+      "query": "Interpret soil: pH 6.2, OM 3.5%, N 0.2%, P 25 ppm, K 0.4, Ca 8, Mg 2 cmol/kg.",
+      "groups": [
+        [
+          "analyze_soil_report"
+        ]
+      ],
+      "gold": [
+        "analyze_soil_report"
+      ],
+      "called": [
+        "analyze_soil_report"
+      ],
+      "called_set": [
+        "analyze_soil_report"
+      ],
+      "iterations": 2,
+      "latency_s": 56.9,
+      "final_text": "El suelo presenta un **pH de 6.2**, ideal para la vid, asegurando una disponibilidad óptima de la mayoría de los nutrientes. La materia orgánica (**3.5%**) es adecuada para un suelo franco en Casablanca, proporcionando buena estructura y retención hídrica.\n\nEl nivel de fósforo (**25 ppm**) es suficiente, mientras que el potasio (**0.4 cmol/kg**) se encuentra en un rango medio-alto. El balance catiónico es saludable: la relación **Ca/Mg (4:1)** y **Mg/K (5:1)** sugiere que no hay antagonismos crí",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q12",
+      "lang": "en",
+      "category": "foliar",
+      "query": "My leaf tissue analysis shows N 1.8%, K 0.6%, Mg 0.18%. Are there any deficiencies?",
+      "groups": [
+        [
+          "analyze_foliar_report"
+        ]
+      ],
+      "gold": [
+        "analyze_foliar_report"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.56,
+      "final_text": "Tienes deficiencias críticas de **Nitrógeno (N)**, **Potasio (K)** y **Magnesio (Mg)**. Los niveles reportados están muy por debajo de los rangos de suficiencia para vid en etapa de media estación.\n\nEl déficit de **K (0.6%)** es el más severo y afectará directamente el llenado y calidad de la baya. El **Mg (0.18%)** limitará la capacidad fotosintética y el **N (1.8%)** restringirá el vigor general.\n\nRecomiendo aplicaciones foliares urgentes para corregir el síntoma mientras ajustas la fertirriga",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q13",
+      "lang": "es",
+      "category": "foliar",
+      "query": "Analiza este foliar: N 2.2%, P 0.25%, K 1.1%, Fe 45 ppm, Zn 12 ppm.",
+      "groups": [
+        [
+          "analyze_foliar_report"
+        ]
+      ],
+      "gold": [
+        "analyze_foliar_report"
+      ],
+      "called": [
+        "analyze_foliar_report"
+      ],
+      "called_set": [
+        "analyze_foliar_report"
+      ],
+      "iterations": 2,
+      "latency_s": 1.26,
+      "final_text": "Presentas una **deficiencia moderada de Potasio (K)** y una **deficiencia severa de Zinc (Zn)**. El Nitrógeno (N) y el Fósforo (P) se encuentran en niveles aceptables para el estadío de media estación.\n\nRecomiendo las siguientes acciones urgentes:\n* **Zinc**: Aplicación foliar de **sulfato de zinc** o **zinc quelatado** (2-3 kg/ha) para corregir la deficiencia y evitar el retraso en el crecimiento de los brotes.\n* **Potasio**: Reforzar la fertirrigación con **nitrato de potasio** o **sulfato de ",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q14",
+      "lang": "es",
+      "category": "foliar",
+      "query": "Tengo clorosis férrica visible. Aquí va el foliar: Fe 30 ppm, Mn 25 ppm, N 2.5%. ¿Qué corrijo?",
+      "groups": [
+        [
+          "analyze_foliar_report"
+        ]
+      ],
+      "gold": [
+        "analyze_foliar_report"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 55.97,
+      "final_text": "Tu nivel de **Fe (30 ppm)** es críticamente bajo para vid en etapa de media estación (el rango óptimo suele estar entre 50 y 150 ppm), lo que confirma la clorosis férrica. El **Mn (25 ppm)** también se encuentra en el límite inferior, sugiriendo un desequilibrio concomitante común en suelos calcáreos o con pH elevado. El **N (2.5%)** está en niveles aceptables.\n\nPara una corrección inmediata y efectiva:\n\n*   **Foliar urgente**: Aplicar un **quelato de hierro (Fe-EDDHA o Fe-EDTA)** junto con **ma",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q15",
+      "lang": "en",
+      "category": "irrigation",
+      "query": "How much should I irrigate my 5 ha drip-irrigated tomato field this week?",
+      "groups": [
+        [
+          "calculate_irrigation_plan"
+        ]
+      ],
+      "gold": [
+        "calculate_irrigation_plan",
+        "get_climate_data"
+      ],
+      "called": [
+        "get_climate_data",
+        "calculate_irrigation_plan"
+      ],
+      "called_set": [
+        "calculate_irrigation_plan",
+        "get_climate_data"
+      ],
+      "iterations": 3,
+      "latency_s": 1.36,
+      "final_text": "Para tu campo de **5 ha de tomate** en etapa de media estación con suelo franco y riego por goteo, la lámina neta recomendada es de **4.5 a 6.0 mm diarios**, dependiendo de la ET₀ actual de Casablanca.\n\nPara esta semana, debes aplicar un volumen total estimado de **1,575 a 2,100 m³** en total para las 5 hectáreas.\n\n**Recomendación técnica:**\n- **Frecuencia**: Riegos diarios o cada 2 días para mantener la humedad constante y evitar el estrés hídrico que provoca el cracking del fruto.\n- **Control*",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q16",
+      "lang": "es",
+      "category": "irrigation",
+      "query": "Calcula un plan de riego para mi viñedo en veraison, suelo franco, riego por goteo.",
+      "groups": [
+        [
+          "calculate_irrigation_plan"
+        ]
+      ],
+      "gold": [
+        "calculate_irrigation_plan",
+        "get_climate_data"
+      ],
+      "called": [
+        "get_climate_data",
+        "calculate_irrigation_plan"
+      ],
+      "called_set": [
+        "calculate_irrigation_plan",
+        "get_climate_data"
+      ],
+      "iterations": 3,
+      "latency_s": 57.77,
+      "final_text": "El plan de riego para tu viñedo en veraison (media estación) con suelo franco y goteo es:\n\n*   **Kc (Coeficiente de cultivo):** **0.70 - 0.85** (según FAO-56 para vid).\n*   **Frecuencia recomendada:** Cada **3 a 5 días**, dependiendo de la ET₀ actual de Casablanca.\n*   **Lámina neta:** Aproximadamente **3.5 a 5.0 mm/día** durante este periodo crítico.\n*   **Volumen total:** Ajustar la dosis para evitar el estrés hídrico severo, pero manteniendo un déficit controlado si buscas calidad enológica (",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q17",
+      "lang": "pt",
+      "category": "irrigation",
+      "query": "Quanto devo irrigar minha lavoura de milho na fase de meio de estação?",
+      "groups": [
+        [
+          "calculate_irrigation_plan"
+        ]
+      ],
+      "gold": [
+        "calculate_irrigation_plan",
+        "get_climate_data"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.57,
+      "final_text": "Embora seu campo registrado seja de videiras, para un cultivo de **maíz** en etapa de **media estación** (floración/llenado de grano), la demanda hídrica es máxima.\n\nPara un suelo **franco** (loam) con riego por **goteo**, la lámina neta suele oscilar entre **5 y 8 mm diarios**, dependiendo de la ET₀ actual. \n\nPara darte el volumen exacto en m³/ha y la frecuencia, necesito confirmar si este maíz está en la misma ubicación de Casablanca o en otra zona, ya que el clima actual define la cantidad re",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q18",
+      "lang": "es",
+      "category": "irrigation",
+      "query": "Mi cultivo de papa está en mid-season, suelo arcilloso, aspersión. ¿Cuánto regar?",
+      "groups": [
+        [
+          "calculate_irrigation_plan"
+        ]
+      ],
+      "gold": [
+        "calculate_irrigation_plan",
+        "get_climate_data"
+      ],
+      "called": [
+        "get_climate_data",
+        "calculate_irrigation_plan"
+      ],
+      "called_set": [
+        "calculate_irrigation_plan",
+        "get_climate_data"
+      ],
+      "iterations": 2,
+      "latency_s": 1.03,
+      "final_text": "Para papa en etapa de **media estación** (tuberización/llenado) con suelo **arcilloso** y riego por **aspersión**, la demanda hídrica es máxima.\n\nPara un área de 5 ha, debes aplicar una lámina neta aproximada de **35-50 mm por semana**, distribuidos en riegos frecuentes pero cortos para evitar la asfixia radicular y enfermedades fúngicas comunes en suelos arcillosos. \n\nConsiderando la eficiencia de la aspersión (aprox. 75%), debes programar una lámina bruta de **47-67 mm semanales**. Ajusta la f",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q19",
+      "lang": "en",
+      "category": "fertilization",
+      "query": "Give me an NPK fertilization plan for a 12 t/ha potato yield target.",
+      "groups": [
+        [
+          "calculate_fertilization_plan"
+        ]
+      ],
+      "gold": [
+        "calculate_fertilization_plan"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 56.95,
+      "final_text": "Para un objetivo de **12 t/ha en papa**, los requerimientos nutricionales típicos son aproximadamente **120-150 kg N**, **80-120 kg P₂O₅** y **150-200 kg K₂O** por hectárea.\n\nComo el campo actual es un viñedo, necesitaría saber si planeas establecer la papa en un área nueva o como rotación. Para darte dosis exactas y fuentes de fertilizantes, por favor adjunta el **análisis de suelo** 📎.\n\nSin el análisis, una base estándar para suelo franco sería:\n*   **Fondo (Presiembra):** **DAP** (fosfato dia",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q20",
+      "lang": "es",
+      "category": "fertilization",
+      "query": "Plan de fertilización para uva de mesa, objetivo 25 t/ha.",
+      "groups": [
+        [
+          "calculate_fertilization_plan"
+        ]
+      ],
+      "gold": [
+        "calculate_fertilization_plan"
+      ],
+      "called": [
+        "calculate_fertilization_plan"
+      ],
+      "called_set": [
+        "calculate_fertilization_plan"
+      ],
+      "iterations": 2,
+      "latency_s": 1.63,
+      "final_text": "Para un objetivo de **25 t/ha** en uva de mesa con riego por goteo y suelo franco en Casablanca, el plan se enfoca en mantener el vigor y el llenado del fruto en media estación.\n\n| Nutriente | Dosis Total (kg/ha) | Fuente Recomendada | Momento de Aplicación |\n| :--- | :--- | :--- | :--- |\n| **Nitrógeno (N)** | 80 - 110 | Nitrato de Calcio / Urea | 60% en crecimiento vegetativo, 40% post-cosecha |\n| **Fósforo (P₂O₅)** | 40 - 60 | MAP / DAP | Base (invierno) o fertirrigación inicial |\n| **Potasio ",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q21",
+      "lang": "en",
+      "category": "fertilization",
+      "query": "How should I split nitrogen applications for a 10 t/ha wheat crop?",
+      "groups": [
+        [
+          "calculate_fertilization_plan"
+        ]
+      ],
+      "gold": [
+        "calculate_fertilization_plan"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.63,
+      "final_text": "Para un rendimiento de **10 t/ha** de trigo, el nitrógeno (N) debe fraccionarse para maximizar la eficiencia y evitar lixiviaciones. Generalmente se requiere entre **150 y 200 kg N/ha**, dependiendo de la materia orgánica del suelo.\n\nLa distribución recomendada es:\n\n*   **Base (Presiembra/Inicio):** **30-40%** del total. Estimula el establecimiento y el desarrollo radicular.\n*   **1ra Cobertera (Macollaje/Encañado):** **30-40%** del total. Crítico para definir el número de espigas por m².\n*   **",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q22",
+      "lang": "en",
+      "category": "literature_openalex",
+      "query": "Find recent peer-reviewed scientific papers on deficit irrigation in grapevine.",
+      "groups": [
+        [
+          "search_openalex",
+          "search_agris",
+          "search_inia_rag",
+          "search_inia_biblioteca"
+        ]
+      ],
+      "gold": [
+        "search_openalex",
+        "search_agris",
+        "search_inia_rag",
+        "search_inia_biblioteca"
+      ],
+      "called": [
+        "search_openalex"
+      ],
+      "called_set": [
+        "search_openalex"
+      ],
+      "iterations": 2,
+      "latency_s": 59.57,
+      "final_text": "Aquí tienes investigaciones recientes y revisadas por pares sobre riego deficitario (RDP) en vid:\n\n- **\"Regulated Deficit Irrigation (RDI) in Grapevines\"** (2021). Analiza cómo el control del estrés hídrico post-envero mejora la concentración de antocianos y taninos, optimizando la calidad del vino sin comprometer drásticamente el rendimiento.\n- **\"Impact of Deficit Irrigation on Water Use Efficiency and Berry Quality\"** (2022). Demuestra que el riego deficitario moderado reduce la superficie fo",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q23",
+      "lang": "es",
+      "category": "literature_openalex",
+      "query": "Busca estudios científicos sobre el índice NDRE y el contenido de nitrógeno en vid.",
+      "groups": [
+        [
+          "search_openalex",
+          "search_agris",
+          "search_inia_rag",
+          "search_inia_biblioteca"
+        ]
+      ],
+      "gold": [
+        "search_openalex",
+        "search_agris",
+        "search_inia_rag",
+        "search_inia_biblioteca"
+      ],
+      "called": [
+        "search_openalex",
+        "search_inia_rag"
+      ],
+      "called_set": [
+        "search_inia_rag",
+        "search_openalex"
+      ],
+      "iterations": 2,
+      "latency_s": 0.98,
+      "final_text": "El índice **NDRE** (Normalized Difference Red Edge) es superior al NDVI para monitorear el nitrógeno en vid, ya que el canal *Red Edge* penetra más profundamente en el dosel y **no se satura** en etapas de alta densidad foliar (como tu etapa de mid-season).\n\nLos estudios indican una **correlación positiva fuerte** entre los valores de NDRE y el contenido de nitrógeno foliar, permitiendo detectar deficiencias antes de que sean visibles. Mientras que el NDVI mide biomasa general, el NDRE es más se",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q24",
+      "lang": "en",
+      "category": "literature_openalex",
+      "query": "Find peer-reviewed studies reporting YOLO-based grape cluster detection accuracy.",
+      "groups": [
+        [
+          "search_openalex",
+          "search_agris",
+          "search_inia_rag",
+          "search_inia_biblioteca"
+        ]
+      ],
+      "gold": [
+        "search_openalex",
+        "search_agris",
+        "search_inia_rag",
+        "search_inia_biblioteca"
+      ],
+      "called": [
+        "search_openalex"
+      ],
+      "called_set": [
+        "search_openalex"
+      ],
+      "iterations": 2,
+      "latency_s": 55.79,
+      "final_text": "Recent peer-reviewed studies report that YOLO-based models (particularly **YOLOv5, YOLOv8, and YOLOv7**) achieve high accuracy for grape cluster detection, typically with a **Mean Average Precision (mAP)** ranging between **85% and 96%**.\n\nKey findings in current literature indicate:\n* **YOLOv8** is currently leading in performance due to its anchor-free detection, showing superior precision in dense clusters.\n* **Challenges** remain in occlusion (clusters hidden by leaves) and varying lighting ",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q25",
+      "lang": "es",
+      "category": "literature_inia",
+      "query": "¿Qué recomienda el INIA sobre el manejo del riego en cerezos en Chile? Dame extractos.",
+      "groups": [
+        [
+          "search_inia_rag",
+          "search_inia_biblioteca"
+        ]
+      ],
+      "gold": [
+        "search_inia_rag",
+        "search_inia_biblioteca"
+      ],
+      "called": [
+        "search_inia_rag"
+      ],
+      "called_set": [
+        "search_inia_rag"
+      ],
+      "iterations": 2,
+      "latency_s": 1.14,
+      "final_text": "Para el manejo del riego en cerezos en Chile, el INIA recomienda ajustar la frecuencia según la etapa fenológica y el tipo de suelo, priorizando evitar el estrés hídrico crítico durante el cuajado y crecimiento del fruto.\n\nExtractos clave:\n- **Etapa crítica:** Se debe asegurar un suministro hídrico constante entre el **cuajado y el crecimiento rápido del fruto** para evitar la caída de frutos y asegurar el calibre.\n- **Monitoreo:** Recomiendan el uso de **tensiómetros** situados a 30 y 60 cm de ",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q26",
+      "lang": "es",
+      "category": "literature_inia",
+      "query": "Busca boletines técnicos del INIA sobre control de oídio en vid.",
+      "groups": [
+        [
+          "search_inia_biblioteca",
+          "search_inia_rag"
+        ]
+      ],
+      "gold": [
+        "search_inia_biblioteca",
+        "search_inia_rag"
+      ],
+      "called": [
+        "search_inia_biblioteca",
+        "search_inia_rag"
+      ],
+      "called_set": [
+        "search_inia_biblioteca",
+        "search_inia_rag"
+      ],
+      "iterations": 3,
+      "latency_s": 58.27,
+      "final_text": "Para el control de oídio (*Erysiphe necrosa*) en vid, los boletines técnicos del INIA recomiendan:\n\n- **Azufre**: Es la herramienta base. Aplicaciones de **azufre CaCO3** (polvo) en invierno y **azufre micronizado** ( Mojable) durante el periodo vegetativo, especialmente antes del cierre del racimo.\n- **Fungicidas Sistémicos**: Uso de **estrobirulinas** y **triazoles** en etapas críticas (floración y cuaja), rotando principios activos para evitar resistencia.\n- **Manejo Cultural**: Priorizar la ",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q27",
+      "lang": "es",
+      "category": "literature_inia",
+      "query": "Recupera las dosis de riego recomendadas por el INIA para arándanos, con cifras.",
+      "groups": [
+        [
+          "search_inia_rag",
+          "search_inia_biblioteca"
+        ]
+      ],
+      "gold": [
+        "search_inia_rag",
+        "search_inia_biblioteca"
+      ],
+      "called": [
+        "search_inia_rag"
+      ],
+      "called_set": [
+        "search_inia_rag"
+      ],
+      "iterations": 2,
+      "latency_s": 1.96,
+      "final_text": "Las dosis de riego para arándanos varían según la zona y la etapa, pero según lineamientos técnicos del **INIA**, los requerimientos promedio oscilan entre **2.5 y 5.0 mm/día** durante el periodo crítico de crecimiento y fructificación.\n\nEn términos de volumen, esto se traduce generalmente en:\n- **Riego diario**: entre **25 y 50 m³/ha/día**.\n- **Láminas totales**: Se recomienda mantener la humedad del suelo entre el **60% y 80% de la capacidad de campo** para evitar estrés hídrico o asfixia radi",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q28",
+      "lang": "en",
+      "category": "literature_agris",
+      "query": "Search the FAO AGRIS database for literature on integrated pest management in vineyards.",
+      "groups": [
+        [
+          "search_agris",
+          "search_openalex"
+        ]
+      ],
+      "gold": [
+        "search_agris",
+        "search_openalex"
+      ],
+      "called": [
+        "search_agris"
+      ],
+      "called_set": [
+        "search_agris"
+      ],
+      "iterations": 2,
+      "latency_s": 1.27,
+      "final_text": "He encontrado literatura técnica en la base de datos AGRIS (FAO) sobre el **Manejo Integrado de Plagas (MIP)** en viñedos. Los enfoques principales se centran en:\n\n*   **Control Biológico**: Implementación de corredores biológicos y uso de enemigos naturales para reducir la dependencia de insecticidas químicos.\n*   **Monitoreo Ético**: Uso de trampas de feromonas y estaciones de monitoreo para aplicaciones basadas en umbrales críticos de plagas.\n*   **Manejo del Dosel**: Podas estratégicas y des",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q29",
+      "lang": "es",
+      "category": "literature_agris",
+      "query": "Busca en AGRIS de la FAO publicaciones sobre fertilización nitrogenada en maíz.",
+      "groups": [
+        [
+          "search_agris",
+          "search_openalex"
+        ]
+      ],
+      "gold": [
+        "search_agris",
+        "search_openalex"
+      ],
+      "called": [
+        "search_agris"
+      ],
+      "called_set": [
+        "search_agris"
+      ],
+      "iterations": 2,
+      "latency_s": 56.61,
+      "final_text": "He encontrado publicaciones en AGRIS sobre fertilización nitrogenada en maíz. Para darte la recomendación exacta o resumirte los hallazgos, ¿necesitas dosis para un **rendimiento objetivo** específico o buscas manejar algún problema de **eficiencia de nitrógeno** en particular?",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q30",
+      "lang": "en",
+      "category": "faostat",
+      "query": "What was Chile's grape production and yield over the last 10 years?",
+      "groups": [
+        [
+          "get_faostat_data"
+        ]
+      ],
+      "gold": [
+        "get_faostat_data"
+      ],
+      "called": [
+        "get_faostat_data",
+        "get_faostat_data"
+      ],
+      "called_set": [
+        "get_faostat_data"
+      ],
+      "iterations": 2,
+      "latency_s": 1.21,
+      "final_text": "Chile has maintained a consistent production of grapes over the last decade, with yields generally stabilizing between **10,000 and 15,000 kg/ha** depending on the variety (table vs. wine). \n\nSince I don't have the exact table in front of me, I can provide the specific year-by-year values if you need them for a report or a comparison with your **Demo Vineyard**'s current performance.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q31",
+      "lang": "es",
+      "category": "faostat",
+      "query": "¿Cuál es la superficie cosechada de maíz en Brasil según la FAO?",
+      "groups": [
+        [
+          "get_faostat_data"
+        ]
+      ],
+      "gold": [
+        "get_faostat_data"
+      ],
+      "called": [
+        "get_faostat_data"
+      ],
+      "called_set": [
+        "get_faostat_data"
+      ],
+      "iterations": 2,
+      "latency_s": 57.35,
+      "final_text": "La superficie cosechada de maíz en Brasil es de aproximadamente **97.6 millones de hectáreas** (datos FAOSTAT 2022).",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q32",
+      "lang": "en",
+      "category": "faostat",
+      "query": "Give me wheat yield trends in Argentina from FAO statistics.",
+      "groups": [
+        [
+          "get_faostat_data"
+        ]
+      ],
+      "gold": [
+        "get_faostat_data"
+      ],
+      "called": [
+        "get_faostat_data"
+      ],
+      "called_set": [
+        "get_faostat_data"
+      ],
+      "iterations": 2,
+      "latency_s": 1.65,
+      "final_text": "The wheat yield trends in Argentina show a general upward trajectory with significant interannual variability due to climate events (La Niña/El Niño). Recent data indicates an average yield fluctuation between **2.5 and 4.5 t/ha**, with peak performances usually coinciding with favorable rainfall patterns in the Pampas region.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q33",
+      "lang": "en",
+      "category": "multi",
+      "query": "What is my field's current NDVI, and based on the weather should I irrigate this week?",
+      "groups": [
+        [
+          "get_ndvi_data"
+        ],
+        [
+          "calculate_irrigation_plan"
+        ]
+      ],
+      "gold": [
+        "get_ndvi_data",
+        "calculate_irrigation_plan",
+        "get_climate_data"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.74,
+      "final_text": "Para conocer el **NDVI** actual, por favor revisa el mapa de satélite directamente en la aplicación; allí tienes la capa de Sentinel-2 activa con la resolución de 10m.\n\nRespecto al riego, consultaré el clima actual y la ET₀ para darte una respuesta precisa.",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q34",
+      "lang": "en",
+      "category": "multi",
+      "query": "Check the weather and then give me an irrigation plan for my drip-irrigated vineyard.",
+      "groups": [
+        [
+          "get_climate_data"
+        ],
+        [
+          "calculate_irrigation_plan"
+        ]
+      ],
+      "gold": [
+        "get_climate_data",
+        "calculate_irrigation_plan"
+      ],
+      "called": [
+        "get_climate_data",
+        "calculate_irrigation_plan"
+      ],
+      "called_set": [
+        "calculate_irrigation_plan",
+        "get_climate_data"
+      ],
+      "iterations": 3,
+      "latency_s": 56.72,
+      "final_text": "El clima actual en Casablanca muestra condiciones típicas de enero, con una **ET₀ elevada** que incrementa la demanda hídrica en plena etapa de media estación.\n\nPara tu viñedo en suelo franco con riego por goteo, el plan es el siguiente:\n\n*   **Lámina neta recomendada**: Aplicar entre **3.5 y 5.0 mm/día**, ajustando según el balance hídrico semanal.\n*   **Frecuencia**: Riegos diarios o cada 2 días para mantener la humedad en la zona radicular sin saturar el suelo.\n*   **Volumen total**: Aproxima",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q35",
+      "lang": "en",
+      "category": "multi",
+      "query": "Interpret my soil analysis (pH 5.5, P 10 ppm, K 0.12 cmol/kg) and then propose a fertilization plan for a 20 t/ha grape target.",
+      "groups": [
+        [
+          "analyze_soil_report"
+        ],
+        [
+          "calculate_fertilization_plan"
+        ]
+      ],
+      "gold": [
+        "analyze_soil_report",
+        "calculate_fertilization_plan"
+      ],
+      "called": [
+        "analyze_soil_report",
+        "calculate_fertilization_plan"
+      ],
+      "called_set": [
+        "analyze_soil_report",
+        "calculate_fertilization_plan"
+      ],
+      "iterations": 2,
+      "latency_s": 1.55,
+      "final_text": "Tu suelo presenta **acidez marcada (pH 5.5)**, niveles de **fósforo bajos (10 ppm)** y un **potasio deficiente (0.12 cmol/kg)**, lo que limitará la absorción de nutrientes y el llenado del fruto si no se corrige.\n\nPara un objetivo de **20 t/ha**, recomiendo el siguiente plan:\n\n| Nutriente | Fuente Recomendada | Dosis Total (kg/ha) | Momento de Aplicación |\n| :--- | :--- | :--- | :--- |\n| **Enmienda** | Cal Agrícola | **1,500 - 2,000** | Pre-temporada (incorporado) |\n| **Nitrógeno** | Nitrato de ",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q36",
+      "lang": "es",
+      "category": "multi",
+      "query": "Analiza mi suelo (pH 5.0, baja materia orgánica) y dime qué publicaciones científicas hay sobre enmiendas calcáreas.",
+      "groups": [
+        [
+          "analyze_soil_report"
+        ],
+        [
+          "search_openalex",
+          "search_agris",
+          "search_inia_rag",
+          "search_inia_biblioteca"
+        ]
+      ],
+      "gold": [
+        "analyze_soil_report",
+        "search_openalex",
+        "search_agris",
+        "search_inia_rag",
+        "search_inia_biblioteca"
+      ],
+      "called": [
+        "analyze_soil_report",
+        "search_inia_rag",
+        "search_openalex"
+      ],
+      "called_set": [
+        "analyze_soil_report",
+        "search_inia_rag",
+        "search_openalex"
+      ],
+      "iterations": 2,
+      "latency_s": 57.71,
+      "final_text": "Tu suelo presenta una **acidez crítica (pH 5.0)** que limita la disponibilidad de fósforo, calcio y magnesio, además de aumentar el riesgo de toxicidad por aluminio y manganeso. La baja materia orgánica reduce la capacidad amortiguadora del suelo, haciendo que el pH sea más inestable.\n\nPara corrigir esto en Casablanca, recomiendo la aplicación de **Cal Agrícola (Carbonato de Calcio)** o **Cal Dolomita** (si el magnesio también es bajo) para elevar el pH a un rango de **6.0 - 6.5**. La dosis exac",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q37",
+      "lang": "en",
+      "category": "multi",
+      "query": "Compare my grape yield potential against national FAO statistics and find papers on improving vineyard yield.",
+      "groups": [
+        [
+          "get_faostat_data"
+        ],
+        [
+          "search_openalex",
+          "search_agris",
+          "search_inia_rag",
+          "search_inia_biblioteca"
+        ]
+      ],
+      "gold": [
+        "get_faostat_data",
+        "search_openalex",
+        "search_agris",
+        "search_inia_rag",
+        "search_inia_biblioteca"
+      ],
+      "called": [
+        "get_faostat_data",
+        "search_inia_rag"
+      ],
+      "called_set": [
+        "get_faostat_data",
+        "search_inia_rag"
+      ],
+      "iterations": 2,
+      "latency_s": 10.6,
+      "final_text": "Para comparar tu rendimiento, necesito que me indiques el **rendimiento estimado o real** (ton/ha) de tu campo 'Demo Vineyard'. Una vez que me des ese valor, lo contrastaré con los datos de FAOSTAT para Chile.\n\nSobre la mejora del rendimiento en viñedos, las investigaciones sugieren enfocarse en:\n\n- **Manejo del estrés hídrico controlado (RDI)**: Optimizar el riego en el valle de Casablanca para balancear vigor y calidad.\n- **Nutrición equilibrada**: Ajustar la relación N-K durante el llenado de",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q38",
+      "lang": "en",
+      "category": "out_of_scope",
+      "query": "Hello, who are you and what can you do?",
+      "groups": [],
+      "gold": [],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.81,
+      "final_text": "Soy **agragent**, agrónomo experto con más de 20 años de experiencia en agricultura internacional y latinoamericana. Ayudo a productores y técnicos a optimizar sus cultivos mediante decisiones basadas en datos reales y evidencia científica.\n\nPuedo asistirte en:\n- **Análisis técnicos**: Interpretación de análisis de suelo y foliares con recomendaciones de enmiendas y fertilizantes.\n- **Gestión hídrica**: Planificación de riego basada en ET₀ y coeficientes Kc (estándar FAO-56).\n- **Programas nutri",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q39",
+      "lang": "es",
+      "category": "out_of_scope",
+      "query": "Gracias, muy útil tu ayuda.",
+      "groups": [],
+      "gold": [],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 60.43,
+      "final_text": "De nada. Quedo atento a cualquier duda sobre el manejo de tu viñedo en Casablanca, ya sea para ajustes de riego en esta etapa de media estación o la planificación de la fertilización.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q40",
+      "lang": "en",
+      "category": "out_of_scope",
+      "query": "What is the capital of France?",
+      "groups": [],
+      "gold": [],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 2.86,
+      "final_text": "The capital of France is **Paris**.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q41",
+      "lang": "en",
+      "category": "out_of_scope",
+      "query": "Conceptually, what does the NDVI index represent?",
+      "groups": [],
+      "gold": [],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.55,
+      "final_text": "El **NDVI** (Índice de Vegetación de Diferencia Normalizada) representa la **salud y el vigor fotosintético** de la planta. Mide la diferencia entre la reflectancia de la luz roja (absorbida por la clorofila) y la luz infrarroja cercana (reflejada por la estructura celular de las hojas).\n\nEn términos prácticos para tu viñedo:\n- **Valores altos (0.7 - 0.9):** Vegetación densa, hojas verdes y saludables con alta actividad fotosintética.\n- **Valores medios (0.3 - 0.6):** Vegetación moderada o plant",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q42",
+      "lang": "es",
+      "category": "out_of_scope",
+      "query": "Cuéntame un chiste sobre agricultores.",
+      "groups": [],
+      "gold": [],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.49,
+      "final_text": "Un agricultor entra a un banco y el gerente le pregunta:\n— ¿En qué puedo ayudarlo?\n— Vengo a pedir un préstamo para comprar un tractor nuevo.\n— Muy bien —responde el gerente—, pero necesito una garantía.\nEl agricultor, sin pensarlo, saca un puñado de tierra de su bolsillo y lo pone sobre el escritorio.\n— Aquí tiene —dice el agricultor—, **mi terreno**, que es lo más sólido que tengo.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q43",
+      "lang": "pt",
+      "category": "out_of_scope",
+      "query": "Bom dia! Tudo bem com você?",
+      "groups": [],
+      "gold": [],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.42,
+      "final_text": "Bom dia! Tudo bem por aqui, e com você? \n\nSou o agragent, seu agrônomo especialista. Estou pronto para ajudar com a gestão do seu vinhedo em Casablanca. Como posso auxiliá-lo hoje?",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q44",
+      "lang": "es",
+      "category": "fertilization",
+      "query": "Mi suelo tiene fósforo alto (50 ppm). Ajusta el plan de fertilización para tomate con objetivo 80 t/ha.",
+      "groups": [
+        [
+          "calculate_fertilization_plan"
+        ]
+      ],
+      "gold": [
+        "calculate_fertilization_plan",
+        "analyze_soil_report"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 53.19,
+      "final_text": "Para un objetivo de **80 t/ha** en tomate con fósforo alto (**50 ppm**), se debe reducir drásticamente la aplicación de P para evitar antagonismos con el Zinc y Hierro.\n\n**Recomendaciones clave:**\n* **Fósforo**: Aplicar solo dosis de mantenimiento (aprox. **30-50 kg/ha de P₂O₅**), ya que el suelo cubre la mayor parte del requerimiento.\n* **Nitrógeno**: Priorizar aplicaciones fraccionadas vía fertirrigación para evitar lixiviación y crecimiento vegetativo excesivo.\n* **Potasio**: Incrementar la d",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q45",
+      "lang": "en",
+      "category": "literature_inia",
+      "query": "Search the INIA Chile digital library for documents about cover crops in vineyards.",
+      "groups": [
+        [
+          "search_inia_biblioteca",
+          "search_inia_rag"
+        ]
+      ],
+      "gold": [
+        "search_inia_biblioteca",
+        "search_inia_rag"
+      ],
+      "called": [
+        "search_inia_biblioteca"
+      ],
+      "called_set": [
+        "search_inia_biblioteca"
+      ],
+      "iterations": 2,
+      "latency_s": 0.87,
+      "final_text": "He encontrado documentos técnicos en la biblioteca de **INIA Chile** sobre el uso de coberturas vegetales en viñedos. Estos incluyen evaluaciones sobre el manejo de la competencia hídrica, la mejora de la estructura del suelo y el control de malezas mediante especies seleccionadas.\n\nPuedes acceder a las publicaciones detalladas y sus guías de manejo directamente en el portal de la **Biblioteca Digital INIA**.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q46",
+      "lang": "pt",
+      "category": "climate",
+      "query": "Qual é a previsão de geada para o meu vinhedo nos próximos dias?",
+      "groups": [
+        [
+          "get_climate_data"
+        ]
+      ],
+      "gold": [
+        "get_climate_data"
+      ],
+      "called": [
+        "get_climate_data"
+      ],
+      "called_set": [
+        "get_climate_data"
+      ],
+      "iterations": 2,
+      "latency_s": 0.84,
+      "final_text": "Não há previsão de geada para os próximos dias em Casablanca. As temperaturas mínimas esperadas permanecem bem acima do ponto crítico de congelamento para a videira em estágio de meia estação.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q47",
+      "lang": "pt",
+      "category": "satellite",
+      "query": "Mostre o NDVI atual da minha parcela.",
+      "groups": [
+        [
+          "get_ndvi_data"
+        ]
+      ],
+      "gold": [
+        "get_ndvi_data"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 59.9,
+      "final_text": "O NDVI atual da sua parcela pode ser visualizado diretamente no **mapa da aplicação**, onde as imagens de satélite Sentinel-2 (10m) são atualizadas automaticamente.\n\nLá você pode analisar as zonas de maior vigor (verde escuro) e eventuais áreas de estrés (amarelo/rojo) en tiempo real.",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q48",
+      "lang": "pt",
+      "category": "satellite",
+      "query": "Existem zonas de baixo vigor no meu talhão segundo as imagens Sentinel-2 deste mês?",
+      "groups": [
+        [
+          "get_ndvi_data"
+        ]
+      ],
+      "gold": [
+        "get_ndvi_data"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.48,
+      "final_text": "As imagens de satélite Sentinel-2 estão disponíveis diretamente no mapa da aplicação. Para identificar zonas de baixo vigor, verifique as áreas com cores **amarelas ou vermelhas** nos índices **NDVI** ou **NDRE** ativos.\n\nValores de NDVI abaixo de **0.4 - 0.5** nesta etapa de meia-estação para videiras em Casablanca geralmente indicam estresse hídrico, deficiências nutricionais ou problemas de compactação do solo.",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q49",
+      "lang": "pt",
+      "category": "soil",
+      "query": "Interprete esta análise de solo: pH 5,4, MO 1,5%, P 9 ppm, K 0,18 cmol/kg.",
+      "groups": [
+        [
+          "analyze_soil_report"
+        ]
+      ],
+      "gold": [
+        "analyze_soil_report"
+      ],
+      "called": [
+        "analyze_soil_report"
+      ],
+      "called_set": [
+        "analyze_soil_report"
+      ],
+      "iterations": 2,
+      "latency_s": 1.44,
+      "final_text": "El suelo presenta una **acidez fuerte (pH 5.4)** y niveles **deficientes de fósforo (P) y potasio (K)**, con una materia orgánica moderadamente baja.\n\nPara corregir estos valores en su viñedo de Casablanca, recomiendo:\n\n*   **Enmienda**: Aplicar **cal dolomita** para elevar el pH y aportar Mg; la dosis exacta depende de la capacidad de intercambio catiónico, pero es prioritaria para evitar toxicidad por aluminio.\n*   **Fósforo**: Aplicar **Superfosfato Triple** o **MAP** en la zona radicular, ya",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q50",
+      "lang": "pt",
+      "category": "soil",
+      "query": "Minha análise de solo deu pH 7,8 e CE 2,3 dS/m. O que isso significa para a minha cultura?",
+      "groups": [
+        [
+          "analyze_soil_report"
+        ]
+      ],
+      "gold": [
+        "analyze_soil_report"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 54.25,
+      "final_text": "Seu solo apresenta **alcalinidade** (pH 7,8) e **salinidade moderada** (CE 2,3 dS/m). Para a videira, isso significa um risco real de indisponibilidade de micronutrientes e estresse osmótico.\n\nO pH elevado (acima de 7,5) bloqueia a absorção de **Fósforo (P)**, **Hierro (Fe)**, **Zinco (Zn)** e **Manganeso (Mn)**, o que pode causar cloroses foliares mesmo que o nutriente esteja no solo. A condutividade elétrica (CE) de 2,3 dS/m começa a entrar em uma faixa que pode reduzir a absorção de água e po",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q51",
+      "lang": "pt",
+      "category": "foliar",
+      "query": "Análise foliar: N 1,9%, K 0,7%, Mg 0,15%. Há deficiências?",
+      "groups": [
+        [
+          "analyze_foliar_report"
+        ]
+      ],
+      "gold": [
+        "analyze_foliar_report"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.63,
+      "final_text": "Sí, existen deficiencias críticas de **Potasio (K)** y **Magnesio (Mg)**, mientras que el **Nitrógeno (N)** se encuentra en un nivel bajo/marginal para la etapa de media estación.\n\nEl Potasio al **0,7%** es insuficiente para el llenado de bayas, lo que afectará el tamaño y la calidad del fruto. El Magnesio al **0,15%** es muy bajo, lo que puede provocar clorosis intervinal en hojas viejas y reducir la eficiencia fotosintética.\n\nRecomiendo:\n- **Potasio**: Aplicación urgente de **KNO3** o **K2SO4*",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q52",
+      "lang": "pt",
+      "category": "foliar",
+      "query": "Tenho clorose nas folhas. Foliar: Fe 28 ppm, Mn 22 ppm, N 2,4%. O que devo corrigir?",
+      "groups": [
+        [
+          "analyze_foliar_report"
+        ]
+      ],
+      "gold": [
+        "analyze_foliar_report"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.52,
+      "final_text": "Tienes una **deficiencia severa de Hierro (Fe)** y una **deficiencia de Manganeso (Mn)**. El nitrógeno (N) se encuentra en niveles aceptables para la etapa de media estación.\n\nDebes aplicar urgentemente:\n- **Hierro quelatado (Fe-EDDHA)** vía suelo o **Fe-EDTA** vía foliar para corregir la clorosis internervial.\n- **Sulfato de Manganeso** o quelatos de Mn foliares.\n\nLa dosis recomendada es de **1.5 a 2.0 kg/ha de Fe-EDDHA** si el pH del suelo es superior a 7.0, o aplicaciones foliares cada 15 día",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q53",
+      "lang": "pt",
+      "category": "irrigation",
+      "query": "Quanto devo irrigar meu vinhedo de 5 ha por gotejamento nesta semana?",
+      "groups": [
+        [
+          "calculate_irrigation_plan"
+        ]
+      ],
+      "gold": [
+        "calculate_irrigation_plan",
+        "get_climate_data"
+      ],
+      "called": [
+        "get_climate_data",
+        "calculate_irrigation_plan"
+      ],
+      "called_set": [
+        "calculate_irrigation_plan",
+        "get_climate_data"
+      ],
+      "iterations": 3,
+      "latency_s": 57.55,
+      "final_text": "Para o seu vinhedo de 5 ha em Casablanca, a lâmina de irrigação recomendada para esta etapa de meia estação é de aproximadamente **25 a 35 mm por semana**, dependendo da ET₀ atual.\n\nIsso se traduz em um volume total de **1.250 a 1.750 m³ por semana** para a área total. \n\nRecomendo fracionar essa quantidade em **3 a 4 irrigações semanais** para manter a umidade constante no bulbo molhado e evitar estresses hídricos que afetem a qualidade da uva.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q54",
+      "lang": "pt",
+      "category": "fertilization",
+      "query": "Elabore um plano de adubação NPK para uma meta de 15 t/ha de uva.",
+      "groups": [
+        [
+          "calculate_fertilization_plan"
+        ]
+      ],
+      "gold": [
+        "calculate_fertilization_plan"
+      ],
+      "called": [
+        "calculate_fertilization_plan"
+      ],
+      "called_set": [
+        "calculate_fertilization_plan"
+      ],
+      "iterations": 2,
+      "latency_s": 1.09,
+      "final_text": "Para una meta de **15 t/ha** en Casablanca, el plan de fertilización se divide según la demanda fenológica, priorizando la fertirrigación por el sistema de goteo.\n\n| Nutriente | Dosis Total (kg/ha) | Momento de Aplicación | Fuente Recomendada |\n| :--- | :---: | :--- | :--- |\n| **Nitrógeno (N)** | **80 - 120** | 40% Post-cosecha / 60% Vegetación | Urea o Nitrato de Calcio |\n| **Fósforo (P₂O₅)** | **40 - 60** | Base (Invierno/Primavera) | MAP o DAP |\n| **Potasio (K₂O)** | **150 - 200** | Desde cua",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q55",
+      "lang": "pt",
+      "category": "fertilization",
+      "query": "Como fracionar a aplicação de nitrogênio para uma lavoura de milho de 10 t/ha?",
+      "groups": [
+        [
+          "calculate_fertilization_plan"
+        ]
+      ],
+      "gold": [
+        "calculate_fertilization_plan"
+      ],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.58,
+      "final_text": "Para un objetivo de **10 t/ha**, el fraccionamiento del Nitrógeno (N) es crítico para evitar lixiviaciones y maximizar la eficiencia.\n\nLa distribución recomendada es:\n- **Base (Siembra):** 20-30% del total. Para establecer el sistema radicular.\n- **V4 - V6 (4-6 hojas):** 40-50% del total. Es el periodo de mayor demanda y definición del potencial de rendimiento.\n- **V8 - V10 (8-10 hojas):** 20-30% restante. Para asegurar el llenado de grano y evitar el estrés hídrico/nutricional en la floración.\n",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q56",
+      "lang": "pt",
+      "category": "literature_openalex",
+      "query": "Encontre artigos científicos recentes sobre irrigação com déficit em videira.",
+      "groups": [
+        [
+          "search_openalex",
+          "search_agris",
+          "search_inia_rag",
+          "search_inia_biblioteca"
+        ]
+      ],
+      "gold": [
+        "search_openalex",
+        "search_agris",
+        "search_inia_rag",
+        "search_inia_biblioteca"
+      ],
+      "called": [
+        "search_openalex",
+        "search_inia_rag"
+      ],
+      "called_set": [
+        "search_inia_rag",
+        "search_openalex"
+      ],
+      "iterations": 2,
+      "latency_s": 56.39,
+      "final_text": "La irrigación con déficit regulado (RDI) en vid busca optimizar la calidad del fruto reduciendo el vigor vegetativo. Los estudios recientes destacan:\n\n*   **Control de Vigor y Calidad**: Reducir el riego entre el cuajado y el cierre del racimo mejora la concentración de antocianos y polifenoles, especialmente en variedades tintas.\n*   **Eficiencia Hídrica**: Se recomienda mantener el déficit en etapas donde la planta es más tolerante, evitando el estrés severo durante la floración y el envero pa",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q57",
+      "lang": "pt",
+      "category": "literature_agris",
+      "query": "Busque na base AGRIS da FAO publicações sobre manejo integrado de pragas em vinhedos.",
+      "groups": [
+        [
+          "search_agris",
+          "search_openalex"
+        ]
+      ],
+      "gold": [
+        "search_agris",
+        "search_openalex"
+      ],
+      "called": [
+        "search_agris"
+      ],
+      "called_set": [
+        "search_agris"
+      ],
+      "iterations": 2,
+      "latency_s": 0.9,
+      "final_text": "Encontrei publicações relevantes na base AGRIS (FAO) sobre o Manejo Integrado de Pragas (MIP) em vinhedos. As abordagens principais focam em:\n\n*   **Controle Biológico**: Uso de parasitoides e predadores naturais para reduzir a dependência de inseticidas sintéticos.\n*   **Monitoramento**: Implementação de armadilhas de feromônios para a detecção precoce de pragas como a traça da uva (*Lobesia botrana*).\n*   **Manejo Cultural**: Podas sanitárias e controle de plantas daninhas para reduzir a press",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q58",
+      "lang": "pt",
+      "category": "faostat",
+      "query": "Qual foi a produção e o rendimento de uva no Brasil nos últimos 10 anos segundo a FAO?",
+      "groups": [
+        [
+          "get_faostat_data"
+        ]
+      ],
+      "gold": [
+        "get_faostat_data"
+      ],
+      "called": [
+        "get_faostat_data",
+        "get_faostat_data"
+      ],
+      "called_set": [
+        "get_faostat_data"
+      ],
+      "iterations": 2,
+      "latency_s": 9.36,
+      "final_text": "De acordo com os dados da FAO, a produção de uva no Brasil nos últimos 10 anos manteve-se estável, com uma produção anual média situada entre **1,3 e 1,7 milhões de toneladas**.\n\nO rendimento médio tem oscilado entre **12 e 15 toneladas por hectare (t/ha)**, refletindo a predominância de sistemas de produção em regiões como o Sul e o Sudeste.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q59",
+      "lang": "pt",
+      "category": "faostat",
+      "query": "Mostre a tendência de rendimento de soja na Argentina pelas estatísticas da FAO.",
+      "groups": [
+        [
+          "get_faostat_data"
+        ]
+      ],
+      "gold": [
+        "get_faostat_data"
+      ],
+      "called": [
+        "get_faostat_data"
+      ],
+      "called_set": [
+        "get_faostat_data"
+      ],
+      "iterations": 2,
+      "latency_s": 60.86,
+      "final_text": "A tendência de rendimento de soja na Argentina, segundo dados da FAO, apresenta uma **estabilidade com leve crescimento** nos últimos anos, alternando entre oscilações climáticas.\n\nOs rendimentos médios situam-se geralmente entre **2.5 e 3.2 t/ha**, com picos de produtividade dependendo da região e do regime de chuvas.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q60",
+      "lang": "pt",
+      "category": "multi",
+      "query": "Qual é o NDVI atual do meu campo e, considerando o clima, devo irrigar esta semana?",
+      "groups": [
+        [
+          "get_ndvi_data"
+        ],
+        [
+          "calculate_irrigation_plan"
+        ]
+      ],
+      "gold": [
+        "get_ndvi_data",
+        "calculate_irrigation_plan",
+        "get_climate_data"
+      ],
+      "called": [
+        "get_climate_data",
+        "get_climate_data"
+      ],
+      "called_set": [
+        "get_climate_data"
+      ],
+      "iterations": 3,
+      "latency_s": 2.51,
+      "final_text": "O NDVI atual pode ser verificado diretamente no mapa da aplicação. \n\nCom base nos dados climáticos de Casablanca, a **ET₀ está elevada** e não há previsão de chuvas significativas para esta semana. Como a videira está em **estágio de meia estação** (período crítico de enchimento de bagas), você **deve irrigar** para evitar estresse hídrico que afecte a qualidade do fruto.\n\nRecomendo ajustar el riego segun el balance hídrico mostrado en su Dashboard para mantener la humedad en la zona radicular.",
+      "score": {
+        "correct": false,
+        "coverage": false,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q61",
+      "lang": "pt",
+      "category": "multi",
+      "query": "Interprete minha análise de solo (pH 5,3, P 11 ppm, K 0,14 cmol/kg) e proponha um plano de adubação para meta de 20 t/ha de uva.",
+      "groups": [
+        [
+          "analyze_soil_report"
+        ],
+        [
+          "calculate_fertilization_plan"
+        ]
+      ],
+      "gold": [
+        "analyze_soil_report",
+        "calculate_fertilization_plan"
+      ],
+      "called": [
+        "analyze_soil_report",
+        "calculate_fertilization_plan"
+      ],
+      "called_set": [
+        "analyze_soil_report",
+        "calculate_fertilization_plan"
+      ],
+      "iterations": 2,
+      "latency_s": 57.68,
+      "final_text": "Seu solo apresenta **acidez elevada (pH 5,3)**, o que limita a disponibilidade de Fósforo e Cálcio, e níveis **baixos de Fósforo (11 ppm)** e **Potássio (0,14 cmol/kg)**, sendo este último crítico para a meta de 20 t/ha.\n\nPara corrigir e nutrir o vinhedo em Casablanca, recomendo:\n\n*   **Correção de pH:** Aplicação de **calcário dolomítico** (dose a definir via análise completa de saturação de bases) para elevar o pH e fornecer Ca e Mg.\n*   **Fósforo (P):** Aplicação de **Superfosfato Triplo** ou",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q62",
+      "lang": "pt",
+      "category": "out_of_scope",
+      "query": "Bom dia, o que você consegue fazer?",
+      "groups": [],
+      "gold": [],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.76,
+      "final_text": "Bom dia. Sou um agrônomo especialista e posso ajudar você a gerir o seu vinhedo em Casablanca com decisões baseadas em dados.\n\nPara a sua área de **5.0 ha de videira**, posso realizar:\n\n*   **Planos de Irrigação**: Cálculo de lâmina e frequência via **Kc FAO-56**, ajustado pela ET₀ real de Casablanca.\n*   **Nutrição e Fertilização**: Interpretação de **análises de solo e foliares** para recomendar doses exatas de N-P-K e micronutrientes.\n*   **Diagnóstico Técnico**: Recomendações de manejo fitos",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    },
+    {
+      "id": "Q63",
+      "lang": "pt",
+      "category": "out_of_scope",
+      "query": "Qual é a capital da Austrália?",
+      "groups": [],
+      "gold": [],
+      "called": [],
+      "called_set": [],
+      "iterations": 1,
+      "latency_s": 0.61,
+      "final_text": "A capital da Austrália é **Canberra**.",
+      "score": {
+        "correct": true,
+        "coverage": true,
+        "no_extraneous": true
+      }
+    }
+  ]
+}
