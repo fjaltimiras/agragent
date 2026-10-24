@@ -1,0 +1,96 @@
+{
+ "slug": "cerebras_gpt-oss-120b_agentic_promptA",
+ "provider": "cerebras",
+ "model": "gpt-oss-120b",
+ "mode": "agentic",
+ "benchmark": "benchmark.json",
+ "max_iterations": 6,
+ "complete": true,
+ "system_fingerprints": [
+  "fp_a9089f3cce52797e7952"
+ ],
+ "run_date": "2026-10-23",
+ "n_queries": 126,
+ "correct": 72,
+ "query_accuracy": 0.5714285714285714,
+ "query_accuracy_wilson95": [
+  0.4841670153810537,
+  0.6544634389571553
+ ],
+ "on_topic_accuracy": 0.509090909090909,
+ "abstention": [
+  16,
+  16
+ ],
+ "tool_precision": 0.963855421686747,
+ "group_recall": 0.5476190476190477,
+ "f1": 0.6984247485291327,
+ "median_latency_s": 0.85,
+ "mean_iterations": 1.85,
+ "recovered_leaked_calls": 0,
+ "by_lang": {
+  "en": [
+   25,
+   41
+  ],
+  "es": [
+   26,
+   44
+  ],
+  "pt": [
+   21,
+   41
+  ]
+ },
+ "by_category": {
+  "climate": [
+   10,
+   10
+  ],
+  "faostat": [
+   9,
+   10
+  ],
+  "fertilization": [
+   1,
+   12
+  ],
+  "foliar": [
+   0,
+   10
+  ],
+  "irrigation": [
+   3,
+   10
+  ],
+  "literature_agris": [
+   6,
+   6
+  ],
+  "literature_inia": [
+   8,
+   8
+  ],
+  "literature_openalex": [
+   8,
+   8
+  ],
+  "multi": [
+   4,
+   14
+  ],
+  "out_of_scope": [
+   16,
+   16
+  ],
+  "satellite": [
+   7,
+   12
+  ],
+  "soil": [
+   0,
+   10
+  ]
+ },
+ "prompt_note": "Prompt A: system prompt as released on 2026-10-23 before the tool-use rule revision (rules 2, 4, 5, 6). See eval/PROMPTS.md."
+}

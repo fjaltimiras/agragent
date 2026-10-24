@@ -1,0 +1,13 @@
+id,tool,pass,detail
+tomate-mid-drip,irrigation,true,"Kc=1.15 (FAO-56 true) ETc=5.75 true gross=62.2 true vol=622 true interval=10 true"
+tomate-ini-sprinkler,irrigation,true,"Kc=0.6 (FAO-56 true) ETc=1.92 true gross=10.3 true vol=257.5 true interval=4 true"
+vid-mid-drip,irrigation,true,"Kc=0.85 (FAO-56 true) ETc=3.57 true gross=71.1 true vol=3555 true interval=18 true"
+vid-late-furrow,irrigation,true,"Kc=0.45 (FAO-56 true) ETc=1.35 true gross=145.5 true vol=1455 true interval=59 true"
+maiz-mid-sprinkler,irrigation,true,"Kc=1.2 (FAO-56 true) ETc=7.2 true gross=76.9 true vol=7690 true interval=8 true"
+maiz-late-flood,irrigation,true,"Kc=0.6 (FAO-56 true) ETc=2.4 true gross=106.7 true vol=1067 true interval=20 true"
+tomate-60t,fertilization,true,"N=180/180 P2O5=60/60 K2O=300/300 mass=true field=true"
+tomate-80t-highP,fertilization,true,"N=240/240 P2O5=40/40 K2O=400/400 mass=true field=true"
+vid-12t,fertilization,true,"N=24/24 P2O5=7.2/7.2 K2O=36/36 mass=true field=true"
+maiz-12t,fertilization,true,"N=216/216 P2O5=96/96 K2O=60/60 mass=true field=true"
+trigo-8t,fertilization,true,"N=176/176 P2O5=64/64 K2O=48/48 mass=true field=true"
+trigo-8t-lowP,fertilization,true,"N=176/176 P2O5=64/64 K2O=48/48 mass=true field=true"

@@ -1,144 +1,100 @@
 # agragent
 
-An agentic multimodal platform for crop monitoring and decision support. It combines Sentinel-2 imagery,
-climate reanalysis, genomic data visualisation and computer vision behind a conversational agent that
-selects its own tools.
+Open-source agentic platform for field-scale crop monitoring with free public data.
 
-Built entirely on free public data of moderate spatial resolution. It is an operational research prototype:
-its outputs are interpretive guidance, not agronomic prescriptions, and it is designed as the entry tier of a
-stepwise monitoring strategy, establishing a baseline and showing which questions its data cannot settle.
-
-**Live platform:** [app.agragent.com](https://app.agragent.com) (demo account `demo` / `demo33`)
-
-> **Release accompanying the article.** This repository is the frozen release (`v1.0.0`) that
-> reproduces the results of *agragent: An Agentic Multimodal Architecture for Crop Monitoring and Decision
-> Support* (Altimiras et al., submitted to *Artificial Intelligence in Agriculture*). It contains the frontend,
-> the backend orchestration layer (agent loop, eleven tool schemas, system prompts), the 63-query benchmark,
-> the evaluation harnesses and their raw results. The live platform at agragent.com has continued to evolve
-> after this release; the article describes and evaluates this version.
-
----
-
-## Modules
+agragent combines Sentinel-2 imagery (Google Earth Engine), daily weather (Open-Meteo) and an
+LLM assistant that calls tools over those data, in a single browser application. This edition contains
+six modules:
 
 | Module | What it does |
 |---|---|
-| Satellite | Sentinel-2 via Google Earth Engine, 13 spectral indices, scene browsing, temporal comparison |
-| Climate | Open-Meteo reanalysis: GDD, chill hours, frost, heat waves, ET₀, water balance, risk profile |
-| Genomics | RNA-seq differential expression across *Vitis vinifera* phenological stages |
-| Vision | YOLO26m fine-tuned on WGISD for grape cluster detection |
-| Yield | Heuristic weighted estimate, with a panel reporting measured accuracy on three public datasets |
-| Assistant | Conversational agent with 11 autonomous tools over six scientific data sources |
+| **My fields** | Draw a field, or import KML/KMZ/GeoJSON; fields are stored per user (Supabase, row-level security). |
+| **Maps** | 30 spectral layers and ESA SL2P biophysical products (LAI, FAPAR, FCOVER, CCC, CWC), time series, scene explorer, side-by-side comparison, k-means management zones and hotspots computed in Earth Engine. |
+| **Climate** | Current-season weather to date: temperature, rainfall, ET₀, water balance, growing degree days, chill hours and the historical record since 2015. |
+| **Field plan** | Phenological stages located by thermal time (GDD), with a season calendar that follows the field's hemisphere. |
+| **Harvest forecast** | Harvest window and an explainable expert yield estimate for 23 crops (weighted indicators, contributions and sensitivity). **It is not a trained model** and its range is not a confidence interval. |
+| **Ask agragent** | Assistant with 11 tools: climate, NDVI, geocoding, irrigation and fertilisation plans, soil and foliar report analysis, FAOSTAT, OpenAlex, AGRIS and the INIA Digital Library. |
 
-The agent runs **open-weight LLMs** (`gpt-oss-120b`, `gemma-4-31b`, `zai-glm-4.7`) through OpenAI-compatible
-endpoints, so the inference layer is self-hostable and not tied to a proprietary vendor.
+The hosted service at [app.agragent.com](https://app.agragent.com) includes further modules that are not
+part of this repository.
 
-## Repository layout
+## Architecture
 
 ```
-app.html          single-page frontend (satellite, climate, genomics, vision, yield, assistant)
-poligono.kml      sample field boundary, so the workflow can be exercised without drawing one
-backend/          FastAPI orchestration service: agent loop, tool schemas, system prompts
-  app/agent/      the agentic loop and the eleven tool definitions
-  app/services/   domain services (climate, satellite, INIA RAG, AGRIS, FAOSTAT, OpenAlex)
-  eval/           evaluation harnesses, benchmark and results
-yolo/             train_yolo26_wgisd.py: fine-tunes YOLO26m on the official WGISD split
+app.html              single-file browser app (vanilla JS, Leaflet, ECharts, Earth Engine JS API)
+config.js             public deployment settings read by app.html
+assets/indices/       spectral index catalogue and SL2P network weights
+api/                  Vercel Functions (Node.js): chat (streaming), conversations, fields,
+                      Earth Engine token, weather proxy
+supabase/schema.sql   tables, quota function and row-level security
+scripts/              account creation
+eval/                 tool-selection benchmark and arithmetic check used in the paper
 ```
 
-This repository is scoped to what reproduces the paper. The marketing landing page served at
-`agragent.com`, and the institutional logos it uses, are deliberately not included; the platform itself is
-`app.html`, which is the frontend the manuscript describes. The deployment therefore contains files this
-repository does not, and `vercel.json` here differs accordingly: it simply serves `app.html`.
+There is no build step. The LLM runs on OpenAI-compatible endpoints of open-weight models
+(Cerebras `gpt-oss-120b`, with the same model on Groq (`openai/gpt-oss-120b`) as fallback; see `api/_llm.js`).
 
-## Running it locally
+## Deploy your own instance
 
-The frontend is self-contained and needs only a static server (not `file://`, because of CORS):
+You need a Supabase project, a Google Cloud project with Earth Engine enabled and a service account
+registered for it, and an API key from Cerebras and/or Groq.
+
+1. **Database.** Run `supabase/schema.sql` in the Supabase SQL Editor. In Authentication → Providers,
+   disable public sign-up: accounts are created by an administrator.
+2. **Accounts.**
+   `SUPABASE_URL=… SUPABASE_SERVICE_ROLE_KEY=… node scripts/create-user.mjs you@example.org <password>`
+3. **API.** Create a Vercel project from this repository and set the variables listed in
+   [`.env.example`](.env.example). The service_role key and every API key stay on the server.
+4. **Browser settings.** Fill in [`config.js`](config.js) with the Supabase URL and its anon key. These
+   values are public by design; never put a secret there.
+5. Deploy (`vercel --prod`) and add the app's origin to `ALLOWED_ORIGINS`.
+
+Local development: `npm install`, then `vercel dev` with a `.env.local` copied from `.env.example`.
+
+## Reproducing the evaluation
 
 ```bash
-git clone https://github.com/fjaltimiras/agragent.git
-cd agragent
-python3 -m http.server 8080     # then open http://localhost:8080/app.html
+node eval/verify_arithmetic.mjs                    # irrigation/fertilisation arithmetic, no network
+CEREBRAS_API_KEY=… node eval/run_tool_selection.mjs --provider cerebras --mode planned                          # development set
+CEREBRAS_API_KEY=… node eval/run_tool_selection.mjs --provider cerebras --mode planned --benchmark eval/testset.json --tag test
 ```
 
-The assistant additionally needs the backend:
+The assistant plans before it acts (`api/_planner.js`): a short call to the same model decides which tools
+a message needs, and the agent loop then calls them. `eval/benchmark.json` (126 queries in English, Spanish
+and Portuguese, 16 out of scope) was used to develop the prompt and the planning step; `eval/testset.json`
+(36 queries) was written before the planning step and is the held-out estimate. The harness imports the
+prompt, tool schemas, planner and loop settings from `api/`, stubs tool execution and resumes after rate
+limits. Modes: `planned` (the released agent), `agentic` (loop without the planning step), `single` (one
+round) and `router` (planning step alone). Prompt versions and the frozen test-set hash are in
+[`eval/PROMPTS.md`](eval/PROMPTS.md); every raw run is in `eval/runs/`.
 
-```bash
-cd backend
-cp .env.example .env            # fill in CEREBRAS_API_KEY / GROQ_API_KEY and Supabase credentials
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
-```
+With `gpt-oss-120b` on Cerebras, the released agent selected the right tools for 91.7 % of the test
+queries (33/36) and 91.3 % of the development queries, against 63.9 % and 61.1 % without the planning step,
+and called no tool on every out-of-scope query.
 
-Authentication is client-side only and the role label carries no server-side enforcement. Deployments that
-need real access control must add it.
+## Data sources and terms
 
-## Evaluation and reproducibility
-
-Everything below lives in `backend/eval/` and can be re-run.
-
-| Evaluation | Result |
-|---|---|
-| Tool selection, 63 queries, 3 open-weight models | 69.8% / 73.0% / 73.0% query accuracy; 100% abstention on out-of-scope |
-| Non-agentic ablations (single-call, router, no-tools) | Accuracy statistically indistinguishable; the loop buys coverage on compound queries, not better per-tool choice |
-| Calculator arithmetic (FAO-56 irrigation, N balance) | 12/12 |
-| Cluster detection, YOLO26m on the official WGISD split | mAP50 0.880, mAP50-95 0.581 |
-| Yield, three public datasets | FAOSTAT grapes R²=0.92; CropNet maize counties R²=0.41; within-field vineyard R²=-0.12 (MAPE 53%, operationally unusable), 0.38 adding inflorescence counts |
-
-The arithmetic check needs no API key and no network:
-
-```bash
-cd backend && python3 eval/verify_arithmetic.py
-```
-
-The tool-selection benchmark drives the production agent stack against an OpenAI-compatible endpoint,
-one model pinned per run, with tool execution stubbed to isolate selection:
-
-```bash
-cd backend
-python3 eval/run_eval_openweight.py --provider cerebras --model gpt-oss-120b --sleep 0.5 --timeout 90
-python3 eval/run_eval_openweight.py --provider cerebras --model zai-glm-4.7 --mode router   # ablation
-python3 eval/run_eval_openweight.py --provider cerebras --dry-run                            # no API calls
-```
-
-Model identifiers are reproduced verbatim as the endpoint advertises them. No sampling parameter is
-overridden and no seed is set, so runs are not bitwise reproducible; the archived per-model results in
-`backend/eval/` are the ones reported in the manuscript.
-
-Predictability is scale-dependent: the platform reports this rather than quoting a single accuracy figure.
-The yield estimate is a weighted heuristic, **not** a trained model, and no accuracy figure is claimed for it.
-
-An expert-panel rating instrument for recommendation quality is released in `backend/eval/expert_panel/`.
-It has **not** been executed: tool selection is not the same thing as advice quality.
-
-## Data sources
-
-Sentinel-2 via [Google Earth Engine](https://earthengine.google.com) · [Open-Meteo](https://open-meteo.com) ·
-[OpenAlex](https://openalex.org) · [AGRIS FAO](https://agris.fao.org) · Biblioteca Digital INIA Chile ·
-[FAOSTAT](https://www.fao.org/faostat) · [WGISD](https://github.com/thsant/wgisd) (Embrapa)
+Copernicus Sentinel-2 via Google Earth Engine, Open-Meteo, Nominatim/OpenStreetMap, OpenAlex, AGRIS,
+FAOSTAT (CC BY-NC-SA 3.0 IGO, queried at run time and not redistributed) and the INIA Digital Library.
+Whoever runs an instance is responsible for complying with each service's terms. Third-party code is
+listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## License
 
-[GNU Affero General Public License v3.0](LICENSE). The network-use clause is deliberate: anyone running a
-modified version as a network service must publish their changes. Both the frontend and the backend
-orchestration layer are covered.
+agragent is dual-licensed:
 
-## Citation
+- **Open source:** [GNU AGPL-3.0-only](LICENSE). If you run a modified version as a network service, you
+  must offer its users the complete source code of that version (section 13).
+- **Commercial:** for hosted subscriptions, white-label offerings or integration into proprietary
+  software without the AGPL obligations. Write to **contacto@agragent.com**.
 
-```bibtex
-@software{agragent2026,
-  author = {Altimiras, Francisco},
-  title = {agragent: An Agentic Multimodal Architecture for Crop Monitoring and Decision Support},
-  year = {2026},
-  url = {https://github.com/fjaltimiras/agragent},
-  institution = {N\'{u}cleo de Investigaci\'{o}n en Data Science, Facultad de Ingenier\'{i}a y Negocios, Universidad de las Am\'{e}ricas}
-}
-```
+"agragent" and its logo are trademarks and are not licensed under either option. Details in
+[LICENSING.md](LICENSING.md). Contributions require a Contributor License Agreement
+([CONTRIBUTING.md](CONTRIBUTING.md)).
 
-The genomic module builds on Altimiras et al. (2024),
-[doi:10.3390/agronomy14030613](https://doi.org/10.3390/agronomy14030613).
+## How to cite
 
-## Author
+See [CITATION.cff](CITATION.cff), or:
 
-**Francisco Altimiras** — ORCID [0000-0003-1992-8338](https://orcid.org/0000-0003-1992-8338)
-Núcleo de Investigación en Data Science, Facultad de Ingeniería y Negocios,
-Universidad de las Américas, Chile
+> Altimiras, F. *agragent: an open-source agentic platform for field-scale crop monitoring* (software,
+> version 2.0.0). https://github.com/fjaltimiras/agragent

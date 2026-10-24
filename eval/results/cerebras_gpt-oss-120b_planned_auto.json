@@ -1,0 +1,95 @@
+{
+ "slug": "cerebras_gpt-oss-120b_planned",
+ "provider": "cerebras",
+ "model": "gpt-oss-120b",
+ "mode": "planned",
+ "benchmark": "benchmark.json",
+ "max_iterations": 6,
+ "complete": true,
+ "system_fingerprints": [
+  "fp_a9089f3cce52797e7952"
+ ],
+ "run_date": "2026-10-24",
+ "n_queries": 126,
+ "correct": 109,
+ "query_accuracy": 0.8650793650793651,
+ "query_accuracy_wilson95": [
+  0.794528687777586,
+  0.9140269677288159
+ ],
+ "on_topic_accuracy": 0.8454545454545455,
+ "abstention": [
+  16,
+  16
+ ],
+ "tool_precision": 0.9919354838709677,
+ "group_recall": 0.873015873015873,
+ "f1": 0.9286841924634497,
+ "median_latency_s": 1.39,
+ "mean_iterations": 2.08,
+ "recovered_leaked_calls": 0,
+ "by_lang": {
+  "en": [
+   34,
+   41
+  ],
+  "es": [
+   39,
+   44
+  ],
+  "pt": [
+   36,
+   41
+  ]
+ },
+ "by_category": {
+  "climate": [
+   10,
+   10
+  ],
+  "faostat": [
+   10,
+   10
+  ],
+  "fertilization": [
+   10,
+   12
+  ],
+  "foliar": [
+   10,
+   10
+  ],
+  "irrigation": [
+   9,
+   10
+  ],
+  "literature_agris": [
+   6,
+   6
+  ],
+  "literature_inia": [
+   7,
+   8
+  ],
+  "literature_openalex": [
+   8,
+   8
+  ],
+  "multi": [
+   8,
+   14
+  ],
+  "out_of_scope": [
+   16,
+   16
+  ],
+  "satellite": [
+   9,
+   12
+  ],
+  "soil": [
+   6,
+   10
+  ]
+ }
+}
