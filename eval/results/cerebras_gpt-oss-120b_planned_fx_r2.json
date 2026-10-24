@@ -1,0 +1,117 @@
+{
+ "slug": "cerebras_gpt-oss-120b_planned_fx_r2",
+ "provider": "cerebras",
+ "model": "gpt-oss-120b",
+ "mode": "planned",
+ "benchmark": "testset.json",
+ "max_iterations": 6,
+ "complete": true,
+ "system_fingerprints": [
+  "fp_a9089f3cce52797e7952"
+ ],
+ "run_date": "2026-10-24",
+ "stubs": "fixtures",
+ "sha256": {
+  "chat-stream.js": "f670eb71851cf8c66499c5ae38f19b10a195fbaccec7ff5d8e080ca82d04db2b",
+  "_planner.js": "e52da2431e1da2f34c865aa91b54ca7dc7b6207c8aa53435095e9e9239671d81",
+  "_llm.js": "2b74a279ac984285b219aba3cd75e969f12aa22ef315bbb6cefca9a5e31dc117",
+  "testset.json": "8fe2c4342b62e8be52c3dea11ec0b9f4b6b92709093bfdc4fd9d2b4e893a844d",
+  "fixtures.json": "ac5a9e4ae40833be4606a6b0d0bf3ebaa564d3a278e979d8994a63b9aec97937"
+ },
+ "n_queries": 36,
+ "correct": 32,
+ "query_accuracy": 0.8888888888888888,
+ "query_accuracy_wilson95": [
+  0.7468487098496366,
+  0.9559343109125815
+ ],
+ "on_topic_accuracy": 0.8709677419354839,
+ "abstention": [
+  5,
+  5
+ ],
+ "tool_precision": 0.9487179487179487,
+ "group_recall": 0.9142857142857143,
+ "f1": 0.9311836413684623,
+ "median_latency_s": 1.32,
+ "mean_iterations": 2.33,
+ "recovered_leaked_calls": 0,
+ "rounds_retried_auto": 0,
+ "by_lang": {
+  "en": [
+   12,
+   12
+  ],
+  "es": [
+   11,
+   13
+  ],
+  "pt": [
+   9,
+   11
+  ]
+ },
+ "by_category": {
+  "climate": [
+   3,
+   3
+  ],
+  "faostat": [
+   3,
+   3
+  ],
+  "fertilization": [
+   2,
+   3
+  ],
+  "foliar": [
+   2,
+   3
+  ],
+  "irrigation": [
+   2,
+   3
+  ],
+  "literature_agris": [
+   2,
+   2
+  ],
+  "literature_inia": [
+   2,
+   2
+  ],
+  "literature_openalex": [
+   2,
+   2
+  ],
+  "multi": [
+   3,
+   4
+  ],
+  "out_of_scope": [
+   5,
+   5
+  ],
+  "satellite": [
+   3,
+   3
+  ],
+  "soil": [
+   3,
+   3
+  ]
+ },
+ "fidelity": {
+  "answers": 31,
+  "with_untraceable_figure": 11,
+  "with_untraceable_reference": 1,
+  "figures_total": 182,
+  "figures_untraceable": 18,
+  "figures_unexplained": 8,
+  "with_unexplained_figure": 7,
+  "refs_total": 6,
+  "refs_untraceable": 1,
+  "correct_and_faithful": 17,
+  "correct_and_faithful_lenient": 21
+ }
+}

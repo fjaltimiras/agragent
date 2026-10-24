@@ -1,0 +1,117 @@
+{
+ "slug": "cerebras_qwen-3-8-27b_planned_fx_r2",
+ "provider": "cerebras",
+ "model": "qwen-3.8-27b",
+ "mode": "planned",
+ "benchmark": "testset.json",
+ "max_iterations": 6,
+ "complete": true,
+ "system_fingerprints": [
+  "fp_829e8c8e5020fd230ff0"
+ ],
+ "run_date": "2026-10-24",
+ "stubs": "fixtures",
+ "sha256": {
+  "chat-stream.js": "f670eb71851cf8c66499c5ae38f19b10a195fbaccec7ff5d8e080ca82d04db2b",
+  "_planner.js": "e52da2431e1da2f34c865aa91b54ca7dc7b6207c8aa53435095e9e9239671d81",
+  "_llm.js": "2b74a279ac984285b219aba3cd75e969f12aa22ef315bbb6cefca9a5e31dc117",
+  "testset.json": "8fe2c4342b62e8be52c3dea11ec0b9f4b6b92709093bfdc4fd9d2b4e893a844d",
+  "fixtures.json": "ac5a9e4ae40833be4606a6b0d0bf3ebaa564d3a278e979d8994a63b9aec97937"
+ },
+ "n_queries": 36,
+ "correct": 34,
+ "query_accuracy": 0.9444444444444444,
+ "query_accuracy_wilson95": [
+  0.8185502589238879,
+  0.9846303362329331
+ ],
+ "on_topic_accuracy": 0.9354838709677419,
+ "abstention": [
+  5,
+  5
+ ],
+ "tool_precision": 0.9285714285714286,
+ "group_recall": 1,
+ "f1": 0.962962962962963,
+ "median_latency_s": 2.37,
+ "mean_iterations": 2.22,
+ "recovered_leaked_calls": 0,
+ "rounds_retried_auto": 5,
+ "by_lang": {
+  "en": [
+   11,
+   12
+  ],
+  "es": [
+   13,
+   13
+  ],
+  "pt": [
+   10,
+   11
+  ]
+ },
+ "by_category": {
+  "climate": [
+   3,
+   3
+  ],
+  "faostat": [
+   3,
+   3
+  ],
+  "fertilization": [
+   2,
+   3
+  ],
+  "foliar": [
+   3,
+   3
+  ],
+  "irrigation": [
+   3,
+   3
+  ],
+  "literature_agris": [
+   2,
+   2
+  ],
+  "literature_inia": [
+   1,
+   2
+  ],
+  "literature_openalex": [
+   2,
+   2
+  ],
+  "multi": [
+   4,
+   4
+  ],
+  "out_of_scope": [
+   5,
+   5
+  ],
+  "satellite": [
+   3,
+   3
+  ],
+  "soil": [
+   3,
+   3
+  ]
+ },
+ "fidelity": {
+  "answers": 31,
+  "with_untraceable_figure": 15,
+  "with_untraceable_reference": 1,
+  "figures_total": 289,
+  "figures_untraceable": 34,
+  "figures_unexplained": 14,
+  "with_unexplained_figure": 10,
+  "refs_total": 9,
+  "refs_untraceable": 1,
+  "correct_and_faithful": 15,
+  "correct_and_faithful_lenient": 19
+ }
+}

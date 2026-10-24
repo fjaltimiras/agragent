@@ -55,22 +55,43 @@ Local development: `npm install`, then `vercel dev` with a `.env.local` copied f
 
 ```bash
 node eval/verify_arithmetic.mjs                    # irrigation/fertilisation arithmetic, no network
-CEREBRAS_API_KEY=… node eval/run_tool_selection.mjs --provider cerebras --mode planned                          # development set
-CEREBRAS_API_KEY=… node eval/run_tool_selection.mjs --provider cerebras --mode planned --benchmark eval/testset.json --tag test
+# v2: calculators executed, fixed data for external tools, fidelity check
+CEREBRAS_API_KEY=… node eval/run_tool_selection.mjs --provider cerebras --mode planned --stubs fixtures                       # development set
+for r in r1 r2 r3; do
+  CEREBRAS_API_KEY=… node eval/run_tool_selection.mjs --provider cerebras --mode planned --stubs fixtures --benchmark eval/testset.json --tag $r
+done
+CEREBRAS_API_KEY=… node eval/run_tool_selection.mjs --provider cerebras --mode planned --stubs fixtures --benchmark eval/askset.json --tag ask
+# add --model qwen-3.8-27b for the second model; drop --stubs fixtures for v1 (stub without data, selection only)
 ```
 
 The assistant plans before it acts (`api/_planner.js`): a short call to the same model decides which tools
 a message needs, and the agent loop then calls them. `eval/benchmark.json` (126 queries in English, Spanish
 and Portuguese, 16 out of scope) was used to develop the prompt and the planning step; `eval/testset.json`
-(36 queries) was written before the planning step and is the held-out estimate. The harness imports the
-prompt, tool schemas, planner and loop settings from `api/`, stubs tool execution and resumes after rate
-limits. Modes: `planned` (the released agent), `agentic` (loop without the planning step), `single` (one
-round) and `router` (planning step alone). Prompt versions and the frozen test-set hash are in
-[`eval/PROMPTS.md`](eval/PROMPTS.md); every raw run is in `eval/runs/`.
+(36 queries) was written before the planning step. The harness imports the prompt, tool schemas, planner and
+loop settings from `api/` and resumes after rate limits. Modes: `planned` (the released agent), `agentic`
+(loop without the planning step), `single` (one round) and `router` (planning step alone).
 
-With `gpt-oss-120b` on Cerebras, the released agent selected the right tools for 91.7 % of the test
-queries (33/36) and 91.3 % of the development queries, against 63.9 % and 61.1 % without the planning step,
-and called no tool on every out-of-scope query.
+Two versions of the benchmark exist. **v1** replaces every tool result with a stub that carries no data and
+measures tool selection only. **v2** (`--stubs fixtures`) runs the four local tools for real, gives the seven
+external tools the fixed payloads in `eval/fixtures.json`, and checks every figure and DOI/URL in the answer
+against the query, the context, the prompt and the tool results (strict bound, and a lenient bound that forgives
+one unit conversion). `eval/askset.json` holds nine queries that must not receive a per-area dose. Each result
+records the SHA-256 of the code and data it evaluated. Prompt versions, the revision history and the frozen
+test-set hash are in [`eval/PROMPTS.md`](eval/PROMPTS.md); every raw run is in `eval/runs/`, summaries in
+`eval/results/`.
+
+v2 results on the test set (three runs, 108 pooled; Cerebras):
+
+| Model | Configuration | Right tools | Right tools and every figure traceable (lenient) | Answers with an unexplained figure |
+|---|---|---|---|---|
+| `gpt-oss-120b` | loop only | 67.6 % | 46/93 | 19/93 |
+| `gpt-oss-120b` | released | 90.7 % | 61/93 | 24/93 |
+| `qwen-3.8-27b` | loop only | 87.0 % | 61/93 | 17/93 |
+| `qwen-3.8-27b` | released | 94.4 % | 58/93 | 26/93 |
+
+Both models declined every out-of-scope query. The planning step fixes tool selection, mostly for
+`gpt-oss-120b`; it does not make answers more faithful. Treat figures the assistant gives as guidance and check
+them against the tool output shown in the app.
 
 ## Data sources and terms
 

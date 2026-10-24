@@ -1,0 +1,8 @@
+# cerebras_qwen-3-8-27b_planned_fx_ask
+
+Queries: 9/9 · accuracy 100.0 % (95 % Wilson 70.1–100.0) · F1 0.000 · abstention 0/0
+
+## Failures
+
+| ID | Lang | Category | Query | Expected | Selected |
+|---|---|---|---|---|---|

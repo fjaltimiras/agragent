@@ -264,7 +264,7 @@ const TOOLS = [
       type: 'object',
       properties: {
         crop_type:     { type: 'string' },
-        yield_target:  { type: 'number', description: 'Objetivo de rendimiento en t/ha' },
+        yield_target:  { type: 'number', description: 'Objetivo de rendimiento en t/ha, dado por el usuario o su rendimiento histórico. Esencial: si no lo tienes, pregúntalo; no lo inventes' },
         soil_analysis: { type: 'object', description: 'Datos de suelo opcionales para ajuste' },
         area_ha:       { type: 'number' },
         irrigation_type: { type: 'string', description: 'goteo, aspersion, gravedad' },
@@ -442,7 +442,10 @@ function calculateIrrigationPlan({ crop_type='default', growth_stage='mid_season
   return { crop_type, kc, et0: et0v, etc_daily_mm: etc, net_irrigation_mm: net, gross_irrigation_mm: gross, interval_days: interval, volume_m3: vol, efficiency_pct: Math.round(eff*100), recommendations: [`Regar cada ${interval} día(s). Volumen: ${vol} m³ para ${area_ha} ha.`] };
 }
 
-function calculateFertilizationPlan({ crop_type='default', yield_target=30, soil_analysis={}, area_ha=1, irrigation_type='goteo', cycle_days=120 }) {
+function calculateFertilizationPlan({ crop_type='default', yield_target, soil_analysis={}, area_ha=1, irrigation_type='goteo', cycle_days=120 }) {
+  // El rendimiento objetivo fija la dosis: sin él no se calcula (antes se suponían 30 t/ha, absurdo para vid).
+  if (!(+yield_target > 0)) return { status: 'missing_input', missing: ['yield_target'], message: 'Falta el rendimiento objetivo (t/ha). Pregúntaselo al usuario en una línea (o usa su rendimiento histórico si está en el contexto); no lo supongas.' };
+  yield_target = +yield_target;
   const NPK = { tomate:{N:3,P2O5:1,K2O:5,Ca:1.5,Mg:0.5}, vid:{N:2,P2O5:0.6,K2O:3,Ca:1.2,Mg:0.4}, maiz:{N:18,P2O5:8,K2O:5,Ca:2,Mg:2}, trigo:{N:22,P2O5:8,K2O:6,Ca:1.5,Mg:1.5}, default:{N:3.5,P2O5:1.2,K2O:4.5,Ca:1,Mg:0.4} };
   const req = NPK[crop_type] || NPK.default;
   let N = +(req.N * yield_target).toFixed(1);
@@ -768,12 +771,17 @@ module.exports = async function handler(req, res) {
     let finalText   = '';
 
     while (iterations++ < 6) {
-      const { message: assistantMsg } = await completeLLM({
-        messages,
-        tools: activeTools,
-        tool_choice: iterations === 1 && planned.length ? 'required' : 'auto',
-        max_tokens: 1024,
-      });
+      // Con plan, la primera ronda va con 'required'. Si el modelo no quiere llamar tools, el proveedor devuelve
+      // el razonamiento como texto ("We need yield_target.", a veces en otro idioma) o un HTTP 400: ninguna de las
+      // dos cosas se muestra, la ronda se repite en 'auto'.
+      const round = choice => completeLLM({ messages, tools: activeTools, tool_choice: choice, max_tokens: 1024 });
+      let assistantMsg;
+      if (iterations === 1 && planned.length > 0) {
+        try { ({ message: assistantMsg } = await round('required')); } catch (e) { assistantMsg = null; }
+        if (!assistantMsg || !(assistantMsg.tool_calls || []).length) ({ message: assistantMsg } = await round('auto'));
+      } else {
+        ({ message: assistantMsg } = await round('auto'));
+      }
 
       const functionCalls = assistantMsg.tool_calls || [];
       const textContent = (assistantMsg.content || '').replace(/<\/?[a-zA-Z][^>]*>/g, '');

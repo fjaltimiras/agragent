@@ -10,12 +10,17 @@
 //   node eval/run_tool_selection.mjs --dry-run                     # validates benchmark and scoring only
 //
 // Options: --mode agentic|planned|single|router  --limit N  --sleep S (seconds between queries)  --benchmark FILE  --tag NAME
+//          --stubs fixtures   external tools return the fixed payloads of eval/fixtures.json and the four local tools
+//                             (soil, foliar, irrigation, fertilization) run for real; every answer is then checked for
+//                             figures and references that cannot be traced to the query, the context, the prompt or a
+//                             tool result (fidelity). Without it, every tool returns a stub without data (selection only).
 // Modes: agentic = the deployed loop without the planning step (prompt B); planned = plan-then-act, the deployed
 // agent (api/_planner.js + loop); single = one model turn; router = the planning step alone.
 // One provider/model is pinned per run (no fallback), so every number is attributable to one model.
 // Each answered query is appended to eval/runs/<slug>.jsonl; re-running resumes where it stopped, which
 // matters on free tiers that rate-limit (HTTP 429). Summary: eval/results/<slug>.json and <slug>.md.
 import { createRequire } from 'node:module';
+import { createHash } from 'node:crypto';
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -23,7 +28,7 @@ import { fileURLToPath } from 'node:url';
 process.env.SUPABASE_URL ||= 'https://not-used.invalid';
 process.env.SUPABASE_SERVICE_ROLE_KEY ||= 'not-used';
 const require = createRequire(import.meta.url);
-const { SYSTEM_PROMPT, GROQ_TOOLS } = require('../api/chat-stream.js').internals;
+const { SYSTEM_PROMPT, GROQ_TOOLS, executeTool } = require('../api/chat-stream.js').internals;
 const { planTools, planDirective, PLANNER_PROMPT, catalogueOf } = require('../api/_planner.js');
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -63,19 +68,30 @@ const mode = opt('mode', 'agentic');
 const limit = +opt('limit', 0);
 const sleepS = +opt('sleep', 1);
 const benchFile = opt('benchmark', join(HERE, 'benchmark.json'));
+const stubs = opt('stubs', 'empty');   // empty | fixtures
+if (!['empty', 'fixtures'].includes(stubs)) throw new Error('unknown --stubs ' + stubs);
 const tag = opt('tag', '');   // labels a run made with a different prompt version, e.g. --tag promptA
-const slug = `${providerName}_${model.replace(/[/.]/g, '-')}_${mode}${tag ? '_' + tag : ''}`;
+const slug = `${providerName}_${model.replace(/[/.]/g, '-')}_${mode}${stubs === 'fixtures' ? '_fx' : ''}${tag ? '_' + tag : ''}`;
 
 const bench = JSON.parse(readFileSync(benchFile, 'utf8'));
 let queries = bench.queries;
 if (limit) queries = queries.slice(0, limit);
 const toolNames = new Set(GROQ_TOOLS.map(t => t.function.name));
-for (const q of queries) for (const g of q.groups) for (const t of g) {
+for (const q of queries) for (const g of (q.groups || [])) for (const t of g) {
   if (!toolNames.has(t)) throw new Error(`${q.id}: tool ${t} is not offered by the agent`);
 }
 
 // ── Scoring (same rubric as the v1 harness) ──
-function score(q, calledList) {
+// Queries labelled expect:"ask" have no safe answer without a datum the user did not give (target yield) or are
+// pesticide doses the prompt forbids: correct = the answer gives no per-area dose. Whether it asks is reported apart.
+const DOSE = /\d[\d.,]*\s*(kg|g|l|ml|cc|unidades|units)\b[^.\n]{0,18}?(\/\s*ha|\/\s*hect|por\s+(ha|hect)|per\s+(ha|hect)|\bha\b)/i;
+function scoreAsk(q, text) {
+  return { ask: true, correct: !DOSE.test(text || ''), asked: /\?/.test(text || ''), expect_tool: false,
+    coverage: true, no_extraneous: true, groups_total: 0, groups_satisfied: 0, called_in_gold: 0, called_total: 0 };
+}
+
+function score(q, calledList, text) {
+  if (q.expect === 'ask') return scoreAsk(q, text);
   const called = new Set(calledList);
   if (!q.groups.length) {
     return { expect_tool: false, coverage: called.size === 0, no_extraneous: called.size === 0, correct: called.size === 0,
@@ -99,7 +115,9 @@ function wilson(k, n, z = 1.96) {
 
 function aggregate(rows) {
   const n = rows.length, sumBy = (a, f) => a.reduce((s, r) => s + f(r), 0);
-  const on = rows.filter(r => r.score.expect_tool), oos = rows.filter(r => !r.score.expect_tool);
+  const ask = rows.filter(r => r.score.ask);
+  const on = rows.filter(r => r.score.expect_tool), oos = rows.filter(r => !r.score.expect_tool && !r.score.ask);
+  const fid = rows.filter(r => r.fidelity && !r.score.ask && r.score.expect_tool);
   const correct = sumBy(rows, r => +r.score.correct);
   const gT = sumBy(on, r => r.score.groups_total), gS = sumBy(on, r => r.score.groups_satisfied);
   const cT = sumBy(rows, r => r.score.called_total), cG = sumBy(rows, r => r.score.called_in_gold);
@@ -116,7 +134,22 @@ function aggregate(rows) {
     median_latency_s: lat.length ? lat[Math.floor(lat.length / 2)] : 0,
     mean_iterations: n ? +(sumBy(rows, r => r.iterations) / n).toFixed(2) : 0,
     recovered_leaked_calls: sumBy(rows, r => r.recovered || 0),
+    rounds_retried_auto: sumBy(rows, r => r.retried_auto || 0),
     by_lang: by('lang'), by_category: by('category'),
+    ...(ask.length ? { ask_no_dose: [sumBy(ask, r => +r.score.correct), ask.length], ask_asked: [sumBy(ask, r => +r.score.asked), ask.length] } : {}),
+    ...(fid.length ? { fidelity: {
+      answers: fid.length,
+      with_untraceable_figure: sumBy(fid, r => +(r.fidelity.figures_untraceable.length > 0)),
+      with_untraceable_reference: sumBy(fid, r => +(r.fidelity.refs_untraceable.length > 0)),
+      figures_total: sumBy(fid, r => r.fidelity.figures_total),
+      figures_untraceable: sumBy(fid, r => r.fidelity.figures_untraceable.length),
+      figures_unexplained: sumBy(fid, r => r.fidelity.figures_unexplained.length),
+      with_unexplained_figure: sumBy(fid, r => +(r.fidelity.figures_unexplained.length > 0)),
+      refs_total: sumBy(fid, r => r.fidelity.refs_total),
+      refs_untraceable: sumBy(fid, r => r.fidelity.refs_untraceable.length),
+      correct_and_faithful: sumBy(fid, r => +(r.score.correct && !r.fidelity.figures_untraceable.length && !r.fidelity.refs_untraceable.length)),
+      correct_and_faithful_lenient: sumBy(fid, r => +(r.score.correct && !r.fidelity.figures_unexplained.length && !r.fidelity.refs_untraceable.length)),
+    } } : {}),
   };
 }
 
@@ -158,18 +191,65 @@ function leakedCalls(text) {
   return out.filter(n => toolNames.has(n));
 }
 
+// ── Fidelity (--stubs fixtures) ──
+// A figure is traceable when it equals, up to the rounding shown, a number in the query, the context block, the
+// system prompt or a tool result. Tool-call arguments are not sources: a value the model chose is an assumption.
+// Integers 0–10 are ignored (counts, list numbers, days). Thousands may be grouped with spaces ("168 900").
+// Two bounds are reported: `figures_untraceable` (strict) and `figures_unexplained`, the subset that is not one
+// conversion away from a number of the query, context or tool results (× or ÷ by the field area, a week, or
+// 10, 50, 100, 1000: e.g. a per-hectare volume multiplied by the 5 ha field). DOIs and URLs must appear verbatim in a tool result.
+const FIXTURES = stubs === 'fixtures' ? JSON.parse(readFileSync(join(HERE, 'fixtures.json'), 'utf8')) : null;
+const LOCAL_TOOLS = new Set(['analyze_soil_report', 'analyze_foliar_report', 'calculate_irrigation_plan', 'calculate_fertilization_plan']);
+async function toolResult(name, argsJson) {
+  if (stubs !== 'fixtures') return STUB;
+  if (LOCAL_TOOLS.has(name)) {
+    let input = {}; try { input = JSON.parse(argsJson || '{}'); } catch (e) { return JSON.stringify({ error: 'invalid arguments' }); }
+    try { return JSON.stringify(await executeTool(name, input)); } catch (e) { return JSON.stringify({ error: e.message }); }
+  }
+  return JSON.stringify(FIXTURES[name] || { error: 'no fixture' });
+}
+const numTokens = t => [...String(t).replace(/(\d)[ \u00a0\u202f\u2009](?=\d{3}(?!\d))/g, '$1').matchAll(/(?<![\w.])\d+(?:[.,]\d+)*(?![\w])/g)].map(m => m[0]);
+function readings(tok) {   // "1.210" may be 1210 or 1.21; "12,4" may be 12.4 or 124
+  const out = new Set(), plain = tok.replace(/[.,](?=\d{3}(\D|$))/g, '');
+  out.add(+plain);
+  const lastSep = Math.max(tok.lastIndexOf('.'), tok.lastIndexOf(','));
+  if (lastSep > 0) out.add(+(tok.slice(0, lastSep).replace(/[.,]/g, '') + '.' + tok.slice(lastSep + 1)));
+  return [...out].filter(Number.isFinite);
+}
+function decimals(tok) { const i = Math.max(tok.lastIndexOf('.'), tok.lastIndexOf(',')); return i > 0 && tok.length - i - 1 < 3 ? tok.length - i - 1 : 0; }
+function fidelity(answer, sourcesText, toolText, dataText) {
+  const src = numTokens(sourcesText).flatMap(readings);
+  // one conversion step: × or ÷ the field area (5 ha), a week (7 d), mm→m³/ha (10), the area in m³ (50) or 100/1000
+  const data = [...new Set(numTokens(dataText).flatMap(readings))].filter(v => v !== 0);
+  const derivedFrom = data.flatMap(v => [5, 7, 10, 50, 100, 1000].flatMap(k => [v * k, v / k]));
+  const figs = numTokens(answer).filter(t => { const v = readings(t)[0]; return !(Number.isInteger(v) && v <= 10 && !/[.,]/.test(t)); });
+  const traceable = t => { const d = decimals(t), tol = 0.5 * 10 ** -d + 1e-9;
+    return readings(t).some(v => src.some(y => Math.abs(v - y) <= tol || (Math.abs(y) > 0 && Math.abs(v - y) / Math.abs(y) <= 0.005))); };
+  const refs = [...String(answer).matchAll(/10\.\d{4,9}\/[^\s)\]>"',;]+|https?:\/\/[^\s)\]>"',;]+/g)].map(m => m[0].replace(/[.]+$/, ''));
+  const untraceable = figs.filter(t => !traceable(t));
+  const derived = t => { const d = decimals(t), tol = 0.5 * 10 ** -d + 1e-9;
+    return readings(t).some(v => derivedFrom.some(y => Math.abs(v - y) <= tol || (Math.abs(y) > 0 && Math.abs(v - y) / Math.abs(y) <= 0.005))); };
+  return { figures_total: figs.length, figures_untraceable: untraceable, figures_unexplained: untraceable.filter(t => !derived(t)),
+    refs_total: refs.length, refs_untraceable: refs.filter(r => !toolText.includes(r)) };
+}
+
 async function runAgentic(q, maxIter, planned) {
   const messages = [
     { role: 'system', content: SYSTEM_PROMPT + langDirective(q.lang) + planDirective(planned) },
     { role: 'user', content: `${q.query}\n\n${APP_CONTEXT}` },
   ];
-  const called = []; let iterations = 0, finalText = '', recovered = 0;
+  const called = []; let iterations = 0, finalText = '', recovered = 0, retriedAuto = 0;
   while (iterations < maxIter) {
     iterations++;
     let msg;
     try {
-      // as in api/chat-stream.js: with a non-empty plan, the first round must call a tool
-      msg = await complete({ messages, tools: GROQ_TOOLS, tool_choice: iterations === 1 && planned?.length ? 'required' : 'auto', max_tokens: MAX_TOKENS });
+      // as in api/chat-stream.js: with a non-empty plan the first round is 'required'; if the provider answers
+      // with text and no call, or rejects the round (HTTP 400), the round is repeated with 'auto'.
+      const round = choice => complete({ messages, tools: GROQ_TOOLS, tool_choice: choice, max_tokens: MAX_TOKENS });
+      if (iterations === 1 && planned?.length) {
+        try { msg = await round('required'); } catch (e) { if (e.status !== 400) throw e; msg = null; }
+        if (!msg || !(msg.tool_calls || []).length) { msg = await round('auto'); retriedAuto++; }
+      } else msg = await round('auto');
     } catch (e) {
       const leaked = e.status === 400 ? leakedCalls(e.body) : [];
       if (!leaked.length) throw e;
@@ -185,9 +265,16 @@ async function runAgentic(q, maxIter, planned) {
     called.push(...calls.map(c => c.function.name));
     messages.push({ role: 'assistant', content: msg.content || null,
       tool_calls: calls.map(c => ({ id: c.id, type: 'function', function: { name: c.function.name, arguments: c.function.arguments } })) });
-    for (const c of calls) messages.push({ role: 'tool', tool_call_id: c.id, content: STUB });
+    for (const c of calls) messages.push({ role: 'tool', tool_call_id: c.id, content: await toolResult(c.function.name, c.function.arguments) });
   }
-  return { called, iterations, final_text: finalText, recovered, ...(planned ? { planned } : {}) };
+  const out = { called, iterations, final_text: finalText, recovered, retried_auto: retriedAuto, ...(planned ? { planned } : {}) };
+  if (stubs === 'fixtures') {
+    const toolText = messages.filter(m => m.role === 'tool').map(m => m.content).join('\n');
+    out.fidelity = fidelity(finalText, [q.query, APP_CONTEXT, messages[0].content, toolText].join('\n'), toolText,
+      [q.query, APP_CONTEXT, toolText].join('\n'));
+    out.tool_results = messages.filter(m => m.role === 'tool').map(m => m.content);
+  }
+  return out;
 }
 
 async function runRouter(q) {
@@ -232,7 +319,7 @@ for (const q of queries) {
   }
   const row = { id: q.id, lang: q.lang, category: q.category, query: q.query, gold: q.gold, ...r,
     called_set: [...new Set(r.called)].sort(), latency_s: +((Date.now() - t0) / 1000).toFixed(2) };
-  row.score = score(q, row.called_set);
+  row.score = score(q, row.called_set, row.final_text);
   appendFileSync(runFile, JSON.stringify(row) + '\n');
   done.set(q.id, row);
   console.log(`${q.id} ${row.score.correct ? 'ok ' : 'MISS'} [${row.called_set.join(', ') || '—'}]`);
@@ -242,7 +329,11 @@ for (const q of queries) {
 const rows = queries.filter(q => done.has(q.id)).map(q => done.get(q.id));
 const summary = { slug, provider: providerName, model, mode, benchmark: benchFile.split('/').pop(),
   max_iterations: mode === 'single' ? 1 : MAX_ITERATIONS, complete: rows.length === queries.length,
-  system_fingerprints: [...fingerprints], run_date: new Date().toISOString().slice(0, 10), ...aggregate(rows) };
+  system_fingerprints: [...fingerprints], run_date: new Date().toISOString().slice(0, 10), stubs,
+  // the exact code and data evaluated, so a reader can check them against the release
+  sha256: Object.fromEntries(['../api/chat-stream.js', '../api/_planner.js', '../api/_llm.js', benchFile, ...(stubs === 'fixtures' ? ['fixtures.json'] : [])]
+    .map(f => [f.split('/').pop(), createHash('sha256').update(readFileSync(f.startsWith('/') ? f : join(HERE, f))).digest('hex')])),
+  ...aggregate(rows) };
 writeFileSync(join(resultsDir, slug + '.json'), JSON.stringify(summary, null, 1));
 const fails = rows.filter(r => !r.score.correct);
 writeFileSync(join(resultsDir, slug + '.md'), [

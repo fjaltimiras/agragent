@@ -72,3 +72,22 @@ development-set results. `testset.json` (36 queries, T01–T36) was written and 
 planning step was implemented and is not edited afterwards; SHA-256 of the file as frozen:
 `8fe2c4342b62e8be52c3dea11ec0b9f4b6b92709093bfdc4fd9d2b4e893a844d`. Results on it are reported as the
 held-out estimate.
+
+## Revision after the internal review (2026-10-24): target yield and benchmark v2
+
+An internal review of the first plan-then-act runs found two problems that the selection score could not show:
+
+1. `calculate_fertilization_plan` defaulted to a target yield of 30 t/ha when none was given (meaningless for
+   grapevine), and the planning directive told the assistant to call a tool "with a reasonable assumption". The
+   default was removed: without a target yield the calculator returns `missing_input` and the assistant must ask.
+   The schema and the planning directive now say that a datum that fixes the dose is not an assumption.
+2. With the empty stub, answers cannot contain tool data, so any figure in them is invented. Benchmark v2
+   (`--stubs fixtures`) gives the external tools the fixed payloads of `fixtures.json` and runs the four local tools,
+   and measures **fidelity**: figures and references in the answer that cannot be traced to the query, the context,
+   the system prompt or a tool result (strict bound), and the subset not explained by one unit or area conversion
+   (lenient bound). `askset.json` (A1–A9) adds queries whose safe answer gives no dose.
+
+The test set was not edited. Because these changes came after the test set had been run once, results on it with
+the revised code are reported as a second evaluation of a revised system, alongside the first. Each test-set
+configuration is run three times (`--tag r1|r2|r3`); every result file records the SHA-256 of the code and data it
+evaluated.

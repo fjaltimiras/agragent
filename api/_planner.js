@@ -54,7 +54,8 @@ function planDirective(planned) {
     + 'Llama esas herramientas ahora, con los argumentos que salen del mensaje y del [App Context] (ubicación, cultivo, '
     + 'etapa, suelo, sistema de riego, valores de análisis que el usuario escribió). No le pidas al usuario un dato que '
     + 'una herramienta trae o que ya está en el mensaje o el contexto. Si a una herramienta le falta un valor no esencial, '
-    + 'llámala con un supuesto razonable y decláralo en la respuesta. Las reglas de prudencia siguen valiendo para cómo '
+    + 'llámala con un supuesto razonable y decláralo en la respuesta; un dato que fija la dosis (rendimiento objetivo de '
+    + 'una fertilización) no es un supuesto: si falta, pregúntalo. Las reglas de prudencia siguen valiendo para cómo '
     + 'presentas el resultado: orienta, separa medido de inferido y entrega los planes como estimación a validar con el asesor.';
 }
 
