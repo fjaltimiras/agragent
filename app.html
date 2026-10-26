@@ -9165,9 +9165,13 @@ function normalizeStack(img, bands, geom) {
   });
   let out = null;
   bands.forEach(b => {
-    const scaled = img.select(b)
-      .unitScale(ee.Number(mm.get(b + '_min')), ee.Number(mm.get(b + '_max')))
-      .rename(b);
+    // A band that is constant over the field (e.g. the temporal SD when the date
+    // range holds a single clear scene) has min == max, and unitScale rejects an
+    // empty range. Widen it by an epsilon: the band becomes 0 and does not drive
+    // the clustering, instead of aborting the whole zoning.
+    const lo = ee.Number(mm.get(b + '_min'));
+    const hi = ee.Number(mm.get(b + '_max')).max(lo.add(1e-6));
+    const scaled = img.select(b).unitScale(lo, hi).rename(b);
     out = out ? out.addBands(scaled) : scaled;
   });
   return out;

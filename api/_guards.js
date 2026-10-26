@@ -30,7 +30,8 @@ const PIDE_DATO_RE = new RegExp([
 
 // Prescripción en la RESPUESTA: una dosis, una lámina, un "aplica tantos", "te recomiendo".
 const PRESCRIPCION_RE = new RegExp([
-  '\\d+(?:[.,]\\d+)?\\s*(kg|kilos?|g|gr|gramos?|grams?|l|lt|litros?|liters?|litres?|cc|ml|mm|m3|m³|unidades?|units?|lb|lbs)\\s*(\\/|\\s+(por|per|a)\\s+)\\s*(ha|hect[aá]rea|hectare|acre|planta|plant|[aá]rbol|[aá]rvore|tree|d[ií]a|day|dia|semana|week)',
+  // unidad por superficie, planta o tiempo: "kg/ha", "kg por ha", "kg ha⁻¹" (notación SI), "kg N ha⁻¹", "L/100 L", "L/hL"
+  '\\d+(?:[.,]\\d+)?\\s*(kg|kilos?|g|gr|gramos?|grams?|l|lt|litros?|liters?|litres?|cc|ml|mm|m3|m³|unidades?|units?|lb|lbs)(?:\\s+(?:de\\s+)?[A-Z][A-Za-z0-9\u2080-\u2089\u2011-]{0,6})?\\s*(?:(\\/|\\s+(por|per|a)\\s+)\\s*(ha|hect[aá]rea|hectare|acre|planta|plant|[aá]rbol|[aá]rvore|tree|d[ií]a|day|dia|semana|week)|(ha|hect[aá]rea|hectare|acre|planta|plant|[aá]rbol|[aá]rvore|tree)\\s*(⁻¹|-¹|\\^?-1(?!\\d))|\\/\\s*(100\\s*(l|lt|litros?|liters?|litres?)|hl)\\b)',
   '\\bdosis\\b', '\\bdose\\b', '\\bdosage\\b', '\\bl[aá]mina\\b', '\\bl[aâ]mina de (riego|irriga)',
   '\\bte recomiendo\\b', '\\brecomiendo\\b', '\\bI recommend\\b', '\\byou should (apply|irrigate|fertili[sz]e|spray)', '\\brecomendo\\b',
   '\\bdeber[ií]as (aplicar|regar|fertilizar|podar)', '\\bvoc[eê] deve (aplicar|irrigar|adubar)', '\\baplica(r|le)? \\d', '\\bapply \\d',
@@ -93,4 +94,4 @@ function pulirRespuesta(text, message, lang) {
   return avisarConsultarAsesor(quitarPreguntaDeCierre(text), message, lang);
 }
 
-module.exports = { pulirRespuesta, quitarPreguntaDeCierre, avisarConsultarAsesor, AVISO_ASESOR };
+module.exports = { pulirRespuesta, quitarPreguntaDeCierre, avisarConsultarAsesor, AVISO_ASESOR, PRESCRIPCION_RE, TEMA_SENSIBLE_RE, YA_DERIVA_RE };

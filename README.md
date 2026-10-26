@@ -93,6 +93,48 @@ Both models declined every out-of-scope query. The planning step fixes tool sele
 `gpt-oss-120b`; it does not make answers more faithful. Treat figures the assistant gives as guidance and check
 them against the tool output shown in the app.
 
+### Changes after the benchmark v2 runs
+
+Two fixes were made after the runs reported in the paper, and are therefore not reflected in `eval/results/`:
+
+- `calculate_fertilization_plan` now returns a `dose_summary` string, labels the base application of established
+  perennials as start-of-season/post-harvest instead of `preplant`, and tells the model to quote `total_kg_ha` (per
+  hectare) and `total_kg_field` (whole field) as such. The arithmetic is unchanged (`node eval/verify_arithmetic.mjs`
+  still passes 12/12); only the payload the model reads changed.
+- Management zones failed with `Image.unitScale: low value must be less than high value` when the date range held a
+  single clear scene (the temporal standard deviation is then constant). `normalizeStack` in `app.html` now widens an
+  empty range by an epsilon.
+
+### Expert-panel consultations re-run on the released agent
+
+The 100 consultations scored by the INIA panel on a related deployment (`eval/panel_cases.json`: id, module,
+query, consensus total) were run through the released agent with and without the output guardrails of
+`api/_guards.js`, on the demo field context and the fixed payloads of `eval/fixtures.json`:
+
+```bash
+CEREBRAS_API_KEY=… node eval/run_panel_cases.mjs --guards on    # eval/runs/panel_guards_on.jsonl
+CEREBRAS_API_KEY=… node eval/run_panel_cases.mjs --guards off   # eval/runs/panel_guards_off.jsonl
+node eval/analyze_panel.mjs                                      # eval/results/panel_comparison.json
+```
+
+The guardrails are a deterministic post-processor, so `analyze_panel.mjs` measures their effect within each
+generation: it re-applies the current `api/_guards.js` to the 200 stored raw answers (`eval/panel_behaviour.mjs`
+holds the counters) and reports, before and after, closing questions or offers, per-area doses and the advisor
+note; the two runs are also compared with each other as a measure of run-to-run variability. It measures
+behaviour, not agronomic accuracy: the queries refer to fields the agent does not have. The prescription rule of
+`_guards.js` was extended after the runs to accept the SI notation `kg ha⁻¹` (and `kg N ha⁻¹`, `L/100 L`); the
+re-application uses the released rule.
+
+### Stability of management zones and hotspots
+
+`scripts/zone_stability.mjs` ports the zoning and hotspot recipe of `app.html` to the Earth Engine Node client
+and runs it on the three example fields of the release over three seasons: Cohen's κ between seasons,
+sensitivity to k, to the modal filter and to the hotspot threshold, and the area by `pixelArea()` against the
+pixel count × 100 m², in GEE's default geographic grid and in the native UTM grid (`--extra`, which also adds the
+within-season κ between k-means seeds). It needs `GEE_CLIENT_EMAIL` and `GEE_PRIVATE_KEY_B64` in the environment
+and the `@google/earthengine` package (`NODE_PATH` to a directory that has it). Output:
+`eval/results/zone_stability.json`.
+
 ## Data sources and terms
 
 Copernicus Sentinel-2 via Google Earth Engine, Open-Meteo, Nominatim/OpenStreetMap, OpenAlex, AGRIS,

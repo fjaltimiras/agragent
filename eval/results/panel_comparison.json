@@ -1,0 +1,345 @@
+{
+ "_about": "see header of eval/analyze_panel.mjs",
+ "guards_sha256": "ac736ecc",
+ "behaviour_sha256": "4023e76f",
+ "n_cases": 100,
+ "paired": {
+  "n_generations": 200,
+  "modified": 53,
+  "offer_removed": 5,
+  "note_added": 50,
+  "note_trigger": {
+   "prescription": 30,
+   "topic_only": 20
+  },
+  "raw": {
+   "closes_with_offer": 5,
+   "ends_with_question": 24,
+   "per_area_dose": 13,
+   "advisor_note": 0
+  },
+  "filtered": {
+   "closes_with_offer": 0,
+   "ends_with_question": 19,
+   "per_area_dose": 13,
+   "advisor_note": 50
+  },
+  "dosed_answers": {
+   "n": 13,
+   "with_note": 13,
+   "without_note_ids": [],
+   "already_refers_to_advisor": 0
+  },
+  "dosed_ids": [
+   "AGR-RIE-13/on",
+   "AGR-FER-19/on",
+   "AGR-FER-05/on",
+   "AGR-MAN-05/on",
+   "AGR-MAN-08/on",
+   "AGR-PLA-03/on",
+   "SFI-REF-03/on",
+   "AGR-FER-19/off",
+   "AGR-FER-10/off",
+   "AGR-FER-05/off",
+   "AGR-MAN-14/off",
+   "AGR-MAN-05/off",
+   "AGR-MAN-08/off"
+  ]
+ },
+ "behaviours": {
+  "closes_with_offer": {
+   "guards_off": 2,
+   "guards_on": 0,
+   "off_only": 2,
+   "on_only": 0,
+   "mcnemar_p": 0.5
+  },
+  "ends_with_question": {
+   "guards_off": 13,
+   "guards_on": 8,
+   "off_only": 6,
+   "on_only": 1,
+   "mcnemar_p": 0.125
+  },
+  "per_area_dose": {
+   "guards_off": 6,
+   "guards_on": 7,
+   "off_only": 2,
+   "on_only": 3,
+   "mcnemar_p": 1
+  },
+  "advisor_note": {
+   "guards_off": 0,
+   "guards_on": 22,
+   "off_only": 0,
+   "on_only": 22,
+   "mcnemar_p": 4.77e-7
+  },
+  "tools_used": {
+   "guards_off": 49,
+   "guards_on": 50,
+   "off_only": 4,
+   "on_only": 5,
+   "mcnemar_p": 1
+  }
+ },
+ "by_module": {
+  "Agrometeorología del campo": {
+   "n": 8,
+   "closes_with_offer": [
+    1,
+    0
+   ],
+   "ends_with_question": [
+    1,
+    0
+   ],
+   "per_area_dose": [
+    0,
+    0
+   ],
+   "advisor_note": [
+    0,
+    2
+   ],
+   "tools_used": [
+    8,
+    8
+   ]
+  },
+  "Clima y protección": {
+   "n": 12,
+   "closes_with_offer": [
+    0,
+    0
+   ],
+   "ends_with_question": [
+    0,
+    0
+   ],
+   "per_area_dose": [
+    0,
+    0
+   ],
+   "advisor_note": [
+    0,
+    1
+   ],
+   "tools_used": [
+    6,
+    7
+   ]
+  },
+  "Comunicación y usabilidad": {
+   "n": 3,
+   "closes_with_offer": [
+    0,
+    0
+   ],
+   "ends_with_question": [
+    1,
+    1
+   ],
+   "per_area_dose": [
+    0,
+    0
+   ],
+   "advisor_note": [
+    0,
+    0
+   ],
+   "tools_used": [
+    0,
+    0
+   ]
+  },
+  "Contexto del campo": {
+   "n": 10,
+   "closes_with_offer": [
+    1,
+    0
+   ],
+   "ends_with_question": [
+    2,
+    0
+   ],
+   "per_area_dose": [
+    0,
+    0
+   ],
+   "advisor_note": [
+    0,
+    1
+   ],
+   "tools_used": [
+    3,
+    5
+   ]
+  },
+  "Fertilización y nutrición": {
+   "n": 12,
+   "closes_with_offer": [
+    0,
+    0
+   ],
+   "ends_with_question": [
+    5,
+    5
+   ],
+   "per_area_dose": [
+    3,
+    2
+   ],
+   "advisor_note": [
+    0,
+    3
+   ],
+   "tools_used": [
+    5,
+    6
+   ]
+  },
+  "Manejo de campo": {
+   "n": 12,
+   "closes_with_offer": [
+    0,
+    0
+   ],
+   "ends_with_question": [
+    1,
+    1
+   ],
+   "per_area_dose": [
+    3,
+    2
+   ],
+   "advisor_note": [
+    0,
+    1
+   ],
+   "tools_used": [
+    1,
+    1
+   ]
+  },
+  "Plagas y enfermedades": {
+   "n": 12,
+   "closes_with_offer": [
+    0,
+    0
+   ],
+   "ends_with_question": [
+    1,
+    1
+   ],
+   "per_area_dose": [
+    0,
+    1
+   ],
+   "advisor_note": [
+    0,
+    1
+   ],
+   "tools_used": [
+    7,
+    7
+   ]
+  },
+  "Respaldo INIA y trazabilidad": {
+   "n": 6,
+   "closes_with_offer": [
+    0,
+    0
+   ],
+   "ends_with_question": [
+    0,
+    0
+   ],
+   "per_area_dose": [
+    0,
+    1
+   ],
+   "advisor_note": [
+    0,
+    1
+   ],
+   "tools_used": [
+    5,
+    5
+   ]
+  },
+  "Riego": {
+   "n": 12,
+   "closes_with_offer": [
+    0,
+    0
+   ],
+   "ends_with_question": [
+    2,
+    0
+   ],
+   "per_area_dose": [
+    0,
+    1
+   ],
+   "advisor_note": [
+    0,
+    10
+   ],
+   "tools_used": [
+    5,
+    5
+   ]
+  },
+  "Satelital e índices": {
+   "n": 8,
+   "closes_with_offer": [
+    0,
+    0
+   ],
+   "ends_with_question": [
+    0,
+    0
+   ],
+   "per_area_dose": [
+    0,
+    0
+   ],
+   "advisor_note": [
+    0,
+    2
+   ],
+   "tools_used": [
+    7,
+    5
+   ]
+  },
+  "Seguridad y límites": {
+   "n": 5,
+   "closes_with_offer": [
+    0,
+    0
+   ],
+   "ends_with_question": [
+    0,
+    0
+   ],
+   "per_area_dose": [
+    0,
+    0
+   ],
+   "advisor_note": [
+    0,
+    0
+   ],
+   "tools_used": [
+    2,
+    1
+   ]
+  }
+ },
+ "tools_called": {
+  "guards_off": 49,
+  "guards_on": 50
+ }
+}

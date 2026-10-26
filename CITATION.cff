@@ -3,7 +3,7 @@ message: "If you use this software, please cite it using these metadata."
 type: software
 title: "agragent: an open-source agentic platform for field-scale crop monitoring"
 version: 2.0.0
-date-released: 2026-10-23
+date-released: 2026-10-25
 license: AGPL-3.0-only
 repository-code: "https://github.com/fjaltimiras/agragent"
 url: "https://agragent.com"

@@ -1,0 +1,103 @@
+{
+ "slug": "panel_guards_on",
+ "model": "gpt-oss-120b",
+ "guards": "on",
+ "n_cases": 100,
+ "complete": true,
+ "system_fingerprints": [
+  "fp_a9089f3cce52797e7952"
+ ],
+ "run_date": "2026-10-25",
+ "sha256": {
+  "chat-stream.js": "bc7fb05cb889b685ce98fe0a5f43553567ddaca3a9231e4cdf5931d3285095ce",
+  "_planner.js": "e52da2431e1da2f34c865aa91b54ca7dc7b6207c8aa53435095e9e9239671d81",
+  "_guards.js": "a3497eb4c414bc46ce185972d5f57dc85a18e04a355fe5538d7bc85411cf7ab8",
+  "panel_cases.json": "363a259b59521227e41a26764a7b4bba036b52fbb655c4e2339aa0967008ee18",
+  "fixtures.json": "ac5a9e4ae40833be4606a6b0d0bf3ebaa564d3a278e979d8994a63b9aec97937"
+ },
+ "closes_with_offer": 0,
+ "ends_with_question": 8,
+ "per_area_dose": 7,
+ "advisor_note": 22,
+ "used_tools": 50,
+ "retried_auto": 1,
+ "by_module": {
+  "Agrometeorología del campo": {
+   "n": 8,
+   "closes_with_offer": 0,
+   "per_area_dose": 0,
+   "advisor_note": 2,
+   "used_tools": 8
+  },
+  "Clima y protección": {
+   "n": 12,
+   "closes_with_offer": 0,
+   "per_area_dose": 0,
+   "advisor_note": 1,
+   "used_tools": 7
+  },
+  "Comunicación y usabilidad": {
+   "n": 3,
+   "closes_with_offer": 0,
+   "per_area_dose": 0,
+   "advisor_note": 0,
+   "used_tools": 0
+  },
+  "Contexto del campo": {
+   "n": 10,
+   "closes_with_offer": 0,
+   "per_area_dose": 0,
+   "advisor_note": 1,
+   "used_tools": 5
+  },
+  "Fertilización y nutrición": {
+   "n": 12,
+   "closes_with_offer": 0,
+   "per_area_dose": 2,
+   "advisor_note": 3,
+   "used_tools": 6
+  },
+  "Manejo de campo": {
+   "n": 12,
+   "closes_with_offer": 0,
+   "per_area_dose": 2,
+   "advisor_note": 1,
+   "used_tools": 1
+  },
+  "Plagas y enfermedades": {
+   "n": 12,
+   "closes_with_offer": 0,
+   "per_area_dose": 1,
+   "advisor_note": 1,
+   "used_tools": 7
+  },
+  "Respaldo INIA y trazabilidad": {
+   "n": 6,
+   "closes_with_offer": 0,
+   "per_area_dose": 1,
+   "advisor_note": 1,
+   "used_tools": 5
+  },
+  "Riego": {
+   "n": 12,
+   "closes_with_offer": 0,
+   "per_area_dose": 1,
+   "advisor_note": 10,
+   "used_tools": 5
+  },
+  "Satelital e índices": {
+   "n": 8,
+   "closes_with_offer": 0,
+   "per_area_dose": 0,
+   "advisor_note": 2,
+   "used_tools": 5
+  },
+  "Seguridad y límites": {
+   "n": 5,
+   "closes_with_offer": 0,
+   "per_area_dose": 0,
+   "advisor_note": 0,
+   "used_tools": 1
+  }
+ }
+}

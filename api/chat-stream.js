@@ -453,7 +453,9 @@ function calculateFertilizationPlan({ crop_type='default', yield_target, soil_an
   let K = +(req.K2O * yield_target).toFixed(1);
   if (+soil_analysis.P > 40) P = +(P * 0.5).toFixed(1);
   const fert = irrigation_type === 'goteo' ? ['Fertirriego semanal recomendado'] : [];
-  return { crop_type, yield_target_t_ha: yield_target, area_ha, total_kg_ha: {N, P2O5: P, K2O: K}, total_kg_field: {N: +(N*area_ha).toFixed(1), P2O5: +(P*area_ha).toFixed(1), K2O: +(K*area_ha).toFixed(1)}, application_program: { preplant: `DAP ${+(P/0.46).toFixed(0)} kg/ha + KCl ${+(K*0.25/0.6).toFixed(0)} kg/ha + Urea ${+(N*0.1/0.46).toFixed(0)} kg/ha`, fertirriego: fert }, notes: ['Ajustar con análisis foliar periódico.'] };
+  // Perennes establecidos: la aplicación base no es pre-plantación (el modelo la ofrecía para viñedos en producción).
+  const perennial = /^(vid|uva|cerezo|ciruelo|durazno|nectarin|damasco|manzano|peral|palto|citric|limon|naranj|mandarin|nogal|almendro|avellano|pistacho|olivo|kiwi|arandano|frambues|frutal)/i.test(String(crop_type).normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+  return { crop_type, yield_target_t_ha: yield_target, area_ha, total_kg_ha: {N, P2O5: P, K2O: K}, total_kg_field: {N: +(N*area_ha).toFixed(1), P2O5: +(P*area_ha).toFixed(1), K2O: +(K*area_ha).toFixed(1)}, application_program: { [perennial ? 'base_application_start_of_season' : 'preplant']: `DAP ${+(P/0.46).toFixed(0)} kg/ha + KCl ${+(K*0.25/0.6).toFixed(0)} kg/ha + Urea ${+(N*0.1/0.46).toFixed(0)} kg/ha`, fertirriego: fert }, dose_summary: `N ${N} kg/ha (${+(N*area_ha).toFixed(1)} kg en ${area_ha} ha) · P2O5 ${P} kg/ha · K2O ${K} kg/ha`, notes: ['Ajustar con análisis foliar periódico.', ...(perennial ? ['Cultivo perenne establecido: la aplicación base va al inicio de temporada (brotación) o en postcosecha, no en pre-plantación.'] : []), 'Cita las dosis tal como vienen aquí: total_kg_ha es por hectárea y total_kg_field es el total del campo.'] };
 }
 
 async function searchOpenAlex({ query, max_results = 5, year_from = 2010 }) {

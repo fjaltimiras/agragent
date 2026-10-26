@@ -1,0 +1,603 @@
+{
+ "_about": "Stability and sensitivity of zones and hotspots, same recipe as app.html; see scripts/zone_stability.mjs",
+ "run_date": "2026-10-25",
+ "fields": {
+  "colchagua": {
+   "label": "Vineyard, Santa Cruz, Colchagua (Chile)",
+   "hemisphere": "S",
+   "seasons": {
+    "2022-23": {
+     "window": [
+      "2022-11-01",
+      "2023-03-31"
+     ],
+     "n_scenes": 26,
+     "zones": [
+      {
+       "zone": 1,
+       "area_ha": 4.59,
+       "mean_ndvi": 0.432
+      },
+      {
+       "zone": 2,
+       "area_ha": 6.55,
+       "mean_ndvi": 0.489
+      },
+      {
+       "zone": 3,
+       "area_ha": 3.14,
+       "mean_ndvi": 0.541
+      }
+     ]
+    },
+    "2023-24": {
+     "window": [
+      "2023-11-01",
+      "2024-03-31"
+     ],
+     "n_scenes": 21,
+     "zones": [
+      {
+       "zone": 1,
+       "area_ha": 0.89,
+       "mean_ndvi": 0.488
+      },
+      {
+       "zone": 2,
+       "area_ha": 6.68,
+       "mean_ndvi": 0.644
+      },
+      {
+       "zone": 3,
+       "area_ha": 6.69,
+       "mean_ndvi": 0.671
+      }
+     ]
+    },
+    "2024-25": {
+     "window": [
+      "2024-11-01",
+      "2025-03-31"
+     ],
+     "n_scenes": 27,
+     "zones": [
+      {
+       "zone": 1,
+       "area_ha": 2.31,
+       "mean_ndvi": 0.384
+      },
+      {
+       "zone": 2,
+       "area_ha": 3.91,
+       "mean_ndvi": 0.512
+      },
+      {
+       "zone": 3,
+       "area_ha": 8.05,
+       "mean_ndvi": 0.644
+      }
+     ]
+    }
+   },
+   "kappa_between_seasons": {
+    "2022-23 vs 2023-24": {
+     "kappa": 0.371,
+     "agreement": 0.584,
+     "n_pixels": 1738.772549019608
+    },
+    "2022-23 vs 2024-25": {
+     "kappa": 0.181,
+     "agreement": 0.428,
+     "n_pixels": 1738.7725490196078
+    },
+    "2023-24 vs 2024-25": {
+     "kappa": 0.439,
+     "agreement": 0.665,
+     "n_pixels": 1738.772549019608
+    }
+   },
+   "sensitivity": {
+    "k": {
+     "2": {
+      "zones": [
+       {
+        "zone": 1,
+        "area_ha": 4.56,
+        "mean_ndvi": 0.434
+       },
+       {
+        "zone": 2,
+        "area_ha": 9.71,
+        "mean_ndvi": 0.627
+       }
+      ]
+     },
+     "4": {
+      "zones": [
+       {
+        "zone": 1,
+        "area_ha": 2.26,
+        "mean_ndvi": 0.378
+       },
+       {
+        "zone": 2,
+        "area_ha": 1.09,
+        "mean_ndvi": 0.457
+       },
+       {
+        "zone": 3,
+        "area_ha": 4.62,
+        "mean_ndvi": 0.561
+       },
+       {
+        "zone": 4,
+        "area_ha": 6.29,
+        "mean_ndvi": 0.655
+       }
+      ]
+     }
+    },
+    "smooth_off": {
+     "zones": [
+      {
+       "zone": 1,
+       "area_ha": 2.34,
+       "mean_ndvi": 0.385
+      },
+      {
+       "zone": 2,
+       "area_ha": 4.2,
+       "mean_ndvi": 0.504
+      },
+      {
+       "zone": 3,
+       "area_ha": 7.73,
+       "mean_ndvi": 0.653
+      }
+     ],
+     "kappa_vs_released": {
+      "kappa": 0.837,
+      "agreement": 0.904,
+      "n_pixels": 1738.772549019608
+     }
+    },
+    "hotspots_z": {
+     "1": {
+      "z": 1,
+      "n_patches": 1,
+      "area_ha": 3.17
+     },
+     "2": {
+      "z": 2,
+      "n_patches": 0,
+      "area_ha": 0
+     },
+     "1.5": {
+      "z": 1.5,
+      "n_patches": 4,
+      "area_ha": 0.87
+     }
+    }
+   },
+   "area": {
+    "polygon_ha": 14.27,
+    "pixel_area_ha": 14.27,
+    "count_x100m2_ha": 17.36,
+    "count_utm_x100m2_ha": 14.27,
+    "utm_crs": "EPSG:32719",
+    "one_over_cos_lat": 1.216
+   },
+   "within_season_seed_kappa": {
+    "season": "2024-25",
+    "seed 1 vs 42": {
+     "kappa": 1,
+     "agreement": 1,
+     "n_pixels": 1738.772549019608
+    },
+    "seed 7 vs 42": {
+     "kappa": 1,
+     "agreement": 1,
+     "n_pixels": 1738.772549019608
+    }
+   }
+  },
+  "agrelo": {
+   "label": "Malbec, Agrelo, Mendoza (Argentina)",
+   "hemisphere": "S",
+   "seasons": {
+    "2022-23": {
+     "window": [
+      "2022-11-01",
+      "2023-03-31"
+     ],
+     "n_scenes": 41,
+     "zones": [
+      {
+       "zone": 1,
+       "area_ha": 19.26,
+       "mean_ndvi": 0.296
+      },
+      {
+       "zone": 2,
+       "area_ha": 40.85,
+       "mean_ndvi": 0.412
+      },
+      {
+       "zone": 3,
+       "area_ha": 49.31,
+       "mean_ndvi": 0.493
+      }
+     ]
+    },
+    "2023-24": {
+     "window": [
+      "2023-11-01",
+      "2024-03-31"
+     ],
+     "n_scenes": 38,
+     "zones": [
+      {
+       "zone": 1,
+       "area_ha": 14.12,
+       "mean_ndvi": 0.277
+      },
+      {
+       "zone": 2,
+       "area_ha": 48.35,
+       "mean_ndvi": 0.416
+      },
+      {
+       "zone": 3,
+       "area_ha": 46.96,
+       "mean_ndvi": 0.499
+      }
+     ]
+    },
+    "2024-25": {
+     "window": [
+      "2024-11-01",
+      "2025-03-31"
+     ],
+     "n_scenes": 41,
+     "zones": [
+      {
+       "zone": 1,
+       "area_ha": 9.31,
+       "mean_ndvi": 0.322
+      },
+      {
+       "zone": 2,
+       "area_ha": 52.54,
+       "mean_ndvi": 0.478
+      },
+      {
+       "zone": 3,
+       "area_ha": 47.57,
+       "mean_ndvi": 0.56
+      }
+     ]
+    }
+   },
+   "kappa_between_seasons": {
+    "2022-23 vs 2023-24": {
+     "kappa": 0.8,
+     "agreement": 0.876,
+     "n_pixels": 13098.349019607838
+    },
+    "2022-23 vs 2024-25": {
+     "kappa": 0.651,
+     "agreement": 0.787,
+     "n_pixels": 13098.349019607838
+    },
+    "2023-24 vs 2024-25": {
+     "kappa": 0.686,
+     "agreement": 0.814,
+     "n_pixels": 13098.34901960784
+    }
+   },
+   "sensitivity": {
+    "k": {
+     "2": {
+      "zones": [
+       {
+        "zone": 1,
+        "area_ha": 10.87,
+        "mean_ndvi": 0.325
+       },
+       {
+        "zone": 2,
+        "area_ha": 98.56,
+        "mean_ndvi": 0.52
+       }
+      ]
+     },
+     "4": {
+      "zones": [
+       {
+        "zone": 1,
+        "area_ha": 9.02,
+        "mean_ndvi": 0.317
+       },
+       {
+        "zone": 2,
+        "area_ha": 43.79,
+        "mean_ndvi": 0.467
+       },
+       {
+        "zone": 3,
+        "area_ha": 18.16,
+        "mean_ndvi": 0.532
+       },
+       {
+        "zone": 4,
+        "area_ha": 38.45,
+        "mean_ndvi": 0.566
+       }
+      ]
+     }
+    },
+    "smooth_off": {
+     "zones": [
+      {
+       "zone": 1,
+       "area_ha": 17.41,
+       "mean_ndvi": 0.304
+      },
+      {
+       "zone": 2,
+       "area_ha": 50.24,
+       "mean_ndvi": 0.496
+      },
+      {
+       "zone": 3,
+       "area_ha": 41.78,
+       "mean_ndvi": 0.587
+      }
+     ],
+     "kappa_vs_released": {
+      "kappa": 0.677,
+      "agreement": 0.806,
+      "n_pixels": 13098.349019607842
+     }
+    },
+    "hotspots_z": {
+     "1": {
+      "z": 1,
+      "n_patches": 25,
+      "area_ha": 17.95
+     },
+     "2": {
+      "z": 2,
+      "n_patches": 9,
+      "area_ha": 1.35
+     },
+     "1.5": {
+      "z": 1.5,
+      "n_patches": 19,
+      "area_ha": 6
+     }
+    }
+   },
+   "area": {
+    "polygon_ha": 109.48,
+    "pixel_area_ha": 109.43,
+    "count_x100m2_ha": 131.14,
+    "count_utm_x100m2_ha": 109.34,
+    "utm_crs": "EPSG:32719",
+    "one_over_cos_lat": 1.194
+   },
+   "within_season_seed_kappa": {
+    "season": "2024-25",
+    "seed 1 vs 42": {
+     "kappa": 0.906,
+     "agreement": 0.946,
+     "n_pixels": 13098.349019607842
+    },
+    "seed 7 vs 42": {
+     "kappa": 0.921,
+     "agreement": 0.954,
+     "n_pixels": 13098.349019607838
+    }
+   }
+  },
+  "oakville": {
+   "label": "Cabernet, Oakville, Napa Valley (USA)",
+   "hemisphere": "N",
+   "seasons": {
+    "2023": {
+     "window": [
+      "2023-05-01",
+      "2023-09-30"
+     ],
+     "n_scenes": 23,
+     "zones": [
+      {
+       "zone": 1,
+       "area_ha": 7.26,
+       "mean_ndvi": 0.307
+      },
+      {
+       "zone": 2,
+       "area_ha": 29.37,
+       "mean_ndvi": 0.432
+      },
+      {
+       "zone": 3,
+       "area_ha": 24.03,
+       "mean_ndvi": 0.517
+      }
+     ]
+    },
+    "2024": {
+     "window": [
+      "2024-05-01",
+      "2024-09-30"
+     ],
+     "n_scenes": 25,
+     "zones": [
+      {
+       "zone": 1,
+       "area_ha": 13.02,
+       "mean_ndvi": 0.33
+      },
+      {
+       "zone": 2,
+       "area_ha": 22.26,
+       "mean_ndvi": 0.4
+      },
+      {
+       "zone": 3,
+       "area_ha": 25.37,
+       "mean_ndvi": 0.439
+      }
+     ]
+    },
+    "2025": {
+     "window": [
+      "2025-05-01",
+      "2025-09-30"
+     ],
+     "n_scenes": 30,
+     "zones": [
+      {
+       "zone": 1,
+       "area_ha": 6.77,
+       "mean_ndvi": 0.302
+      },
+      {
+       "zone": 2,
+       "area_ha": 34.98,
+       "mean_ndvi": 0.431
+      },
+      {
+       "zone": 3,
+       "area_ha": 18.9,
+       "mean_ndvi": 0.463
+      }
+     ]
+    }
+   },
+   "kappa_between_seasons": {
+    "2023 vs 2024": {
+     "kappa": 0.313,
+     "agreement": 0.567,
+     "n_pixels": 7755.180392156864
+    },
+    "2023 vs 2025": {
+     "kappa": 0.151,
+     "agreement": 0.504,
+     "n_pixels": 7755.180392156863
+    },
+    "2024 vs 2025": {
+     "kappa": 0.07,
+     "agreement": 0.41,
+     "n_pixels": 7755.180392156864
+    }
+   },
+   "sensitivity": {
+    "k": {
+     "2": {
+      "zones": [
+       {
+        "zone": 1,
+        "area_ha": 20.5,
+        "mean_ndvi": 0.416
+       },
+       {
+        "zone": 2,
+        "area_ha": 40.16,
+        "mean_ndvi": 0.432
+       }
+      ]
+     },
+     "4": {
+      "zones": [
+       {
+        "zone": 1,
+        "area_ha": 6.88,
+        "mean_ndvi": 0.303
+       },
+       {
+        "zone": 2,
+        "area_ha": 24.85,
+        "mean_ndvi": 0.415
+       },
+       {
+        "zone": 3,
+        "area_ha": 10.79,
+        "mean_ndvi": 0.452
+       },
+       {
+        "zone": 4,
+        "area_ha": 18.14,
+        "mean_ndvi": 0.474
+       }
+      ]
+     }
+    },
+    "smooth_off": {
+     "zones": [
+      {
+       "zone": 1,
+       "area_ha": 8.88,
+       "mean_ndvi": 0.303
+      },
+      {
+       "zone": 2,
+       "area_ha": 32.47,
+       "mean_ndvi": 0.437
+      },
+      {
+       "zone": 3,
+       "area_ha": 19.31,
+       "mean_ndvi": 0.466
+      }
+     ],
+     "kappa_vs_released": {
+      "kappa": 0.772,
+      "agreement": 0.869,
+      "n_pixels": 7755.180392156863
+     }
+    },
+    "hotspots_z": {
+     "1": {
+      "z": 1,
+      "n_patches": 12,
+      "area_ha": 8
+     },
+     "2": {
+      "z": 2,
+      "n_patches": 2,
+      "area_ha": 2.7
+     },
+     "1.5": {
+      "z": 1.5,
+      "n_patches": 5,
+      "area_ha": 4.42
+     }
+    }
+   },
+   "area": {
+    "polygon_ha": 60.62,
+    "pixel_area_ha": 60.66,
+    "count_x100m2_ha": 77.45,
+    "count_utm_x100m2_ha": 60.66,
+    "utm_crs": "EPSG:32610",
+    "one_over_cos_lat": 1.277
+   },
+   "within_season_seed_kappa": {
+    "season": "2025",
+    "seed 1 vs 42": {
+     "kappa": 0.95,
+     "agreement": 0.972,
+     "n_pixels": 7755.180392156863
+    },
+    "seed 7 vs 42": {
+     "kappa": 0.921,
+     "agreement": 0.955,
+     "n_pixels": 7755.1803921568635
+    }
+   }
+  }
+ }
+}
